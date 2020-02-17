@@ -18,8 +18,9 @@ class Item(models.Model):
     """ 物品 """
     name = models.CharField(max_length=200)
     number = models.IntegerField()
-    storage = models.ForeignKey(Storage, on_delete=models.CASCADE)
+    description = models.CharField(max_length=200, null=True, blank=True)
     update_date = models.DateTimeField('date updated')
+    storage = models.ForeignKey(Storage, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.name} in {self.storage.name}'
+        return self.name

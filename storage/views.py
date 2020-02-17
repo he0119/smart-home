@@ -19,4 +19,10 @@ def storage_detail(request, storage_id):
 
 def item_detail(request, item_id):
     item = get_object_or_404(Item, pk=item_id)
-    return render(request, 'storage/item_detail.html', {'item': item})
+    description = item.description if item.description else '无备注'
+    update_date = item.update_date
+    return render(request, 'storage/item_detail.html', {
+        'item': item,
+        'update_date': update_date,
+        'description': description
+    })
