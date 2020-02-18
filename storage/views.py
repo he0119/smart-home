@@ -1,12 +1,14 @@
+from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.datetime_safe import datetime
 
-from .models import Item, Storage
 from .forms import ItemForm, StorageForm
+from .models import Item, Storage
 
 
+@login_required
 def index(request):
     storage_list = Storage.objects.filter(parent__isnull=True)
     storage_form = StorageForm()
@@ -17,6 +19,7 @@ def index(request):
     return render(request, 'storage/index.html', context)
 
 
+@login_required
 def storage_detail(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
     item_form = ItemForm(initial={
@@ -29,11 +32,13 @@ def storage_detail(request, storage_id):
     })
 
 
+@login_required
 def item_detail(request, item_id):
     item = get_object_or_404(Item, pk=item_id)
     return render(request, 'storage/item_detail.html', {'item': item})
 
 
+@login_required
 def add_storage(request):
     try:
         storage = Storage.objects.get(name=request.POST['name'])
@@ -50,6 +55,7 @@ def add_storage(request):
                       {'storage': storage})
 
 
+@login_required
 def add_item(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
     try:
