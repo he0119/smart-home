@@ -14,6 +14,6 @@ rsync -czrt --progress \
 --exclude ".editorconfig" \
 --exclude ".gitignore" \
 --exclude "rsync.sh" \
---exclude "sign.log" \
+--exclude "db.sqlite3" \
 /mnt/c/Users/hmy01/Works/Working/intelligent-home/ \
 hehome:/home/ubuntu/intelligent-home
