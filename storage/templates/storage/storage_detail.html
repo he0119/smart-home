@@ -29,18 +29,8 @@
   </ul>
 {% endif %}
 
-<h3> 快速添加物品 </h2>
-<form action="{% url 'storage:add_item' storage.id %}" method="post">
-{% csrf_token %}
-{{ item_form.as_p }}
-<input type="submit" value="添加">
-</form>
+{% include "storage/add_item.html" %}
 
-<h3> 快速添加位置 </h2>
-<form action="{% url 'storage:add_storage' storage.id %}" method="post">
-{% csrf_token %}
-{{ storage_form.as_p }}
-<input type="submit" value="添加">
-</form>
+{% include "storage/add_storage.html" %}
 
 {% endblock %}

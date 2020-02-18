@@ -53,38 +53,53 @@ def item_detail(request, item_id):
 
 
 @login_required
-def add_storage(request, storage_id):
+def add_storage(request):
+    f = StorageForm(request.POST)
+    new_storage = f.save(commit=False)
     try:
-        storage = Storage.objects.get(name=request.POST['name'])
+        storage = Storage.objects.get(name=new_storage.name)
     except Storage.DoesNotExist:
-        f = StorageForm(request.POST)
-        new_storage = f.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        if storage_id == 0:
-            return HttpResponseRedirect(reverse('storage:index'))
-        return HttpResponseRedirect(
-            reverse('storage:storage_detail', args=(storage_id, )))
+        new_storage.save()
+        if new_storage.parent:
+            return HttpResponseRedirect(
+                reverse('storage:storage_detail',
+                        args=(new_storage.parent.id, )))
+        return HttpResponseRedirect(reverse('storage:index'))
     else:
-        return render(request, 'storage/storage_detail.html',
-                      {'storage': storage})
+        return HttpResponseRedirect(
+            reverse('storage:storage_detail', args=(storage.id, )))
 
 
 @login_required
-def add_item(request, storage_id):
-    storage = get_object_or_404(Storage, pk=storage_id)
-    try:
-        item = storage.item_set.get(name=request.POST['name'])
-    except Item.DoesNotExist:
+def add_item(request):
+    if request.method == 'POST':
         f = ItemForm(request.POST)
         new_item = f.save(commit=False)
-        new_item.update_date = datetime.now()
-        new_item.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(
-            reverse('storage:storage_detail', args=(storage.id, )))
-    else:
-        return render(request, 'storage/item_detail.html', {'item': item})
+        try:
+            item = new_item.storage.item_set.get(name=new_item.name)
+        except Item.DoesNotExist:
+            new_item.update_date = datetime.now()
+            new_item.save()
+            return HttpResponseRedirect(
+                reverse('storage:storage_detail', args=(new_item.storage.id, )))
+        else:
+            return HttpResponseRedirect(
+                reverse('storage:item_detail', args=(item.id, )))
+
+
+@login_required
+def delete_storage(request, storage_id):
+    storage = get_object_or_404(Storage, pk=storage)
+    parent = storage.parent
+    storage.delete()
+    return HttpResponseRedirect(
+        reverse('storage:storage_detail', args=(parent.id, )))
+
+
+@login_required
+def delete_item(request, item_id):
+    item = get_object_or_404(Item, pk=item_id)
+    storage = item.storage
+    item.delete()
+    return HttpResponseRedirect(
+        reverse('storage:storage_detail', args=(storage.id, )))
