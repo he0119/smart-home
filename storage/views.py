@@ -24,11 +24,14 @@ def storage_detail(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
     item_form = ItemForm(initial={
         'storage': storage,
-        'update_date': datetime.now()
+    })
+    storage_form = StorageForm(initial={
+        'parent': storage,
     })
     return render(request, 'storage/storage_detail.html', {
         'storage': storage,
         'item_form': item_form,
+        'storage_form': storage_form,
     })
 
 
@@ -39,7 +42,7 @@ def item_detail(request, item_id):
 
 
 @login_required
-def add_storage(request):
+def add_storage(request, storage_id):
     try:
         storage = Storage.objects.get(name=request.POST['name'])
     except Storage.DoesNotExist:
@@ -48,8 +51,10 @@ def add_storage(request):
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
+        if storage_id == 0:
+            return HttpResponseRedirect(reverse('storage:index'))
         return HttpResponseRedirect(
-            reverse('storage:storage_detail', args=(new_storage.id, )))
+            reverse('storage:storage_detail', args=(storage_id, )))
     else:
         return render(request, 'storage/storage_detail.html',
                       {'storage': storage})
@@ -69,6 +74,6 @@ def add_item(request, storage_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
         return HttpResponseRedirect(
-            reverse('storage:item_detail', args=(new_item.id, )))
+            reverse('storage:storage_detail', args=(storage.id, )))
     else:
         return render(request, 'storage/item_detail.html', {'item': item})
