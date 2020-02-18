@@ -1,3 +1,7 @@
+{% extends "storage/base.html" %}
+
+{% block content %}
+
 <h1> 物品管理 </h1>
 {% if storage_list %}
     <ul>
@@ -15,3 +19,5 @@
 {{ storage_form.as_p }}
 <input type="submit" value="添加">
 </form>
+
+{% endblock %}

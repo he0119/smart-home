@@ -1,3 +1,7 @@
+{% extends "storage/base.html" %}
+
+{% block content %}
+
 <h1>{{ storage.name }}</h1>
 
 {% if storage.storage_set.all %}
@@ -24,3 +28,5 @@
 {{ item_form.as_p }}
 <input type="submit" value="添加">
 </form>
+
+{% endblock %}
