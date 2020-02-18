@@ -4,8 +4,15 @@
 
 <h1>{{ storage.name }}</h1>
 
+<a href="{% url 'storage:index' %}"> 家 </a> /
+{% if parents %}
+  {% for parent in parents %}
+    <a href="{% url 'storage:storage_detail' parent.id %}">{{ parent.name }}</a> /
+  {% endfor %}
+{% endif %}
+
 {% if storage.storage_set.all %}
-  <h2> 存储位置 </h2>
+  <h3> 位置 </h3>
   <ul>
   {% for storage in storage.storage_set.all %}
       <li><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
@@ -14,7 +21,7 @@
 {% endif %}
 
 {% if storage.item_set.all %}
-  <h2> 物品 </h2>
+  <h3> 物品 </h3>
   <ul>
   {% for item in storage.item_set.all %}
       <li><a href="{% url 'storage:item_detail' item.id %}">{{ item.name }}</a></li>

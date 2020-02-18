@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.datetime_safe import datetime
@@ -22,17 +22,28 @@ def index(request):
 @login_required
 def storage_detail(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
+
+    # 获取存储位置的上一级
+    parents = []
+    parent = storage.parent
+    while parent:
+        parents.append(parent)
+        parent = parent.parent
+    parents.reverse()
+
     item_form = ItemForm(initial={
         'storage': storage,
     })
     storage_form = StorageForm(initial={
         'parent': storage,
     })
-    return render(request, 'storage/storage_detail.html', {
-        'storage': storage,
-        'item_form': item_form,
-        'storage_form': storage_form,
-    })
+    return render(
+        request, 'storage/storage_detail.html', {
+            'storage': storage,
+            'item_form': item_form,
+            'storage_form': storage_form,
+            'parents': parents,
+        })
 
 
 @login_required

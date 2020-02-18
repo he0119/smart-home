@@ -13,6 +13,7 @@ rsync -czrt --progress \
 --exclude "venv" \
 --exclude ".editorconfig" \
 --exclude ".gitignore" \
+--exclude ".env" \
 --exclude "rsync.sh" \
 --exclude "db.sqlite3" \
 /mnt/c/Users/hmy01/Works/Working/intelligent-home/ \
