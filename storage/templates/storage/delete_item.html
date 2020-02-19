@@ -2,22 +2,24 @@
 
 {% block content %}
 
-<h2> 删除物品 </h2>
-
-<h3> {{ item.name }} </h3>
-
-请确认是否删除该物品
-<ul>
-  <li> 存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
-  <li> 数量：{{ item.number }} </li>
-  <li> 备注：{{ item.description }} </li>
-  <li> 更新时间：{{ item.update_date }} </li>
-</ul>
-
-<form action="{% url 'storage:delete_item' item.id %}" method="post">
-  {% csrf_token %}
-  <input type="submit" value="确认" name="_confirm">
-  <input type="submit" value="取消" name="_cancel">
-</form>
+<div class="card">
+  <div class="card-header">
+    请确认是否删除该物品
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item"> 名称：{{ item.name }} </li>
+    <li class="list-group-item"> 存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
+    <li class="list-group-item"> 数量：{{ item.number }} </li>
+    <li class="list-group-item"> 备注：{{ item.description }} </li>
+    <li class="list-group-item"> 更新时间：{{ item.update_date }} </li>
+  </ul>
+  <div class="card-body">
+    <form action="{% url 'storage:delete_item' item.id %}" method="post">
+      {% csrf_token %}
+      <input type="submit" class="btn btn-danger" value="确认" name="_confirm">
+      <input type="submit" class="btn btn-primary" value="取消" name="_cancel">
+    </form>
+  </div>
+</div>
 
 {% endblock %}

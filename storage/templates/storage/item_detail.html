@@ -2,17 +2,20 @@
 
 {% block content %}
 
-<h2>{{ item.name }}</h2>
-<ul>
-  <li> 存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
-  <li> 数量：{{ item.number }} </li>
-  <li> 备注：{{ item.description }} </li>
-  <li> 更新时间：{{ item.update_date }} </li>
-</ul>
-
-<p>
-  <button onclick="location.href='{% url 'storage:change_item' item.id %}'"> 修改 </button>
-  <button onclick="location.href='{% url 'storage:delete_item' item.id %}'"> 删除 </button>
-</p>
+<div class="card">
+  <div class="card-header">
+    {{ item.name }}
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item"> 存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
+    <li class="list-group-item"> 数量：{{ item.number }} </li>
+    <li class="list-group-item"> 备注：{{ item.description }} </li>
+    <li class="list-group-item"> 更新时间：{{ item.update_date }} </li>
+  </ul>
+  <div class="card-body">
+    <button class="btn btn-danger" onclick="location.href='{% url 'storage:delete_item' item.id %}'"> 删除 </button>
+    <button class="btn btn-primary" onclick="location.href='{% url 'storage:change_item' item.id %}'"> 修改 </button>
+  </div>
+</div>
 
 {% endblock %}

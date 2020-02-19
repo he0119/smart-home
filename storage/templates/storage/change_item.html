@@ -2,10 +2,15 @@
 
 {% block content %}
 
-<h2> 修改物品 </h2>
-
-<form action="{% url 'storage:change_item' item.id %}" method="post">
-  {% include "storage/form_snippet.html" with form=form %}
+<div class="card">
+  <div class="card-header">
+    修改物品
+  </div>
+  <div class="card-body">
+    <form action="{% url 'storage:change_item' item.id %}" method="post">
+      {% include "storage/form_snippet.html" with form=form %}
 </form>
+  </div>
+</div>
 
 {% endblock %}
