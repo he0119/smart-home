@@ -2,48 +2,66 @@
 
 {% block content %}
 
-<h2>{{ storage.name }}</h2>
-
-<p>
-  <a href="{% url 'storage:index' %}"> 家 / </a>
-  {% if parents %}
-    {% for parent in parents %}
-      <a href="{% url 'storage:storage_detail' parent.id %}">{{ parent.name }} / </a>
+<div class="card">
+  <h5 class="card-header">
+    {{ storage.name }}
+  </h5>
+  <div class="card-header">
+    <a href="{% url 'storage:index' %}"> 家 / </a>
+    {% if parents %}
+      {% for parent in parents %}
+        <a href="{% url 'storage:storage_detail' parent.id %}">{{ parent.name }} / </a>
+      {% endfor %}
+    {% endif %}
+  </div>
+  <ul class="list-group list-group-flush">
+  {% if storage.storage_set.all %}
+    {% for storage in storage.storage_set.all %}
+      <li class="list-group-item">
+        <a href="{% url 'storage:storage_detail' storage.id %}">
+          {{ storage.name }}
+          <span class="badge badge-secondary">位置</span>
+        </a>
+      </li>
     {% endfor %}
   {% endif %}
-</p>
-
-{% if storage.storage_set.all %}
-  <h3> 位置 </h3>
-  <ul>
-  {% for storage in storage.storage_set.all %}
-    <li><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
-  {% endfor %}
+  {% if storage.item_set.all %}
+    {% for item in storage.item_set.all %}
+      <li class="list-group-item">
+        <a href="{% url 'storage:item_detail' item.id %}">
+          {{ item.name }}
+          <span class="badge badge-secondary">物品</span>
+        </a>
+      </li>
+    {% endfor %}
+  {% endif %}
   </ul>
-{% endif %}
+  <div class="card-body">
+    <button class="btn btn-danger" onclick="location.href='{% url 'storage:delete_storage' storage.id %}'">删除</button>
+    <button class="btn btn-primary" onclick="location.href='{% url 'storage:change_storage' storage.id %}'">修改</button>
+  </div>
+</div>
 
-{% if storage.item_set.all %}
-  <h3> 物品 </h3>
-  <ul>
-  {% for item in storage.item_set.all %}
-    <li><a href="{% url 'storage:item_detail' item.id %}">{{ item.name }}</a></li>
-  {% endfor %}
-  </ul>
-{% endif %}
+<div class="card">
+  <div class="card-header">
+    快速添加物品
+  </div>
+  <div class="card-body">
+    <form action="{% url 'storage:add_item' %}" method="post">
+      {% include "storage/form_snippet.html" with form=item_form %}
+    </form>
+  </div>
+</div>
 
-<h3> 添加物品 </h3>
-<form action="{% url 'storage:add_item' %}" method="post">
-  {% include "storage/form_snippet.html" with form=item_form %}
-</form>
-
-<h3> 添加位置 </h3>
-<form action="{% url 'storage:add_storage' %}" method="post">
-  {% include "storage/form_snippet.html" with form=storage_form %}
-</form>
-
-<p>
-  <button onclick="location.href='{% url 'storage:change_storage' storage.id %}'"> 修改 </button>
-  <button onclick="location.href='{% url 'storage:delete_storage' storage.id %}'"> 删除 </button>
-</p>
+<div class="card">
+  <div class="card-header">
+    快速添加位置
+  </div>
+  <div class="card-body">
+    <form action="{% url 'storage:add_storage' %}" method="post">
+      {% include "storage/form_snippet.html" with form=storage_form %}
+    </form>
+  </div>
+</div>
 
 {% endblock %}

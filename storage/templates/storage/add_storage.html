@@ -2,11 +2,16 @@
 
 {% block content %}
 
-<h2> 添加位置 </h2>
-
-<form action="{% url 'storage:add_storage' %}" method="post">
-  {% include "storage/form_snippet.html" with form=form submit_text='添加' %}
-</form>
+<div class="card">
+  <h5 class="card-header">
+    添加位置
+  </h5>
+  <div class="card-body">
+    <form action="{% url 'storage:add_storage' %}" method="post">
+      {% include "storage/form_snippet.html" with form=form %}
+    </form>
+  </div>
+</div>
 
 {% endblock %}
 

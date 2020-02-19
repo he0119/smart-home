@@ -5,6 +5,8 @@ from .models import Item, Storage
 
 
 class StorageForm(ModelForm):
+    prefix = 'storage'
+
     class Meta:
         model = Storage
         fields = ['name', 'parent', 'description']
@@ -16,6 +18,8 @@ class StorageForm(ModelForm):
 
 
 class ItemForm(ModelForm):
+    prefix = 'item'
+
     class Meta:
         model = Item
         fields = ['name', 'number', 'storage', 'description']
