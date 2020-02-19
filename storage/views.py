@@ -10,6 +10,7 @@ from .models import Item, Storage
 
 @login_required
 def index(request):
+    """ 主页 """
     storage_list = Storage.objects.filter(parent__isnull=True)
     storage_form = StorageForm()
     context = {
@@ -21,6 +22,7 @@ def index(request):
 
 @login_required
 def storage_detail(request, storage_id):
+    """ 存储位置的详情页 """
     storage = get_object_or_404(Storage, pk=storage_id)
 
     item_form = ItemForm(initial={
@@ -40,30 +42,34 @@ def storage_detail(request, storage_id):
 
 @login_required
 def item_detail(request, item_id):
+    """ 物品的详情页 """
     item = get_object_or_404(Item, pk=item_id)
     return render(request, 'storage/item_detail.html', {'item': item})
 
 
 @login_required
 def add_storage(request):
-    f = StorageForm(request.POST)
-    new_storage = f.save(commit=False)
-    try:
-        storage = Storage.objects.get(name=new_storage.name)
-    except Storage.DoesNotExist:
-        new_storage.save()
-        if new_storage.parent:
+    """ 存储位置的添加页 """
+    if request.method == 'POST':
+        f = StorageForm(request.POST)
+        new_storage = f.save(commit=False)
+        try:
+            storage = Storage.objects.get(name=new_storage.name)
+        except Storage.DoesNotExist:
+            new_storage.save()
+            if new_storage.parent:
+                return HttpResponseRedirect(
+                    reverse('storage:storage_detail',
+                            args=(new_storage.parent.id, )))
+            return HttpResponseRedirect(reverse('storage:index'))
+        else:
             return HttpResponseRedirect(
-                reverse('storage:storage_detail',
-                        args=(new_storage.parent.id, )))
-        return HttpResponseRedirect(reverse('storage:index'))
-    else:
-        return HttpResponseRedirect(
-            reverse('storage:storage_detail', args=(storage.id, )))
+                reverse('storage:storage_detail', args=(storage.id, )))
 
 
 @login_required
 def add_item(request):
+    """ 物品的添加页 """
     if request.method == 'POST':
         f = ItemForm(request.POST)
         new_item = f.save(commit=False)
@@ -73,25 +79,50 @@ def add_item(request):
             new_item.update_date = datetime.now()
             new_item.save()
             return HttpResponseRedirect(
-                reverse('storage:storage_detail', args=(new_item.storage.id, )))
+                reverse('storage:storage_detail',
+                        args=(new_item.storage.id, )))
         else:
             return HttpResponseRedirect(
                 reverse('storage:item_detail', args=(item.id, )))
 
 
 @login_required
+def change_storage(request, storage_id):
+    """ 存储位置的修改页 """
+    if request.method == 'GET':
+        storage = get_object_or_404(Storage, pk=storage_id)
+        form = StorageForm(instance=storage)
+        return render(request, 'storage/change_storage.html', {
+            'storage': storage,
+            'form': form,
+        })
+    if request.method == 'POST':
+        pass
+
+
+@login_required
+def change_item(request):
+    """ 物品的修改页 """
+    pass
+
+
+@login_required
 def delete_storage(request, storage_id):
-    storage = get_object_or_404(Storage, pk=storage)
-    parent = storage.parent
-    storage.delete()
-    return HttpResponseRedirect(
-        reverse('storage:storage_detail', args=(parent.id, )))
+    """ 存储位置的删除页 """
+    if request.method == 'POST':
+        storage = get_object_or_404(Storage, pk=storage_id)
+        parent = storage.parent
+        storage.delete()
+        return HttpResponseRedirect(
+            reverse('storage:storage_detail', args=(parent.id, )))
 
 
 @login_required
 def delete_item(request, item_id):
-    item = get_object_or_404(Item, pk=item_id)
-    storage = item.storage
-    item.delete()
-    return HttpResponseRedirect(
-        reverse('storage:storage_detail', args=(storage.id, )))
+    """ 物品的删除页 """
+    if request.method == 'POST':
+        item = get_object_or_404(Item, pk=item_id)
+        storage = item.storage
+        item.delete()
+        return HttpResponseRedirect(
+            reverse('storage:storage_detail', args=(storage.id, )))

@@ -1,0 +1,13 @@
+{% extends "storage/base.html" %}
+
+{% block content %}
+
+<h1> 修改位置 </h1>
+
+<form action="{% url 'storage:change_storage' storage.id %}" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="修改">
+</form>
+
+{% endblock %}
