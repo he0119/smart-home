@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'crispy_forms',
     'storage.apps.StorageConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -125,3 +126,8 @@ STATIC_ROOT = 'static'
 # https://docs.djangoproject.com/zh-hans/3.0/topics/auth/default/
 
 LOGIN_URL = '/admin/'
+
+# Crispy Forms
+# https://django-crispy-forms.readthedocs.io/en/latest/install.html
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
