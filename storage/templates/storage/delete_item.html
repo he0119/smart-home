@@ -1,0 +1,23 @@
+{% extends "storage/base.html" %}
+
+{% block content %}
+
+<h1> 删除物品 </h1>
+
+<h2> {{ item.name }} </h2>
+
+请确认是否删除该物品
+<ul>
+  <li> 存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
+  <li> 数量：{{ item.number }} </li>
+  <li> 备注：{{ item.description }} </li>
+  <li> 更新时间：{{ item.update_date }} </li>
+</ul>
+
+<form action="{% url 'storage:delete_item' item.id %}" method="post">
+  {% csrf_token %}
+  <input type="submit" value="确认" name="_confirm">
+  <input type="submit" value="取消" name="_cancel">
+</form>
+
+{% endblock %}

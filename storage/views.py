@@ -12,10 +12,10 @@ from .models import Item, Storage
 def index(request):
     """ 主页 """
     storage_list = Storage.objects.filter(parent__isnull=True)
-    storage_form = StorageForm()
+    form = StorageForm()
     context = {
         'storage_list': storage_list,
-        'storage_form': storage_form,
+        'form': form,
     }
     return render(request, 'storage/index.html', context)
 
@@ -50,6 +50,9 @@ def item_detail(request, item_id):
 @login_required
 def add_storage(request):
     """ 存储位置的添加页 """
+    if request.method == 'GET':
+        form = StorageForm()
+        return render(request, 'storage/add_storage.html', {'form': form})
     if request.method == 'POST':
         f = StorageForm(request.POST)
         new_storage = f.save(commit=False)
@@ -70,6 +73,9 @@ def add_storage(request):
 @login_required
 def add_item(request):
     """ 物品的添加页 """
+    if request.method == 'GET':
+        form = ItemForm()
+        return render(request, 'storage/add_item.html', {'form': form})
     if request.method == 'POST':
         f = ItemForm(request.POST)
         new_item = f.save(commit=False)
@@ -97,32 +103,70 @@ def change_storage(request, storage_id):
             'form': form,
         })
     if request.method == 'POST':
-        pass
+        storage = get_object_or_404(Storage, pk=storage_id)
+        f = StorageForm(request.POST, instance=storage)
+        storage = f.save()
+        return HttpResponseRedirect(
+            reverse('storage:storage_detail', args=(storage.id, )))
 
 
 @login_required
-def change_item(request):
+def change_item(request, item_id):
     """ 物品的修改页 """
-    pass
+    if request.method == 'GET':
+        item = get_object_or_404(Item, pk=item_id)
+        form = ItemForm(instance=item)
+        return render(request, 'storage/change_item.html', {
+            'item': item,
+            'form': form,
+        })
+    if request.method == 'POST':
+        item = get_object_or_404(Item, pk=item_id)
+        f = ItemForm(request.POST, instance=item)
+        item = f.save(commit=False)
+        item.update_date = datetime.now()
+        item.save()
+        return HttpResponseRedirect(
+            reverse('storage:item_detail', args=(item.id, )))
 
 
 @login_required
 def delete_storage(request, storage_id):
     """ 存储位置的删除页 """
+    if request.method == 'GET':
+        storage = get_object_or_404(Storage, pk=storage_id)
+        return render(request, 'storage/delete_storage.html', {
+            'storage': storage,
+        })
     if request.method == 'POST':
         storage = get_object_or_404(Storage, pk=storage_id)
-        parent = storage.parent
-        storage.delete()
-        return HttpResponseRedirect(
-            reverse('storage:storage_detail', args=(parent.id, )))
+        if '_cancel' in request.POST:
+            return HttpResponseRedirect(
+                reverse('storage:storage_detail', args=(storage.id, )))
+        if '_confirm' in request.POST:
+            parent = storage.parent
+            storage.delete()
+            if parent:
+                return HttpResponseRedirect(
+                    reverse('storage:storage_detail', args=(parent.id, )))
+            return HttpResponseRedirect(reverse('storage:index'))
 
 
 @login_required
 def delete_item(request, item_id):
     """ 物品的删除页 """
+    if request.method == 'GET':
+        item = get_object_or_404(Item, pk=item_id)
+        return render(request, 'storage/delete_item.html', {
+            'item': item,
+        })
     if request.method == 'POST':
         item = get_object_or_404(Item, pk=item_id)
-        storage = item.storage
-        item.delete()
-        return HttpResponseRedirect(
-            reverse('storage:storage_detail', args=(storage.id, )))
+        if '_cancel' in request.POST:
+            return HttpResponseRedirect(
+                reverse('storage:item_detail', args=(item.id, )))
+        if '_confirm' in request.POST:
+            storage = item.storage
+            item.delete()
+            return HttpResponseRedirect(
+                reverse('storage:storage_detail', args=(storage.id, )))

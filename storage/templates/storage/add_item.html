@@ -1,7 +1,13 @@
-<h3> 添加物品 </h2>
+{% extends "storage/base.html" %}
+
+{% block content %}
+
+<h1> 添加物品 </h1>
 
 <form action="{% url 'storage:add_item' %}" method="post">
-  {% csrf_token %}
-  {{ item_form.as_p }}
-  <input type="submit" value="添加">
+  {% include "storage/form_snippet.html" with form=form submit_text='添加' %}
 </form>
+
+{% endblock %}
+
+

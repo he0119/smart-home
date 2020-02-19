@@ -4,9 +4,15 @@
 
 <h1>{{ item.name }}</h1>
 <ul>
-  <li> 存放位置： {{ item.storage.name }} </li>
-  <li> 数量： {{ item.number }} </li>
-  <li> 备注： {{ item.description }} </li>
-  <li> 更新时间： {{ item.update_date }} </li>
+  <li> 存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
+  <li> 数量：{{ item.number }} </li>
+  <li> 备注：{{ item.description }} </li>
+  <li> 更新时间：{{ item.update_date }} </li>
 </ul>
+
+<p>
+  <button onclick="location.href='{% url 'storage:change_item' item.id %}'"> 修改 </button>
+  <button onclick="location.href='{% url 'storage:delete_item' item.id %}'"> 删除 </button>
+</p>
+
 {% endblock %}
