@@ -9,9 +9,14 @@
   </div>
   <ul class="list-group list-group-flush">
     {% for storage in storage_list %}
-      <li class="list-group-item"><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
+      <li class="list-group-item">
+        <a href="{% url 'storage:storage_detail' storage.id %}">
+          {{ storage.name }}
+          <span class="badge badge-secondary">位置</span>
+        </a>
+      </li>
     {% empty %}
-      <li class="list-group-item"> 当前没有添加任何存储位置 </p>
+      <li class="list-group-item">当前没有添加任何存储位置</p>
     {% endfor %}
   </ul>
 </div>

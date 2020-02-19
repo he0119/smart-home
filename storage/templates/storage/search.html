@@ -9,13 +9,23 @@
   <ul class="list-group list-group-flush">
   {% if storages %}
     {% for storage in storages %}
-      <li class="list-group-item"><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
+      <li class="list-group-item">
+        <a href="{% url 'storage:storage_detail' storage.id %}">
+          {{ storage.name }}
+          <span class="badge badge-secondary">位置</span>
+        </a>
+      </li>
     {% endfor %}
   {% endif %}
 
   {% if items %}
     {% for item in items %}
-      <li class="list-group-item"><a href="{% url 'storage:item_detail' item.id %}">{{ item.name }}</a></li>
+      <li class="list-group-item">
+        <a href="{% url 'storage:item_detail' item.id %}">
+          {{ item.name }}
+          <span class="badge badge-secondary">物品</span>
+        </a>
+      </li>
     {% endfor %}
   {% endif %}
   </ul>
