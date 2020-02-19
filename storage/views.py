@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.utils.datetime_safe import datetime
+from django.utils import timezone
 
 from .forms import ItemForm, StorageForm
 from .models import Item, Storage
@@ -82,7 +82,7 @@ def add_item(request):
         try:
             item = new_item.storage.item_set.get(name=new_item.name)
         except Item.DoesNotExist:
-            new_item.update_date = datetime.now()
+            new_item.update_date = timezone.now()
             new_item.save()
             return HttpResponseRedirect(
                 reverse('storage:storage_detail',
@@ -124,7 +124,7 @@ def change_item(request, item_id):
         item = get_object_or_404(Item, pk=item_id)
         f = ItemForm(request.POST, instance=item)
         item = f.save(commit=False)
-        item.update_date = datetime.now()
+        item.update_date = timezone.now()
         item.save()
         return HttpResponseRedirect(
             reverse('storage:item_detail', args=(item.id, )))
@@ -183,4 +183,3 @@ def search(request):
             'items': items,
             'total': total,
         })
-
