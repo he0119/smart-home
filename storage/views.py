@@ -170,3 +170,17 @@ def delete_item(request, item_id):
             item.delete()
             return HttpResponseRedirect(
                 reverse('storage:storage_detail', args=(storage.id, )))
+
+@login_required
+def search(request):
+    if request.method == 'GET':
+        search_query = request.GET.get('q', None)
+        storages = Storage.objects.filter(name__contains=search_query)
+        items = Item.objects.filter(name__contains=search_query)
+        total = len(storages) + len(items)
+        return render(request, 'storage/search.html', {
+            'storages': storages,
+            'items': items,
+            'total': total,
+        })
+

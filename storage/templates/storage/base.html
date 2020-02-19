@@ -7,6 +7,14 @@
 </head>
 
 <body>
+  <nav>
+    <a href="{% url 'storage:index' %}">物品管理</a>
+    <form type="get" action="{% url 'storage:search' %}" style="margin: 0">
+      <input id="id_q" type="search" name="q" placeholder="搜索...">
+      <button type="submit"> 搜索 </button>
+    </form>
+  </nav>
+
   {% block content %}{% endblock %}
 </body>
 

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1>{{ item.name }}</h1>
+<h2>{{ item.name }}</h2>
 <ul>
   <li> 存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
   <li> 数量：{{ item.number }} </li>

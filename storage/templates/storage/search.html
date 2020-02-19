@@ -1,0 +1,21 @@
+{% extends "storage/base.html" %}
+
+{% block content %}
+
+<h2> 找到 {{ total }} 个符合条件的结果 </h2>
+
+{% if storages %}
+  {% for storage in storages %}
+    <li><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
+  {% endfor %}
+{% endif %}
+
+{% if items %}
+  {% for item in items %}
+    <li><a href="{% url 'storage:item_detail' item.id %}">{{ item.name }}</a></li>
+  {% endfor %}
+{% endif %}
+
+{% endblock %}
+
+
