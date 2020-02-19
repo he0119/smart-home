@@ -23,14 +23,6 @@ def index(request):
 def storage_detail(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
 
-    # 获取存储位置的上一级
-    parents = []
-    parent = storage.parent
-    while parent:
-        parents.append(parent)
-        parent = parent.parent
-    parents.reverse()
-
     item_form = ItemForm(initial={
         'storage': storage,
     })
@@ -42,7 +34,7 @@ def storage_detail(request, storage_id):
             'storage': storage,
             'item_form': item_form,
             'storage_form': storage_form,
-            'parents': parents,
+            'parents': storage.parents(),
         })
 
 

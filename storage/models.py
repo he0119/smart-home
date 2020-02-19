@@ -2,13 +2,23 @@ from django.db import models
 
 
 class Storage(models.Model):
-    """ 存储空间 """
+    """ 存储位置 """
     name = models.CharField(max_length=30)
     parent = models.ForeignKey('self',
                                on_delete=models.CASCADE,
                                null=True,
                                blank=True)
     description = models.CharField(max_length=200, null=True, blank=True)
+
+    def parents(self):
+        """ 获取存储位置的上一级列表 """
+        parents = []
+        parent = self.parent
+        while parent:
+            parents.append(parent)
+            parent = parent.parent
+        parents.reverse()
+        return parents
 
     def __str__(self):
         return self.name
