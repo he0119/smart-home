@@ -1,4 +1,4 @@
-{% csrf_token %}
 {% load crispy_forms_tags %}
-{% crispy form %}
+{% csrf_token %}
+{{ form|crispy }}
 <input class="btn btn-primary" type="submit" value="保存">

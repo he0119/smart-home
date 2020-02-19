@@ -3,15 +3,20 @@
 {% block content %}
 
 <div class="card">
-  <div class="card-header">
-    请确认是否删除该物品
+  <h5 class="card-header">
+    删除物品
+  </h5>
+  <div class="card-body">
+    <h5 class="card-title">{{ item.name }}</h5>
+    <p class="card-text">
+      请确认是否删除该物品：
+    </p>
   </div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item"> 名称：{{ item.name }} </li>
-    <li class="list-group-item"> 存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
-    <li class="list-group-item"> 数量：{{ item.number }} </li>
-    <li class="list-group-item"> 备注：{{ item.description }} </li>
-    <li class="list-group-item"> 更新时间：{{ item.update_date }} </li>
+    <li class="list-group-item">存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
+    <li class="list-group-item">数量：{{ item.number }} </li>
+    <li class="list-group-item">备注：{{ item.description }} </li>
+    <li class="list-group-item">更新时间：{{ item.update_date }} </li>
   </ul>
   <div class="card-body">
     <form action="{% url 'storage:delete_item' item.id %}" method="post">

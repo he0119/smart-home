@@ -3,9 +3,9 @@
 {% block content %}
 
 <div class="card">
-  <h3 class="card-header">
+  <h5 class="card-header">
     修改位置
-  </h3>
+  </h5>
   <div class="card-body">
     <form action="{% url 'storage:change_storage' storage.id %}" method="post">
       {% include "storage/form_snippet.html" with form=form %}

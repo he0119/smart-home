@@ -3,9 +3,9 @@
 {% block content %}
 
 <div class="card">
-  <h3 class="card-header">
+  <h5 class="card-header">
     {{ item.name }}
-  </h3>
+  </h5>
   <ul class="list-group list-group-flush">
     <li class="list-group-item"> 存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
     <li class="list-group-item"> 数量：{{ item.number }} </li>
@@ -13,8 +13,8 @@
     <li class="list-group-item"> 更新时间：{{ item.update_date }} </li>
   </ul>
   <div class="card-body">
-    <button class="btn btn-danger" onclick="location.href='{% url 'storage:delete_item' item.id %}'"> 删除 </button>
-    <button class="btn btn-primary" onclick="location.href='{% url 'storage:change_item' item.id %}'"> 修改 </button>
+    <button class="btn btn-danger" onclick="location.href='{% url 'storage:delete_item' item.id %}'">删除</button>
+    <button class="btn btn-primary" onclick="location.href='{% url 'storage:change_item' item.id %}'">修改</button>
   </div>
 </div>
 
