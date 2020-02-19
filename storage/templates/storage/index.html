@@ -2,19 +2,29 @@
 
 {% block content %}
 
-<h2> 存储位置 </h2>
-<ul>
-{% for storage in storage_list %}
-  <li><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
-{% empty %}
-  <li> 当前没有添加任何存储位置 </p>
-{% endfor %}
-</ul>
 
-<h3> 添加位置 </h3>
+<div class="card">
+  <div class="card-header">
+    存储位置
+  </div>
+  <ul class="list-group list-group-flush">
+    {% for storage in storage_list %}
+      <li class="list-group-item"><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
+    {% empty %}
+      <li class="list-group-item"> 当前没有添加任何存储位置 </p>
+    {% endfor %}
+  </ul>
+</div>
 
-<form action="{% url 'storage:add_storage' %}" method="post">
-  {% include "storage/form_snippet.html" with form=form %}
-</form>
+<div class="card">
+  <div class="card-header">
+    快速添加位置
+  </div>
+  <div class="card-body">
+    <form action="{% url 'storage:add_storage' %}" method="post">
+      {% include "storage/form_snippet.html" with form=form %}
+    </form>
+  </div>
+</div>
 
 {% endblock %}

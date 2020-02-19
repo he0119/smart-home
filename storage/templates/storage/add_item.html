@@ -3,9 +3,9 @@
 {% block content %}
 
 <div class="card">
-  <div class="card-header">
+  <h3 class="card-header">
     添加物品
-  </div>
+  </h3>
   <div class="card-body">
     <form action="{% url 'storage:add_item' %}" method="post">
       {% include "storage/form_snippet.html" with form=form %}

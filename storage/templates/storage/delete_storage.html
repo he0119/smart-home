@@ -27,8 +27,8 @@
 
 <form action="{% url 'storage:delete_storage' storage.id %}" method="post">
   {% csrf_token %}
-  <input type="submit" value="确认" name="_confirm">
-  <input type="submit" value="取消" name="_cancel">
+  <input class="btn btn-danger" type="submit" value="确认" name="_confirm">
+  <input class="btn btn-primary" type="submit" value="取消" name="_cancel">
 </form>
 
 {% endblock %}

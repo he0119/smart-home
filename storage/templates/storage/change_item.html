@@ -3,13 +3,13 @@
 {% block content %}
 
 <div class="card">
-  <div class="card-header">
+  <h3 class="card-header">
     修改物品
-  </div>
+  </h3>
   <div class="card-body">
     <form action="{% url 'storage:change_item' item.id %}" method="post">
       {% include "storage/form_snippet.html" with form=form %}
-</form>
+    </form>
   </div>
 </div>
 
