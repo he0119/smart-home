@@ -1,6 +1,7 @@
 <h3> 添加物品 </h2>
+
 <form action="{% url 'storage:add_item' %}" method="post">
-{% csrf_token %}
-{{ item_form.as_p }}
-<input type="submit" value="添加">
+  {% csrf_token %}
+  {{ item_form.as_p }}
+  <input type="submit" value="添加">
 </form>

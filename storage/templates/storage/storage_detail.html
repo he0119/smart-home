@@ -15,7 +15,7 @@
   <h3> 位置 </h3>
   <ul>
   {% for storage in storage.storage_set.all %}
-      <li><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
+    <li><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
   {% endfor %}
   </ul>
 {% endif %}
@@ -24,7 +24,7 @@
   <h3> 物品 </h3>
   <ul>
   {% for item in storage.item_set.all %}
-      <li><a href="{% url 'storage:item_detail' item.id %}">{{ item.name }}</a></li>
+    <li><a href="{% url 'storage:item_detail' item.id %}">{{ item.name }}</a></li>
   {% endfor %}
   </ul>
 {% endif %}
