@@ -1,0 +1,11 @@
+{% extends "storage/base.html" %}
+
+{% block content %}
+
+<h1> 修改物品 </h1>
+
+<form action="{% url 'storage:change_item' item.id %}" method="post">
+  {% include "storage/form_snippet.html" with form=form %}
+</form>
+
+{% endblock %}

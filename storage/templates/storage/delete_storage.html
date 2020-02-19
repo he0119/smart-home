@@ -1,0 +1,34 @@
+{% extends "storage/base.html" %}
+
+{% block content %}
+
+<h1> 删除位置 </h1>
+
+<h2> {{ storage.name }} </h2>
+
+请确认是否删除该位置，注意你将同时删除该位置下：
+<h3> 位置 </h3>
+<ul>
+{% for storage in storage.storage_set.all %}
+  <li><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
+{% empty %}
+  <li> 无 </li>
+{% endfor %}
+</ul>
+
+<h3> 物品 </h3>
+<ul>
+{% for item in storage.item_set.all %}
+  <li><a href="{% url 'storage:item_detail' item.id %}">{{ item.name }}</a></li>
+{% empty %}
+<li> 无 </li>
+{% endfor %}
+</ul>
+
+<form action="{% url 'storage:delete_storage' storage.id %}" method="post">
+  {% csrf_token %}
+  <input type="submit" value="确认" name="_confirm">
+  <input type="submit" value="取消" name="_cancel">
+</form>
+
+{% endblock %}

@@ -4,18 +4,20 @@
 
 <h1>{{ storage.name }}</h1>
 
-<a href="{% url 'storage:index' %}"> 家 </a> /
-{% if parents %}
-  {% for parent in parents %}
-    <a href="{% url 'storage:storage_detail' parent.id %}">{{ parent.name }}</a> /
-  {% endfor %}
-{% endif %}
+<p>
+  <a href="{% url 'storage:index' %}"> 家 / </a>
+  {% if parents %}
+    {% for parent in parents %}
+      <a href="{% url 'storage:storage_detail' parent.id %}">{{ parent.name }} / </a>
+    {% endfor %}
+  {% endif %}
+</p>
 
 {% if storage.storage_set.all %}
   <h3> 位置 </h3>
   <ul>
   {% for storage in storage.storage_set.all %}
-      <li><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
+    <li><a href="{% url 'storage:storage_detail' storage.id %}">{{ storage.name }}</a></li>
   {% endfor %}
   </ul>
 {% endif %}
@@ -24,13 +26,24 @@
   <h3> 物品 </h3>
   <ul>
   {% for item in storage.item_set.all %}
-      <li><a href="{% url 'storage:item_detail' item.id %}">{{ item.name }}</a></li>
+    <li><a href="{% url 'storage:item_detail' item.id %}">{{ item.name }}</a></li>
   {% endfor %}
   </ul>
 {% endif %}
 
-{% include "storage/add_item.html" %}
+<h3> 添加物品 </h3>
+<form action="{% url 'storage:add_item' %}" method="post">
+  {% include "storage/form_snippet.html" with form=item_form %}
+</form>
 
-{% include "storage/add_storage.html" %}
+<h3> 添加位置 </h3>
+<form action="{% url 'storage:add_storage' %}" method="post">
+  {% include "storage/form_snippet.html" with form=storage_form %}
+</form>
+
+<p>
+  <button onclick="location.href='{% url 'storage:change_storage' storage.id %}'"> 修改 </button>
+  <button onclick="location.href='{% url 'storage:delete_storage' storage.id %}'"> 删除 </button>
+</p>
 
 {% endblock %}
