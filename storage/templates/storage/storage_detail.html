@@ -4,15 +4,25 @@
 
 <div class="card">
   <h5 class="card-header">
-    {{ storage.name }}
-  </h5>
-  <div class="card-header">
-    <a href="{% url 'storage:index' %}"> 家 / </a>
+    <a href="{% url 'storage:index' %}"> 家 </a>
+    <span> / </span>
     {% if parents %}
       {% for parent in parents %}
-        <a href="{% url 'storage:storage_detail' parent.id %}">{{ parent.name }} / </a>
+        <a href="{% url 'storage:storage_detail' parent.id %}">{{ parent.name }}</a>
+        <span> / </span>
       {% endfor %}
     {% endif %}
+    {{ storage.name }}
+  </h5>
+  <div class="card-body">
+    <h6 class="card-text mb-2 text-muted">
+      备注：
+      {% if storage.description %}
+        {{ storage.description }}
+      {% else %}
+        无
+      {% endif %}
+    </h6>
   </div>
   <ul class="list-group list-group-flush">
   {% if storage.storage_set.all %}

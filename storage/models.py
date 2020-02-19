@@ -10,11 +10,13 @@ class Storage(models.Model):
                                blank=True)
     description = models.CharField(max_length=200, null=True, blank=True)
 
-    def parents(self):
+    def parents(self, number=None):
         """ 获取存储位置的上一级列表 """
         parents = []
         parent = self.parent
         while parent:
+            if number and len(parents) >= number:
+                break
             parents.append(parent)
             parent = parent.parent
         parents.reverse()
