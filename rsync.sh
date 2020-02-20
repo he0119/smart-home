@@ -16,5 +16,5 @@ rsync -czrt --progress \
 --exclude ".env" \
 --exclude "rsync.sh" \
 --exclude "db.sqlite3" \
-/mnt/c/Users/hmy01/Works/Working/intelligent-home/ \
-hehome:/home/ubuntu/intelligent-home
+/mnt/c/Users/hmy01/Works/Working/smart-home/ \
+hehome:/home/ubuntu/smart-home
