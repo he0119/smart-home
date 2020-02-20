@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'import_export',
     'crispy_forms',
     'storage.apps.StorageConfig',
     'django.contrib.admin',
