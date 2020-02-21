@@ -1,9 +1,12 @@
 from django.db import models
-from mptt.models import TreeForeignKey, MPTTModel
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Storage(MPTTModel):
     """ 存储位置 """
+    class Meta:
+        ordering = ['name']
+
     name = models.CharField(max_length=200)
     parent = TreeForeignKey('self',
                             on_delete=models.CASCADE,
@@ -18,6 +21,9 @@ class Storage(MPTTModel):
 
 class Item(models.Model):
     """ 物品 """
+    class Meta:
+        ordering = ['name']
+
     name = models.CharField(max_length=200)
     number = models.IntegerField()
     description = models.CharField(max_length=200, null=True, blank=True)
