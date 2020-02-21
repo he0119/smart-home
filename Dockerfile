@@ -3,10 +3,15 @@ FROM python:3.8-alpine
 WORKDIR /usr/src/app
 
 # 安装依赖
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-RUN apk del .build-deps
+RUN set -e; \
+	apk add --no-cache --virtual .build-deps \
+		gcc \
+		libc-dev \
+		linux-headers \
+	; \
+	pip install -r requirements.txt; \
+	apk del .build-deps;
 
 # 复制网站
 COPY . .
