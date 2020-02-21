@@ -1,26 +1,16 @@
 from django.db import models
+from mptt.models import TreeForeignKey, MPTTModel
 
 
-class Storage(models.Model):
+class Storage(MPTTModel):
     """ 存储位置 """
-    name = models.CharField(max_length=30)
-    parent = models.ForeignKey('self',
-                               on_delete=models.CASCADE,
-                               null=True,
-                               blank=True)
+    name = models.CharField(max_length=200)
+    parent = TreeForeignKey('self',
+                            on_delete=models.CASCADE,
+                            null=True,
+                            blank=True,
+                            related_name='children')
     description = models.CharField(max_length=200, null=True, blank=True)
-
-    def parents(self, number=None):
-        """ 获取存储位置的上一级列表 """
-        parents = []
-        parent = self.parent
-        while parent:
-            if number and len(parents) >= number:
-                break
-            parents.append(parent)
-            parent = parent.parent
-        parents.reverse()
-        return parents
 
     def __str__(self):
         return self.name

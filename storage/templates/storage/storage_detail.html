@@ -25,8 +25,8 @@
     </h6>
   </div>
   <ul class="list-group list-group-flush">
-  {% if storage.storage_set.all %}
-    {% for storage in storage.storage_set.all %}
+  {% if storage.get_children %}
+    {% for storage in storage.get_children %}
       <li class="list-group-item">
         <a href="{% url 'storage:storage_detail' storage.id %}">
           {{ storage.name }}

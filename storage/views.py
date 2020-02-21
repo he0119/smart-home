@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
+from mptt.exceptions import InvalidMove
 
 from .forms import ItemForm, StorageForm
 from .models import Item, Storage
@@ -36,7 +37,7 @@ def storage_detail(request, storage_id):
             'storage': storage,
             'item_form': item_form,
             'storage_form': storage_form,
-            'parents': storage.parents(2),
+            'parents': storage.get_ancestors(),
         })
 
 
@@ -105,7 +106,16 @@ def change_storage(request, storage_id):
     if request.method == 'POST':
         storage = get_object_or_404(Storage, pk=storage_id)
         f = StorageForm(request.POST, instance=storage)
-        storage = f.save()
+        try:
+            storage = f.save()
+        except InvalidMove:
+            error = '一个位置不能属于它的子节点'
+            form = StorageForm(instance=storage)
+            return render(request, 'storage/change_storage.html', {
+                'storage': storage,
+                'form': form,
+                'error': error,
+            })
         return HttpResponseRedirect(
             reverse('storage:storage_detail', args=(storage.id, )))
 
@@ -170,6 +180,7 @@ def delete_item(request, item_id):
             item.delete()
             return HttpResponseRedirect(
                 reverse('storage:storage_detail', args=(storage.id, )))
+
 
 @login_required
 def search(request):

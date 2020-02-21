@@ -1,4 +1,4 @@
-# smart-home
+# Smart Home
 
 智慧家庭
 
