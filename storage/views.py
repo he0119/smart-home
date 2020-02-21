@@ -36,7 +36,7 @@ def storage_detail(request, storage_id):
             'storage': storage,
             'item_form': item_form,
             'storage_form': storage_form,
-            'parents': storage.parents(2),
+            'parents': storage.get_ancestors(),
         })
 
 
