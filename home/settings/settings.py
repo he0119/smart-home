@@ -133,3 +133,8 @@ LOGIN_URL = '/admin/'
 # https://django-crispy-forms.readthedocs.io/en/latest/install.html
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# MPTT
+# https://django-mptt.readthedocs.io/en/latest/forms.html
+
+MPTT_DEFAULT_LEVEL_INDICATOR = '--'
