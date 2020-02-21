@@ -2,12 +2,11 @@ version: '3'
 
 services:
   django-web:
-    build: .
-    container_name: intelligent-home
+    image: he0119/smart-home
+    container_name: smart-home
     restart: always
-    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - ./db.sqlite3:/usr/src/app/db.sqlite3
     env_file:
       - ./.env
 
