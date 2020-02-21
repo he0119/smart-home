@@ -6,7 +6,6 @@ services:
     container_name: smart-home
     restart: always
     volumes:
-      - ./static:/usr/src/app/static
       - ./db.sqlite3:/usr/src/app/db.sqlite3
     env_file:
       - ./.env

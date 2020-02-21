@@ -18,6 +18,6 @@ COPY . .
 
 # UWSGI
 ENV UWSGI_WSGI_FILE=home/wsgi.py
-ENV UWSGI_HTTP=:8000 UWSGI_MASTER=1
+ENV UWSGI_SOCKET=:8000 UWSGI_MASTER=1
 
 CMD [ "uwsgi", "--show-config" ]

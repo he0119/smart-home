@@ -58,18 +58,18 @@ jobs:
   steps:
     - bash: echo '##vso[task.setvariable variable=imageTag]test'
       condition: eq(variables['Build.Reason'], 'PullRequest')
-      displayName: 'set imageTag to test'
+      displayName: 'Set imageTag to test'
     - bash: echo '##vso[task.setvariable variable=imageTag]latest'
       condition: contains(variables['Build.SourceBranch'], 'master')
-      displayName: 'set imageTag to latest'
+      displayName: 'Set imageTag to latest'
     - bash: |
         tag=`echo $(Build.SourceBranch) | grep -P 'v([0-9.]+)' -o`
         echo '##vso[task.setvariable variable=imageTag]'$tag
       condition: contains(variables['Build.SourceBranch'], 'tags')
-      displayName: 'set imageTag to tags'
+      displayName: 'Set imageTag to tags'
     - bash: docker build -f Dockerfile -t $(dockerId)/$(imageName):$(imageTag) .
-      displayName: 'docker build'
+      displayName: 'Docker build'
     - bash: |
         docker login -u $(dockerId) -p $(pswd)
         docker push $(dockerId)/$(imageName):$(imageTag)
-      displayName: 'docker push'
+      displayName: 'Docker push'
