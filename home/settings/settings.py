@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'import_export',
     'crispy_forms',
+    'mptt',
     'storage.apps.StorageConfig',
     'django.contrib.admin',
     'django.contrib.auth',
