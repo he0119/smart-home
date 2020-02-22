@@ -24,10 +24,11 @@ class ItemForm(ModelForm):
 
     class Meta:
         model = Item
-        fields = ['name', 'number', 'storage', 'description']
+        fields = ['name', 'number', 'storage', 'price', 'description']
         labels = {
             'name': '名字',
             'number': '数量',
             'storage': '属于',
+            'price': '价格',
             'description': '备注',
         }

@@ -34,6 +34,7 @@ class ItemResource(ModelResource):
             'storage',
             'name',
             'number',
+            'price',
             'description',
             'update_date',
         )
@@ -46,7 +47,8 @@ class StorageAdmin(ImportExportModelAdmin):
 
 class ItemAdmin(ImportExportModelAdmin):
     resource_class = ItemResource
-    list_display = ('name', 'number', 'description', 'update_date', 'storage')
+    list_display = ('name', 'number', 'price', 'description', 'update_date',
+                    'storage')
 
 
 admin.site.register(Storage, StorageAdmin)
