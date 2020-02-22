@@ -12,7 +12,7 @@ from .models import Item, Storage
 @login_required
 def index(request):
     """ 主页 """
-    storage_list = Storage.objects.filter(parent__isnull=True)
+    storage_list = Storage.objects.filter(parent__isnull=True).order_by('name')
     form = StorageForm()
     context = {
         'storage_list': storage_list,
