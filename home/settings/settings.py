@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'import_export',
     'crispy_forms',
     'mptt',
-    'storage.apps.StorageConfig',
+    'storage',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
