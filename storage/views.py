@@ -57,18 +57,22 @@ def add_storage(request):
         form = StorageForm()
         return render(request, 'storage/add_storage.html', {'form': form})
     if request.method == 'POST':
-        f = StorageForm(request.POST)
-        new_storage = f.save(commit=False)
+        form = StorageForm(request.POST)
         try:
-            storage = Storage.objects.get(name=new_storage.name)
+            storage = Storage.objects.get(name=form.data['storage-name'])
         except Storage.DoesNotExist:
-            new_storage.save()
-            if new_storage.parent:
-                return HttpResponseRedirect(
-                    reverse('storage:storage_detail',
-                            args=(new_storage.parent.id, )))
-            return HttpResponseRedirect(reverse('storage:index'))
+            if form.is_valid():
+                new_storage = form.save()
+                messages.info(request, f'位置 {new_storage.name} 添加完成')
+                if new_storage.parent:
+                    return HttpResponseRedirect(
+                        reverse('storage:storage_detail',
+                                args=(new_storage.parent.id, )))
+                return HttpResponseRedirect(reverse('storage:index'))
+            else:
+                render(request, 'storage/add_storage.html', {'form': form})
         else:
+            messages.info(request, f'位置 {storage.name} 已存在，自动转跳至该位置详情页面')
             return HttpResponseRedirect(
                 reverse('storage:storage_detail', args=(storage.id, )))
 
@@ -82,17 +86,23 @@ def add_item(request):
         })
         return render(request, 'storage/add_item.html', {'form': form})
     if request.method == 'POST':
-        f = ItemForm(request.POST)
-        new_item = f.save(commit=False)
+        form = ItemForm(request.POST)
+        # 检查是否已经有同名物品，如有则自动转跳
         try:
-            item = new_item.storage.item_set.get(name=new_item.name)
+            item = Item.objects.get(name=form.data['item-name'])
         except Item.DoesNotExist:
-            new_item.update_date = timezone.now()
-            new_item.save()
-            return HttpResponseRedirect(
-                reverse('storage:storage_detail',
-                        args=(new_item.storage.id, )))
+            if form.is_valid():
+                new_item = form.save(commit=False)
+                new_item.update_date = timezone.now()
+                new_item.save()
+                messages.info(request, f'物品 {new_item.name} 添加完成')
+                return HttpResponseRedirect(
+                    reverse('storage:storage_detail',
+                            args=(new_item.storage.id, )))
+            else:
+                return render(request, 'storage/add_item.html', {'form': form})
         else:
+            messages.info(request, f'物品 {item.name} 已存在，自动转跳至该物品详情页面')
             return HttpResponseRedirect(
                 reverse('storage:item_detail', args=(item.id, )))
 
@@ -109,18 +119,25 @@ def change_storage(request, storage_id):
         })
     if request.method == 'POST':
         storage = get_object_or_404(Storage, pk=storage_id)
-        f = StorageForm(request.POST, instance=storage)
-        try:
-            storage = f.save()
-        except InvalidMove:
-            messages.add_message(request, messages.ERROR, '一个位置不能属于它的子节点')
-            form = StorageForm(instance=storage)
+        form = StorageForm(request.POST, instance=storage)
+        if form.is_valid():
+            try:
+                storage = form.save()
+            except InvalidMove:
+                messages.error(request, '一个位置不能属于它自己或其子节点')
+                return render(request, 'storage/change_storage.html', {
+                    'storage': storage,
+                    'form': form,
+                })
+            else:
+                messages.info(request, f'位置 {storage.name} 修改成功')
+                return HttpResponseRedirect(
+                    reverse('storage:storage_detail', args=(storage.id, )))
+        else:
             return render(request, 'storage/change_storage.html', {
                 'storage': storage,
                 'form': form,
             })
-        return HttpResponseRedirect(
-            reverse('storage:storage_detail', args=(storage.id, )))
 
 
 @login_required
@@ -135,10 +152,17 @@ def change_item(request, item_id):
         })
     if request.method == 'POST':
         item = get_object_or_404(Item, pk=item_id)
-        f = ItemForm(request.POST, instance=item)
-        item = f.save(commit=False)
-        item.update_date = timezone.now()
-        item.save()
+        form = ItemForm(request.POST, instance=item)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.update_date = timezone.now()
+            item.save()
+            messages.info(request, f'物品 {item.name} 修改成功')
+        else:
+            return render(request, 'storage/change_item.html', {
+                'item': item,
+                'form': form,
+            })
         return HttpResponseRedirect(
             reverse('storage:item_detail', args=(item.id, )))
 
@@ -158,6 +182,7 @@ def delete_storage(request, storage_id):
                 reverse('storage:storage_detail', args=(storage.id, )))
         if '_confirm' in request.POST:
             parent = storage.parent
+            messages.info(request, f'位置 {storage.name} 删除成功')
             storage.delete()
             if parent:
                 return HttpResponseRedirect(
@@ -180,6 +205,7 @@ def delete_item(request, item_id):
                 reverse('storage:item_detail', args=(item.id, )))
         if '_confirm' in request.POST:
             storage = item.storage
+            messages.info(request, f'物品 {item.name} 删除成功')
             item.delete()
             return HttpResponseRedirect(
                 reverse('storage:storage_detail', args=(storage.id, )))
