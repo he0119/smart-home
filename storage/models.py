@@ -4,8 +4,8 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 class Storage(MPTTModel):
     """ 存储位置 """
-    class Meta:
-        ordering = ['name']
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     name = models.CharField(max_length=200, unique=True)
     parent = TreeForeignKey('self',
