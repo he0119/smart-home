@@ -27,6 +27,7 @@ def storage_detail(request, storage_id):
     storage = get_object_or_404(Storage, pk=storage_id)
 
     item_form = ItemForm(initial={
+        'number': 1,
         'storage': storage,
     })
     storage_form = StorageForm(initial={
@@ -75,7 +76,9 @@ def add_storage(request):
 def add_item(request):
     """ 物品的添加页 """
     if request.method == 'GET':
-        form = ItemForm()
+        form = ItemForm(initial={
+            'number': 1,
+        })
         return render(request, 'storage/add_item.html', {'form': form})
     if request.method == 'POST':
         f = ItemForm(request.POST)
