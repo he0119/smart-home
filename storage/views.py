@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -112,12 +113,11 @@ def change_storage(request, storage_id):
         try:
             storage = f.save()
         except InvalidMove:
-            error_message = '一个位置不能属于它的子节点'
+            messages.add_message(request, messages.ERROR, '一个位置不能属于它的子节点')
             form = StorageForm(instance=storage)
             return render(request, 'storage/change_storage.html', {
                 'storage': storage,
                 'form': form,
-                'error_message': error_message,
             })
         return HttpResponseRedirect(
             reverse('storage:storage_detail', args=(storage.id, )))
