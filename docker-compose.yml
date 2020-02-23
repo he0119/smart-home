@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    image: he0119/smart-home
+    image: he0119/smart-home:latest
     container_name: smart-home
     restart: always
     env_file:
@@ -10,15 +10,10 @@ services:
     depends_on:
       - db
   db:
-    image: postgres:12.2
+    build: ./postgres
     container_name: postgres
     restart: always
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./postgres/pgdata:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres
-
-networks:
-  default:
-    external:
-      name: website
