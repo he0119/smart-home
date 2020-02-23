@@ -1,14 +1,22 @@
 version: '3'
 
 services:
-  django-web:
+  web:
     image: he0119/smart-home
     container_name: smart-home
     restart: always
-    volumes:
-      - ./db.sqlite3:/usr/src/app/db.sqlite3
     env_file:
       - ./.env
+    depends_on:
+      - db
+  db:
+    image: postgres:12.2
+    container_name: postgres
+    restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
 
 networks:
   default:

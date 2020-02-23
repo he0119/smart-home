@@ -3,3 +3,4 @@ django-mptt==0.11.0
 django-crispy-forms==1.8.1
 django-import-export==2.0.2
 uwsgi==2.0.18
+psycopg2==2.8.4
