@@ -9,8 +9,9 @@ RUN set -e; \
 		gcc \
 		libc-dev \
 		linux-headers \
+    postgresql-dev \
 	; \
-	pip install -r requirements.txt; \
+	pip install --no-cache-dir -r requirements.txt; \
 	apk del .build-deps;
 
 # 复制网站
