@@ -4,22 +4,26 @@ trigger:
     - master
     - refs/tags/*
 
+resources:
+  containers:
+  - container: postgres
+    image: postgres:12.2
+    ports:
+    - 5432:5432
+    env:
+      POSTGRES_PASSWORD: postgres
+
 pool:
   vmImage: 'ubuntu-latest'
 
 jobs:
 - job: 'Test'
-  strategy:
-    matrix:
-      Python37:
-        PYTHON_VERSION: '3.7'
-      Python38:
-        PYTHON_VERSION: '3.8'
-    maxParallel: 2
+  services:
+    postgres: postgres
   steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '$(PYTHON_VERSION)'
+      versionSpec: '3.8'
       architecture: 'x64'
   - task: PythonScript@0
     displayName: 'Export project path'

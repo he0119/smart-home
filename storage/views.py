@@ -94,6 +94,7 @@ def add_item(request):
             if form.is_valid():
                 new_item = form.save(commit=False)
                 new_item.update_date = timezone.now()
+                new_item.editor = request.user
                 new_item.save()
                 messages.info(request, f'物品 {new_item.name} 添加完成')
                 return HttpResponseRedirect(
@@ -156,6 +157,7 @@ def change_item(request, item_id):
         if form.is_valid():
             item = form.save(commit=False)
             item.update_date = timezone.now()
+            item.editor = request.user
             item.save()
             messages.info(request, f'物品 {item.name} 修改成功')
         else:
@@ -223,6 +225,7 @@ def search(request):
             'items': items,
             'total': total,
         })
+
 
 @login_required
 def latest(request):
