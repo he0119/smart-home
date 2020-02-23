@@ -10,11 +10,6 @@ class StorageForm(ModelForm):
     class Meta:
         model = Storage
         fields = ['name', 'parent', 'description']
-        labels = {
-            'name': '名字',
-            'parent': '属于',
-            'description': '备注',
-        }
 
 
 class ItemForm(ModelForm):
@@ -25,10 +20,3 @@ class ItemForm(ModelForm):
     class Meta:
         model = Item
         fields = ['name', 'number', 'storage', 'price', 'description']
-        labels = {
-            'name': '名字',
-            'number': '数量',
-            'storage': '属于',
-            'price': '价格',
-            'description': '备注',
-        }
