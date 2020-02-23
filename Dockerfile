@@ -4,12 +4,12 @@ WORKDIR /usr/src/app
 
 # 安装依赖
 COPY requirements.txt ./
+RUN apk add --no-cache postgresql-dev
 RUN set -e; \
 	apk add --no-cache --virtual .build-deps \
 		gcc \
 		libc-dev \
 		linux-headers \
-    postgresql-dev \
 	; \
 	pip install --no-cache-dir -r requirements.txt; \
 	apk del .build-deps;
