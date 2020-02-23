@@ -9,7 +9,8 @@
   <ul class="list-group list-group-flush">
     <li class="list-group-item"> 存放位置：<a href="{% url 'storage:storage_detail' item.storage.id %}">{{ item.storage.name }} </a> </li>
     <li class="list-group-item"> 数量：{{ item.number }} </li>
-    <li class="list-group-item"> 备注：{{ item.description }} </li>
+    <li class="list-group-item"> 价格：{% if item.price %} {{ item.price }} 元 {% else %} &nbsp; {% endif %} </li>
+    <li class="list-group-item"> 备注：{% if item.description %} {{ item.description }} {% else %} &nbsp; {% endif %} </li>
     <li class="list-group-item"> 更新时间：{{ item.update_date }} </li>
   </ul>
   <div class="card-body">

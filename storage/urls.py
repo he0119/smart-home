@@ -5,6 +5,7 @@ from . import views
 app_name = 'storage'
 urlpatterns = [
     path('', views.index, name='index'),
+    path('latest/', views.latest, name='latest'),
     path('search/', views.search, name='search'),
     path('storage/add/', views.add_storage, name='add_storage'),
     path('storage/<int:storage_id>/',

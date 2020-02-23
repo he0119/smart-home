@@ -14,12 +14,20 @@ class StorageResource(ModelResource):
 
     class Meta:
         model = Storage
+        exclude = (
+            'lft',
+            'rght',
+            'tree_id',
+            'level',
+        )
         export_order = (
             'id',
             'name',
             'parent',
             'description',
         )
+        skip_unchanged = True
+        report_skipped= False
 
 
 class ItemResource(ModelResource):
@@ -34,9 +42,12 @@ class ItemResource(ModelResource):
             'storage',
             'name',
             'number',
+            'price',
             'description',
             'update_date',
         )
+        skip_unchanged = True
+        report_skipped= False
 
 
 class StorageAdmin(ImportExportModelAdmin):
@@ -46,7 +57,8 @@ class StorageAdmin(ImportExportModelAdmin):
 
 class ItemAdmin(ImportExportModelAdmin):
     resource_class = ItemResource
-    list_display = ('name', 'number', 'description', 'update_date', 'storage')
+    list_display = ('name', 'number', 'price', 'description', 'update_date',
+                    'storage')
 
 
 admin.site.register(Storage, StorageAdmin)

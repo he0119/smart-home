@@ -3,6 +3,14 @@ from django.test import TestCase
 from .models import Storage
 
 
+def query_set_to_list(query_set):
+    """ 转换 TreeQuerySet 到列表 """
+    new = []
+    for i in query_set:
+        new.append(i)
+    return new
+
+
 class StorageModelTests(TestCase):
     def setUp(self):
         balcony = Storage.objects.create(name="阳台", description='家里的阳台')
@@ -15,14 +23,17 @@ class StorageModelTests(TestCase):
         balcony = Storage.objects.get(name="阳台")
         locker = Storage.objects.get(name="阳台储物柜")
         toolbox = Storage.objects.get(name="工具箱")
+        toolbox2 = Storage.objects.get(name="工具箱2")
 
         self.assertEqual(balcony.parent, None)
-        self.assertEqual(len(balcony.get_ancestors()), 0)
-        self.assertEqual(len(balcony.get_children()), 1)
+        self.assertEqual(query_set_to_list(balcony.get_ancestors()), [])
+        self.assertEqual(query_set_to_list(balcony.get_children()), [locker])
 
         self.assertEqual(locker.parent, balcony)
-        self.assertEqual(len(locker.get_ancestors()), 1)
-        self.assertEqual(len(locker.get_children()), 2)
+        self.assertEqual(query_set_to_list(locker.get_ancestors()), [balcony])
+        self.assertEqual(query_set_to_list(locker.get_children()),
+                         [toolbox, toolbox2])
 
         self.assertEqual(toolbox.parent, locker)
-        self.assertEqual(len(toolbox.get_ancestors()), 2)
+        self.assertEqual(query_set_to_list(toolbox.get_ancestors()),
+                         [balcony, locker])
