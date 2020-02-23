@@ -14,12 +14,20 @@ class StorageResource(ModelResource):
 
     class Meta:
         model = Storage
+        exclude = (
+            'lft',
+            'rght',
+            'tree_id',
+            'level',
+        )
         export_order = (
             'id',
             'name',
             'parent',
             'description',
         )
+        skip_unchanged = True
+        report_skipped= False
 
 
 class ItemResource(ModelResource):
@@ -38,6 +46,8 @@ class ItemResource(ModelResource):
             'description',
             'update_date',
         )
+        skip_unchanged = True
+        report_skipped= False
 
 
 class StorageAdmin(ImportExportModelAdmin):
