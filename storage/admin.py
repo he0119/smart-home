@@ -1,7 +1,8 @@
 from django.contrib import admin
-from import_export.resources import ModelResource
+from django.contrib.auth import get_user_model
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
+from import_export.resources import ModelResource
 from import_export.widgets import ForeignKeyWidget
 
 from .models import Item, Storage
@@ -27,13 +28,16 @@ class StorageResource(ModelResource):
             'description',
         )
         skip_unchanged = True
-        report_skipped= False
+        report_skipped = False
 
 
 class ItemResource(ModelResource):
     storage = Field(column_name='storage',
                     attribute='storage',
                     widget=ForeignKeyWidget(Storage, 'name'))
+    editor = Field(column_name='editor',
+                   attribute='editor',
+                   widget=ForeignKeyWidget(get_user_model(), 'username'))
 
     class Meta:
         model = Item
@@ -45,9 +49,10 @@ class ItemResource(ModelResource):
             'price',
             'description',
             'update_date',
+            'editor',
         )
         skip_unchanged = True
-        report_skipped= False
+        report_skipped = False
 
 
 class StorageAdmin(ImportExportModelAdmin):
@@ -58,7 +63,7 @@ class StorageAdmin(ImportExportModelAdmin):
 class ItemAdmin(ImportExportModelAdmin):
     resource_class = ItemResource
     list_display = ('name', 'number', 'price', 'description', 'update_date',
-                    'storage')
+                    'storage', 'editor')
 
 
 admin.site.register(Storage, StorageAdmin)
