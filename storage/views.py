@@ -223,3 +223,11 @@ def search(request):
             'items': items,
             'total': total,
         })
+
+@login_required
+def latest(request):
+    if request.method == 'GET':
+        items = Item.objects.all().order_by('-update_date')[:50]
+        return render(request, 'storage/latest.html', {
+            'items': items,
+        })
