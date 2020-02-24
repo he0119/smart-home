@@ -1,4 +1,5 @@
 {% extends "storage/base.html" %}
+{% load storage_extras %}
 
 {% block content %}
 
@@ -11,22 +12,22 @@
       <a href="{% url 'storage:item_detail' item.id %}" class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
           <h6 class="mb-1">
-            {{ item.name }}
+            {{ item.name|highlight:search_query }}
             <span class="badge badge-secondary">物品</span>
           </h6>
         </div>
-        <p class="mb-1">{% if item.description %}{{ item.description }}{% else %} &nbsp; {% endif %}</p>
+        <p class="mb-1">{% if item.description %}{{ item.description|highlight:search_query }}{% else %} &nbsp; {% endif %}</p>
       </a>
     {% endfor %}
     {% for storage in storages %}
       <a href="{% url 'storage:storage_detail' storage.id %}" class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
           <h6 class="mb-1">
-            {{ storage.name }}
+            {{ storage.name|highlight:search_query }}
             <span class="badge badge-secondary">位置</span>
           </h6>
         </div>
-        <p class="mb-1">{% if storage.description %}{{ storage.description }}{% else %} &nbsp; {% endif %}</p>
+        <p class="mb-1">{% if storage.description %}{{ storage.description|highlight:search_query }}{% else %} &nbsp; {% endif %}</p>
       </a>
     {% endfor %}
   </div>

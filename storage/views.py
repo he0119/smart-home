@@ -224,11 +224,13 @@ def search(request):
                     | Storage.objects.filter(
                         description__icontains=search_query)).distinct()
         total = len(items) + len(storages)
-        return render(request, 'storage/search.html', {
-            'total': total,
-            'items': items,
-            'storages': storages,
-        })
+        return render(
+            request, 'storage/search.html', {
+                'total': total,
+                'items': items,
+                'storages': storages,
+                'search_query': search_query,
+            })
 
 
 @login_required
