@@ -1,4 +1,5 @@
 {% extends "storage/base.html" %}
+{% load storage_extras %}
 
 {% block content %}
 
@@ -6,29 +7,30 @@
   <h5 class="card-header">
     找到 {{ total }} 个符合条件的结果
   </h5>
-  <ul class="list-group list-group-flush">
-  {% if storages %}
-    {% for storage in storages %}
-      <li class="list-group-item">
-        <a href="{% url 'storage:storage_detail' storage.id %}">
-          {{ storage.name }}
-          <span class="badge badge-secondary">位置</span>
-        </a>
-      </li>
-    {% endfor %}
-  {% endif %}
-
-  {% if items %}
+  <div class="list-group list-group-flush">
     {% for item in items %}
-      <li class="list-group-item">
-        <a href="{% url 'storage:item_detail' item.id %}">
-          {{ item.name }}
-          <span class="badge badge-secondary">物品</span>
-        </a>
-      </li>
+      <a href="{% url 'storage:item_detail' item.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+          <h6 class="mb-1">
+            {{ item.name|highlight:search_query }}
+            <span class="badge badge-secondary">物品</span>
+          </h6>
+        </div>
+        <p class="mb-1">{% if item.description %}{{ item.description|highlight:search_query }}{% else %} &nbsp; {% endif %}</p>
+      </a>
     {% endfor %}
-  {% endif %}
-  </ul>
+    {% for storage in storages %}
+      <a href="{% url 'storage:storage_detail' storage.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+          <h6 class="mb-1">
+            {{ storage.name|highlight:search_query }}
+            <span class="badge badge-secondary">位置</span>
+          </h6>
+        </div>
+        <p class="mb-1">{% if storage.description %}{{ storage.description|highlight:search_query }}{% else %} &nbsp; {% endif %}</p>
+      </a>
+    {% endfor %}
+  </div>
 </div>
 
 

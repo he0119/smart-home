@@ -217,14 +217,20 @@ def delete_item(request, item_id):
 def search(request):
     if request.method == 'GET':
         search_query = request.GET.get('q', None)
-        storages = Storage.objects.filter(name__contains=search_query)
-        items = Item.objects.filter(name__contains=search_query)
-        total = len(storages) + len(items)
-        return render(request, 'storage/search.html', {
-            'storages': storages,
-            'items': items,
-            'total': total,
-        })
+        items = (Item.objects.filter(name__icontains=search_query)
+                 | Item.objects.filter(
+                     description__icontains=search_query)).distinct()
+        storages = (Storage.objects.filter(name__icontains=search_query)
+                    | Storage.objects.filter(
+                        description__icontains=search_query)).distinct()
+        total = len(items) + len(storages)
+        return render(
+            request, 'storage/search.html', {
+                'total': total,
+                'items': items,
+                'storages': storages,
+                'search_query': search_query,
+            })
 
 
 @login_required
