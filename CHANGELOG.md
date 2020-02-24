@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2020-02-24
+
 ### Changed
 
 - 切换到 PostgreSQL 数据库
+- 搜索会同时搜索名字和备注，并且高亮对应关键字
 
 ### Fixed
 
@@ -21,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.2.0...HEAD
 
+[0.2.0]: https://github.com/he0119/smart-home/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/he0119/smart-home/releases/tag/v0.1.0
