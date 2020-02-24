@@ -4,31 +4,32 @@
 
 <div class="card">
   <h5 class="card-header">
-    找到 {{ results|length }} 个符合条件的结果
+    找到 {{ total }} 个符合条件的结果
   </h5>
   <div class="list-group list-group-flush">
-  {% if results %}
-    {% for result in results %}
-      {% if result.storage %}
-        <a href="{% url 'storage:item_detail' result.id %}" class="list-group-item list-group-item-action">
-      {% else %}
-        <a href="{% url 'storage:storage_detail' result.id %}" class="list-group-item list-group-item-action">
-      {% endif %}
+    {% for item in items %}
+      <a href="{% url 'storage:item_detail' item.id %}" class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
           <h6 class="mb-1">
-            {{ result.name }}
-            {% if result.storage %}
+            {{ item.name }}
             <span class="badge badge-secondary">物品</span>
-            {% else %}
-            <span class="badge badge-secondary">位置</span>
-            {% endif %}
           </h6>
         </div>
-        <p class="mb-1">{% if result.description %}{{ result.description }}{% else %} &nbsp; {% endif %}</p>
+        <p class="mb-1">{% if item.description %}{{ item.description }}{% else %} &nbsp; {% endif %}</p>
+      </a>
+    {% endfor %}
+    {% for storage in storages %}
+      <a href="{% url 'storage:storage_detail' storage.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+          <h6 class="mb-1">
+            {{ storage.name }}
+            <span class="badge badge-secondary">位置</span>
+          </h6>
+        </div>
+        <p class="mb-1">{% if storage.description %}{{ storage.description }}{% else %} &nbsp; {% endif %}</p>
       </a>
     {% endfor %}
   </div>
-  {% endif %}
 </div>
 
 
