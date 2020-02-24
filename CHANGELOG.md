@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- 切换到 PostgreSQL 数据库
+
+### Fixed
+
+- 修复汉字无法按照拼音排序的问题
+
 ## [0.1.0] - 2020-02-22
 
 ### Added
