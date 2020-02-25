@@ -23,3 +23,18 @@ python manage.py collectstatic
 python manage.py migrate
 python manage.py createsuperuser
 ```
+
+## 备份与还原
+
+### Django import / export
+
+通过管理页面导出数据或导入数据
+
+### [PostgreSQL](https://www.postgresql.org/docs/12/backup.html)
+
+通过命令来备份或还原
+
+```bash
+sudo docker exec postgres pg_dump -U postgres postgres > backup.sql
+sudo docker exec postgres psql -U postgres postgres < backup.sql
+```
