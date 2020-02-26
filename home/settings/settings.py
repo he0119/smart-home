@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mptt',
-    'crispy_forms',
     'import_export',
+    'graphene_django',
     'storage',
 ]
 
@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
+        'HOST': 'hehome.xyz',
         'PORT': '5432',
     }
 }
@@ -128,24 +128,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# Login
-# https://docs.djangoproject.com/zh-hans/3.0/topics/auth/default/
-
-LOGIN_URL = '/admin/'
-
-# MESSAGES
-# https://docs.djangoproject.com/zh-hans/3.0/ref/settings/#std:setting-MESSAGE_TAGS
-
-MESSAGE_TAGS = {
-    messages.ERROR: 'danger',
-}
-
-# Crispy Forms
-# https://django-crispy-forms.readthedocs.io/en/latest/install.html
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
 # MPTT
 # https://django-mptt.readthedocs.io/en/latest/forms.html
 
 MPTT_DEFAULT_LEVEL_INDICATOR = '--'
+
+# Graphene(GraphQL)
+# https://docs.graphene-python.org/projects/django/en/latest/installation/
+
+GRAPHENE = {'SCHEMA': 'home.schema.schema'}
