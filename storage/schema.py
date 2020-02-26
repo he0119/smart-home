@@ -29,8 +29,8 @@ class UserType(DjangoObjectType):
 class Query:
     storages = graphene.List(StorageType)
     items = graphene.List(ItemType)
-    storage = graphene.Field(StorageType, storage_id=graphene.String())
-    item = graphene.Field(ItemType, item_id=graphene.String())
+    storage = graphene.Field(StorageType, id=graphene.ID())
+    item = graphene.Field(ItemType, id=graphene.ID())
     me = graphene.Field(UserType)
 
     @login_required
@@ -46,12 +46,12 @@ class Query:
         return Item.objects.all()
 
     @login_required
-    def resolve_storage(self, info, storage_id):
-        return Storage.objects.get(pk=storage_id)
+    def resolve_storage(self, info, id):
+        return Storage.objects.get(pk=id)
 
     @login_required
-    def resolve_item(self, info, item_id):
-        return Item.objects.get(pk=item_id)
+    def resolve_item(self, info, id):
+        return Item.objects.get(pk=id)
 
 
 class UpdateStorageInput(graphene.InputObjectType):
