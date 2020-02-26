@@ -2,6 +2,7 @@ import graphene
 from django.contrib.auth import get_user_model
 from django.utils.timezone import make_aware
 from graphene_django.types import DjangoObjectType
+from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
 
 from .models import Item, Storage
@@ -131,12 +132,16 @@ class CreateStorageMutation(graphene.Mutation):
 
     @login_required
     def mutate(self, info, input):
-        storage = Storage(name=input.name, description=input.description)
-        if input.parent:
-            parent = Storage.objects.get(pk=input.parent)
-            storage.parent = parent
-        storage.save()
-        return CreateStorageMutation(storage=storage)
+        try:
+            Storage.objects.get(name=input.name)
+            raise GraphQLError('名称重复')
+        except Item.DoesNotExist:
+            storage = Storage(name=input.name, description=input.description)
+            if input.parent:
+                parent = Storage.objects.get(pk=input.parent)
+                storage.parent = parent
+            storage.save()
+            return CreateStorageMutation(storage=storage)
 
 
 class CreateItemInput(graphene.InputObjectType):
@@ -156,19 +161,23 @@ class CreateItemMutation(graphene.Mutation):
 
     @login_required
     def mutate(self, info, input):
-        storage = Storage.objects.get(pk=input.storage)
-        item = Item(
-            name=input.name,
-            number=input.number,
-            description=input.description,
-            storage=storage,
-            price=input.price,
-        )
-        if input.expiration_date:
-            item.expiration_date = make_aware(input.expiration_date)
-        item.editor = info.context.user
-        item.save()
-        return CreateItemMutation(item=item)
+        try:
+            Item.objects.get(name=input.name)
+            raise GraphQLError('名称重复')
+        except Item.DoesNotExist:
+            storage = Storage.objects.get(pk=input.storage)
+            item = Item(
+                name=input.name,
+                number=input.number,
+                description=input.description,
+                storage=storage,
+                price=input.price,
+            )
+            if input.expiration_date:
+                item.expiration_date = make_aware(input.expiration_date)
+            item.editor = info.context.user
+            item.save()
+            return CreateItemMutation(item=item)
 
 
 class Mutation(graphene.ObjectType):
