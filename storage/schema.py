@@ -1,5 +1,6 @@
 import graphene
 from django.contrib.auth import get_user_model
+from django.utils.timezone import make_aware
 from graphene_django.types import DjangoObjectType
 from graphql_jwt.decorators import login_required
 
@@ -110,7 +111,7 @@ class UpdateItemMutation(graphene.Mutation):
         if input.price:
             item.price = input.price
         if input.expiration_date:
-            item.expiration_date = input.expiration_date
+            item.expiration_date = make_aware(input.expiration_date)
         item.editor = info.context.user
         item.save()
         return UpdateItemMutation(item=item)
@@ -162,8 +163,9 @@ class CreateItemMutation(graphene.Mutation):
             description=input.description,
             storage=storage,
             price=input.price,
-            expiration_date=input.expiration_date,
         )
+        if input.expiration_date:
+            item.expiration_date = make_aware(input.expiration_date)
         item.editor = info.context.user
         item.save()
         return CreateItemMutation(item=item)
