@@ -71,7 +71,12 @@ class UpdateStorageMutation(graphene.Mutation):
     def mutate(self, info, input):
         storage = Storage.objects.get(pk=input.id)
         if input.name:
-            storage.name = input.name
+            try:
+                Storage.objects.get(name=input.name)
+            except Storage.DoesNotExist:
+                storage.name = input.name
+            else:
+                raise GraphQLError('名称重复')
         if input.description:
             storage.description = input.description
         if input.parent:
@@ -101,7 +106,12 @@ class UpdateItemMutation(graphene.Mutation):
     def mutate(self, info, input):
         item = Item.objects.get(pk=input.id)
         if input.name:
-            item.name = input.name
+            try:
+                Item.objects.get(name=input.name)
+            except Item.DoesNotExist:
+                item.name = input.name
+            else:
+                raise GraphQLError('名称重复')
         if input.number:
             item.number = input.number
         if input.storage:
