@@ -118,15 +118,15 @@ class UpdateItemMutation(graphene.Mutation):
         return UpdateItemMutation(item=item)
 
 
-class CreateStorageInput(graphene.InputObjectType):
+class AddStorageInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     description = graphene.String()
     parent = graphene.ID()
 
 
-class CreateStorageMutation(graphene.Mutation):
+class AddStorageMutation(graphene.Mutation):
     class Arguments:
-        input = CreateStorageInput(required=True)
+        input = AddStorageInput(required=True)
 
     storage = graphene.Field(StorageType)
 
@@ -141,10 +141,10 @@ class CreateStorageMutation(graphene.Mutation):
                 parent = Storage.objects.get(pk=input.parent)
                 storage.parent = parent
             storage.save()
-            return CreateStorageMutation(storage=storage)
+            return AddStorageMutation(storage=storage)
 
 
-class CreateItemInput(graphene.InputObjectType):
+class AddItemInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     number = graphene.Int(required=True)
     storage = graphene.ID(required=True)
@@ -153,9 +153,9 @@ class CreateItemInput(graphene.InputObjectType):
     expiration_date = graphene.DateTime()
 
 
-class CreateItemMutation(graphene.Mutation):
+class AddItemMutation(graphene.Mutation):
     class Arguments:
-        input = CreateItemInput(required=True)
+        input = AddItemInput(required=True)
 
     item = graphene.Field(ItemType)
 
@@ -177,11 +177,11 @@ class CreateItemMutation(graphene.Mutation):
                 item.expiration_date = make_aware(input.expiration_date)
             item.editor = info.context.user
             item.save()
-            return CreateItemMutation(item=item)
+            return AddItemMutation(item=item)
 
 
 class Mutation(graphene.ObjectType):
     update_storage = UpdateStorageMutation.Field()
     update_item = UpdateItemMutation.Field()
-    create_storage = CreateStorageMutation.Field()
-    create_item = CreateItemMutation.Field()
+    add_storage = AddStorageMutation.Field()
+    add_item = AddItemMutation.Field()
