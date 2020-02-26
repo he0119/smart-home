@@ -135,7 +135,7 @@ class AddStorageMutation(graphene.Mutation):
         try:
             Storage.objects.get(name=input.name)
             raise GraphQLError('名称重复')
-        except Item.DoesNotExist:
+        except Storage.DoesNotExist:
             storage = Storage(name=input.name, description=input.description)
             if input.parent:
                 parent = Storage.objects.get(pk=input.parent)
