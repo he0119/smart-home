@@ -52,116 +52,117 @@ class Query:
         return Item.objects.get(pk=item_id)
 
 
+class UpdateStorageInput(graphene.InputObjectType):
+    id = graphene.ID(required=True)
+    name = graphene.String()
+    description = graphene.String()
+    parent = graphene.ID()
+
+
 class UpdateStorageMutation(graphene.Mutation):
     class Arguments:
-        id = graphene.ID()
-        name = graphene.String()
-        description = graphene.String()
-        parent_id = graphene.ID()
+        input = UpdateStorageInput(required=True)
 
     storage = graphene.Field(StorageType)
 
     @login_required
-    def mutate(self, info, id, name=None, description=None, parent_id=None):
-        storage = Storage.objects.get(pk=id)
-        if name:
-            storage.name = name
-        if description:
-            storage.description = description
-        if parent_id:
-            parent = Storage.objects.get(pk=parent_id)
+    def mutate(self, info, input):
+        storage = Storage.objects.get(pk=input.id)
+        if input.name:
+            storage.name = input.name
+        if input.description:
+            storage.description = input.description
+        if input.parent:
+            parent = Storage.objects.get(pk=input.parent)
             storage.parent = parent
         storage.save()
         return UpdateStorageMutation(storage=storage)
 
 
+class UpdateItemInput(graphene.InputObjectType):
+    id = graphene.ID(required=True)
+    name = graphene.String()
+    number = graphene.Int()
+    description = graphene.String()
+    price = graphene.String()
+    expiration_date = graphene.DateTime()
+    storage = graphene.ID()
+
+
 class UpdateItemMutation(graphene.Mutation):
     class Arguments:
-        id = graphene.ID(required=True)
-        name = graphene.String()
-        number = graphene.Int()
-        description = graphene.String()
-        price = graphene.String()
-        expiration_date = graphene.DateTime()
-        storage_id = graphene.ID()
+        input = UpdateItemInput(required=True)
 
     item = graphene.Field(ItemType)
 
     @login_required
-    def mutate(self,
-               info,
-               id,
-               name=None,
-               number=None,
-               description=None,
-               price=None,
-               expiration_date=None,
-               storage_id=None):
-        item = Item.objects.get(pk=id)
-        if name:
-            item.name = name
-        if number:
-            item.number = number
-        if storage_id:
-            storage = Storage.objects.get(pk=storage_id)
+    def mutate(self, info, input):
+        item = Item.objects.get(pk=input.id)
+        if input.name:
+            item.name = input.name
+        if input.number:
+            item.number = input.number
+        if input.storage:
+            storage = Storage.objects.get(pk=input.storage)
             item.storage = storage
-        if description:
-            item.description = description
-        if price:
-            item.price = price
-        if expiration_date:
-            item.expiration_date = expiration_date
+        if input.description:
+            item.description = input.description
+        if input.price:
+            item.price = input.price
+        if input.expiration_date:
+            item.expiration_date = input.expiration_date
         item.editor = info.context.user
         item.save()
         return UpdateItemMutation(item=item)
 
 
+class CreateStorageInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+    description = graphene.String()
+    parent = graphene.ID()
+
+
 class CreateStorageMutation(graphene.Mutation):
     class Arguments:
-        name = graphene.String(required=True)
-        description = graphene.String()
-        parent_id = graphene.ID()
+        input = CreateStorageInput(required=True)
 
     storage = graphene.Field(StorageType)
 
     @login_required
-    def mutate(self, info, name, description=None, parent_id=None):
-        storage = Storage(name=name, description=description)
-        if parent_id:
-            parent = Storage.objects.get(pk=parent_id)
+    def mutate(self, info, input):
+        storage = Storage(name=input.name, description=input.description)
+        if input.parent:
+            parent = Storage.objects.get(pk=input.parent)
             storage.parent = parent
         storage.save()
         return CreateStorageMutation(storage=storage)
 
 
+class CreateItemInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+    number = graphene.Int(required=True)
+    storage = graphene.ID(required=True)
+    description = graphene.String()
+    price = graphene.String()
+    expiration_date = graphene.DateTime()
+
+
 class CreateItemMutation(graphene.Mutation):
     class Arguments:
-        name = graphene.String(required=True)
-        number = graphene.Int(required=True)
-        storage_id = graphene.ID(required=True)
-        description = graphene.String()
-        price = graphene.String()
-        expiration_date = graphene.DateTime()
+        input = CreateItemInput(required=True)
 
     item = graphene.Field(ItemType)
 
     @login_required
-    def mutate(self,
-               info,
-               name,
-               number,
-               storage_id,
-               description=None,
-               price=None,
-               expiration_date=None):
-        storage = Storage.objects.get(pk=storage_id)
+    def mutate(self, info, input):
+        storage = Storage.objects.get(pk=input.storage)
         item = Item(
-            name=name,
-            number=number,
-            description=description,
+            name=input.name,
+            number=input.number,
+            description=input.description,
             storage=storage,
-            price=price,
-            expiration_date=expiration_date,
+            price=input.price,
+            expiration_date=input.expiration_date,
         )
         item.editor = info.context.user
         item.save()
