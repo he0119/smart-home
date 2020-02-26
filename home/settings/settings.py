@@ -128,6 +128,15 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+# Login
+# https://docs.djangoproject.com/zh-hans/3.0/topics/auth/default/
+
+LOGIN_URL = '/admin/'
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 # MPTT
 # https://django-mptt.readthedocs.io/en/latest/forms.html
 
@@ -136,4 +145,9 @@ MPTT_DEFAULT_LEVEL_INDICATOR = '--'
 # Graphene(GraphQL)
 # https://docs.graphene-python.org/projects/django/en/latest/installation/
 
-GRAPHENE = {'SCHEMA': 'home.schema.schema'}
+GRAPHENE = {
+    'SCHEMA': 'home.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
+}
