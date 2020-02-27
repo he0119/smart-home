@@ -26,12 +26,18 @@ class UserType(DjangoObjectType):
         fields = '__all__'
 
 
-class Query:
+class SearchType(graphene.ObjectType):
+    items = graphene.List(ItemType)
+    storages = graphene.List(StorageType)
+
+
+class Query(graphene.ObjectType):
     storages = graphene.List(StorageType)
     items = graphene.List(ItemType)
     storage = graphene.Field(StorageType, id=graphene.ID())
     item = graphene.Field(ItemType, id=graphene.ID())
     me = graphene.Field(UserType)
+    search = graphene.Field(SearchType, key=graphene.String())
 
     @login_required
     def resolve_me(self, info, **kwargs):
@@ -52,6 +58,15 @@ class Query:
     @login_required
     def resolve_item(self, info, id):
         return Item.objects.get(pk=id)
+
+    @login_required
+    def resolve_search(self, info, key):
+        items = (Item.objects.filter(name__icontains=key)
+                 | Item.objects.filter(description__icontains=key)).distinct()
+        storages = (
+            Storage.objects.filter(name__icontains=key)
+            | Storage.objects.filter(description__icontains=key)).distinct()
+        return SearchType(items=items, storages=storages)
 
 
 class UpdateStorageInput(graphene.InputObjectType):
