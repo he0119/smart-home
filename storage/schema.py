@@ -32,16 +32,21 @@ class SearchType(graphene.ObjectType):
 
 
 class Query(graphene.ObjectType):
+    me = graphene.Field(UserType)
+    root_storage = graphene.List(StorageType)
     storages = graphene.List(StorageType)
     items = graphene.List(ItemType)
     storage = graphene.Field(StorageType, id=graphene.ID())
     item = graphene.Field(ItemType, id=graphene.ID())
-    me = graphene.Field(UserType)
     search = graphene.Field(SearchType, key=graphene.String())
 
     @login_required
     def resolve_me(self, info, **kwargs):
         return info.context.user
+
+    @login_required
+    def resolve_root_storage(self, info, **kwargs):
+        return Storage.objects.filter(level=0)
 
     @login_required
     def resolve_storages(self, info, **kwargs):
