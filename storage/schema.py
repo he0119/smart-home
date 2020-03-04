@@ -74,11 +74,17 @@ class Query(graphene.ObjectType):
         return SearchType(items=items, storages=storages)
 
 
+class StorageInput(graphene.InputObjectType):
+    id = graphene.ID(required=True)
+    name = graphene.String()
+    description = graphene.String()
+
+
 class UpdateStorageInput(graphene.InputObjectType):
     id = graphene.ID(required=True)
     name = graphene.String()
     description = graphene.String()
-    parent = graphene.ID()
+    parent = StorageInput()
 
 
 class UpdateStorageMutation(graphene.Mutation):
@@ -90,15 +96,14 @@ class UpdateStorageMutation(graphene.Mutation):
     @login_required
     def mutate(self, info, input):
         storage = Storage.objects.get(pk=input.id)
-        if input.name:
+        if input.name and input.name != storage.name:
             try:
                 Storage.objects.get(name=input.name)
             except Storage.DoesNotExist:
                 storage.name = input.name
             else:
                 raise GraphQLError('名称重复')
-        if input.description:
-            storage.description = input.description
+        storage.description = input.description
         if input.parent:
             parent = Storage.objects.get(pk=input.parent)
             storage.parent = parent
@@ -111,9 +116,9 @@ class UpdateItemInput(graphene.InputObjectType):
     name = graphene.String()
     number = graphene.Int()
     description = graphene.String()
-    price = graphene.String()
+    price = graphene.Float()
     expiration_date = graphene.DateTime()
-    storage = graphene.ID()
+    storage = StorageInput()
 
 
 class UpdateItemMutation(graphene.Mutation):
@@ -125,24 +130,18 @@ class UpdateItemMutation(graphene.Mutation):
     @login_required
     def mutate(self, info, input):
         item = Item.objects.get(pk=input.id)
-        if input.name:
+        if input.name and input.name != item.name:
             try:
                 Item.objects.get(name=input.name)
             except Item.DoesNotExist:
                 item.name = input.name
             else:
                 raise GraphQLError('名称重复')
-        if input.number:
-            item.number = input.number
-        if input.storage:
-            storage = Storage.objects.get(pk=input.storage)
-            item.storage = storage
-        if input.description:
-            item.description = input.description
-        if input.price:
-            item.price = input.price
-        if input.expiration_date:
-            item.expiration_date = make_aware(input.expiration_date)
+        item.number = input.number
+        item.storage = Storage.objects.get(pk=input.storage.id)
+        item.description = input.description
+        item.price = input.price
+        item.expiration_date = input.expiration_date
         item.editor = info.context.user
         item.save()
         return UpdateItemMutation(item=item)
@@ -151,7 +150,7 @@ class UpdateItemMutation(graphene.Mutation):
 class AddStorageInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     description = graphene.String()
-    parent = graphene.ID()
+    parent = StorageInput()
 
 
 class AddStorageMutation(graphene.Mutation):
@@ -177,9 +176,9 @@ class AddStorageMutation(graphene.Mutation):
 class AddItemInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     number = graphene.Int(required=True)
-    storage = graphene.ID(required=True)
+    storage = StorageInput(required=True)
     description = graphene.String()
-    price = graphene.String()
+    price = graphene.Float()
     expiration_date = graphene.DateTime()
 
 
@@ -195,16 +194,14 @@ class AddItemMutation(graphene.Mutation):
             Item.objects.get(name=input.name)
             raise GraphQLError('名称重复')
         except Item.DoesNotExist:
-            storage = Storage.objects.get(pk=input.storage)
             item = Item(
                 name=input.name,
                 number=input.number,
                 description=input.description,
-                storage=storage,
+                storage=Storage.objects.get(pk=input.storage.id),
                 price=input.price,
+                expiration_date=input.expiration_date,
             )
-            if input.expiration_date:
-                item.expiration_date = make_aware(input.expiration_date)
             item.editor = info.context.user
             item.save()
             return AddItemMutation(item=item)
