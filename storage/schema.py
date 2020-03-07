@@ -1,6 +1,5 @@
 import graphene
 from django.contrib.auth import get_user_model
-from django.utils.timezone import make_aware
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
@@ -29,6 +28,44 @@ class UserType(DjangoObjectType):
 class SearchType(graphene.ObjectType):
     items = graphene.List(ItemType)
     storages = graphene.List(StorageType)
+
+
+class StorageInput(graphene.InputObjectType):
+    id = graphene.ID(required=True)
+    name = graphene.String()
+    description = graphene.String()
+
+
+class UpdateStorageInput(graphene.InputObjectType):
+    id = graphene.ID(required=True)
+    name = graphene.String()
+    description = graphene.String()
+    parent = StorageInput()
+
+
+class UpdateItemInput(graphene.InputObjectType):
+    id = graphene.ID(required=True)
+    name = graphene.String()
+    number = graphene.Int()
+    description = graphene.String()
+    price = graphene.Float()
+    expiration_date = graphene.DateTime()
+    storage = StorageInput()
+
+
+class AddStorageInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+    description = graphene.String()
+    parent = StorageInput()
+
+
+class AddItemInput(graphene.InputObjectType):
+    name = graphene.String(required=True)
+    number = graphene.Int(required=True)
+    storage = StorageInput(required=True)
+    description = graphene.String()
+    price = graphene.Float()
+    expiration_date = graphene.DateTime()
 
 
 class Query(graphene.ObjectType):
@@ -74,19 +111,6 @@ class Query(graphene.ObjectType):
         return SearchType(items=items, storages=storages)
 
 
-class StorageInput(graphene.InputObjectType):
-    id = graphene.ID(required=True)
-    name = graphene.String()
-    description = graphene.String()
-
-
-class UpdateStorageInput(graphene.InputObjectType):
-    id = graphene.ID(required=True)
-    name = graphene.String()
-    description = graphene.String()
-    parent = StorageInput()
-
-
 class UpdateStorageMutation(graphene.Mutation):
     class Arguments:
         input = UpdateStorageInput(required=True)
@@ -109,16 +133,6 @@ class UpdateStorageMutation(graphene.Mutation):
             storage.parent = parent
         storage.save()
         return UpdateStorageMutation(storage=storage)
-
-
-class UpdateItemInput(graphene.InputObjectType):
-    id = graphene.ID(required=True)
-    name = graphene.String()
-    number = graphene.Int()
-    description = graphene.String()
-    price = graphene.Float()
-    expiration_date = graphene.DateTime()
-    storage = StorageInput()
 
 
 class UpdateItemMutation(graphene.Mutation):
@@ -147,12 +161,6 @@ class UpdateItemMutation(graphene.Mutation):
         return UpdateItemMutation(item=item)
 
 
-class AddStorageInput(graphene.InputObjectType):
-    name = graphene.String(required=True)
-    description = graphene.String()
-    parent = StorageInput()
-
-
 class AddStorageMutation(graphene.Mutation):
     class Arguments:
         input = AddStorageInput(required=True)
@@ -171,15 +179,6 @@ class AddStorageMutation(graphene.Mutation):
                 storage.parent = parent
             storage.save()
             return AddStorageMutation(storage=storage)
-
-
-class AddItemInput(graphene.InputObjectType):
-    name = graphene.String(required=True)
-    number = graphene.Int(required=True)
-    storage = StorageInput(required=True)
-    description = graphene.String()
-    price = graphene.Float()
-    expiration_date = graphene.DateTime()
 
 
 class AddItemMutation(graphene.Mutation):
@@ -207,8 +206,42 @@ class AddItemMutation(graphene.Mutation):
             return AddItemMutation(item=item)
 
 
+class DeleteStorageMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+
+    deletedId = graphene.ID()
+
+    @login_required
+    def mutate(self, info, id):
+        try:
+            storage = Storage.objects.get(pk=id)
+            storage.delete()
+            return DeleteStorageMutation(deletedId=id)
+        except Storage.DoesNotExist:
+            raise GraphQLError('位置不存在')
+
+
+class DeleteItemMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+
+    deletedId = graphene.ID()
+
+    @login_required
+    def mutate(self, info, id):
+        try:
+            item = Item.objects.get(pk=id)
+            item.delete()
+            return DeleteItemMutation(deletedId=id)
+        except Item.DoesNotExist:
+            raise GraphQLError('物品不存在')
+
+
 class Mutation(graphene.ObjectType):
     update_storage = UpdateStorageMutation.Field()
     update_item = UpdateItemMutation.Field()
     add_storage = AddStorageMutation.Field()
     add_item = AddItemMutation.Field()
+    delete_storage = DeleteStorageMutation.Field()
+    delete_item = DeleteItemMutation.Field()
