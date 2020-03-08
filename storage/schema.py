@@ -76,6 +76,7 @@ class Query(graphene.ObjectType):
     storage = graphene.Field(StorageType, id=graphene.ID())
     item = graphene.Field(ItemType, id=graphene.ID())
     search = graphene.Field(SearchType, key=graphene.String())
+    latest_items = graphene.List(ItemType, number=graphene.Int())
 
     @login_required
     def resolve_me(self, info, **kwargs):
@@ -109,6 +110,11 @@ class Query(graphene.ObjectType):
             Storage.objects.filter(name__icontains=key)
             | Storage.objects.filter(description__icontains=key)).distinct()
         return SearchType(items=items, storages=storages)
+
+    @login_required
+    def resolve_latest_items(self, info, number):
+        items = Item.objects.all().order_by('-update_date')[:number]
+        return items
 
 
 class UpdateStorageMutation(graphene.Mutation):
