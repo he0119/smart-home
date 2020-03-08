@@ -46,9 +46,15 @@ class Item(models.Model):
                                 null=True,
                                 blank=True,
                                 verbose_name='价格')
-    update_date = models.DateTimeField(verbose_name='更新时间')
+    update_date = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    expiration_date = models.DateTimeField(
+        verbose_name='有效期至',
+        null=True,
+        blank=True,
+    )
     storage = models.ForeignKey(Storage,
                                 on_delete=models.CASCADE,
+                                related_name='items',
                                 verbose_name='属于')
     editor = models.ForeignKey(
         settings.AUTH_USER_MODEL,

@@ -11,8 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-
-from django.contrib import messages
+from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.getcwd()
@@ -38,8 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mptt',
-    'crispy_forms',
     'import_export',
+    'graphene_django',
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'storage',
 ]
 
@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
+        'HOST': 'hehome.xyz',
         'PORT': '5432',
     }
 }
@@ -132,20 +132,32 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # https://docs.djangoproject.com/zh-hans/3.0/topics/auth/default/
 
 LOGIN_URL = '/admin/'
-
-# MESSAGES
-# https://docs.djangoproject.com/zh-hans/3.0/ref/settings/#std:setting-MESSAGE_TAGS
-
-MESSAGE_TAGS = {
-    messages.ERROR: 'danger',
-}
-
-# Crispy Forms
-# https://django-crispy-forms.readthedocs.io/en/latest/install.html
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # MPTT
 # https://django-mptt.readthedocs.io/en/latest/forms.html
 
 MPTT_DEFAULT_LEVEL_INDICATOR = '--'
+
+# Graphene(GraphQL)
+# https://docs.graphene-python.org/projects/django/en/latest/installation/
+
+GRAPHENE = {
+    'SCHEMA': 'home.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
+}
+
+# Django-GraphQL-JWT
+# https://django-graphql-jwt.domake.io/en/latest/refresh_token.html
+
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
+    'JWT_EXPIRATION_DELTA': timedelta(minutes=5),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=30),
+}

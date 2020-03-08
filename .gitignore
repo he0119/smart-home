@@ -130,3 +130,6 @@ dmypy.json
 
 # static
 static
+
+# vscode
+.vscode

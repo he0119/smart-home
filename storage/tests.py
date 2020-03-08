@@ -1,4 +1,6 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
+from graphql_jwt.testcases import JSONWebTokenTestCase
 
 from .models import Storage
 
@@ -37,3 +39,44 @@ class StorageModelTests(TestCase):
         self.assertEqual(toolbox.parent, locker)
         self.assertEqual(query_set_to_list(toolbox.get_ancestors()),
                          [balcony, locker])
+
+
+class UserTests(JSONWebTokenTestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create(username='test')
+        self.client.authenticate(self.user)
+
+    def test_get_user(self):
+        query = '''
+            query me {
+                me {
+                    username
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+        self.assertEqual(content.data['me'], {'username': 'test'})
+
+
+class StoragesTests(JSONWebTokenTestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create(username='test')
+        self.client.authenticate(self.user)
+        balcony = Storage.objects.create(name='阳台', description='家里的阳台')
+        locker = Storage.objects.create(name='阳台储物柜', parent=balcony)
+        toolbox = Storage.objects.create(name='工具箱', parent=locker)
+        toolbox2 = Storage.objects.create(name='工具箱2', parent=locker)
+
+    def test_get_storages(self):
+        query = '''
+            query storage {
+                storages {
+                    name
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+        names = [storage['name'] for storage in content.data['storages']]
+        self.assertEqual(set(names), set(['阳台', '阳台储物柜', '工具箱', '工具箱2']))
