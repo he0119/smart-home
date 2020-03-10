@@ -34,9 +34,9 @@ python manage.py createsuperuser
 
 通过命令来备份或还原
 
-还原时注意删除掉 ID 项，因为 ID 是自增的，并且位置只能通过管理页面导入。
-
 ```bash
 sudo docker exec postgres pg_dump -U postgres postgres > backup.sql
-sudo docker exec -i postgres psql -U postgres postgres < backup.sql
+# --set ON_ERROR_STOP=on: 一旦出错便停止
+# --single-transaction: 把整个输入当成一个单独数据库事务，要么全部成功，要么全部失败
+sudo docker exec -i postgres psql --set ON_ERROR_STOP=on --single-transaction -U postgres postgres < backup.sql
 ```
