@@ -76,13 +76,13 @@ class Query(graphene.ObjectType):
     root_storage = graphene.List(StorageType)
     storages = graphene.List(StorageType)
     items = graphene.List(ItemType)
-    storage = graphene.Field(StorageType, id=graphene.ID())
-    item = graphene.Field(ItemType, id=graphene.ID())
-    search = graphene.Field(SearchType, key=graphene.String())
-    latest_items = graphene.List(ItemType, number=graphene.Int())
+    storage = graphene.Field(StorageType, id=graphene.ID(required=True))
+    item = graphene.Field(ItemType, id=graphene.ID(required=True))
+    search = graphene.Field(SearchType, key=graphene.String(required=True))
+    latest_items = graphene.List(ItemType, number=graphene.Int(required=True))
     near_expired_items = graphene.List(ItemType,
-                                       number=graphene.Int(),
-                                       within=graphene.Int())
+                                       within=graphene.Int(required=True),
+                                       number=graphene.Int())
     expired_items = graphene.List(ItemType, number=graphene.Int())
 
     @login_required
@@ -124,27 +124,30 @@ class Query(graphene.ObjectType):
         return items
 
     @login_required
-    def resolve_near_expired_items(self, info, number, within):
+    def resolve_near_expired_items(self, info, within, number=None):
         """ 接近过期的物品
 
-        number: 显示多少物品
         within: 最近多少天内过期
+        number: 显示多少物品，不提供则显示全部
         """
         now = timezone.now()
         expired = now + timedelta(days=within)
         items = Item.objects.all().filter(
             expiration_date__isnull=False,
-            expiration_date__range=(
-                now, expired)).order_by('expiration_date')[:number]
+            expiration_date__range=(now, expired)).order_by('expiration_date')
+        if number:
+            return items[:number]
         return items
 
     @login_required
-    def resolve_expired_items(self, info, number):
+    def resolve_expired_items(self, info, number=None):
         """ 已经过期的物品 """
         now = timezone.now()
         items = Item.objects.all().filter(
             expiration_date__isnull=False,
-            expiration_date__lt=now).order_by('expiration_date')[:number]
+            expiration_date__lt=now).order_by('expiration_date')
+        if number:
+            return items[:number]
         return items
 
 
