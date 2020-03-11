@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 import graphene
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
@@ -77,6 +80,10 @@ class Query(graphene.ObjectType):
     item = graphene.Field(ItemType, id=graphene.ID())
     search = graphene.Field(SearchType, key=graphene.String())
     latest_items = graphene.List(ItemType, number=graphene.Int())
+    near_expired_items = graphene.List(ItemType,
+                                       number=graphene.Int(),
+                                       within=graphene.Int())
+    expired_items = graphene.List(ItemType, number=graphene.Int())
 
     @login_required
     def resolve_me(self, info, **kwargs):
@@ -114,6 +121,30 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_latest_items(self, info, number):
         items = Item.objects.all().order_by('-update_date')[:number]
+        return items
+
+    @login_required
+    def resolve_near_expired_items(self, info, number, within):
+        """ 接近过期的物品
+
+        number: 显示多少物品
+        within: 最近多少天内过期
+        """
+        now = timezone.now()
+        expired = now + timedelta(days=within)
+        items = Item.objects.all().filter(
+            expiration_date__isnull=False,
+            expiration_date__range=(
+                now, expired)).order_by('expiration_date')[:number]
+        return items
+
+    @login_required
+    def resolve_expired_items(self, info, number):
+        """ 已经过期的物品 """
+        now = timezone.now()
+        items = Item.objects.all().filter(
+            expiration_date__isnull=False,
+            expiration_date__lt=now).order_by('expiration_date')[:number]
         return items
 
 
