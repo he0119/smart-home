@@ -61,6 +61,7 @@ class Item(models.Model):
         on_delete=models.CASCADE,
         verbose_name='录入者',
     )
+    date_added = models.DateTimeField(auto_now_add=True, verbose_name='添加时间')
 
     def __str__(self):
         return self.name
