@@ -79,7 +79,8 @@ class Query(graphene.ObjectType):
     storage = graphene.Field(StorageType, id=graphene.ID(required=True))
     item = graphene.Field(ItemType, id=graphene.ID(required=True))
     search = graphene.Field(SearchType, key=graphene.String(required=True))
-    latest_items = graphene.List(ItemType, number=graphene.Int(required=True))
+    latest_update_items = graphene.List(ItemType, number=graphene.Int(required=True))
+    latest_added_items = graphene.List(ItemType, number=graphene.Int(required=True))
     near_expired_items = graphene.List(ItemType,
                                        within=graphene.Int(required=True),
                                        number=graphene.Int())
@@ -119,8 +120,13 @@ class Query(graphene.ObjectType):
         return SearchType(items=items, storages=storages)
 
     @login_required
-    def resolve_latest_items(self, info, number):
+    def resolve_latest_update_items(self, info, number):
         items = Item.objects.all().order_by('-update_date')[:number]
+        return items
+
+    @login_required
+    def resolve_latest_added_items(self, info, number):
+        items = Item.objects.all().order_by('-date_added')[:number]
         return items
 
     @login_required
