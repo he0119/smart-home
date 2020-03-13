@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2020-03-13
+
+### Added
+
+- 支持获取位置的祖先节点
+- 新增 `添加时间` 字段
+- 新增查询最近更新
+- 添加查询最近或已过期物品
+
 ## [0.3.0] - 2020-03-08
 
 ### Changed
@@ -31,8 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.3.1...HEAD
 
+[0.3.1]: https://github.com/he0119/smart-home/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/he0119/smart-home/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/he0119/smart-home/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/he0119/smart-home/releases/tag/v0.1.0
