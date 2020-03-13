@@ -77,10 +77,14 @@ class Query(graphene.ObjectType):
     storages = graphene.List(StorageType)
     items = graphene.List(ItemType)
     storage = graphene.Field(StorageType, id=graphene.ID(required=True))
+    storage_ancestors = graphene.List(StorageType,
+                                       id=graphene.ID(required=True))
     item = graphene.Field(ItemType, id=graphene.ID(required=True))
     search = graphene.Field(SearchType, key=graphene.String(required=True))
-    recently_updated_items = graphene.List(ItemType, number=graphene.Int(required=True))
-    recently_added_items = graphene.List(ItemType, number=graphene.Int(required=True))
+    recently_updated_items = graphene.List(ItemType,
+                                           number=graphene.Int(required=True))
+    recently_added_items = graphene.List(ItemType,
+                                         number=graphene.Int(required=True))
     near_expired_items = graphene.List(ItemType,
                                        within=graphene.Int(required=True),
                                        number=graphene.Int())
@@ -105,6 +109,11 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_storage(self, info, id):
         return Storage.objects.get(pk=id)
+
+    @login_required
+    def resolve_storage_ancestors(self, info, id):
+        storage = Storage.objects.get(pk=id)
+        return storage.get_ancestors(include_self=True)
 
     @login_required
     def resolve_item(self, info, id):
