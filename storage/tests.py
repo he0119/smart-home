@@ -49,9 +49,9 @@ class UserTests(JSONWebTokenTestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.get(username='test')
-        self.client.authenticate(self.user)
 
     def test_get_user(self):
+        self.client.authenticate(self.user)
         query = '''
             query me {
                 me {
@@ -63,6 +63,16 @@ class UserTests(JSONWebTokenTestCase):
         self.assertIsNone(content.errors)
         self.assertEqual(content.data['me'], {'username': 'test'})
 
+    def test_unauthenticate_user(self):
+        query = '''
+            query me {
+                me {
+                    username
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNotNone(content.errors)
 
 class StoragesTests(JSONWebTokenTestCase):
     fixtures = ['tests.json']
