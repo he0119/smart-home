@@ -74,6 +74,7 @@ class UserTests(JSONWebTokenTestCase):
         content = self.client.execute(query)
         self.assertIsNotNone(content.errors)
 
+
 class StoragesTests(JSONWebTokenTestCase):
     fixtures = ['tests.json']
 
@@ -106,5 +107,93 @@ class StoragesTests(JSONWebTokenTestCase):
         '''
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
+
         name = content.data['storage']['name']
         self.assertEqual(name, toolbox.name)
+
+    def test_add_storage(self):
+        mutation = '''
+            mutation addStorage($input: AddStorageInput!) {
+                addStorage(input: $input) {
+                    storage {
+                        __typename
+                        id
+                        name
+                        description
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'name': 'test',
+                'description': 'some',
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        storage = content.data['addStorage']['storage']
+        self.assertEqual(storage['__typename'], 'StorageType')
+        self.assertEqual(storage['name'], 'test')
+        self.assertEqual(storage['description'], 'some')
+
+    def test_delete_storage(self):
+        mutation = '''
+            mutation deleteStorage($id: ID!) {
+                deleteStorage(id: $id) {
+                    deletedId
+                }
+            }
+        '''
+
+        toolbox = Storage.objects.get(name='工具箱')
+        variables = {
+            'id': toolbox.id
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        deletedId = content.data['deleteStorage']['deletedId']
+        self.assertEqual(deletedId, str(toolbox.id))
+        with self.assertRaises(Storage.DoesNotExist):
+            Storage.objects.get(name='工具箱')
+
+    def test_update_storage(self):
+        mutation = '''
+            mutation updateStorage($input: UpdateStorageInput!) {
+                updateStorage(input: $input) {
+                    storage {
+                        __typename
+                        id
+                        name
+                        description
+                        parent {
+                            __typename
+                            id
+                        }
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': 1,
+                'name': 'test',
+                'description': 'some',
+            }
+        }
+
+        old_storage = Storage.objects.get(pk=1)
+        self.assertEqual(old_storage.name, '阳台')
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+        storage = content.data['updateStorage']['storage']
+
+        self.assertEqual(storage['__typename'], 'StorageType')
+        self.assertEqual(storage['id'], '1')
+        self.assertEqual(storage['name'], 'test')
+        self.assertEqual(storage['description'], 'some')
