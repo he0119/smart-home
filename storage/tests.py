@@ -1,8 +1,10 @@
+from datetime import datetime, timezone
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from graphql_jwt.testcases import JSONWebTokenTestCase
 
-from .models import Storage
+from .models import Item, Storage
 
 
 def query_set_to_list(query_set):
@@ -75,7 +77,7 @@ class UserTests(JSONWebTokenTestCase):
         self.assertIsNotNone(content.errors)
 
 
-class StoragesTests(JSONWebTokenTestCase):
+class StorageTests(JSONWebTokenTestCase):
     fixtures = ['tests.json']
 
     def setUp(self):
@@ -149,9 +151,7 @@ class StoragesTests(JSONWebTokenTestCase):
         '''
 
         toolbox = Storage.objects.get(name='工具箱')
-        variables = {
-            'id': toolbox.id
-        }
+        variables = {'id': toolbox.id}
 
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
@@ -197,3 +197,160 @@ class StoragesTests(JSONWebTokenTestCase):
         self.assertEqual(storage['id'], '1')
         self.assertEqual(storage['name'], 'test')
         self.assertEqual(storage['description'], 'some')
+
+
+class ItemTests(JSONWebTokenTestCase):
+    fixtures = ['tests.json']
+
+    def setUp(self):
+        self.user = get_user_model().objects.get(username='test')
+        self.client.authenticate(self.user)
+
+    def test_get_items(self):
+        query = '''
+            query items {
+                items {
+                    name
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+        names = [item['name'] for item in content.data['items']]
+        self.assertEqual(set(names), set(['雨伞', '口罩']))
+
+    def test_get_item(self):
+        umbrella = Item.objects.get(name='雨伞')
+
+        query = f'''
+            query item {{
+                item(id: {umbrella.id}) {{
+                    name
+                }}
+            }}
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        name = content.data['item']['name']
+        self.assertEqual(name, umbrella.name)
+
+    def test_add_item(self):
+        mutation = '''
+            mutation addItem($input: AddItemInput!) {
+                addItem(input: $input) {
+                    item {
+                        __typename
+                        id
+                        name
+                        number
+                        storage {
+                            id
+                            name
+                        }
+                        description
+                        price
+                        expirationDate
+                        updateDate
+                        editor {
+                            username
+                        }
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'name': 'test',
+                'number': 1,
+                'storage': {
+                    'id': 1
+                },
+                'description': 'some',
+                'price': '12.0',
+                'expirationDate': None,
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        item = content.data['addItem']['item']
+        self.assertEqual(item['__typename'], 'ItemType')
+        self.assertEqual(item['name'], 'test')
+        self.assertEqual(item['description'], 'some')
+
+    def test_delete_item(self):
+        mutation = '''
+            mutation deleteItem($id: ID!) {
+                deleteItem(id: $id) {
+                    deletedId
+                }
+            }
+        '''
+
+        umbrella = Item.objects.get(name='雨伞')
+        variables = {'id': umbrella.id}
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        deletedId = content.data['deleteItem']['deletedId']
+        self.assertEqual(deletedId, str(umbrella.id))
+        with self.assertRaises(Item.DoesNotExist):
+            Item.objects.get(name='雨伞')
+
+    def test_update_item(self):
+        mutation = '''
+            mutation updateItem($input: UpdateItemInput!) {
+                updateItem(input: $input) {
+                    item {
+                        __typename
+                        id
+                        name
+                        number
+                        storage {
+                            id
+                            name
+                        }
+                        description
+                        price
+                        expirationDate
+                        updateDate
+                        editor {
+                            username
+                        }
+                    }
+                }
+            }
+        '''
+        expiration_date = datetime.now(timezone.utc)
+        variables = {
+            'input': {
+                'id': 1,
+                'name': 'test',
+                'number': 2,
+                'storage': {
+                    'id': 2
+                },
+                'description': 'some',
+                'price': '12.0',
+                'expirationDate': expiration_date.isoformat(),
+            }
+        }
+
+        old_item = Item.objects.get(pk=1)
+        self.assertEqual(old_item.name, '雨伞')
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+        item = content.data['updateItem']['item']
+
+        self.assertEqual(item['__typename'], 'ItemType')
+        self.assertEqual(item['id'], '1')
+        self.assertEqual(item['name'], 'test')
+        self.assertEqual(item['number'], 2)
+        self.assertEqual(item['description'], 'some')
+        self.assertEqual(item['storage']['id'], '2')
+        self.assertEqual(item['price'], 12.0)
+        self.assertEqual(item['expirationDate'], expiration_date.isoformat())
