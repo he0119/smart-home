@@ -19,6 +19,9 @@ class Topic(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, verbose_name='发布时间')
     date_modified = models.DateTimeField(auto_now=True, verbose_name='修改时间')
 
+    def __str__(self):
+        return self.title
+
 
 class Comment(MPTTModel):
     """ 评论 """
