@@ -1,0 +1,508 @@
+[
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 1,
+    "fields": {
+      "app_label": "admin",
+      "model": "logentry"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 2,
+    "fields": {
+      "app_label": "auth",
+      "model": "permission"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 3,
+    "fields": {
+      "app_label": "auth",
+      "model": "group"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 4,
+    "fields": {
+      "app_label": "auth",
+      "model": "user"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 5,
+    "fields": {
+      "app_label": "contenttypes",
+      "model": "contenttype"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 6,
+    "fields": {
+      "app_label": "sessions",
+      "model": "session"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 7,
+    "fields": {
+      "app_label": "refresh_token",
+      "model": "refreshtoken"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 8,
+    "fields": {
+      "app_label": "storage",
+      "model": "storage"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 9,
+    "fields": {
+      "app_label": "storage",
+      "model": "item"
+    }
+  },
+  {
+    "model": "storage.storage",
+    "pk": 1,
+    "fields": {
+      "name": "\u9633\u53f0",
+      "parent": null,
+      "description": null,
+      "lft": 1,
+      "rght": 8,
+      "tree_id": 1,
+      "level": 0
+    }
+  },
+  {
+    "model": "storage.storage",
+    "pk": 2,
+    "fields": {
+      "name": "\u9633\u53f0\u50a8\u7269\u67dc",
+      "parent": 1,
+      "description": null,
+      "lft": 2,
+      "rght": 7,
+      "tree_id": 1,
+      "level": 1
+    }
+  },
+  {
+    "model": "storage.storage",
+    "pk": 3,
+    "fields": {
+      "name": "\u5de5\u5177\u7bb1",
+      "parent": 2,
+      "description": null,
+      "lft": 3,
+      "rght": 4,
+      "tree_id": 1,
+      "level": 2
+    }
+  },
+  {
+    "model": "storage.storage",
+    "pk": 4,
+    "fields": {
+      "name": "\u5de5\u5177\u7bb12",
+      "parent": 2,
+      "description": null,
+      "lft": 5,
+      "rght": 6,
+      "tree_id": 1,
+      "level": 2
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 1,
+    "fields": {
+      "name": "Can add log entry",
+      "content_type": 1,
+      "codename": "add_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 2,
+    "fields": {
+      "name": "Can change log entry",
+      "content_type": 1,
+      "codename": "change_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 3,
+    "fields": {
+      "name": "Can delete log entry",
+      "content_type": 1,
+      "codename": "delete_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 4,
+    "fields": {
+      "name": "Can view log entry",
+      "content_type": 1,
+      "codename": "view_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 5,
+    "fields": {
+      "name": "Can add permission",
+      "content_type": 2,
+      "codename": "add_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 6,
+    "fields": {
+      "name": "Can change permission",
+      "content_type": 2,
+      "codename": "change_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 7,
+    "fields": {
+      "name": "Can delete permission",
+      "content_type": 2,
+      "codename": "delete_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 8,
+    "fields": {
+      "name": "Can view permission",
+      "content_type": 2,
+      "codename": "view_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 9,
+    "fields": {
+      "name": "Can add group",
+      "content_type": 3,
+      "codename": "add_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 10,
+    "fields": {
+      "name": "Can change group",
+      "content_type": 3,
+      "codename": "change_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 11,
+    "fields": {
+      "name": "Can delete group",
+      "content_type": 3,
+      "codename": "delete_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 12,
+    "fields": {
+      "name": "Can view group",
+      "content_type": 3,
+      "codename": "view_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 13,
+    "fields": {
+      "name": "Can add user",
+      "content_type": 4,
+      "codename": "add_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 14,
+    "fields": {
+      "name": "Can change user",
+      "content_type": 4,
+      "codename": "change_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 15,
+    "fields": {
+      "name": "Can delete user",
+      "content_type": 4,
+      "codename": "delete_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 16,
+    "fields": {
+      "name": "Can view user",
+      "content_type": 4,
+      "codename": "view_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 17,
+    "fields": {
+      "name": "Can add content type",
+      "content_type": 5,
+      "codename": "add_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 18,
+    "fields": {
+      "name": "Can change content type",
+      "content_type": 5,
+      "codename": "change_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 19,
+    "fields": {
+      "name": "Can delete content type",
+      "content_type": 5,
+      "codename": "delete_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 20,
+    "fields": {
+      "name": "Can view content type",
+      "content_type": 5,
+      "codename": "view_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 21,
+    "fields": {
+      "name": "Can add session",
+      "content_type": 6,
+      "codename": "add_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 22,
+    "fields": {
+      "name": "Can change session",
+      "content_type": 6,
+      "codename": "change_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 23,
+    "fields": {
+      "name": "Can delete session",
+      "content_type": 6,
+      "codename": "delete_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 24,
+    "fields": {
+      "name": "Can view session",
+      "content_type": 6,
+      "codename": "view_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 25,
+    "fields": {
+      "name": "Can add refresh token",
+      "content_type": 7,
+      "codename": "add_refreshtoken"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 26,
+    "fields": {
+      "name": "Can change refresh token",
+      "content_type": 7,
+      "codename": "change_refreshtoken"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 27,
+    "fields": {
+      "name": "Can delete refresh token",
+      "content_type": 7,
+      "codename": "delete_refreshtoken"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 28,
+    "fields": {
+      "name": "Can view refresh token",
+      "content_type": 7,
+      "codename": "view_refreshtoken"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 29,
+    "fields": {
+      "name": "Can add \u4f4d\u7f6e",
+      "content_type": 8,
+      "codename": "add_storage"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 30,
+    "fields": {
+      "name": "Can change \u4f4d\u7f6e",
+      "content_type": 8,
+      "codename": "change_storage"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 31,
+    "fields": {
+      "name": "Can delete \u4f4d\u7f6e",
+      "content_type": 8,
+      "codename": "delete_storage"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 32,
+    "fields": {
+      "name": "Can view \u4f4d\u7f6e",
+      "content_type": 8,
+      "codename": "view_storage"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 33,
+    "fields": {
+      "name": "Can add \u7269\u54c1",
+      "content_type": 9,
+      "codename": "add_item"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 34,
+    "fields": {
+      "name": "Can change \u7269\u54c1",
+      "content_type": 9,
+      "codename": "change_item"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 35,
+    "fields": {
+      "name": "Can delete \u7269\u54c1",
+      "content_type": 9,
+      "codename": "delete_item"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 36,
+    "fields": {
+      "name": "Can view \u7269\u54c1",
+      "content_type": 9,
+      "codename": "view_item"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$180000$9Zxjhv3I754T$RXM/vToGVMGzNgNnY4HJR8KBwE/5akiXTAysZSc/B9I=",
+      "last_login": null,
+      "is_superuser": true,
+      "username": "test",
+      "first_name": "",
+      "last_name": "",
+      "email": "test@test.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2020-03-14T02:33:04.454Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "refresh_token.refreshtoken",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "token": "c60f0da5a4bcea067e23adffd0e31e5fe3b9d488",
+      "created": "2020-03-14T02:34:58.334Z",
+      "revoked": null
+    }
+  },
+  {
+    "model": "storage.item",
+    "pk": 1,
+    "fields": {
+      "name": "\u96e8\u4f1e",
+      "number": 1,
+      "description": null,
+      "price": null,
+      "update_date": "2020-03-17T02:34:59.862Z",
+      "expiration_date": null,
+      "storage": 1,
+      "editor": 1,
+      "date_added": "2020-03-17T02:34:59.862Z"
+    }
+  },
+  {
+    "model": "storage.item",
+    "pk": 2,
+    "fields": {
+      "name": "\u53e3\u7f69",
+      "number": 1,
+      "description": "\u4e00\u7bb1",
+      "price": null,
+      "update_date": "2020-03-17T02:35:47.342Z",
+      "expiration_date": null,
+      "storage": 2,
+      "editor": 1,
+      "date_added": "2020-03-17T02:35:47.342Z"
+    }
+  }
+]
