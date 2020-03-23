@@ -132,20 +132,76 @@ class UpdateTopicMutation(graphene.Mutation):
         return UpdateTopicMutation(topic=topic)
 
 
-# class AddCommentMutation(graphene.Mutation):
-#     pass
+class AddCommentMutation(graphene.Mutation):
+    class Arguments:
+        input = AddCommentInput(required=True)
 
-# class DeleteCommentMutation(graphene.Mutation):
-#     pass
+    comment = graphene.Field(CommentType)
 
-# class UpdateCommentMutation(graphene.Mutation):
-#     pass
+    @login_required
+    def mutate(self, info, **kwargs):
+        input = kwargs.get('input')
+
+        comment = Comment(
+            topic=Topic.objects.get(pk=input.topic.id),
+            user=info.context.user,
+            body=input.body,
+        )
+        if input.parent:
+            parent_comment = Comment.objects.get(pk=input.parent.id)
+            # 若回复层级超过二级，则转换为二级
+            comment.parent_id = parent_comment.get_root().id
+            # 被回复人
+            comment.reply_to = parent_comment.user
+        comment.save()
+        return AddCommentMutation(comment=comment)
+
+
+class DeleteCommentMutation(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+
+    deletedId = graphene.ID()
+
+    @login_required
+    def mutate(self, info, **kwargs):
+        id = kwargs.get('id')
+
+        try:
+            comment = Comment.objects.get(pk=id)
+            comment.delete()
+            return DeleteCommentMutation(deletedId=id)
+        except Comment.DoesNotExist:
+            raise GraphQLError('评论不存在')
+
+
+class UpdateCommentMutation(graphene.Mutation):
+    class Arguments:
+        input = UpdateCommentInput(required=True)
+
+    comment = graphene.Field(CommentType)
+
+    @login_required
+    def mutate(self, info, **kwargs):
+        input = kwargs.get('input')
+
+        try:
+            comment = Comment.objects.get(pk=input.id)
+        except Comment.DoesNotExist:
+            raise GraphQLError('评论不存在')
+
+        comment.body = input.body
+        comment.save()
+        return UpdateCommentMutation(comment=comment)
 
 
 class Mutation(graphene.ObjectType):
     add_topic = AddTopicMutation.Field()
     delete_topic = DeleteTopicMutation.Field()
     update_topic = UpdateTopicMutation.Field()
+    add_comment = AddCommentMutation.Field()
+    delete_comment = DeleteCommentMutation.Field()
+    update_comment = UpdateCommentMutation.Field()
 
 
 #endregion
