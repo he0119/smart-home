@@ -39,6 +39,7 @@ class Query(graphene.ObjectType):
 
 
 #region mutation
+#region inputs
 class TopicInput(graphene.InputObjectType):
     id = graphene.ID(required=True)
     title = graphene.String()
@@ -74,6 +75,8 @@ class UpdateCommentInput(graphene.InputObjectType):
     body = graphene.String()
 
 
+#endregion
+#region Topic
 class AddTopicMutation(graphene.Mutation):
     class Arguments:
         input = AddTopicInput(required=True)
@@ -104,8 +107,10 @@ class DeleteTopicMutation(graphene.Mutation):
         id = kwargs.get('id')
 
         try:
-            storage = Topic.objects.get(pk=id)
-            storage.delete()
+            topic = Topic.objects.get(pk=id)
+            if topic.user != info.context.user:
+                raise GraphQLError('只能删除自己创建的话题')
+            topic.delete()
             return DeleteTopicMutation(deletedId=id)
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
@@ -126,12 +131,16 @@ class UpdateTopicMutation(graphene.Mutation):
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
 
+        if topic.user != info.context.user:
+            raise GraphQLError('只能修改自己创建的话题')
         topic.title = input.title
         topic.description = input.description
         topic.save()
         return UpdateTopicMutation(topic=topic)
 
 
+#endregion
+#region Comment
 class AddCommentMutation(graphene.Mutation):
     class Arguments:
         input = AddCommentInput(required=True)
@@ -169,6 +178,8 @@ class DeleteCommentMutation(graphene.Mutation):
 
         try:
             comment = Comment.objects.get(pk=id)
+            if comment.user != info.context.user:
+                raise GraphQLError('只能删除自己创建的评论')
             comment.delete()
             return DeleteCommentMutation(deletedId=id)
         except Comment.DoesNotExist:
@@ -190,9 +201,14 @@ class UpdateCommentMutation(graphene.Mutation):
         except Comment.DoesNotExist:
             raise GraphQLError('评论不存在')
 
+        if comment.user != info.context.user:
+            raise GraphQLError('只能修改自己创建的评论')
         comment.body = input.body
         comment.save()
         return UpdateCommentMutation(comment=comment)
+
+
+#endregion
 
 
 class Mutation(graphene.ObjectType):
