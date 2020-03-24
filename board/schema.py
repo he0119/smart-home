@@ -50,7 +50,7 @@ class Query(graphene.ObjectType):
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
 
-        q = topic.comments.all().order_by('-date_created')
+        q = topic.comments.all().order_by('date_created')
         if number:
             return q[:number]
         return q
