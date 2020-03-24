@@ -12,6 +12,7 @@ class Topic(models.Model):
 
     title = models.CharField(max_length=200, verbose_name='标题')
     description = models.TextField(verbose_name='说明')
+    is_open = models.BooleanField(verbose_name='进行中')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
                              related_name='topics',

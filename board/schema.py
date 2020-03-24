@@ -44,6 +44,7 @@ class TopicInput(graphene.InputObjectType):
     id = graphene.ID(required=True)
     title = graphene.String()
     description = graphene.String()
+    is_open = graphene.Boolean()
 
 
 class CommentInput(graphene.InputObjectType):
@@ -62,6 +63,7 @@ class UpdateTopicInput(graphene.InputObjectType):
     id = graphene.ID(required=True)
     title = graphene.String()
     description = graphene.String()
+    is_open = graphene.Boolean()
 
 
 class AddCommentInput(graphene.InputObjectType):
@@ -91,6 +93,7 @@ class AddTopicMutation(graphene.Mutation):
             title=input.title,
             description=input.description,
             user=info.context.user,
+            is_open=True,
         )
         topic.save()
         return AddTopicMutation(topic=topic)
@@ -135,6 +138,7 @@ class UpdateTopicMutation(graphene.Mutation):
             raise GraphQLError('只能修改自己创建的话题')
         topic.title = input.title
         topic.description = input.description
+        topic.is_open = input.is_open
         topic.save()
         return UpdateTopicMutation(topic=topic)
 
