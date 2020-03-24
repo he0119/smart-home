@@ -21,18 +21,39 @@ class CommentType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    topics = graphene.List(TopicType)
-    comments = graphene.List(CommentType, topic_id=graphene.ID(required=True))
+    topics = graphene.List(
+        TopicType,
+        number=graphene.Int(),
+    )
+    comments = graphene.List(
+        CommentType,
+        topic_id=graphene.ID(required=True),
+        number=graphene.Int(),
+    )
 
     @login_required
     def resolve_topics(self, info, **kwargs):
-        return Topic.objects.all()
+        number = kwargs.get('number')
+
+        q = Topic.objects.all().order_by('-is_open', '-date_modified')
+        if number:
+            return q[:number]
+        return q
 
     @login_required
     def resolve_comments(self, info, **kwargs):
         topic_id = kwargs.get('topic_id')
+        number = kwargs.get('number')
 
-        return Topic.objects.get(pk=topic_id).comments.all()
+        try:
+            topic = Topic.objects.get(pk=topic_id)
+        except Topic.DoesNotExist:
+            raise GraphQLError('话题不存在')
+
+        q = topic.comments.all().order_by('-date_created')
+        if number:
+            return q[:number]
+        return q
 
 
 # endregion
