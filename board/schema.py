@@ -65,7 +65,6 @@ class TopicInput(graphene.InputObjectType):
     id = graphene.ID(required=True)
     title = graphene.String()
     description = graphene.String()
-    is_open = graphene.Boolean()
 
 
 class CommentInput(graphene.InputObjectType):
@@ -84,7 +83,6 @@ class UpdateTopicInput(graphene.InputObjectType):
     id = graphene.ID(required=True)
     title = graphene.String()
     description = graphene.String()
-    is_open = graphene.Boolean()
 
 
 class AddCommentInput(graphene.InputObjectType):
@@ -96,6 +94,14 @@ class AddCommentInput(graphene.InputObjectType):
 class UpdateCommentInput(graphene.InputObjectType):
     id = graphene.ID(required=True)
     body = graphene.String()
+
+
+class CloseTopicInput(graphene.InputObjectType):
+    topic_id = graphene.ID(required=True)
+
+
+class ReopenTopicInput(graphene.InputObjectType):
+    topic_id = graphene.ID(required=True)
 
 
 #endregion
@@ -159,9 +165,54 @@ class UpdateTopicMutation(graphene.Mutation):
             raise GraphQLError('只能修改自己创建的话题')
         topic.title = input.title
         topic.description = input.description
-        topic.is_open = input.is_open
         topic.save()
         return UpdateTopicMutation(topic=topic)
+
+
+class CloseTopicMutation(graphene.Mutation):
+    class Arguments:
+        input = CloseTopicInput(required=True)
+
+    topic = graphene.Field(TopicType)
+
+    @login_required
+    def mutate(self, info, **kwargs):
+        input = kwargs.get('input')
+
+        try:
+            topic = Topic.objects.get(pk=input.topic_id)
+        except Topic.DoesNotExist:
+            raise GraphQLError('话题不存在')
+
+        if topic.user != info.context.user:
+            raise GraphQLError('只能修改自己创建的话题')
+
+        topic.is_open = False
+        topic.save()
+        return CloseTopicMutation(topic=topic)
+
+
+class ReopenTopicMutation(graphene.Mutation):
+    class Arguments:
+        input = ReopenTopicInput(required=True)
+
+    topic = graphene.Field(TopicType)
+
+    @login_required
+    def mutate(self, info, **kwargs):
+        input = kwargs.get('input')
+
+        try:
+            topic = Topic.objects.get(pk=input.topic_id)
+        except Topic.DoesNotExist:
+            raise GraphQLError('话题不存在')
+
+        if topic.user != info.context.user:
+            raise GraphQLError('只能修改自己创建的话题')
+
+        topic.is_open = True
+        topic.save()
+        return ReopenTopicMutation(topic=topic)
 
 
 #endregion
@@ -240,6 +291,8 @@ class Mutation(graphene.ObjectType):
     add_topic = AddTopicMutation.Field()
     delete_topic = DeleteTopicMutation.Field()
     update_topic = UpdateTopicMutation.Field()
+    close_topic = CloseTopicMutation.Field()
+    reopen_topic = ReopenTopicMutation.Field()
     add_comment = AddCommentMutation.Field()
     delete_comment = DeleteCommentMutation.Field()
     update_comment = UpdateCommentMutation.Field()
