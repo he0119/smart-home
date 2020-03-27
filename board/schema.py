@@ -21,6 +21,7 @@ class CommentType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
+    topic = graphene.Field(TopicType, id=graphene.ID(required=True))
     topics = graphene.List(
         TopicType,
         number=graphene.Int(),
@@ -30,6 +31,10 @@ class Query(graphene.ObjectType):
         topic_id=graphene.ID(required=True),
         number=graphene.Int(),
     )
+
+    @login_required
+    def resolve_topic(self, info, id):
+        return Topic.objects.get(pk=id)
 
     @login_required
     def resolve_topics(self, info, **kwargs):
