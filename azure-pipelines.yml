@@ -49,7 +49,7 @@ jobs:
   - script: |
       pushd '$(projectRoot)'
       python manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
-      coverage run --source='.' --omit='venv/*' manage.py test && coverage xml && coverage html
+      coverage run manage.py test && coverage xml
     displayName: 'Run tests'
     env: { TESTING_SERVER: true }
   - task: PublishTestResults@2
@@ -60,7 +60,6 @@ jobs:
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
-      reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'
 
 - job: 'Build'
   dependsOn: 'Test'
