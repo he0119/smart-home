@@ -44,16 +44,23 @@ jobs:
       python -m pip install --upgrade pip setuptools wheel
       pip install -r requirements.txt
       pip install unittest-xml-reporting
+      pip install coverage
     displayName: 'Install prerequisites'
   - script: |
       pushd '$(projectRoot)'
       python manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
+      coverage run --source='.' --omit='venv/*' manage.py test && coverage xml && coverage html
     displayName: 'Run tests'
     env: { TESTING_SERVER: true }
   - task: PublishTestResults@2
     inputs:
       testResultsFiles: "**/TEST-*.xml"
     condition: succeededOrFailed()
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/**/htmlcov'
 
 - job: 'Build'
   dependsOn: 'Test'
