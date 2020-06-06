@@ -48,8 +48,7 @@ jobs:
     displayName: 'Install prerequisites'
   - script: |
       pushd '$(projectRoot)'
-      python manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
-      coverage run manage.py test && coverage xml
+      coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input && coverage xml
     displayName: 'Run tests'
     env: { TESTING_SERVER: true }
   - task: PublishTestResults@2
