@@ -130,7 +130,7 @@ class DeleteTopicMutation(graphene.Mutation):
     class Arguments:
         input = DeleteTopicInput(required=True)
 
-    topic_id = graphene.ID()
+    deletedId = graphene.ID()
 
     @login_required
     def mutate(self, info, **kwargs):
@@ -141,7 +141,7 @@ class DeleteTopicMutation(graphene.Mutation):
             if topic.user != info.context.user:
                 raise GraphQLError('只能删除自己创建的话题')
             topic.delete()
-            return DeleteTopicMutation(topic_id=input.topic_id)
+            return DeleteTopicMutation(deletedId=input.topic_id)
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
 
