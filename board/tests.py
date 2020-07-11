@@ -1,14 +1,7 @@
-from datetime import datetime, timezone
-
 from django.contrib.auth import get_user_model
 from graphql_jwt.testcases import JSONWebTokenTestCase
 
 from .models import Comment, Topic
-
-
-def query_set_to_list(query_set):
-    """ 转换 TreeQuerySet 到列表 """
-    return [i for i in query_set]
 
 
 class TopicTests(JSONWebTokenTestCase):
