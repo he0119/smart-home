@@ -12,6 +12,7 @@ RUN set -e; \
 		linux-headers \
 	; \
 	pip install --no-cache-dir -r requirements.txt; \
+  pip install uwsgi; \
 	apk del .build-deps;
 
 # 复制网站
