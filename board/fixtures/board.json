@@ -1,0 +1,43 @@
+[
+  {
+    "model": "board.topic",
+    "pk": 1,
+    "fields": {
+      "title": "\u4f60\u597d\u4e16\u754c",
+      "description": "\u8fd9\u662f\u4e00\u4e2a\u6d4b\u8bd5\u8bdd\u9898",
+      "is_open": true,
+      "user": 1,
+      "date_created": "2020-07-11T02:19:43.721Z",
+      "date_modified": "2020-07-11T02:19:43.721Z"
+    }
+  },
+  {
+    "model": "board.topic",
+    "pk": 2,
+    "fields": {
+      "title": "\u5173\u95ed\u8bdd\u9898",
+      "description": "\u4e00\u4e2a\u5173\u95ed\u7684\u8bdd\u9898",
+      "is_open": false,
+      "user": 1,
+      "date_created": "2020-07-11T07:27:53.093Z",
+      "date_modified": "2020-07-11T07:27:53.093Z"
+    }
+  },
+  {
+    "model": "board.comment",
+    "pk": 1,
+    "fields": {
+      "topic": 1,
+      "user": 1,
+      "body": "\u4f60\u597d\uff01",
+      "date_created": "2020-07-11T02:20:23.803Z",
+      "date_modified": "2020-07-11T02:20:23.803Z",
+      "parent": null,
+      "reply_to": null,
+      "lft": 1,
+      "rght": 2,
+      "tree_id": 1,
+      "level": 0
+    }
+  }
+]

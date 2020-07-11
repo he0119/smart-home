@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- 留言板功能
+
 ## [0.3.1] - 2020-03-13
 
 ### Added

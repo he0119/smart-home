@@ -13,7 +13,7 @@ def query_set_to_list(query_set):
 
 
 class StorageModelTests(TestCase):
-    fixtures = ['tests.json']
+    fixtures = ['user', 'storage']
 
     def test_ancestors(self):
         """ 测试父节点 """
@@ -47,7 +47,7 @@ class StorageModelTests(TestCase):
 
 
 class UserTests(JSONWebTokenTestCase):
-    fixtures = ['tests.json']
+    fixtures = ['user']
 
     def setUp(self):
         self.user = get_user_model().objects.get(username='test')
@@ -78,7 +78,7 @@ class UserTests(JSONWebTokenTestCase):
 
 
 class StorageTests(JSONWebTokenTestCase):
-    fixtures = ['tests.json']
+    fixtures = ['user', 'storage']
 
     def setUp(self):
         self.user = get_user_model().objects.get(username='test')
@@ -200,7 +200,7 @@ class StorageTests(JSONWebTokenTestCase):
 
 
 class ItemTests(JSONWebTokenTestCase):
-    fixtures = ['tests.json']
+    fixtures = ['user', 'storage']
 
     def setUp(self):
         self.user = get_user_model().objects.get(username='test')
