@@ -72,55 +72,19 @@
     }
   },
   {
-    "model": "storage.storage",
-    "pk": 1,
+    "model": "contenttypes.contenttype",
+    "pk": 10,
     "fields": {
-      "name": "\u9633\u53f0",
-      "parent": null,
-      "description": null,
-      "lft": 1,
-      "rght": 8,
-      "tree_id": 1,
-      "level": 0
+      "app_label": "board",
+      "model": "topic"
     }
   },
   {
-    "model": "storage.storage",
-    "pk": 2,
+    "model": "contenttypes.contenttype",
+    "pk": 11,
     "fields": {
-      "name": "\u9633\u53f0\u50a8\u7269\u67dc",
-      "parent": 1,
-      "description": null,
-      "lft": 2,
-      "rght": 7,
-      "tree_id": 1,
-      "level": 1
-    }
-  },
-  {
-    "model": "storage.storage",
-    "pk": 3,
-    "fields": {
-      "name": "\u5de5\u5177\u7bb1",
-      "parent": 2,
-      "description": null,
-      "lft": 3,
-      "rght": 4,
-      "tree_id": 1,
-      "level": 2
-    }
-  },
-  {
-    "model": "storage.storage",
-    "pk": 4,
-    "fields": {
-      "name": "\u5de5\u5177\u7bb12",
-      "parent": 2,
-      "description": null,
-      "lft": 5,
-      "rght": 6,
-      "tree_id": 1,
-      "level": 2
+      "app_label": "board",
+      "model": "comment"
     }
   },
   {
@@ -448,61 +412,93 @@
     }
   },
   {
+    "model": "auth.permission",
+    "pk": 37,
+    "fields": {
+      "name": "Can add \u8bdd\u9898",
+      "content_type": 10,
+      "codename": "add_topic"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 38,
+    "fields": {
+      "name": "Can change \u8bdd\u9898",
+      "content_type": 10,
+      "codename": "change_topic"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 39,
+    "fields": {
+      "name": "Can delete \u8bdd\u9898",
+      "content_type": 10,
+      "codename": "delete_topic"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 40,
+    "fields": {
+      "name": "Can view \u8bdd\u9898",
+      "content_type": 10,
+      "codename": "view_topic"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 41,
+    "fields": {
+      "name": "Can add \u8bc4\u8bba",
+      "content_type": 11,
+      "codename": "add_comment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 42,
+    "fields": {
+      "name": "Can change \u8bc4\u8bba",
+      "content_type": 11,
+      "codename": "change_comment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 43,
+    "fields": {
+      "name": "Can delete \u8bc4\u8bba",
+      "content_type": 11,
+      "codename": "delete_comment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 44,
+    "fields": {
+      "name": "Can view \u8bc4\u8bba",
+      "content_type": 11,
+      "codename": "view_comment"
+    }
+  },
+  {
     "model": "auth.user",
     "pk": 1,
     "fields": {
-      "password": "pbkdf2_sha256$180000$9Zxjhv3I754T$RXM/vToGVMGzNgNnY4HJR8KBwE/5akiXTAysZSc/B9I=",
+      "password": "pbkdf2_sha256$180000$8oACiCuu4J09$KZJT2LIDC+XUYBdjCAFo3B9DP+mHjz/wtysMcaqFP2o=",
       "last_login": null,
       "is_superuser": true,
       "username": "test",
       "first_name": "",
       "last_name": "",
-      "email": "test@test.com",
+      "email": "he0119@163.com",
       "is_staff": true,
       "is_active": true,
-      "date_joined": "2020-03-14T02:33:04.454Z",
+      "date_joined": "2020-07-11T02:01:56.012Z",
       "groups": [],
       "user_permissions": []
-    }
-  },
-  {
-    "model": "refresh_token.refreshtoken",
-    "pk": 1,
-    "fields": {
-      "user": 1,
-      "token": "c60f0da5a4bcea067e23adffd0e31e5fe3b9d488",
-      "created": "2020-03-14T02:34:58.334Z",
-      "revoked": null
-    }
-  },
-  {
-    "model": "storage.item",
-    "pk": 1,
-    "fields": {
-      "name": "\u96e8\u4f1e",
-      "number": 1,
-      "description": null,
-      "price": null,
-      "update_date": "2020-03-17T02:34:59.862Z",
-      "expiration_date": null,
-      "storage": 1,
-      "editor": 1,
-      "date_added": "2020-03-17T02:34:59.862Z"
-    }
-  },
-  {
-    "model": "storage.item",
-    "pk": 2,
-    "fields": {
-      "name": "\u53e3\u7f69",
-      "number": 1,
-      "description": "\u4e00\u7bb1",
-      "price": null,
-      "update_date": "2020-03-17T02:35:47.342Z",
-      "expiration_date": null,
-      "storage": 2,
-      "editor": 1,
-      "date_added": "2020-03-17T02:35:47.342Z"
     }
   }
 ]

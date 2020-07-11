@@ -1,0 +1,84 @@
+[
+  {
+    "model": "storage.storage",
+    "pk": 1,
+    "fields": {
+      "name": "\u9633\u53f0",
+      "parent": null,
+      "description": null,
+      "lft": 1,
+      "rght": 8,
+      "tree_id": 1,
+      "level": 0
+    }
+  },
+  {
+    "model": "storage.storage",
+    "pk": 2,
+    "fields": {
+      "name": "\u9633\u53f0\u50a8\u7269\u67dc",
+      "parent": 1,
+      "description": null,
+      "lft": 2,
+      "rght": 7,
+      "tree_id": 1,
+      "level": 1
+    }
+  },
+  {
+    "model": "storage.storage",
+    "pk": 3,
+    "fields": {
+      "name": "\u5de5\u5177\u7bb1",
+      "parent": 2,
+      "description": null,
+      "lft": 3,
+      "rght": 4,
+      "tree_id": 1,
+      "level": 2
+    }
+  },
+  {
+    "model": "storage.storage",
+    "pk": 4,
+    "fields": {
+      "name": "\u5de5\u5177\u7bb12",
+      "parent": 2,
+      "description": null,
+      "lft": 5,
+      "rght": 6,
+      "tree_id": 1,
+      "level": 2
+    }
+  },
+  {
+    "model": "storage.item",
+    "pk": 1,
+    "fields": {
+      "name": "\u96e8\u4f1e",
+      "number": 1,
+      "description": null,
+      "price": null,
+      "update_date": "2020-03-17T02:34:59.862Z",
+      "expiration_date": null,
+      "storage": 1,
+      "editor": 1,
+      "date_added": "2020-03-17T02:34:59.862Z"
+    }
+  },
+  {
+    "model": "storage.item",
+    "pk": 2,
+    "fields": {
+      "name": "\u53e3\u7f69",
+      "number": 1,
+      "description": "\u4e00\u7bb1",
+      "price": null,
+      "update_date": "2020-03-17T02:35:47.342Z",
+      "expiration_date": null,
+      "storage": 2,
+      "editor": 1,
+      "date_added": "2020-03-17T02:35:47.342Z"
+    }
+  }
+]
