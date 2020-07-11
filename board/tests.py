@@ -22,7 +22,7 @@ class TopicTests(JSONWebTokenTestCase):
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
         titles = [item['title'] for item in content.data['topics']]
-        self.assertEqual(set(titles), set(['你好世界']))
+        self.assertEqual(set(titles), set(['你好世界', '关闭话题']))
 
     def test_get_topic(self):
         helloworld = Topic.objects.get(title='你好世界')
@@ -48,6 +48,7 @@ class TopicTests(JSONWebTokenTestCase):
                         __typename
                         title
                         description
+                        isOpen
                     }
                 }
             }
@@ -66,6 +67,7 @@ class TopicTests(JSONWebTokenTestCase):
         self.assertEqual(topic['__typename'], 'TopicType')
         self.assertEqual(topic['title'], 'test')
         self.assertEqual(topic['description'], 'some')
+        self.assertEqual(topic['isOpen'], True)
 
     def test_delete_topic(self):
         mutation = '''
@@ -123,6 +125,69 @@ class TopicTests(JSONWebTokenTestCase):
         self.assertEqual(topic['id'], '1')
         self.assertEqual(topic['title'], 'test')
         self.assertEqual(topic['description'], 'some')
+
+    def test_close_topic(self):
+        mutation = '''
+            mutation closeTopic($input: CloseTopicInput!) {
+                closeTopic(input: $input) {
+                    topic {
+                        __typename
+                        id
+                        isOpen
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'topicId': 1,
+            }
+        }
+
+        old_topic = Topic.objects.get(pk=1)
+        self.assertEqual(old_topic.title, '你好世界')
+        self.assertEqual(old_topic.is_open, True)
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+        topic = content.data['closeTopic']['topic']
+
+        self.assertEqual(topic['__typename'], 'TopicType')
+        self.assertEqual(topic['id'], '1')
+        self.assertEqual(topic['isOpen'], False)
+
+    def test_reopen_topic(self):
+        mutation = '''
+            mutation reopenTopic($input: ReopenTopicInput!) {
+                reopenTopic(input: $input) {
+                    topic {
+                        __typename
+                        id
+                        title
+                        isOpen
+                    }
+                }
+            }
+        '''
+
+        variables = {
+            'input': {
+                'topicId': 2,
+            }
+        }
+
+        old_topic = Topic.objects.get(pk=2)
+        self.assertEqual(old_topic.title, '关闭话题')
+        self.assertEqual(old_topic.is_open, False)
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+        topic = content.data['reopenTopic']['topic']
+
+        self.assertEqual(topic['__typename'], 'TopicType')
+        self.assertEqual(topic['id'], '2')
+        self.assertEqual(topic['title'], '关闭话题')
+        self.assertEqual(topic['isOpen'], True)
 
 
 class CommentTests(JSONWebTokenTestCase):

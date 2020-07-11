@@ -12,6 +12,18 @@
     }
   },
   {
+    "model": "board.topic",
+    "pk": 2,
+    "fields": {
+      "title": "\u5173\u95ed\u8bdd\u9898",
+      "description": "\u4e00\u4e2a\u5173\u95ed\u7684\u8bdd\u9898",
+      "is_open": false,
+      "user": 1,
+      "date_created": "2020-07-11T07:27:53.093Z",
+      "date_modified": "2020-07-11T07:27:53.093Z"
+    }
+  },
+  {
     "model": "board.comment",
     "pk": 1,
     "fields": {
