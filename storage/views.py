@@ -1,6 +1,10 @@
+import base64
 import json
+from hashlib import sha256
+from hmac import HMAC
 
-from django.http import JsonResponse
+from django.conf import settings
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Item
@@ -9,11 +13,13 @@ from .models import Item
 @csrf_exempt
 def xiaoai(request):
     """ 小爱同学 """
-    print(request.headers['Authorization'])
     if request.method == 'POST':
-        received_json_data = json.loads(request.body)
-        response = process_request(received_json_data)
-        return JsonResponse(response)
+        if is_xiaomi(request.headers):
+            received_json_data = json.loads(request.body)
+            response = process_request(received_json_data)
+            return JsonResponse(response)
+        else:
+            HttpResponse(status=401)
 
     return JsonResponse({'xiaoai': 'working'})
 
@@ -64,3 +70,37 @@ def find_item(name: str) -> str:
         return f'共找到{item_count}个物品{message}。'
 
     return f'找不到名字是{name}的物品。'
+
+
+def xiaomi_hmac(headers: dict):
+    """ 小米签名
+
+    MIAI-HmacSHA256-V1
+    """
+    secret = settings.XIAOAI_SECRET
+    method = 'POST'
+    url_path = '/xiaoai'
+    param = ''
+    xiaomi_date = headers['X-Xiaomi-Date']
+    host = headers['Host']
+    content_type = headers['Content-Type']
+    md5 = headers['Content-Md5']
+    source = f'{method}\n{url_path}\n{param}\n{xiaomi_date}\n{host}\n{content_type}\n{md5}\n'
+    signature = HMAC(base64.b64decode(secret), source.encode('utf8'),
+                     sha256).digest().hex()
+    return signature
+
+
+def is_xiaomi(headers: dict) -> bool:
+    """ 是否是小米发送的请求 """
+    authorization = headers['Authorization']
+    sign_version = authorization.split()[0]
+    key_id, scope, signature = authorization.split()[1].split(':')
+    if sign_version == 'MIAI-HmacSHA256-V1':
+        if key_id != settings.XIAOAI_KEY_ID:
+            return False
+        if signature != xiaomi_hmac(headers):
+            return False
+        return True
+    else:
+        return False

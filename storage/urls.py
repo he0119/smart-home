@@ -4,5 +4,5 @@ from . import views
 
 app_name = 'storage'
 urlpatterns = [
-    path('', views.xiaoai, name='index'),
+    path('', views.xiaoai, name='xiaoai'),
 ]
