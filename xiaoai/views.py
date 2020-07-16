@@ -7,7 +7,7 @@ from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Item
+from storage.models import Item
 
 
 @csrf_exempt
@@ -19,7 +19,7 @@ def xiaoai(request):
             response = process_request(received_json_data)
             return JsonResponse(response)
         else:
-            HttpResponse(status=401)
+            return HttpResponse(status=401)
 
     return JsonResponse({'xiaoai': 'working'})
 
