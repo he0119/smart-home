@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - 留言板功能
+- 小爱同学自定义技能
 
 ## [0.3.1] - 2020-03-13
 
