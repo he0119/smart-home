@@ -44,3 +44,9 @@ ADMINS = [
         os.getenv('ADMINS_EMAIL').split(';'),
     )
 ]
+
+# 小米小爱
+# https://developers.xiaoai.mi.com/documents/Home?type=/api/doc/render_markdown/SkillAccess/SkillDocument/CustomSkills/Signature
+
+XIAOAI_KEY_ID = os.getenv('XIAOAI_KEY_ID')
+XIAOAI_SECRET = os.getenv('XIAOAI_SECRET')
