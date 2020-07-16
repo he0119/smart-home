@@ -1,13 +1,17 @@
 import base64
 import json
+import logging
 from hashlib import sha256
 from hmac import HMAC
 
 from django.conf import settings
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from storage.models import Item
+
+# Get an instance of a logger
+logger = logging.getLogger('xiaoai')
 
 
 @csrf_exempt
@@ -29,7 +33,7 @@ def process_request(data: dict) -> str:
 
     暂时只支持查询物品的位置
     """
-    print(data)
+    logger.info(data)
     message = ''
     is_session_end = True
 
