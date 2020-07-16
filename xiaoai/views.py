@@ -93,14 +93,17 @@ def xiaomi_hmac(headers: dict):
 
 def is_xiaomi(headers: dict) -> bool:
     """ 是否是小米发送的请求 """
-    authorization = headers['Authorization']
-    sign_version = authorization.split()[0]
-    key_id, scope, signature = authorization.split()[1].split(':')
-    if sign_version == 'MIAI-HmacSHA256-V1':
-        if key_id != settings.XIAOAI_KEY_ID:
+    try:
+        authorization = headers['Authorization']
+        sign_version = authorization.split()[0]
+        key_id, scope, signature = authorization.split()[1].split(':')
+        if sign_version == 'MIAI-HmacSHA256-V1':
+            if key_id != settings.XIAOAI_KEY_ID:
+                return False
+            if signature != xiaomi_hmac(headers):
+                return False
+            return True
+        else:
             return False
-        if signature != xiaomi_hmac(headers):
-            return False
-        return True
-    else:
+    except:
         return False
