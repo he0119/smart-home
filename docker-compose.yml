@@ -12,13 +12,20 @@ services:
     depends_on:
       - db
   db:
-    build: ./postgres
+    build: ./docker/postgres
     container_name: postgres
     restart: always
     volumes:
-      - ./postgres/pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/pgdata:/var/lib/postgresql/data
     env_file:
       - ./.env
+  mqtt:
+    image: eclipse-mosquitto:1.6.10
+    container_name: mosquitto
+    restart: always
+    volumes:
+      - ./docker/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./docker/mosquitto/data:/mosquitto/data
 
 networks:
   default:

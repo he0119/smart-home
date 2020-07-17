@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     'storage',
     'board',
     'xiaoai',
+    'iot',
 ]
 
 MIDDLEWARE = [
