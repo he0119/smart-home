@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.http import JsonResponse
 from django.utils.timezone import make_aware
@@ -20,7 +20,7 @@ def iot(request):
     if request.method == 'POST':
         try:
             event = json.loads(request.body)
-            logger.info(event)
+            logger.debug(event)
             if event['action'] == 'message_publish':
                 process_message_publish(event)
             if event['action'] == 'client_connected':
@@ -62,7 +62,7 @@ def process_message_publish(event):
                     pump_delay=payload['data']['pump_delay'],
                 )
                 autowatering_data.save()
-                logger.info(f'{device.name} {autowatering_data.time} 保存成功')
+                logger.debug(f'{device.name} {autowatering_data.time} 保存成功')
         except Device.DoesNotExist:
             logger.error(f'设备 ID({device_id}) 不存在')
         except Exception as e:
@@ -78,7 +78,7 @@ def process_client_disconnected(event):
     try:
         device = Device.objects.get(pk=int(device_id))
         device.is_online = False
-        device.date_offline = datetime.now()
+        device.date_offline = datetime.now(timezone.utc)
         device.save()
         logger.info(f'{device.name} {device.date_offline} 已离线')
     except Device.DoesNotExist:
@@ -96,7 +96,7 @@ def process_client_connected(event):
     try:
         device = Device.objects.get(pk=int(device_id))
         device.is_online = True
-        device.date_online = datetime.now()
+        device.date_online = datetime.now(timezone.utc)
         device.save()
         logger.info(f'{device.name} {device.date_online} 已在线')
     except Device.DoesNotExist:
