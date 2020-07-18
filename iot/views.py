@@ -35,10 +35,13 @@ def iot(request):
 
 def process_message_publish(event):
     """ 处理消息发布 """
+    device_id = event['from_client_id']
+    if not device_id.isdigit():
+        logger.warn('不是物联网设备，已忽略')
+        return
     topic = event['topic']
     if 'status' in topic:
         payload = json.loads(event['payload'])
-        device_id = payload['device_id']
         try:
             device = Device.objects.get(pk=device_id)
             if device.device_type == 'autowatering':
@@ -69,6 +72,9 @@ def process_message_publish(event):
 def process_client_disconnected(event):
     """ 设备下线 """
     device_id = event['clientid']
+    if not device_id.isdigit():
+        logger.warn('不是物联网设备，已忽略')
+        return
     try:
         device = Device.objects.get(pk=int(device_id))
         device.is_online = False
@@ -84,6 +90,9 @@ def process_client_disconnected(event):
 def process_client_connected(event):
     """ 设备上线 """
     device_id = event['clientid']
+    if not device_id.isdigit():
+        logger.warn('不是物联网设备，已忽略')
+        return
     try:
         device = Device.objects.get(pk=int(device_id))
         device.is_online = True
