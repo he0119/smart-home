@@ -17,12 +17,13 @@ class MQTTClient:
         return self.s.post(self.base_url + url, json=data).json()
 
 
-class AutowateringAPI:
+class DeviceAPI:
     def __init__(self, device_id: str) -> None:
         self.device_id = device_id
         self._client = MQTTClient()
 
     def set_status(self, key, value):
+        """ 设置设备参数 """
         data = {
             'topic': f'device/{self.device_id}/set',
             'clientid': 'server',
