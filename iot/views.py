@@ -89,7 +89,7 @@ def process_client_connected(event):
         device.is_online = True
         device.date_online = datetime.now()
         device.save()
-        logger.info(f'{device.name} {device.date_online} 已上线')
+        logger.info(f'{device.name} {device.date_online} 已在线')
     except Device.DoesNotExist:
         logger.error(f'设备 ID({device_id}) 不存在')
     except Exception as e:

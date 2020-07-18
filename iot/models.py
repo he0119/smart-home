@@ -15,7 +15,7 @@ class Device(models.Model):
     is_online = models.BooleanField(verbose_name='在线状态')
     date_online = models.DateTimeField(null=True,
                                        blank=True,
-                                       verbose_name='上线日期')
+                                       verbose_name='在线日期')
     date_offline = models.DateTimeField(null=True,
                                         blank=True,
                                         verbose_name='离线日期')
