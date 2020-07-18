@@ -20,12 +20,11 @@ services:
     env_file:
       - ./.env
   mqtt:
-    image: eclipse-mosquitto:1.6.10
-    container_name: mosquitto
+    image: emqx/emqx:v4.1.1-alpine-amd64
+    container_name: emqx
     restart: always
-    volumes:
-      - ./docker/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
-      - ./docker/mosquitto/data:/mosquitto/data
+    env_file:
+      - ./docker/emqx/configuration
 
 networks:
   default:
