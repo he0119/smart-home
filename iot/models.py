@@ -13,7 +13,9 @@ class Device(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, verbose_name='创建日期')
     date_updated = models.DateTimeField(auto_now=True, verbose_name='更新日期')
     is_online = models.BooleanField(verbose_name='在线状态')
-    date_online = models.DateTimeField(verbose_name='上线日期')
+    date_online = models.DateTimeField(null=True,
+                                       blank=True,
+                                       verbose_name='上线日期')
     date_offline = models.DateTimeField(null=True,
                                         blank=True,
                                         verbose_name='离线日期')
@@ -25,8 +27,8 @@ class Device(models.Model):
 class AutowateringData(models.Model):
     """ 自动浇水设备数据 """
     class Meta:
-        verbose_name = '自动浇水'
-        verbose_name_plural = '自动浇水'
+        verbose_name = '自动浇水设备数据'
+        verbose_name_plural = '自动浇水设备数据'
 
     device = models.ForeignKey(Device,
                                on_delete=models.CASCADE,
