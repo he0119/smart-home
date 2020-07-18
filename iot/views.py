@@ -23,6 +23,10 @@ def iot(request):
             logger.info(event)
             if event['action'] == 'message_publish':
                 process_message_publish(event)
+            if event['action'] == 'client_connected':
+                process_client_connected(event)
+            if event['action'] == 'client_disconnected':
+                process_client_disconnected(event)
         except:
             pass
 
@@ -60,3 +64,33 @@ def process_message_publish(event):
             logger.error(f'设备 ID({device_id}) 不存在')
         except Exception as e:
             logger.error(e)
+
+
+def process_client_disconnected(event):
+    """ 设备下线 """
+    device_id = event['clientid']
+    try:
+        device = Device.objects.get(pk=int(device_id))
+        device.is_online = False
+        device.date_offline = datetime.now()
+        device.save()
+        logger.info(f'{device.name} {device.date_offline} 已离线')
+    except Device.DoesNotExist:
+        logger.error(f'设备 ID({device_id}) 不存在')
+    except Exception as e:
+        logger.error(e)
+
+
+def process_client_connected(event):
+    """ 设备上线 """
+    device_id = event['clientid']
+    try:
+        device = Device.objects.get(pk=int(device_id))
+        device.is_online = True
+        device.date_online = datetime.now()
+        device.save()
+        logger.info(f'{device.name} {device.date_online} 已上线')
+    except Device.DoesNotExist:
+        logger.error(f'设备 ID({device_id}) 不存在')
+    except Exception as e:
+        logger.error(e)
