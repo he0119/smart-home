@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'import_export',
     'graphene_django',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
+    'django_celery_beat',
     'storage',
     'board',
     'xiaoai',
@@ -205,3 +206,17 @@ GRAPHQL_JWT = {
     'JWT_EXPIRATION_DELTA': timedelta(minutes=5),
     'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=30),
 }
+
+# Celery
+# https://docs.celeryproject.org/en/stable/getting-started/brokers/redis.html
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# Celery Beats
+# https://docs.celeryproject.org/en/stable/userguide/periodic-tasks.html#beat-custom-schedulers
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
