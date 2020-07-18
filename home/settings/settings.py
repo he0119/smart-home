@@ -220,3 +220,11 @@ CELERY_RESULT_SERIALIZER = 'json'
 # https://docs.celeryproject.org/en/stable/userguide/periodic-tasks.html#beat-custom-schedulers
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+# EMQX HTTP
+# https://docs.emqx.io/broker/latest/cn/advanced/http-api.html
+
+EMQX_HOST = 'localhost'
+EMQX_PORT = '8081'
+EMQX_APPID = 'admin'
+EMQX_APPSECRET = 'public'

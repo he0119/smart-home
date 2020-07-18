@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.http import JsonResponse
+from .api import AutowateringAPI
 
-# Create your views here.
+
+def iot(request):
+    """ 物联网 """
+    api = AutowateringAPI('1')
+    return JsonResponse(api.set_status(key='valve1', value=True))
