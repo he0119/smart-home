@@ -3,15 +3,18 @@ FROM python:3.8-alpine
 WORKDIR /usr/src/app
 
 # 安装依赖
-COPY requirements.txt ./
+COPY poetry.lock pyproject.toml ./
 RUN apk add --no-cache postgresql-dev
 RUN set -e; \
 	apk add --no-cache --virtual .build-deps \
 		gcc \
 		libc-dev \
 		linux-headers \
+    curl \
 	; \
-	pip install --no-cache-dir -r requirements.txt; \
+	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python; \
+  $HOME/.poetry/bin/poetry config virtualenvs.create false && \
+  $HOME/.poetry/bin/poetry install --no-dev; \
   pip install uwsgi; \
 	apk del .build-deps;
 

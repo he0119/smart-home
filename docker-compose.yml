@@ -13,7 +13,7 @@ services:
       - db
       - mqtt
       - celery
-      - celery-beat
+      - redis
   celery:
     image: he0119/smart-home:latest
     command: celery -A home worker --beat -l info
