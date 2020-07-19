@@ -88,7 +88,7 @@ class SetDeviceInput(graphene.InputObjectType):
     key = graphene.String(required=True)
     value = graphene.String(required=True)
     value_type = graphene.String(required=True,
-                                 description='支持 bool, float, int, string 类型')
+                                 description='支持 bool, float, int, str 类型')
 
 
 #endregion
@@ -183,6 +183,8 @@ class SetDeviceMutation(graphene.Mutation):
             value = float(input.value)
         if input.value_type == 'int':
             value = int(input.value)
+        if input.value_type == 'str':
+            value = input.value
 
         set_status.delay(device.id, input.key, value)
 
