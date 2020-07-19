@@ -95,7 +95,6 @@ class SetDeviceInput(graphene.InputObjectType):
 
 #endregion
 
-
 class AddDeviceMutation(graphene.Mutation):
     class Arguments:
         input = AddDeviceInput(required=True)
