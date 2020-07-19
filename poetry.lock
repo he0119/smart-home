@@ -252,6 +252,7 @@ diff-match-patch = "*"
 
 [package.dependencies.tablib]
 extras = ["html", "yaml", "xls", "ods", "xlsx"]
+version = ">=0.14.0"
 
 [package.source]
 reference = 'aliyun'
