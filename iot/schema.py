@@ -82,11 +82,16 @@ class DeleteDeviceInput(graphene.InputObjectType):
     device_id = graphene.ID(required=True, description='设备的 ID')
 
 
+# region setDevice
 class SetDeviceInput(graphene.InputObjectType):
     id = graphene.ID(required=True)
     key = graphene.String(required=True)
     value = graphene.String(required=True)
+    value_type = graphene.String(required=True,
+                                 description='支持 bool, float, int, string 类型')
 
+
+#endregion
 
 #endregion
 
@@ -170,7 +175,16 @@ class SetDeviceMutation(graphene.Mutation):
         except Device.DoesNotExist:
             raise GraphQLError('设备不存在')
 
-        set_status.delay(device.id, input.key, input.value)
+        # 转换 value 的类型
+        value = None
+        if input.value_type == 'bool':
+            value = bool(input.value)
+        if input.value_type == 'float':
+            value = float(input.value)
+        if input.value_type == 'int':
+            value = int(input.value)
+
+        set_status.delay(device.id, input.key, value)
 
         return UpdateDeviceMutation(device=device)
 

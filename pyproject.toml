@@ -23,13 +23,14 @@ requests = "^2.24.0"
 
 [tool.poetry.dev-dependencies]
 django-cors-headers = "^3.4.0"
+eventlet = "^0.25.2"
 yapf = ">=0.30.0"
 
 [[tool.poetry.source]]
+default = true
 name = 'aliyun'
 url = 'https://mirrors.aliyun.com/pypi/simple/'
-default = true
 
 [build-system]
-requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+requires = ["poetry>=0.12"]
