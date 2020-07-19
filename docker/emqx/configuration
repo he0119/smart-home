@@ -11,4 +11,4 @@ EMQX_AUTH__MNESIA__1__IS_SUPERUSER=true
 ## The web services URL for Hook request
 ##
 ## Value: String
-EMQX_WEB__HOOK__API__URL=http://host.docker.internal:8000/iot
+EMQX_WEB__HOOK__API__URL=http://smart-home:8001/iot
