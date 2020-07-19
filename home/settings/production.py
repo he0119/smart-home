@@ -50,3 +50,17 @@ ADMINS = [
 
 XIAOAI_KEY_ID = os.getenv('XIAOAI_KEY_ID')
 XIAOAI_SECRET = os.getenv('XIAOAI_SECRET')
+
+# Celery
+# https://docs.celeryproject.org/en/stable/getting-started/brokers/redis.html
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+
+# EMQX HTTP
+# https://docs.emqx.io/broker/latest/cn/advanced/http-api.html
+
+EMQX_HOST = os.getenv('EMQX_HOST')
+EMQX_PORT = os.getenv('EMQX_PORT')
+EMQX_APPID = os.getenv('EMQX_APPID')
+EMQX_APPSECRET = os.getenv('EMQX_APPSECRET')
