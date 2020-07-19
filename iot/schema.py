@@ -4,6 +4,7 @@ from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
 
 from .models import AutowateringData, Device
+from .tasks import set_status
 
 
 #region query
@@ -81,6 +82,12 @@ class DeleteDeviceInput(graphene.InputObjectType):
     device_id = graphene.ID(required=True, description='设备的 ID')
 
 
+class SetDeviceInput(graphene.InputObjectType):
+    id = graphene.ID(required=True)
+    key = graphene.String(required=True)
+    value = graphene.String(required=True)
+
+
 #endregion
 
 
@@ -148,10 +155,31 @@ class UpdateDeviceMutation(graphene.Mutation):
         return UpdateDeviceMutation(device=device)
 
 
+class SetDeviceMutation(graphene.Mutation):
+    class Arguments:
+        input = SetDeviceInput(required=True)
+
+    device = graphene.Field(DeviceType)
+
+    @login_required
+    def mutate(self, info, **kwargs):
+        input = kwargs.get('input')
+
+        try:
+            device = Device.objects.get(pk=input.id)
+        except Device.DoesNotExist:
+            raise GraphQLError('设备不存在')
+
+        set_status.delay(device.id, input.key, input.value)
+
+        return UpdateDeviceMutation(device=device)
+
+
 class Mutation(graphene.ObjectType):
     add_device = AddDeviceMutation.Field()
     delete_device = DeleteDeviceMutation.Field()
     update_device = UpdateDeviceMutation.Field()
+    set_device = SetDeviceMutation.Field()
 
 
 #endregion
