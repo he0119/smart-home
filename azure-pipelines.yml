@@ -40,9 +40,11 @@ jobs:
         project_location = path.dirname(path.abspath(manage_py))
         print('Found Django project in', project_location)
         print('##vso[task.setvariable variable=projectRoot]{}'.format(project_location))
+  - script: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+    displayName: 'Install poetry'
   - script: |
-      python -m pip install --upgrade pip setuptools wheel
-      pip install -r requirements.txt
+      $HOME/.poetry/bin/poetry config virtualenvs.create false
+      $HOME/.poetry/bin/poetry install --no-dev
       pip install unittest-xml-reporting
       pip install coverage
     displayName: 'Install prerequisites'
@@ -65,20 +67,20 @@ jobs:
   variables:
     imageName: 'smart-home'
   steps:
-    - bash: echo '##vso[task.setvariable variable=imageTag]test'
+    - script: echo '##vso[task.setvariable variable=imageTag]test'
       condition: eq(variables['Build.Reason'], 'PullRequest')
       displayName: 'Set imageTag to test'
-    - bash: echo '##vso[task.setvariable variable=imageTag]latest'
+    - script: echo '##vso[task.setvariable variable=imageTag]latest'
       condition: contains(variables['Build.SourceBranch'], 'master')
       displayName: 'Set imageTag to latest'
-    - bash: |
+    - script: |
         tag=`echo $(Build.SourceBranch) | grep -P 'v([0-9.]+)' -o`
         echo '##vso[task.setvariable variable=imageTag]'$tag
       condition: contains(variables['Build.SourceBranch'], 'tags')
       displayName: 'Set imageTag to tags'
-    - bash: docker build -f Dockerfile -t $(dockerId)/$(imageName):$(imageTag) .
+    - script: docker build -f Dockerfile -t $(dockerId)/$(imageName):$(imageTag) .
       displayName: 'Docker build'
-    - bash: |
+    - script: |
         docker login -u $(dockerId) -p $(pswd)
         docker push $(dockerId)/$(imageName):$(imageTag)
       displayName: 'Docker push'

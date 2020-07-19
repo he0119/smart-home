@@ -1,0 +1,35 @@
+[tool.poetry]
+authors = ["hemengyang <hmy0119@gmail.com>"]
+description = "Smart home."
+homepage = "https://hehome.xyz"
+license = "MIT"
+name = "smart-home"
+readme = "README.md"
+repository = "https://github.com/he0119/smart-home"
+version = "0.4.0"
+
+[tool.poetry.dependencies]
+celery = "^4.4.6"
+django = "^3.0.8"
+django-celery-beat = "^2.0.0"
+django-graphql-jwt = "^0.3.1"
+django-import-export = "^2.2.0"
+django-mptt = "^0.11.0"
+graphene-django = "^2.11.1"
+psycopg2 = "^2.8.5"
+python = "^3.7"
+redis = "^3.5.3"
+requests = "^2.24.0"
+
+[tool.poetry.dev-dependencies]
+django-cors-headers = "^3.4.0"
+yapf = ">=0.30.0"
+
+[[tool.poetry.source]]
+name = 'aliyun'
+url = 'https://mirrors.aliyun.com/pypi/simple/'
+default = true
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

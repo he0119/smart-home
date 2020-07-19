@@ -11,14 +11,36 @@ services:
       - ./.env
     depends_on:
       - db
+      - mqtt
+      - celery
+      - redis
+  celery:
+    image: he0119/smart-home:latest
+    command: celery -A home worker --beat -l info
+    container_name: celery
+    restart: always
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
   db:
-    build: ./postgres
+    build: ./docker/postgres
     container_name: postgres
     restart: always
     volumes:
-      - ./postgres/pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/pgdata:/var/lib/postgresql/data
     env_file:
       - ./.env
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+  mqtt:
+    image: emqx/emqx:v4.1.1-alpine-amd64
+    container_name: emqx
+    restart: always
+    env_file:
+      - ./docker/emqx/configuration
 
 networks:
   default:

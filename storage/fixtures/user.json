@@ -57,7 +57,7 @@
   },
   {
     "model": "contenttypes.contenttype",
-    "pk": 8,
+    "pk": 14,
     "fields": {
       "app_label": "storage",
       "model": "storage"
@@ -65,7 +65,7 @@
   },
   {
     "model": "contenttypes.contenttype",
-    "pk": 9,
+    "pk": 15,
     "fields": {
       "app_label": "storage",
       "model": "item"
@@ -73,7 +73,7 @@
   },
   {
     "model": "contenttypes.contenttype",
-    "pk": 10,
+    "pk": 16,
     "fields": {
       "app_label": "board",
       "model": "topic"
@@ -81,10 +81,26 @@
   },
   {
     "model": "contenttypes.contenttype",
-    "pk": 11,
+    "pk": 17,
     "fields": {
       "app_label": "board",
       "model": "comment"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 18,
+    "fields": {
+      "app_label": "iot",
+      "model": "device"
+    }
+  },
+  {
+    "model": "contenttypes.contenttype",
+    "pk": 19,
+    "fields": {
+      "app_label": "iot",
+      "model": "autowateringdata"
     }
   },
   {
@@ -343,151 +359,439 @@
     "model": "auth.permission",
     "pk": 29,
     "fields": {
-      "name": "Can add \u4f4d\u7f6e",
+      "name": "Can add solar event",
       "content_type": 8,
-      "codename": "add_storage"
+      "codename": "add_solarschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 30,
     "fields": {
-      "name": "Can change \u4f4d\u7f6e",
+      "name": "Can change solar event",
       "content_type": 8,
-      "codename": "change_storage"
+      "codename": "change_solarschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 31,
     "fields": {
-      "name": "Can delete \u4f4d\u7f6e",
+      "name": "Can delete solar event",
       "content_type": 8,
-      "codename": "delete_storage"
+      "codename": "delete_solarschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 32,
     "fields": {
-      "name": "Can view \u4f4d\u7f6e",
+      "name": "Can view solar event",
       "content_type": 8,
-      "codename": "view_storage"
+      "codename": "view_solarschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 33,
     "fields": {
-      "name": "Can add \u7269\u54c1",
+      "name": "Can add interval",
       "content_type": 9,
-      "codename": "add_item"
+      "codename": "add_intervalschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 34,
     "fields": {
-      "name": "Can change \u7269\u54c1",
+      "name": "Can change interval",
       "content_type": 9,
-      "codename": "change_item"
+      "codename": "change_intervalschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 35,
     "fields": {
-      "name": "Can delete \u7269\u54c1",
+      "name": "Can delete interval",
       "content_type": 9,
-      "codename": "delete_item"
+      "codename": "delete_intervalschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 36,
     "fields": {
-      "name": "Can view \u7269\u54c1",
+      "name": "Can view interval",
       "content_type": 9,
-      "codename": "view_item"
+      "codename": "view_intervalschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 37,
     "fields": {
-      "name": "Can add \u8bdd\u9898",
+      "name": "Can add clocked",
       "content_type": 10,
-      "codename": "add_topic"
+      "codename": "add_clockedschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 38,
     "fields": {
-      "name": "Can change \u8bdd\u9898",
+      "name": "Can change clocked",
       "content_type": 10,
-      "codename": "change_topic"
+      "codename": "change_clockedschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 39,
     "fields": {
-      "name": "Can delete \u8bdd\u9898",
+      "name": "Can delete clocked",
       "content_type": 10,
-      "codename": "delete_topic"
+      "codename": "delete_clockedschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 40,
     "fields": {
-      "name": "Can view \u8bdd\u9898",
+      "name": "Can view clocked",
       "content_type": 10,
-      "codename": "view_topic"
+      "codename": "view_clockedschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 41,
     "fields": {
-      "name": "Can add \u8bc4\u8bba",
+      "name": "Can add crontab",
       "content_type": 11,
-      "codename": "add_comment"
+      "codename": "add_crontabschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 42,
     "fields": {
-      "name": "Can change \u8bc4\u8bba",
+      "name": "Can change crontab",
       "content_type": 11,
-      "codename": "change_comment"
+      "codename": "change_crontabschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 43,
     "fields": {
-      "name": "Can delete \u8bc4\u8bba",
+      "name": "Can delete crontab",
       "content_type": 11,
-      "codename": "delete_comment"
+      "codename": "delete_crontabschedule"
     }
   },
   {
     "model": "auth.permission",
     "pk": 44,
     "fields": {
-      "name": "Can view \u8bc4\u8bba",
+      "name": "Can view crontab",
       "content_type": 11,
+      "codename": "view_crontabschedule"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 45,
+    "fields": {
+      "name": "Can add periodic tasks",
+      "content_type": 12,
+      "codename": "add_periodictasks"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 46,
+    "fields": {
+      "name": "Can change periodic tasks",
+      "content_type": 12,
+      "codename": "change_periodictasks"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 47,
+    "fields": {
+      "name": "Can delete periodic tasks",
+      "content_type": 12,
+      "codename": "delete_periodictasks"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 48,
+    "fields": {
+      "name": "Can view periodic tasks",
+      "content_type": 12,
+      "codename": "view_periodictasks"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 49,
+    "fields": {
+      "name": "Can add periodic task",
+      "content_type": 13,
+      "codename": "add_periodictask"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 50,
+    "fields": {
+      "name": "Can change periodic task",
+      "content_type": 13,
+      "codename": "change_periodictask"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 51,
+    "fields": {
+      "name": "Can delete periodic task",
+      "content_type": 13,
+      "codename": "delete_periodictask"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 52,
+    "fields": {
+      "name": "Can view periodic task",
+      "content_type": 13,
+      "codename": "view_periodictask"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 53,
+    "fields": {
+      "name": "Can add \u4f4d\u7f6e",
+      "content_type": 14,
+      "codename": "add_storage"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 54,
+    "fields": {
+      "name": "Can change \u4f4d\u7f6e",
+      "content_type": 14,
+      "codename": "change_storage"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 55,
+    "fields": {
+      "name": "Can delete \u4f4d\u7f6e",
+      "content_type": 14,
+      "codename": "delete_storage"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 56,
+    "fields": {
+      "name": "Can view \u4f4d\u7f6e",
+      "content_type": 14,
+      "codename": "view_storage"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 57,
+    "fields": {
+      "name": "Can add \u7269\u54c1",
+      "content_type": 15,
+      "codename": "add_item"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 58,
+    "fields": {
+      "name": "Can change \u7269\u54c1",
+      "content_type": 15,
+      "codename": "change_item"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 59,
+    "fields": {
+      "name": "Can delete \u7269\u54c1",
+      "content_type": 15,
+      "codename": "delete_item"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 60,
+    "fields": {
+      "name": "Can view \u7269\u54c1",
+      "content_type": 15,
+      "codename": "view_item"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 61,
+    "fields": {
+      "name": "Can add \u8bdd\u9898",
+      "content_type": 16,
+      "codename": "add_topic"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 62,
+    "fields": {
+      "name": "Can change \u8bdd\u9898",
+      "content_type": 16,
+      "codename": "change_topic"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 63,
+    "fields": {
+      "name": "Can delete \u8bdd\u9898",
+      "content_type": 16,
+      "codename": "delete_topic"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 64,
+    "fields": {
+      "name": "Can view \u8bdd\u9898",
+      "content_type": 16,
+      "codename": "view_topic"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 65,
+    "fields": {
+      "name": "Can add \u8bc4\u8bba",
+      "content_type": 17,
+      "codename": "add_comment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 66,
+    "fields": {
+      "name": "Can change \u8bc4\u8bba",
+      "content_type": 17,
+      "codename": "change_comment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 67,
+    "fields": {
+      "name": "Can delete \u8bc4\u8bba",
+      "content_type": 17,
+      "codename": "delete_comment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 68,
+    "fields": {
+      "name": "Can view \u8bc4\u8bba",
+      "content_type": 17,
       "codename": "view_comment"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 69,
+    "fields": {
+      "name": "Can add \u8bbe\u5907",
+      "content_type": 18,
+      "codename": "add_device"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 70,
+    "fields": {
+      "name": "Can change \u8bbe\u5907",
+      "content_type": 18,
+      "codename": "change_device"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 71,
+    "fields": {
+      "name": "Can delete \u8bbe\u5907",
+      "content_type": 18,
+      "codename": "delete_device"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 72,
+    "fields": {
+      "name": "Can view \u8bbe\u5907",
+      "content_type": 18,
+      "codename": "view_device"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 73,
+    "fields": {
+      "name": "Can add \u81ea\u52a8\u6d47\u6c34\u8bbe\u5907\u6570\u636e",
+      "content_type": 19,
+      "codename": "add_autowateringdata"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 74,
+    "fields": {
+      "name": "Can change \u81ea\u52a8\u6d47\u6c34\u8bbe\u5907\u6570\u636e",
+      "content_type": 19,
+      "codename": "change_autowateringdata"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 75,
+    "fields": {
+      "name": "Can delete \u81ea\u52a8\u6d47\u6c34\u8bbe\u5907\u6570\u636e",
+      "content_type": 19,
+      "codename": "delete_autowateringdata"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 76,
+    "fields": {
+      "name": "Can view \u81ea\u52a8\u6d47\u6c34\u8bbe\u5907\u6570\u636e",
+      "content_type": 19,
+      "codename": "view_autowateringdata"
     }
   },
   {
     "model": "auth.user",
     "pk": 1,
     "fields": {
-      "password": "pbkdf2_sha256$180000$8oACiCuu4J09$KZJT2LIDC+XUYBdjCAFo3B9DP+mHjz/wtysMcaqFP2o=",
+      "password": "pbkdf2_sha256$180000$El2CWnAD8FTx$WCONse1QFLFrfRNAfFWWnKQVXZBEdpMiwxSH5XXaUOY=",
       "last_login": null,
       "is_superuser": true,
       "username": "test",
@@ -496,7 +800,7 @@
       "email": "he0119@163.com",
       "is_staff": true,
       "is_active": true,
-      "date_joined": "2020-07-11T02:01:56.012Z",
+      "date_joined": "2020-07-19T02:37:14.747Z",
       "groups": [],
       "user_permissions": []
     }
