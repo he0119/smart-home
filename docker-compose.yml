@@ -38,6 +38,8 @@ services:
   mqtt:
     image: emqx/emqx:v4.1.1-alpine-amd64
     container_name: emqx
+    ports:
+      - "1883:1883"
     restart: always
     env_file:
       - ./docker/emqx/configuration
