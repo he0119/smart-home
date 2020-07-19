@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Added
+
+- 物联网功能
+
 ## [0.4.0] - 2020-07-16
 
 ### Added

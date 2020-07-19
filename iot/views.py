@@ -48,7 +48,8 @@ def process_message_publish(event):
                 autowatering_data = AutowateringData(
                     device=device,
                     time=make_aware(
-                        datetime.fromtimestamp(payload['timestamp'])),
+                        datetime.fromtimestamp(payload['timestamp']),
+                        timezone.utc),
                     temperature=payload['data']['temperature'],
                     humidity=payload['data']['humidity'],
                     wifi_signal=payload['data']['wifi_signal'],

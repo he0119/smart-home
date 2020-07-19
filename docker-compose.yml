@@ -32,12 +32,14 @@ services:
     env_file:
       - ./.env
   redis:
-    image: redis:alpine
+    image: redis:6.0.5-alpine
     container_name: redis
     restart: always
   mqtt:
     image: emqx/emqx:v4.1.1-alpine-amd64
     container_name: emqx
+    ports:
+      - "1883:1883"
     restart: always
     env_file:
       - ./docker/emqx/configuration

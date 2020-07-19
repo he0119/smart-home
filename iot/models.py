@@ -48,4 +48,4 @@ class AutowateringData(models.Model):
     pump_delay = models.IntegerField(verbose_name='水泵延迟')
 
     def __str__(self):
-        return self.time
+        return f'{self.device.name} {self.time.isoformat()}'
