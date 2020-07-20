@@ -1,5 +1,6 @@
 import json
 import logging
+import traceback
 from datetime import datetime, timezone
 
 from django.http import JsonResponse
@@ -18,17 +19,17 @@ def iot(request):
     EMQX WebHook
     """
     if request.method == 'POST':
-        try:
-            event = json.loads(request.body)
-            logger.debug(event)
-            if event['action'] == 'message_publish':
-                process_message_publish(event)
-            if event['action'] == 'client_connected':
-                process_client_connected(event)
-            if event['action'] == 'client_disconnected':
-                process_client_disconnected(event)
-        except:
-            pass
+        event = json.loads(request.body)
+        logger.debug(event)
+        if event['action'] == 'message_publish':
+            process_message_publish(event)
+        elif event['action'] == 'client_connected':
+            process_client_connected(event)
+        elif event['action'] == 'client_disconnected':
+            process_client_disconnected(event)
+        else:
+            logger.warning('未处理的事件')
+            logger.warning(event)
 
     return JsonResponse({'iot': 'working'})
 
@@ -37,7 +38,7 @@ def process_message_publish(event):
     """ 处理消息发布 """
     device_id = event['from_client_id']
     if not device_id.isdigit():
-        logger.warn('不是物联网设备，已忽略')
+        logger.warning(f'{device_id} 不是物联网设备，已忽略')
         return
     topic = event['topic']
     if 'status' in topic:
@@ -74,14 +75,14 @@ def process_client_disconnected(event):
     """ 设备下线 """
     device_id = event['clientid']
     if not device_id.isdigit():
-        logger.warn('不是物联网设备，已忽略')
+        logger.warning(f'{device_id} 不属于物联网设备，已忽略')
         return
     try:
-        device = Device.objects.get(pk=int(device_id))
+        device = Device.objects.get(pk=device_id)
         device.is_online = False
         device.date_offline = datetime.now(timezone.utc)
         device.save()
-        logger.info(f'{device.name} {device.date_offline} 已离线')
+        logger.info(f'{device.date_offline} {device.name} 已离线')
     except Device.DoesNotExist:
         logger.error(f'设备 ID({device_id}) 不存在')
     except Exception as e:
@@ -92,14 +93,14 @@ def process_client_connected(event):
     """ 设备上线 """
     device_id = event['clientid']
     if not device_id.isdigit():
-        logger.warn('不是物联网设备，已忽略')
+        logger.warning(f'{device_id} 不属于物联网设备，已忽略')
         return
     try:
-        device = Device.objects.get(pk=int(device_id))
+        device = Device.objects.get(pk=device_id)
         device.is_online = True
         device.date_online = datetime.now(timezone.utc)
         device.save()
-        logger.info(f'{device.name} {device.date_online} 已在线')
+        logger.info(f'{device.date_online} {device.name} 已在线')
     except Device.DoesNotExist:
         logger.error(f'设备 ID({device_id}) 不存在')
     except Exception as e:

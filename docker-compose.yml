@@ -6,6 +6,7 @@ services:
     restart: always
     volumes:
       - ./static:/usr/src/app/static
+      - ./log:/usr/src/app/log
     env_file:
       - ./.env
     depends_on:

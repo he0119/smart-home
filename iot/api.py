@@ -1,4 +1,5 @@
 import json
+from typing import Dict, List, Tuple
 
 import requests
 from django.conf import settings
@@ -10,11 +11,16 @@ class MQTTClient:
         self.s = requests.Session()
         self.s.auth = (settings.EMQX_HTTP_APPID, settings.EMQX_HTTP_APPSECRET)
 
-    def get(self, url):
-        return self.s.get(self.base_url + url).json()
-
-    def post(self, url, data):
-        return self.s.post(self.base_url + url, json=data).json()
+    def publish(self, topic: str, payload, qos: int) -> Dict:
+        """ 发布消息 """
+        data = {
+            'topic': topic,
+            'clientid': 'server',
+            'payload': json.dumps(payload),
+            'qos': qos
+        }
+        rjson = self._client.post('mqtt/publish', data).json()
+        return rjson
 
 
 class DeviceAPI:
@@ -24,11 +30,14 @@ class DeviceAPI:
 
     def set_status(self, key, value):
         """ 设置设备参数 """
-        data = {
-            'topic': f'device/{self.device_id}/set',
-            'clientid': 'server',
-            'payload': json.dumps({key: value}),
-            'qos': 1
-        }
-        r = self._client.post('mqtt/publish', data)
+        topic = f'device/{self.device_id}/set'
+        payload = {key: value}
+        r = self._client.publish(topic, payload, 1)
+        return r
+
+    def set_multiple_status(self, status: List[Tuple]):
+        """ 设置设备的多个参数 """
+        topic = f'device/{self.device_id}/set'
+        payload = {key: value for key, value in status}
+        r = self._client.publish(topic, payload, 1)
         return r
