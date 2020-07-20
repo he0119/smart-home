@@ -1,3 +1,5 @@
+from distutils.util import strtobool
+
 import graphene
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
@@ -178,7 +180,7 @@ class SetDeviceMutation(graphene.Mutation):
         # 转换 value 的类型
         value = None
         if input.value_type == 'bool':
-            value = bool(input.value)
+            value = strtobool(value)
         if input.value_type == 'float':
             value = float(input.value)
         if input.value_type == 'int':
