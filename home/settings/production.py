@@ -60,7 +60,7 @@ CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
 # EMQX HTTP
 # https://docs.emqx.io/broker/latest/cn/advanced/http-api.html
 
-EMQX_HOST = os.getenv('EMQX_HOST')
-EMQX_PORT = os.getenv('EMQX_PORT')
-EMQX_APPID = os.getenv('EMQX_APPID')
-EMQX_APPSECRET = os.getenv('EMQX_APPSECRET')
+EMQX_HTTP_HOST = os.getenv('EMQX_HTTP_HOST')
+EMQX_HTTP_PORT = os.getenv('EMQX_HTTP_PORT')
+EMQX_HTTP_APPID = os.getenv('EMQX_HTTP_APPID')
+EMQX_HTTP_APPSECRET = os.getenv('EMQX_HTTP_APPSECRET')

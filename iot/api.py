@@ -6,9 +6,9 @@ from django.conf import settings
 
 class MQTTClient:
     def __init__(self) -> None:
-        self.base_url = f'http://{settings.EMQX_HOST}:{settings.EMQX_PORT}/api/v4/'
+        self.base_url = f'http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/'
         self.s = requests.Session()
-        self.s.auth = (settings.EMQX_APPID, settings.EMQX_APPSECRET)
+        self.s.auth = (settings.EMQX_HTTP_APPID, settings.EMQX_HTTP_APPSECRET)
 
     def get(self, url):
         return self.s.get(self.base_url + url).json()

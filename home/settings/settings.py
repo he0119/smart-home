@@ -224,7 +224,7 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 # EMQX HTTP
 # https://docs.emqx.io/broker/latest/cn/advanced/http-api.html
 
-EMQX_HOST = 'localhost'
-EMQX_PORT = '8081'
-EMQX_APPID = 'admin'
-EMQX_APPSECRET = 'public'
+EMQX_HTTP_HOST = 'localhost'
+EMQX_HTTP_PORT = '8081'
+EMQX_HTTP_APPID = 'admin'
+EMQX_HTTP_APPSECRET = 'public'
