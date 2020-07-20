@@ -19,7 +19,7 @@ class MQTTClient:
             'payload': json.dumps(payload),
             'qos': qos
         }
-        rjson = self._client.post('mqtt/publish', data).json()
+        rjson = self.s.post(self.base_url + 'mqtt/publish', json=data).json()
         return rjson
 
 

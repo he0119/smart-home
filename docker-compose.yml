@@ -4,6 +4,7 @@ services:
     image: he0119/smart-home:latest
     container_name: smart-home
     restart: always
+    user: 500:500
     volumes:
       - ./static:/usr/src/app/static
       - ./log:/usr/src/app/log
@@ -20,6 +21,8 @@ services:
     container_name: celery
     restart: always
     user: 500:500
+    volumes:
+      - ./log:/usr/src/app/log
     env_file:
       - ./.env
     depends_on:
