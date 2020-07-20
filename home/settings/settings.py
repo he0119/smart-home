@@ -49,9 +49,19 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': 'INFO',
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
+        },
+        'file': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': os.path.join(BASE_DIR, 'log', 'smart-home.log'),
+            'when': 'midnight',
+            'encoding': 'utf8'
         },
         'mail_admins': {
             'level': 'ERROR',
@@ -62,8 +72,8 @@ LOGGING = {
     },
     'loggers': {
         '': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
+            'handlers': ['console', 'file', 'mail_admins'],
+            'level': 'DEBUG',
         },
     }
 }
