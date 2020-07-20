@@ -180,7 +180,7 @@ class SetDeviceMutation(graphene.Mutation):
         # 转换 value 的类型
         value = None
         if input.value_type == 'bool':
-            value = strtobool(value)
+            value = strtobool(input.value)
         if input.value_type == 'float':
             value = float(input.value)
         if input.value_type == 'int':
