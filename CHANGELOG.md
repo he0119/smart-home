@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.5.0] - 2020-07-20
+
 ### Added
 
 - 物联网功能
@@ -51,8 +53,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.5.0...HEAD
 
+[0.5.0]: https://github.com/he0119/smart-home/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/he0119/smart-home/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/he0119/smart-home/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/he0119/smart-home/compare/v0.2.0...v0.3.0
