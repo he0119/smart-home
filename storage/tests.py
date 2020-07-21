@@ -1,7 +1,6 @@
-from datetime import datetime, timezone
-
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone
 from graphql_jwt.testcases import JSONWebTokenTestCase
 
 from .models import Item, Storage
@@ -324,7 +323,7 @@ class ItemTests(JSONWebTokenTestCase):
                 }
             }
         '''
-        expiration_date = datetime.now(timezone.utc)
+        expiration_date = timezone.now()
         variables = {
             'input': {
                 'id': 1,

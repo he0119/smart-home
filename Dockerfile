@@ -2,6 +2,10 @@ FROM python:3.8-alpine
 
 WORKDIR /usr/src/app
 
+# 设置时区
+RUN apk add --no-cache tzdata
+ENV TZ=Asia/Shanghai
+
 # 安装依赖
 COPY poetry.lock pyproject.toml ./
 RUN apk add --no-cache postgresql-dev
@@ -11,10 +15,7 @@ RUN set -e; \
 		libc-dev \
 		linux-headers \
     curl \
-    tzdata \
 	; \
-  cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
-  echo "Asia/Shanghai" >  /etc/timezone; \
 	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python; \
   $HOME/.poetry/bin/poetry config virtualenvs.create false && \
   $HOME/.poetry/bin/poetry install --no-dev; \

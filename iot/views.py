@@ -1,10 +1,10 @@
 import json
 import logging
-import traceback
-from datetime import datetime, timezone
+from datetime import datetime
 
+import pytz
 from django.http import JsonResponse
-from django.utils.timezone import make_aware
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import AutowateringData, Device
@@ -48,9 +48,8 @@ def process_message_publish(event):
             if device.device_type == 'autowatering':
                 autowatering_data = AutowateringData(
                     device=device,
-                    time=make_aware(
-                        datetime.fromtimestamp(payload['timestamp']),
-                        timezone.utc),
+                    time=datetime.fromtimestamp(payload['timestamp'],
+                                                pytz.utc),
                     temperature=payload['data']['temperature'],
                     humidity=payload['data']['humidity'],
                     wifi_signal=payload['data']['wifi_signal'],
@@ -78,7 +77,7 @@ def process_client_disconnected(event):
     try:
         device = Device.objects.get(pk=device_id)
         device.is_online = False
-        device.date_offline = datetime.now(timezone.utc)
+        device.date_offline = timezone.now()
         device.save()
         logger.info(f'{device.name} 离线')
     except Device.DoesNotExist:
@@ -94,7 +93,7 @@ def process_client_connected(event):
     try:
         device = Device.objects.get(pk=device_id)
         device.is_online = True
-        device.date_online = datetime.now(timezone.utc)
+        device.date_online = timezone.now()
         device.save()
         logger.info(f'{device.name} 在线')
     except Device.DoesNotExist:
