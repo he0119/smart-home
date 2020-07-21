@@ -45,6 +45,7 @@ LOGGING = {
         'verbose': {
             'format': '{levelname} {asctime} {name} {message}',
             'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S %Z',
         },
     },
     'handlers': {
