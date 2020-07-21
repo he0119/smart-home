@@ -35,7 +35,7 @@ def iot(request):
 
 
 def process_message_publish(event):
-    """ 处理消息发布 """
+    """ 处理消息发布事件 """
     device_id = event['from_client_id']
     if not device_id.isdigit():
         logger.warning(f'{device_id} 不是物联网设备，已忽略')
@@ -67,41 +67,35 @@ def process_message_publish(event):
                 logger.debug(f'{device.name} {autowatering_data.time} 保存成功')
         except Device.DoesNotExist:
             logger.error(f'设备 ID({device_id}) 不存在')
-        except Exception as e:
-            logger.error(e)
 
 
 def process_client_disconnected(event):
-    """ 设备下线 """
+    """ 处理设备下线事件 """
     device_id = event['clientid']
     if not device_id.isdigit():
-        logger.warning(f'{device_id} 不属于物联网设备，已忽略')
+        logger.warning(f'{device_id} 离线。因不属于物联网设备，已忽略')
         return
     try:
         device = Device.objects.get(pk=device_id)
         device.is_online = False
         device.date_offline = datetime.now(timezone.utc)
         device.save()
-        logger.info(f'{device.date_offline} {device.name} 已离线')
+        logger.info(f'{device.name} 离线')
     except Device.DoesNotExist:
         logger.error(f'设备 ID({device_id}) 不存在')
-    except Exception as e:
-        logger.error(e)
 
 
 def process_client_connected(event):
-    """ 设备上线 """
+    """ 处理设备上线事件 """
     device_id = event['clientid']
     if not device_id.isdigit():
-        logger.warning(f'{device_id} 不属于物联网设备，已忽略')
+        logger.warning(f'{device_id} 在线。因不属于物联网设备，已忽略')
         return
     try:
         device = Device.objects.get(pk=device_id)
         device.is_online = True
         device.date_online = datetime.now(timezone.utc)
         device.save()
-        logger.info(f'{device.date_online} {device.name} 已在线')
+        logger.info(f'{device.name} 在线')
     except Device.DoesNotExist:
         logger.error(f'设备 ID({device_id}) 不存在')
-    except Exception as e:
-        logger.error(e)
