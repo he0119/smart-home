@@ -11,7 +11,10 @@ RUN set -e; \
 		libc-dev \
 		linux-headers \
     curl \
+    tzdata \
 	; \
+  cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
+  echo "Asia/Shanghai" >  /etc/timezone; \
 	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python; \
   $HOME/.poetry/bin/poetry config virtualenvs.create false && \
   $HOME/.poetry/bin/poetry install --no-dev; \
