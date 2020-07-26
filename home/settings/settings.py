@@ -60,7 +60,7 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'formatter': 'verbose',
-            'filename': os.path.join(BASE_DIR, 'log', 'smart-home.log'),
+            'filename': os.path.join(BASE_DIR, 'logs', 'smart-home.log'),
             'when': 'midnight',
             'atTime': time(0, 0),
             'encoding': 'utf8'

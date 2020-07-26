@@ -7,7 +7,7 @@ services:
     user: 500:500
     volumes:
       - ./static:/usr/src/app/static
-      - ./log:/usr/src/app/log
+      - ./logs:/usr/src/app/logs
     env_file:
       - ./.env
     depends_on:
@@ -21,7 +21,7 @@ services:
     restart: always
     user: 500:500
     volumes:
-      - ./log:/usr/src/app/log
+      - ./logs:/usr/src/app/logs
     env_file:
       - ./.env
     depends_on:
