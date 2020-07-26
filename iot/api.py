@@ -1,6 +1,7 @@
 import json
-from typing import Dict, List, Optional, Tuple
 import re
+from typing import Dict, List, Optional, Tuple
+
 import requests
 from django.conf import settings
 
