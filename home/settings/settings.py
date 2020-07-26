@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from datetime import timedelta
+from datetime import time, timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.getcwd()
@@ -62,6 +62,7 @@ LOGGING = {
             'formatter': 'verbose',
             'filename': os.path.join(BASE_DIR, 'log', 'smart-home.log'),
             'when': 'midnight',
+            'atTime': time(0, 0),
             'encoding': 'utf8'
         },
         'mail_admins': {
