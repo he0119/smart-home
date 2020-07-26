@@ -42,7 +42,7 @@ def autowatering(location_id: str, limit: float, device_id: str,
 
     if need_water:
         device_api = DeviceAPI(device_id)
-        status = {valve: True for valve in valves}
+        status = [(valve, True) for valve in valves]
         device_api.set_multiple_status(status)
 
     return f'{need_water=}, {rainfall=}'
