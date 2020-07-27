@@ -58,11 +58,11 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'filters': ['require_debug_false'],
-            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
             'formatter': 'verbose',
             'filename': os.path.join(BASE_DIR, 'logs', 'smart-home.log'),
-            'when': 'midnight',
-            'atTime': time(0, 0),
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 10,
             'encoding': 'utf8'
         },
         'mail_admins': {
