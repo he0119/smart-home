@@ -9,12 +9,13 @@ ENV TZ=Asia/Shanghai
 # 安装依赖
 COPY poetry.lock pyproject.toml ./
 RUN set -ex; \
-  apk add --no-cache postgresql-libs; \
+  apk add --no-cache postgresql-libs pcre; \
 	apk add --no-cache --virtual .build-deps \
 		gcc \
 		libc-dev \
 		linux-headers \
     postgresql-dev \
+    pcre-dev \
     curl \
 	; \
 	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python; \
