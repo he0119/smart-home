@@ -8,17 +8,19 @@ ENV TZ=Asia/Shanghai
 
 # 安装依赖
 COPY poetry.lock pyproject.toml ./
-RUN apk add --no-cache postgresql-dev
-RUN set -e; \
+RUN set -ex; \
+  apk add --no-cache postgresql-libs; \
 	apk add --no-cache --virtual .build-deps \
 		gcc \
 		libc-dev \
 		linux-headers \
+    postgresql-dev \
     curl \
 	; \
 	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python; \
-  $HOME/.poetry/bin/poetry config virtualenvs.create false && \
+  $HOME/.poetry/bin/poetry config virtualenvs.create false; \
   $HOME/.poetry/bin/poetry install --no-dev; \
+  rm -rf $HOME/.poetry; \
   pip install uwsgi; \
 	apk del .build-deps;
 
