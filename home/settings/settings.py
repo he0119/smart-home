@@ -73,7 +73,11 @@ LOGGING = {
         }
     },
     'loggers': {
-        '': {
+        'iot': {
+            'handlers': ['console', 'file', 'mail_admins'],
+            'level': 'DEBUG',
+        },
+        'xiaoai': {
             'handlers': ['console', 'file', 'mail_admins'],
             'level': 'DEBUG',
         },
