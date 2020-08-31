@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .models import AutowateringData, Device
 
-logger = logging.getLogger('IOT')
+logger = logging.getLogger('iot')
 
 
 @csrf_exempt
