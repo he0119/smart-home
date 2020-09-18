@@ -1,0 +1,73 @@
+[
+  {
+    "model": "iot.device",
+    "pk": 1,
+    "fields": {
+      "name": "test",
+      "device_type": "autowatering",
+      "location": "0w0",
+      "date_created": "2020-08-02T13:37:42.064Z",
+      "date_updated": "2020-08-02T13:41:29.094Z",
+      "is_online": false,
+      "date_online": "2020-08-02T13:40:32.826Z",
+      "date_offline": "2020-08-02T13:41:29.094Z"
+    }
+  },
+  {
+    "model": "iot.autowateringdata",
+    "pk": 1,
+    "fields": {
+      "device": 1,
+      "time": "2020-08-02T13:40:35Z",
+      "temperature": 0.0,
+      "humidity": 0.0,
+      "wifi_signal": -60,
+      "valve1": false,
+      "valve2": false,
+      "valve3": false,
+      "pump": false,
+      "valve1_delay": 60,
+      "valve2_delay": 60,
+      "valve3_delay": 60,
+      "pump_delay": 60
+    }
+  },
+  {
+    "model": "iot.autowateringdata",
+    "pk": 2,
+    "fields": {
+      "device": 1,
+      "time": "2020-08-02T13:40:45Z",
+      "temperature": 0.0,
+      "humidity": 0.0,
+      "wifi_signal": -59,
+      "valve1": false,
+      "valve2": false,
+      "valve3": false,
+      "pump": false,
+      "valve1_delay": 60,
+      "valve2_delay": 60,
+      "valve3_delay": 60,
+      "pump_delay": 60
+    }
+  },
+  {
+    "model": "iot.autowateringdata",
+    "pk": 3,
+    "fields": {
+      "device": 1,
+      "time": "2020-08-02T13:40:55Z",
+      "temperature": 0.0,
+      "humidity": 0.0,
+      "wifi_signal": -60,
+      "valve1": false,
+      "valve2": false,
+      "valve3": false,
+      "pump": false,
+      "valve1_delay": 60,
+      "valve2_delay": 60,
+      "valve3_delay": 60,
+      "pump_delay": 60
+    }
+  }
+]
