@@ -1,5 +1,7 @@
 import graphene
 from django.contrib.auth import get_user_model
+from django.db.models import Max
+from django.db.models.functions import Greatest
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
@@ -40,7 +42,11 @@ class Query(graphene.ObjectType):
     def resolve_topics(self, info, **kwargs):
         number = kwargs.get('number')
 
-        q = Topic.objects.all().order_by('-is_open', '-date_modified')
+        # 进行中，并且最近回复或修改的话题将排在最前面
+        q = Topic.objects.annotate(latest_modified_date=Greatest(
+            Max('comments__date_created'), 'date_modified')).order_by(
+                '-is_open', '-latest_modified_date')
+
         if number:
             return q[:number]
         return q
