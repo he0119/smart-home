@@ -132,4 +132,5 @@ dmypy.json
 static
 
 # vscode
-.vscode
+.vscode/*
+!.vscode/launch.json
