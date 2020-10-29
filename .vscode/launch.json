@@ -11,7 +11,6 @@
       "program": "${workspaceFolder}\\manage.py",
       "args": [
         "runserver",
-        "--noreload",
         "0.0.0.0:8000"
       ],
       "django": true,
@@ -26,12 +25,12 @@
       "request": "launch",
       "program": "${workspaceFolder}\\manage.py",
       "args": [
-        "test",
+        "test"
       ],
       "django": true,
       "env": {
         "DEVELOPMENT_SERVER": "true"
-      },
+      }
     }
   ]
 }
