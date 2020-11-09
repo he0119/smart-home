@@ -1,176 +1,225 @@
 [[package]]
-category = "main"
-description = "Low-level AMQP client for Python (fork of amqplib)."
 name = "amqp"
+version = "5.0.2"
+description = "Low-level AMQP client for Python (fork of amqplib)."
+category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "2.6.1"
+python-versions = ">=3.6"
 
 [package.dependencies]
-vine = ">=1.1.3,<5.0.0a1"
+vine = "5.0.0"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "A library for parsing ISO 8601 strings."
 name = "aniso8601"
+version = "7.0.0"
+description = "A library for parsing ISO 8601 strings."
+category = "main"
 optional = false
 python-versions = "*"
-version = "7.0.0"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "ASGI specs, helper code, and adapters"
 name = "asgiref"
+version = "3.3.0"
+description = "ASGI specs, helper code, and adapters"
+category = "main"
 optional = false
 python-versions = ">=3.5"
-version = "3.2.10"
 
 [package.extras]
 tests = ["pytest", "pytest-asyncio"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Python multiprocessing fork with improvements and bugfixes"
 name = "billiard"
+version = "3.6.3.0"
+description = "Python multiprocessing fork with improvements and bugfixes"
+category = "main"
 optional = false
 python-versions = "*"
-version = "3.6.3.0"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Distributed Task Queue."
 name = "celery"
+version = "5.0.2"
+description = "Distributed Task Queue."
+category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "4.4.7"
+python-versions = ">=3.6,"
 
 [package.dependencies]
 billiard = ">=3.6.3.0,<4.0"
-kombu = ">=4.6.10,<4.7"
+click = ">=7.0"
+click-didyoumean = ">=0.0.3"
+click-repl = ">=0.1.6"
+kombu = ">=5.0.0,<6.0"
 pytz = ">0.0-dev"
-vine = "1.3.0"
+vine = ">=5.0.0,<6.0"
 
 [package.extras]
 arangodb = ["pyArango (>=1.3.2)"]
 auth = ["cryptography"]
-azureblockblob = ["azure-storage (0.36.0)", "azure-common (1.1.5)", "azure-storage-common (1.1.0)"]
+azureblockblob = ["azure-storage (==0.36.0)", "azure-common (==1.1.5)", "azure-storage-common (==1.1.0)"]
 brotli = ["brotli (>=1.0.0)", "brotlipy (>=0.7.0)"]
 cassandra = ["cassandra-driver (<3.21.0)"]
 consul = ["python-consul"]
-cosmosdbsql = ["pydocumentdb (2.3.2)"]
-couchbase = ["couchbase-cffi (<3.0.0)", "couchbase (<3.0.0)"]
+cosmosdbsql = ["pydocumentdb (==2.3.2)"]
+couchbase = ["couchbase (>=3.0.0)"]
 couchdb = ["pycouchdb"]
 django = ["Django (>=1.11)"]
 dynamodb = ["boto3 (>=1.9.178)"]
 elasticsearch = ["elasticsearch"]
-eventlet = ["eventlet (>=0.24.1)"]
-gevent = ["gevent"]
+eventlet = ["eventlet (>=0.26.1)"]
+gevent = ["gevent (>=1.0.0)"]
 librabbitmq = ["librabbitmq (>=1.5.0)"]
 lzma = ["backports.lzma"]
 memcache = ["pylibmc"]
-mongodb = ["pymongo (>=3.3.0)"]
+mongodb = ["pymongo[srv] (>=3.3.0)"]
 msgpack = ["msgpack"]
 pymemcache = ["python-memcached"]
 pyro = ["pyro4"]
 redis = ["redis (>=3.2.0)"]
-riak = ["riak (>=2.0)"]
 s3 = ["boto3 (>=1.9.125)"]
 slmq = ["softlayer-messaging (>=1.0.3)"]
 solar = ["ephem"]
 sqlalchemy = ["sqlalchemy"]
-sqs = ["boto3 (>=1.9.125)", "pycurl (7.43.0.5)"]
+sqs = ["boto3 (>=1.9.125)", "pycurl (==7.43.0.5)"]
 tblib = ["tblib (>=1.3.0)", "tblib (>=1.5.0)"]
 yaml = ["PyYAML (>=3.10)"]
 zookeeper = ["kazoo (>=1.3.1)"]
 zstd = ["zstandard"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Python package for providing Mozilla's CA Bundle."
 name = "certifi"
+version = "2020.11.8"
+description = "Python package for providing Mozilla's CA Bundle."
+category = "main"
 optional = false
 python-versions = "*"
-version = "2020.6.20"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Universal encoding detector for Python 2 and 3"
 name = "chardet"
+version = "3.0.4"
+description = "Universal encoding detector for Python 2 and 3"
+category = "main"
 optional = false
 python-versions = "*"
-version = "3.0.4"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
+name = "click"
+version = "7.1.2"
+description = "Composable command line interface toolkit"
 category = "main"
-description = "XML bomb protection for Python stdlib modules"
-name = "defusedxml"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "0.6.0"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-
-[[package]]
-category = "main"
-description = "Repackaging of Google's Diff Match and Patch libraries. Offers robust algorithms to perform the operations required for synchronizing plain text."
-name = "diff-match-patch"
-optional = false
-python-versions = ">=2.7"
-version = "20200713"
-
-[package.source]
 reference = 'aliyun'
-type = "legacy"
-url = "https://mirrors.aliyun.com/pypi/simple"
 
 [[package]]
+name = "click-didyoumean"
+version = "0.0.3"
+description = "Enable git-like did-you-mean feature in click."
 category = "main"
-description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
-name = "django"
 optional = false
-python-versions = ">=3.6"
-version = "3.1.1"
+python-versions = "*"
 
 [package.dependencies]
-asgiref = ">=3.2.10,<3.3.0"
+click = "*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
+
+[[package]]
+name = "click-repl"
+version = "0.1.6"
+description = "REPL plugin for Click"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+click = "*"
+prompt-toolkit = "*"
+six = "*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
+
+[[package]]
+name = "defusedxml"
+version = "0.6.0"
+description = "XML bomb protection for Python stdlib modules"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
+
+[[package]]
+name = "diff-match-patch"
+version = "20200713"
+description = "Repackaging of Google's Diff Match and Patch libraries. Offers robust algorithms to perform the operations required for synchronizing plain text."
+category = "main"
+optional = false
+python-versions = ">=2.7"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
+
+[[package]]
+name = "django"
+version = "3.1.3"
+description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+asgiref = ">=3.2.10,<4"
 pytz = "*"
 sqlparse = ">=0.2.2"
 
@@ -179,172 +228,169 @@ argon2 = ["argon2-cffi (>=16.1.0)"]
 bcrypt = ["bcrypt"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Database-backed Periodic Tasks."
 name = "django-celery-beat"
+version = "2.1.0"
+description = "Database-backed Periodic Tasks."
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.0.0"
 
 [package.dependencies]
-Django = ">=1.11.17"
-celery = "*"
+celery = ">=4.4,<6.0"
+Django = ">=2.2"
 django-timezone-field = ">=4.0,<5.0"
 python-crontab = ">=2.3.4"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "dev"
-description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
 name = "django-cors-headers"
+version = "3.5.0"
+description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
+category = "dev"
 optional = false
 python-versions = ">=3.5"
-version = "3.5.0"
 
 [package.dependencies]
 Django = ">=2.2"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "JSON Web Token for Django GraphQL"
 name = "django-graphql-jwt"
+version = "0.3.1"
+description = "JSON Web Token for Django GraphQL"
+category = "main"
 optional = false
 python-versions = "*"
-version = "0.3.1"
 
 [package.dependencies]
 Django = ">=1.11"
-PyJWT = ">=1.5.0"
 graphene-django = ">=2.1.5"
 graphql-core = ">=2.1,<3"
+PyJWT = ">=1.5.0"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Django application and library for importing and exporting data with included admin integration."
 name = "django-import-export"
+version = "2.4.0"
+description = "Django application and library for importing and exporting data with included admin integration."
+category = "main"
 optional = false
 python-versions = ">=3.5"
-version = "2.3.0"
 
 [package.dependencies]
-Django = ">=2.0"
 diff-match-patch = "*"
-
-[package.dependencies.tablib]
-extras = ["xlsx", "ods", "yaml", "xls", "html"]
-version = ">=0.14.0"
+Django = ">=2.0"
+tablib = {version = ">=0.14.0", extras = ["html", "ods", "xls", "xlsx", "yaml"]}
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "script tag with additional attributes for django.forms.Media"
 name = "django-js-asset"
+version = "1.2.2"
+description = "script tag with additional attributes for django.forms.Media"
+category = "main"
 optional = false
 python-versions = "*"
-version = "1.2.2"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Utilities for implementing Modified Preorder Tree Traversal with your Django Models and working with trees of Model instances."
 name = "django-mptt"
+version = "0.11.0"
+description = "Utilities for implementing Modified Preorder Tree Traversal with your Django Models and working with trees of Model instances."
+category = "main"
 optional = false
 python-versions = ">=3.5"
-version = "0.11.0"
 
 [package.dependencies]
 Django = ">=1.11"
 django-js-asset = "*"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "A Django app providing database and form fields for pytz timezone objects."
 name = "django-timezone-field"
+version = "4.0"
+description = "A Django app providing database and form fields for pytz timezone objects."
+category = "main"
 optional = false
 python-versions = ">=3.5"
-version = "4.0"
 
 [package.dependencies]
 django = ">=2.2"
 pytz = "*"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "dev"
-description = "DNS toolkit"
 name = "dnspython"
+version = "2.0.0"
+description = "DNS toolkit"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
-version = "2.0.0"
 
 [package.extras]
-curio = ["curio (>=1.2)", "sniffio (>=1.1)"]
 dnssec = ["cryptography (>=2.6)"]
 doh = ["requests", "requests-toolbelt"]
 idna = ["idna (>=2.1)"]
+curio = ["curio (>=1.2)", "sniffio (>=1.1)"]
 trio = ["trio (>=0.14.0)", "sniffio (>=1.1)"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "An implementation of lxml.xmlfile for the standard library"
 name = "et-xmlfile"
+version = "1.0.1"
+description = "An implementation of lxml.xmlfile for the standard library"
+category = "main"
 optional = false
 python-versions = "*"
-version = "1.0.1"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "dev"
-description = "Highly concurrent networking library"
 name = "eventlet"
+version = "0.25.2"
+description = "Highly concurrent networking library"
+category = "dev"
 optional = false
 python-versions = "*"
-version = "0.25.2"
 
 [package.dependencies]
 dnspython = ">=1.15.0"
@@ -353,17 +399,17 @@ monotonic = ">=1.4"
 six = ">=1.10.0"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "GraphQL Framework for Python"
 name = "graphene"
+version = "2.1.8"
+description = "GraphQL Framework for Python"
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.1.8"
 
 [package.dependencies]
 aniso8601 = ">=3,<=7"
@@ -377,17 +423,17 @@ sqlalchemy = ["graphene-sqlalchemy"]
 test = ["pytest", "pytest-benchmark", "pytest-cov", "pytest-mock", "snapshottest", "coveralls", "promise", "six", "mock", "pytz", "iso8601"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Graphene Django integration"
 name = "graphene-django"
+version = "2.13.0"
+description = "Graphene Django integration"
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.13.0"
 
 [package.dependencies]
 Django = ">=1.11"
@@ -399,22 +445,22 @@ six = ">=1.10.0"
 unidecode = ">=1.1.1,<2"
 
 [package.extras]
-dev = ["black (19.10b0)", "flake8 (3.7.9)", "flake8-black (0.1.1)", "flake8-bugbear (20.1.4)", "pytest (>=3.6.3)", "pytest-cov", "coveralls", "mock", "pytz", "pytest-django (>=3.3.2)", "djangorestframework (>=3.6.3)", "django-filter (<2)", "django-filter (>=2)"]
+dev = ["black (==19.10b0)", "flake8 (==3.7.9)", "flake8-black (==0.1.1)", "flake8-bugbear (==20.1.4)", "pytest (>=3.6.3)", "pytest-cov", "coveralls", "mock", "pytz", "pytest-django (>=3.3.2)", "djangorestframework (>=3.6.3)", "django-filter (<2)", "django-filter (>=2)"]
 rest_framework = ["djangorestframework (>=3.6.3)"]
 test = ["pytest (>=3.6.3)", "pytest-cov", "coveralls", "mock", "pytz", "pytest-django (>=3.3.2)", "djangorestframework (>=3.6.3)", "django-filter (<2)", "django-filter (>=2)"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "GraphQL implementation for Python"
 name = "graphql-core"
+version = "2.3.2"
+description = "GraphQL implementation for Python"
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.3.2"
 
 [package.dependencies]
 promise = ">=2.3,<3"
@@ -423,20 +469,20 @@ six = ">=1.10.0"
 
 [package.extras]
 gevent = ["gevent (>=1.1)"]
-test = ["six (1.14.0)", "pyannotate (1.2.0)", "pytest (4.6.10)", "pytest-django (3.9.0)", "pytest-cov (2.8.1)", "coveralls (1.11.1)", "cython (0.29.17)", "gevent (1.5.0)", "pytest-benchmark (3.2.3)", "pytest-mock (2.0.0)"]
+test = ["six (==1.14.0)", "pyannotate (==1.2.0)", "pytest (==4.6.10)", "pytest-django (==3.9.0)", "pytest-cov (==2.8.1)", "coveralls (==1.11.1)", "cython (==0.29.17)", "gevent (==1.5.0)", "pytest-benchmark (==3.2.3)", "pytest-mock (==2.0.0)"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Relay implementation for Python"
 name = "graphql-relay"
+version = "2.0.1"
+description = "Relay implementation for Python"
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.0.1"
 
 [package.dependencies]
 graphql-core = ">=2.2,<3"
@@ -444,59 +490,59 @@ promise = ">=2.2,<3"
 six = ">=1.12"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "dev"
-description = "Lightweight in-process concurrent programming"
 name = "greenlet"
+version = "0.4.17"
+description = "Lightweight in-process concurrent programming"
+category = "dev"
 optional = false
 python-versions = "*"
-version = "0.4.17"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Internationalized Domain Names in Applications (IDNA)"
 name = "idna"
+version = "2.10"
+description = "Internationalized Domain Names in Applications (IDNA)"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "2.10"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Julian dates from proleptic Gregorian and Julian calendars."
 name = "jdcal"
+version = "1.4.1"
+description = "Julian dates from proleptic Gregorian and Julian calendars."
+category = "main"
 optional = false
 python-versions = "*"
-version = "1.4.1"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Messaging library for Python."
 name = "kombu"
+version = "5.0.2"
+description = "Messaging library for Python."
+category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "4.6.11"
+python-versions = ">=3.6"
 
 [package.dependencies]
-amqp = ">=2.6.0,<2.7"
+amqp = ">=5.0.0,<6.0.0"
 
 [package.extras]
 azureservicebus = ["azure-servicebus (>=0.21.1)"]
@@ -510,81 +556,81 @@ qpid = ["qpid-python (>=0.26)", "qpid-tools (>=0.26)"]
 redis = ["redis (>=3.3.11)"]
 slmq = ["softlayer-messaging (>=1.0.3)"]
 sqlalchemy = ["sqlalchemy"]
-sqs = ["boto3 (>=1.4.4)", "pycurl (7.43.0.2)"]
+sqs = ["boto3 (>=1.4.4)", "pycurl (==7.43.0.2)"]
 yaml = ["PyYAML (>=3.10)"]
 zookeeper = ["kazoo (>=1.3.1)"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "An HTML/XML generator"
 name = "markuppy"
-optional = false
-python-versions = "*"
 version = "1.14"
-
-[package.source]
-reference = 'aliyun'
-type = "legacy"
-url = "https://mirrors.aliyun.com/pypi/simple"
-
-[[package]]
-category = "dev"
-description = "An implementation of time.monotonic() for Python 2 & < 3.3"
-name = "monotonic"
-optional = false
-python-versions = "*"
-version = "1.5"
-
-[package.source]
-reference = 'aliyun'
-type = "legacy"
-url = "https://mirrors.aliyun.com/pypi/simple"
-
-[[package]]
+description = "An HTML/XML generator"
 category = "main"
-description = "Python API and tools to manipulate OpenDocument files"
-name = "odfpy"
 optional = false
 python-versions = "*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
+
+[[package]]
+name = "monotonic"
+version = "1.5"
+description = "An implementation of time.monotonic() for Python 2 & < 3.3"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
+
+[[package]]
+name = "odfpy"
 version = "1.4.1"
+description = "Python API and tools to manipulate OpenDocument files"
+category = "main"
+optional = false
+python-versions = "*"
 
 [package.dependencies]
 defusedxml = "*"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
 name = "openpyxl"
+version = "3.0.5"
+description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
+category = "main"
 optional = false
 python-versions = ">=3.6,"
-version = "3.0.5"
 
 [package.dependencies]
 et-xmlfile = "*"
 jdcal = "*"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Promises/A+ implementation for Python"
 name = "promise"
+version = "2.3"
+description = "Promises/A+ implementation for Python"
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.3"
 
 [package.dependencies]
 six = "*"
@@ -593,30 +639,46 @@ six = "*"
 test = ["pytest (>=2.7.3)", "pytest-cov", "coveralls", "futures", "pytest-benchmark", "mock"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
+name = "prompt-toolkit"
+version = "3.0.8"
+description = "Library for building powerful interactive command lines in Python"
 category = "main"
-description = "psycopg2 - Python-PostgreSQL Database Adapter"
-name = "psycopg2"
 optional = false
-python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
-version = "2.8.6"
+python-versions = ">=3.6.1"
+
+[package.dependencies]
+wcwidth = "*"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
+name = "psycopg2"
+version = "2.8.6"
+description = "psycopg2 - Python-PostgreSQL Database Adapter"
 category = "main"
-description = "JSON Web Token implementation in Python"
+optional = false
+python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
+
+[[package]]
 name = "pyjwt"
+version = "1.7.1"
+description = "JSON Web Token implementation in Python"
+category = "main"
 optional = false
 python-versions = "*"
-version = "1.7.1"
 
 [package.extras]
 crypto = ["cryptography (>=1.4)"]
@@ -624,17 +686,17 @@ flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
 test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Python Crontab API"
 name = "python-crontab"
+version = "2.5.1"
+description = "Python Crontab API"
+category = "main"
 optional = false
 python-versions = "*"
-version = "2.5.1"
 
 [package.dependencies]
 python-dateutil = "*"
@@ -644,75 +706,75 @@ cron-description = ["cron-descriptor"]
 cron-schedule = ["croniter"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Extensions to the standard Python datetime module"
 name = "python-dateutil"
+version = "2.8.1"
+description = "Extensions to the standard Python datetime module"
+category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
-version = "2.8.1"
 
 [package.dependencies]
 six = ">=1.5"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "World timezone definitions, modern and historical"
 name = "pytz"
+version = "2020.4"
+description = "World timezone definitions, modern and historical"
+category = "main"
 optional = false
 python-versions = "*"
-version = "2020.1"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "YAML parser and emitter for Python"
 name = "pyyaml"
+version = "5.3.1"
+description = "YAML parser and emitter for Python"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "5.3.1"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Python client for Redis key-value store"
 name = "redis"
+version = "3.5.3"
+description = "Python client for Redis key-value store"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "3.5.3"
 
 [package.extras]
 hiredis = ["hiredis (>=0.1.3)"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Python HTTP for Humans."
 name = "requests"
+version = "2.24.0"
+description = "Python HTTP for Humans."
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "2.24.0"
 
 [package.dependencies]
 certifi = ">=2017.4.17"
@@ -722,100 +784,83 @@ urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
 
 [package.extras]
 security = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)"]
-socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7)", "win-inet-pton"]
+socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Reactive Extensions (Rx) for Python"
 name = "rx"
+version = "1.6.1"
+description = "Reactive Extensions (Rx) for Python"
+category = "main"
 optional = false
 python-versions = "*"
-version = "1.6.1"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "This library brings functools.singledispatch from Python 3.4 to Python 2.6-3.3."
 name = "singledispatch"
+version = "3.4.0.3"
+description = "This library brings functools.singledispatch from Python 3.4 to Python 2.6-3.3."
+category = "main"
 optional = false
 python-versions = "*"
-version = "3.4.0.3"
 
 [package.dependencies]
 six = "*"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Python 2 and 3 compatibility utilities"
 name = "six"
+version = "1.15.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
-version = "1.15.0"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Non-validating SQL parser"
 name = "sqlparse"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "0.3.1"
-
-[package.source]
-reference = 'aliyun'
-type = "legacy"
-url = "https://mirrors.aliyun.com/pypi/simple"
-
-[[package]]
+version = "0.4.1"
+description = "A non-validating SQL parser."
 category = "main"
-description = "Format agnostic tabular data library (XLS, JSON, YAML, CSV)"
-name = "tablib"
 optional = false
 python-versions = ">=3.5"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
+
+[[package]]
+name = "tablib"
 version = "2.0.0"
+description = "Format agnostic tabular data library (XLS, JSON, YAML, CSV)"
+category = "main"
+optional = false
+python-versions = ">=3.5"
 
 [package.dependencies]
-[package.dependencies.markuppy]
-optional = true
-version = "*"
-
-[package.dependencies.odfpy]
-optional = true
-version = "*"
-
-[package.dependencies.openpyxl]
-optional = true
-version = ">=2.6.0"
-
-[package.dependencies.pyyaml]
-optional = true
-version = "*"
-
-[package.dependencies.xlrd]
-optional = true
-version = "*"
-
-[package.dependencies.xlwt]
-optional = true
-version = "*"
+markuppy = {version = "*", optional = true, markers = "extra == \"html\""}
+odfpy = {version = "*", optional = true, markers = "extra == \"ods\""}
+openpyxl = {version = ">=2.6.0", optional = true, markers = "extra == \"xlsx\""}
+pyyaml = {version = "*", optional = true, markers = "extra == \"yaml\""}
+xlrd = {version = "*", optional = true, markers = "extra == \"xls\""}
+xlwt = {version = "*", optional = true, markers = "extra == \"xls\""}
 
 [package.extras]
 all = ["markuppy", "odfpy", "openpyxl (>=2.6.0)", "pandas", "pyyaml", "tabulate", "xlrd", "xlwt"]
@@ -828,126 +873,150 @@ xlsx = ["openpyxl (>=2.6.0)"]
 yaml = ["pyyaml"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "ASCII transliterations of Unicode text"
 name = "unidecode"
+version = "1.1.1"
+description = "ASCII transliterations of Unicode text"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "1.1.1"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "HTTP library with thread-safe connection pooling, file post, and more."
 name = "urllib3"
+version = "1.25.11"
+description = "HTTP library with thread-safe connection pooling, file post, and more."
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
-version = "1.25.10"
 
 [package.extras]
 brotli = ["brotlipy (>=0.6.0)"]
-secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0.14)", "ipaddress"]
-socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
+secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
+socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Promises, promises, promises."
 name = "vine"
+version = "5.0.0"
+description = "Promises, promises, promises."
+category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "1.3.0"
+python-versions = ">=3.6"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
+name = "wcwidth"
+version = "0.2.5"
+description = "Measures the displayed width of unicode strings in a terminal"
 category = "main"
-description = "Library for developers to extract data from Microsoft Excel (tm) spreadsheet files"
+optional = false
+python-versions = "*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
+
+[[package]]
 name = "xlrd"
+version = "1.2.0"
+description = "Library for developers to extract data from Microsoft Excel (tm) spreadsheet files"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "1.2.0"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "main"
-description = "Library to create spreadsheet files compatible with MS Excel 97/2000/XP/2003 XLS files, on any platform, with Python 2.6, 2.7, 3.3+"
 name = "xlwt"
+version = "1.3.0"
+description = "Library to create spreadsheet files compatible with MS Excel 97/2000/XP/2003 XLS files, on any platform, with Python 2.6, 2.7, 3.3+"
+category = "main"
 optional = false
 python-versions = "*"
-version = "1.3.0"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [[package]]
-category = "dev"
-description = "A formatter for Python code."
 name = "yapf"
+version = "0.30.0"
+description = "A formatter for Python code."
+category = "dev"
 optional = false
 python-versions = "*"
-version = "0.30.0"
 
 [package.source]
-reference = 'aliyun'
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
 
 [metadata]
-content-hash = "a22e8026dbf0898dd48e39a2d6ed89659dd74a365adfc340328ad153121b1cf2"
-lock-version = "1.0"
-python-versions = "^3.8"
+lock-version = "1.1"
+python-versions = "~3.8"
+content-hash = "e1a7876a862e1adb57500361a81a7c70648e4961574b9ea838d55213b63bcb36"
 
 [metadata.files]
 amqp = [
-    {file = "amqp-2.6.1-py2.py3-none-any.whl", hash = "sha256:aa7f313fb887c91f15474c1229907a04dac0b8135822d6603437803424c0aa59"},
-    {file = "amqp-2.6.1.tar.gz", hash = "sha256:70cdb10628468ff14e57ec2f751c7aa9e48e7e3651cfd62d431213c0c4e58f21"},
+    {file = "amqp-5.0.2-py3-none-any.whl", hash = "sha256:5b9062d5c0812335c75434bf17ce33d7a20ecfedaa0733faec7379868eb4068a"},
+    {file = "amqp-5.0.2.tar.gz", hash = "sha256:fcd5b3baeeb7fc19b3486ff6d10543099d40ae1f5c9196eae695d1cde1b2f784"},
 ]
 aniso8601 = [
     {file = "aniso8601-7.0.0-py2.py3-none-any.whl", hash = "sha256:d10a4bf949f619f719b227ef5386e31f49a2b6d453004b21f02661ccc8670c7b"},
     {file = "aniso8601-7.0.0.tar.gz", hash = "sha256:513d2b6637b7853806ae79ffaca6f3e8754bdd547048f5ccc1420aec4b714f1e"},
 ]
 asgiref = [
-    {file = "asgiref-3.2.10-py3-none-any.whl", hash = "sha256:9fc6fb5d39b8af147ba40765234fa822b39818b12cc80b35ad9b0cef3a476aed"},
-    {file = "asgiref-3.2.10.tar.gz", hash = "sha256:7e51911ee147dd685c3c8b805c0ad0cb58d360987b56953878f8c06d2d1c6f1a"},
+    {file = "asgiref-3.3.0-py3-none-any.whl", hash = "sha256:a5098bc870b80e7b872bff60bb363c7f2c2c89078759f6c47b53ff8c525a152e"},
+    {file = "asgiref-3.3.0.tar.gz", hash = "sha256:cd88907ecaec59d78e4ac00ea665b03e571cb37e3a0e37b3702af1a9e86c365a"},
 ]
 billiard = [
     {file = "billiard-3.6.3.0-py3-none-any.whl", hash = "sha256:bff575450859a6e0fbc2f9877d9b715b0bbc07c3565bb7ed2280526a0cdf5ede"},
     {file = "billiard-3.6.3.0.tar.gz", hash = "sha256:d91725ce6425f33a97dfa72fb6bfef0e47d4652acd98a032bd1a7fbf06d5fa6a"},
 ]
 celery = [
-    {file = "celery-4.4.7-py2.py3-none-any.whl", hash = "sha256:a92e1d56e650781fb747032a3997d16236d037c8199eacd5217d1a72893bca45"},
-    {file = "celery-4.4.7.tar.gz", hash = "sha256:d220b13a8ed57c78149acf82c006785356071844afe0b27012a4991d44026f9f"},
+    {file = "celery-5.0.2-py3-none-any.whl", hash = "sha256:930c3acd55349d028c4e7104a7d377729cbcca19d9fce470c17172d9e7f9a8b6"},
+    {file = "celery-5.0.2.tar.gz", hash = "sha256:012c814967fe89e3f5d2cf49df2dba3de5f29253a7f4f2270e8fce6b901b4ebf"},
 ]
 certifi = [
-    {file = "certifi-2020.6.20-py2.py3-none-any.whl", hash = "sha256:8fc0819f1f30ba15bdb34cceffb9ef04d99f420f68eb75d901e9560b8749fc41"},
-    {file = "certifi-2020.6.20.tar.gz", hash = "sha256:5930595817496dd21bb8dc35dad090f1c2cd0adfaf21204bf6732ca5d8ee34d3"},
+    {file = "certifi-2020.11.8-py2.py3-none-any.whl", hash = "sha256:1f422849db327d534e3d0c5f02a263458c3955ec0aae4ff09b95f195c59f4edd"},
+    {file = "certifi-2020.11.8.tar.gz", hash = "sha256:f05def092c44fbf25834a51509ef6e631dc19765ab8a57b4e7ab85531f0a9cf4"},
 ]
 chardet = [
     {file = "chardet-3.0.4-py2.py3-none-any.whl", hash = "md5:0004b00caff7bb543a1d0d0bd0185a03"},
     {file = "chardet-3.0.4.tar.gz", hash = "md5:7dd1ba7f9c77e32351b0a0cfacf4055c"},
+]
+click = [
+    {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
+    {file = "click-7.1.2.tar.gz", hash = "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a"},
+]
+click-didyoumean = [
+    {file = "click-didyoumean-0.0.3.tar.gz", hash = "md5:08ac34aa0355f58ffc43ee57f1969ffb"},
+]
+click-repl = [
+    {file = "click-repl-0.1.6.tar.gz", hash = "sha256:b9f29d52abc4d6059f8e276132a111ab8d94980afe6a5432b9d996544afa95d5"},
+    {file = "click_repl-0.1.6-py3-none-any.whl", hash = "sha256:9c4c3d022789cae912aad8a3f5e1d7c2cdd016ee1225b5212ad3e8691563cda5"},
 ]
 defusedxml = [
     {file = "defusedxml-0.6.0-py2.py3-none-any.whl", hash = "sha256:6687150770438374ab581bb7a1b327a847dd9c5749e396102de3fad4e8a3ef93"},
@@ -958,12 +1027,12 @@ diff-match-patch = [
     {file = "diff_match_patch-20200713-py3-none-any.whl", hash = "sha256:8bf9d9c4e059d917b5c6312bac0c137971a32815ddbda9c682b949f2986b4d34"},
 ]
 django = [
-    {file = "Django-3.1.1-py3-none-any.whl", hash = "sha256:b5fbb818e751f660fa2d576d9f40c34a4c615c8b48dd383f5216e609f383371f"},
-    {file = "Django-3.1.1.tar.gz", hash = "sha256:59c8125ca873ed3bdae9c12b146fbbd6ed8d0f743e4cf5f5817af50c51f1fc2f"},
+    {file = "Django-3.1.3-py3-none-any.whl", hash = "sha256:14a4b7cd77297fba516fc0d92444cc2e2e388aa9de32d7a68d4a83d58f5a4927"},
+    {file = "Django-3.1.3.tar.gz", hash = "sha256:14b87775ffedab2ef6299b73343d1b4b41e5d4e2aa58c6581f114dbec01e3f8f"},
 ]
 django-celery-beat = [
-    {file = "django-celery-beat-2.0.0.tar.gz", hash = "sha256:fdf1255eecfbeb770c6521fe3e69989dfc6373cd5a7f0fe62038d37f80f47e48"},
-    {file = "django_celery_beat-2.0.0-py2.py3-none-any.whl", hash = "sha256:fe0b2a1b31d4a6234fea4b31986ddfd4644a48fab216ce1843f3ed0ddd2e9097"},
+    {file = "django-celery-beat-2.1.0.tar.gz", hash = "sha256:4eb0e8412e2e05ba0029912a6f80d1054731001eecbcb4d59688c4e07cf4d9d3"},
+    {file = "django_celery_beat-2.1.0-py2.py3-none-any.whl", hash = "sha256:8a169e11d96faed8b72d505ddbc70e7fe0b16cdc854df43cb209c153ed08d651"},
 ]
 django-cors-headers = [
     {file = "django-cors-headers-3.5.0.tar.gz", hash = "sha256:db82b2840f667d47872ae3e4a4e0a0d72fbecb42779b8aa233fa8bb965f7836a"},
@@ -974,8 +1043,8 @@ django-graphql-jwt = [
     {file = "django_graphql_jwt-0.3.1-py2.py3-none-any.whl", hash = "sha256:2189f6d1a13b827d486780fa74a631a15e4f7f0235a3a87a487736b5b0dc4690"},
 ]
 django-import-export = [
-    {file = "django-import-export-2.3.0.tar.gz", hash = "sha256:21464304cb64e57809f3d6f5ad45108d5b02c556ab115b493a547304d2dddc70"},
-    {file = "django_import_export-2.3.0-py3-none-any.whl", hash = "sha256:8ffddb1f39f2768a747df90c8b55c46c7198e41e9f78bc83427a5b7fc0e78bac"},
+    {file = "django-import-export-2.4.0.tar.gz", hash = "sha256:401d76eca0a5c6cf43bffed16c06e509b9044ce8f6bcff264b776e3952830f1a"},
+    {file = "django_import_export-2.4.0-py3-none-any.whl", hash = "sha256:7610f6efff797d65f56c03ba34444507c0b0ccdffe9346c168b9894fc349c55e"},
 ]
 django-js-asset = [
     {file = "django-js-asset-1.2.2.tar.gz", hash = "sha256:c163ae80d2e0b22d8fb598047cd0dcef31f81830e127cfecae278ad574167260"},
@@ -1045,8 +1114,8 @@ jdcal = [
     {file = "jdcal-1.4.1.tar.gz", hash = "sha256:472872e096eb8df219c23f2689fc336668bdb43d194094b5cc1707e1640acfc8"},
 ]
 kombu = [
-    {file = "kombu-4.6.11-py2.py3-none-any.whl", hash = "sha256:be48cdffb54a2194d93ad6533d73f69408486483d189fe9f5990ee24255b0e0a"},
-    {file = "kombu-4.6.11.tar.gz", hash = "sha256:ca1b45faac8c0b18493d02a8571792f3c40291cf2bcf1f55afed3d8f3aa7ba74"},
+    {file = "kombu-5.0.2-py2.py3-none-any.whl", hash = "sha256:6dc509178ac4269b0e66ab4881f70a2035c33d3a622e20585f965986a5182006"},
+    {file = "kombu-5.0.2.tar.gz", hash = "sha256:f4965fba0a4718d47d470beeb5d6446e3357a62402b16c510b6a2f251e05ac3c"},
 ]
 markuppy = [
     {file = "MarkupPy-1.14.tar.gz", hash = "md5:8c5906f3d6043b981a04bc876c454e31"},
@@ -1064,6 +1133,10 @@ openpyxl = [
 ]
 promise = [
     {file = "promise-2.3.tar.gz", hash = "sha256:dfd18337c523ba4b6a58801c164c1904a9d4d1b1747c7d5dbf45b693a49d93d0"},
+]
+prompt-toolkit = [
+    {file = "prompt_toolkit-3.0.8-py3-none-any.whl", hash = "sha256:7debb9a521e0b1ee7d2fe96ee4bd60ef03c6492784de0547337ca4433e46aa63"},
+    {file = "prompt_toolkit-3.0.8.tar.gz", hash = "sha256:25c95d2ac813909f813c93fde734b6e44406d1477a9faef7c915ff37d39c0a8c"},
 ]
 psycopg2 = [
     {file = "psycopg2-2.8.6-cp27-cp27m-win32.whl", hash = "sha256:068115e13c70dc5982dfc00c5d70437fe37c014c808acce119b5448361c03725"},
@@ -1092,8 +1165,8 @@ python-dateutil = [
     {file = "python_dateutil-2.8.1-py2.py3-none-any.whl", hash = "sha256:75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"},
 ]
 pytz = [
-    {file = "pytz-2020.1-py2.py3-none-any.whl", hash = "sha256:a494d53b6d39c3c6e44c3bec237336e14305e4f29bbf800b599253057fbb79ed"},
-    {file = "pytz-2020.1.tar.gz", hash = "sha256:c35965d010ce31b23eeb663ed3cc8c906275d6be1a34393a1d73a41febf4a048"},
+    {file = "pytz-2020.4-py2.py3-none-any.whl", hash = "sha256:5c55e189b682d420be27c6995ba6edce0c0a77dd67bfbe2ae6607134d5851ffd"},
+    {file = "pytz-2020.4.tar.gz", hash = "sha256:3e6b7dd2d1e0a59084bcee14a17af60c5c562cdc16d828e8eba2e683d3a7e268"},
 ]
 pyyaml = [
     {file = "PyYAML-5.3.1-cp27-cp27m-win32.whl", hash = "sha256:74809a57b329d6cc0fdccee6318f44b9b8649961fa73144a98735b0aaf029f1f"},
@@ -1129,8 +1202,8 @@ six = [
     {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
 ]
 sqlparse = [
-    {file = "sqlparse-0.3.1-py2.py3-none-any.whl", hash = "sha256:022fb9c87b524d1f7862b3037e541f68597a730a8843245c349fc93e1643dc4e"},
-    {file = "sqlparse-0.3.1.tar.gz", hash = "sha256:e162203737712307dfe78860cc56c8da8a852ab2ee33750e33aeadf38d12c548"},
+    {file = "sqlparse-0.4.1-py3-none-any.whl", hash = "sha256:017cde379adbd6a1f15a61873f43e8274179378e95ef3fede90b5aa64d304ed0"},
+    {file = "sqlparse-0.4.1.tar.gz", hash = "sha256:0f91fd2e829c44362cbcfab3e9ae12e22badaa8a29ad5ff599f9ec109f0454e8"},
 ]
 tablib = [
     {file = "tablib-2.0.0-py3-none-any.whl", hash = "sha256:c5a77c96ad306d5b380def1309d521ad5e98b4f83726f84857ad87e142d13279"},
@@ -1141,12 +1214,16 @@ unidecode = [
     {file = "Unidecode-1.1.1.tar.gz", hash = "sha256:2b6aab710c2a1647e928e36d69c21e76b453cd455f4e2621000e54b2a9b8cce8"},
 ]
 urllib3 = [
-    {file = "urllib3-1.25.10-py2.py3-none-any.whl", hash = "sha256:e7983572181f5e1522d9c98453462384ee92a0be7fac5f1413a1e35c56cc0461"},
-    {file = "urllib3-1.25.10.tar.gz", hash = "sha256:91056c15fa70756691db97756772bb1eb9678fa585d9184f24534b100dc60f4a"},
+    {file = "urllib3-1.25.11-py2.py3-none-any.whl", hash = "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"},
+    {file = "urllib3-1.25.11.tar.gz", hash = "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2"},
 ]
 vine = [
-    {file = "vine-1.3.0-py2.py3-none-any.whl", hash = "sha256:ea4947cc56d1fd6f2095c8d543ee25dad966f78692528e68b4fada11ba3f98af"},
-    {file = "vine-1.3.0.tar.gz", hash = "sha256:133ee6d7a9016f177ddeaf191c1f58421a1dcc6ee9a42c58b34bed40e1d2cd87"},
+    {file = "vine-5.0.0-py2.py3-none-any.whl", hash = "sha256:4c9dceab6f76ed92105027c49c823800dd33cacce13bdedc5b914e3514b7fb30"},
+    {file = "vine-5.0.0.tar.gz", hash = "sha256:7d3b1624a953da82ef63462013bbd271d3eb75751489f9807598e8f340bd637e"},
+]
+wcwidth = [
+    {file = "wcwidth-0.2.5-py2.py3-none-any.whl", hash = "sha256:beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784"},
+    {file = "wcwidth-0.2.5.tar.gz", hash = "sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"},
 ]
 xlrd = [
     {file = "xlrd-1.2.0-py2.py3-none-any.whl", hash = "sha256:e551fb498759fa3a5384a94ccd4c3c02eb7c00ea424426e212ac0c57be9dfbde"},

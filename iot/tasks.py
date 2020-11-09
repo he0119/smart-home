@@ -6,7 +6,7 @@ from .api import DeviceAPI, WeatherAPI
 
 
 @shared_task
-def set_status(device_id: str, key: str, value):
+def set_status(device_id: str, key: str, value) -> None:
     """ 设置设备参数 """
     if key is not None and value is not None:
         device_api = DeviceAPI(device_id)
@@ -14,7 +14,7 @@ def set_status(device_id: str, key: str, value):
 
 
 @shared_task
-def set_multiple_status(device_id: str, status: List[Tuple]):
+def set_multiple_status(device_id: str, status: List[Tuple]) -> None:
     """ 设置设备参数
 
     status 为参数名和值的元组列表 [('valve1', True), ('valve2', True)]
@@ -24,9 +24,9 @@ def set_multiple_status(device_id: str, status: List[Tuple]):
         device_api.set_multiple_status(status)
 
 
-@shared_task
-def autowatering(location_id: str, limit: float, device_id: str,
-                 valves: List[str]):
+@shared_task(bind=True)
+def autowatering(self, location_id: str, limit: float, device_id: str,
+                 valves: List[str]) -> str:
     """ 根据当地的降雨情况自动浇水
 
     location_id: 中国天气网的地址 ID
@@ -36,9 +36,12 @@ def autowatering(location_id: str, limit: float, device_id: str,
 
     # 根据降水量判断是否需要浇水
     weather_api = WeatherAPI(location_id)
-    rainfall = weather_api.rainfall_24h()
-    if rainfall < limit:
-        need_water = True
+    try:
+        rainfall = weather_api.rainfall_24h()
+        if rainfall < limit:
+            need_water = True
+    except Exception as exc:
+        raise self.retry(exc=exc)
 
     if need_water:
         device_api = DeviceAPI(device_id)

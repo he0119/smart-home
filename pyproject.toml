@@ -9,9 +9,9 @@ repository = "https://github.com/he0119/smart-home"
 version = "0.5.3"
 
 [tool.poetry.dependencies]
-celery = "^4.4.6"
+celery = "^5.0.0"
 django = "^3.0.8"
-django-celery-beat = "^2.0.0"
+django-celery-beat = "^2.1.0"
 django-graphql-jwt = "^0.3.1"
 django-import-export = "^2.2.0"
 django-mptt = "^0.11.0"
