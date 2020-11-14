@@ -5,7 +5,7 @@ from .models import Comment, Topic
 
 
 class TopicTests(JSONWebTokenTestCase):
-    fixtures = ['user', 'board']
+    fixtures = ['users', 'board']
 
     def setUp(self):
         self.user = get_user_model().objects.get(username='test')
@@ -191,7 +191,7 @@ class TopicTests(JSONWebTokenTestCase):
 
 
 class CommentTests(JSONWebTokenTestCase):
-    fixtures = ['user', 'board']
+    fixtures = ['users', 'board']
 
     def setUp(self):
         self.user = get_user_model().objects.get(username='test')

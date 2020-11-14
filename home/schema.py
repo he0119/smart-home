@@ -4,12 +4,14 @@ import graphql_jwt
 import board.schema
 import iot.schema
 import storage.schema
+import users.schema
 
 
 class Query(
         storage.schema.Query,
         board.schema.Query,
         iot.schema.Query,
+        users.schema.Query,
         graphene.ObjectType,
 ):
     pass

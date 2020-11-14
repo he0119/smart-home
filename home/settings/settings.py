@@ -93,11 +93,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 数据相关
     'mptt',
     'import_export',
+    'django_celery_beat',
+    # GraphQL
     'graphene_django',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
-    'django_celery_beat',
+    # 我的应用
+    'users',
     'storage',
     'board',
     'xiaoai',
