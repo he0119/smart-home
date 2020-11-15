@@ -64,3 +64,9 @@ EMQX_HTTP_HOST = os.getenv('EMQX_HTTP_HOST')
 EMQX_HTTP_PORT = os.getenv('EMQX_HTTP_PORT')
 EMQX_HTTP_APPID = os.getenv('EMQX_HTTP_APPID')
 EMQX_HTTP_APPSECRET = os.getenv('EMQX_HTTP_APPSECRET')
+
+# 小米推送
+# https://dev.mi.com/console/doc/detail?pId=1788
+
+MI_PUSH_PACKAGE_NAME = os.getenv('MI_PUSH_PACKAGE_NAME')
+MI_PUSH_APP_SECRET = os.getenv('MI_PUSH_APP_SECRET')
