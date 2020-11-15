@@ -9,10 +9,14 @@ sender = APISender(settings.MI_PUSH_APP_SECRET)
 
 
 def build_message(title: str, description: str) -> PushMessage:
+    # 每条内容相同的消息单独显示，不覆盖
+    notify_id = abs(hash(title + description)) % (10**8)
     return PushMessage() \
         .restricted_package_name(settings.MI_PUSH_PACKAGE_NAME) \
         .title(title).description(description) \
-        .pass_through(0)
+        .pass_through(0) \
+        .notify_id(notify_id) \
+        .extra({Constants.extra_param_notify_effect: Constants.notify_launcher_activity})
 
 
 @shared_task(max_retries=3, default_retry_delay=5)
