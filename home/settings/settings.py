@@ -102,6 +102,7 @@ INSTALLED_APPS = [
     'board',
     'xiaoai',
     'iot',
+    'push',
 ]
 
 MIDDLEWARE = [
@@ -244,3 +245,9 @@ EMQX_HTTP_HOST = 'localhost'
 EMQX_HTTP_PORT = '8081'
 EMQX_HTTP_APPID = 'admin'
 EMQX_HTTP_APPSECRET = 'public'
+
+# 小米推送
+# https://dev.mi.com/console/doc/detail?pId=1788
+
+MI_PUSH_PACKAGE_NAME = 'package_name'
+MI_PUSH_APP_SECRET = 'app_secret'
