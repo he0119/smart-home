@@ -6,6 +6,8 @@ from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
 
+from push.tasks import push_to_users
+
 from .models import Comment, Topic
 
 
@@ -129,6 +131,13 @@ class AddTopicMutation(graphene.Mutation):
             is_open=True,
         )
         topic.save()
+        # 获取除发布者以外的所有人
+        users = get_user_model().objects.exclude(pk=topic.user.id).exclude(
+            mipush__enable=False)
+        usernames = [user.username for user in users]
+        push_to_users.delay(usernames, '新话题',
+                            f'{topic.user.username} 刚发布了一个新话题，快来查看吧。')
+
         return AddTopicMutation(topic=topic)
 
 
@@ -248,6 +257,16 @@ class AddCommentMutation(graphene.Mutation):
             # 被回复人
             comment.reply_to = parent_comment.user
         comment.save()
+
+        # 获取除发布者以外的所有人
+        users = get_user_model().objects.exclude(pk=comment.user.id).exclude(
+            mipush__enable=False)
+        usernames = [user.username for user in users]
+        push_to_users.delay(
+            usernames, '新回复',
+            f'{comment.user.username} 在 {comment.topic.title} 话题下发表了新回复，快来查看吧。'
+        )
+
         return AddCommentMutation(comment=comment)
 
 
