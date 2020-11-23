@@ -16,7 +16,7 @@ def build_message(title: str, description: str) -> PushMessage:
         .title(title).description(description) \
         .pass_through(0) \
         .notify_id(notify_id) \
-        .extra({Constants.extra_param_notify_effect: Constants.notify_launcher_activity})
+        .extra({Constants.extra_param_notify_effect: Constants.notify_launcher_activity, 'notification_style_type': '1' })
 
 
 @shared_task(max_retries=3, default_retry_delay=5)
