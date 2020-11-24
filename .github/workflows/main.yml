@@ -1,0 +1,91 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+    tags:
+      - 'v*'
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12.3
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:6.0.9-alpine
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install poetry
+        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+      - name: Install prerequisites
+        run: |
+          $HOME/.poetry/bin/poetry config virtualenvs.create false
+          $HOME/.poetry/bin/poetry install --no-dev
+          pip install unittest-xml-reporting
+          pip install coverage
+      - name: Run tests
+        run: |
+          coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input && coverage xml
+        env:
+          TESTING_SERVER: true
+      - name: Publish unit test results
+        uses: EnricoMi/publish-unit-test-result-action@v1.5
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: "**/TEST-*.xml"
+          comment_on_pr: false
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          flags: unittests
+
+
+  docker:
+    name: Docker
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: he0119/smart-home
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
