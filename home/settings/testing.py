@@ -8,5 +8,3 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
-print('testing')
