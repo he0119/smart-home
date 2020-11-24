@@ -45,6 +45,12 @@ jobs:
           coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input && coverage xml
         env:
           TESTING_SERVER: true
+      - name: Publish unit test results
+        uses: EnricoMi/publish-unit-test-result-action@v1.5
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: "**/TEST-*.xml"
 
   docker:
     runs-on: ubuntu-latest
