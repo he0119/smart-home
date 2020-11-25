@@ -11,8 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ### Fixed
 
-- 升级 Django 版本，修复安全问题
 - 自动浇水任务添加自动重试
+
+### Security
+
+- 升级 Django 版本，修复安全问题
 
 ## [0.5.3] - 2020-09-24
 
