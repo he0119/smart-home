@@ -60,7 +60,6 @@ jobs:
           file: ./coverage.xml
           flags: unittests
 
-
   docker:
     name: Docker
     runs-on: ubuntu-latest
@@ -89,3 +88,13 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: docker
+    steps:
+      - name: Dump needs context
+        env:
+          NEEDS_CONTEXT: ${{ toJson(needs.docker) }}
+        run: echo "$NEEDS_CONTEXT"
