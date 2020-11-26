@@ -5,9 +5,9 @@ on:
     branches:
       - 'master'
       - 'dev'
-    tags:
-      - 'v*'
   pull_request:
+  release:
+    types: [released]
 
 jobs:
   test:
@@ -88,3 +88,24 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: docker
+    if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script_stop: true
+          envs: TAG_NAME
+          script: |
+            cd websites
+            sed -i "s#smart-home:.*#smart-home:$TAG_NAME#g" docker-compose.yml
+            sudo docker-compose pull && sudo docker-compose up -d
