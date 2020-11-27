@@ -20,17 +20,17 @@ def build_message(title: str, description: str) -> PushMessage:
 
 
 @shared_task(max_retries=3, default_retry_delay=5)
-def push_to_user(username: str, title: str, description: str) -> None:
+def push_to_user(reg_ids: str, title: str, description: str) -> None:
     """ 向指定用户推送消息 """
     message = build_message(title, description)
-    return sender.send_to_alias(message.message_dict(), username)
+    return sender.send(message.message_dict(), reg_ids)
 
 
 @shared_task(max_retries=3, default_retry_delay=5)
-def push_to_users(usernames: List[str], title: str, description: str) -> None:
+def push_to_users(reg_ids: List[str], title: str, description: str) -> None:
     """ 向多位用户推送消息 """
     message = build_message(title, description)
-    return sender.send_to_alias(message.message_dict(), usernames)
+    return sender.send(message.message_dict(), reg_ids)
 
 
 @shared_task(max_retries=3, default_retry_delay=5)
