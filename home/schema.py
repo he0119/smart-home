@@ -5,6 +5,7 @@ import board.schema
 import iot.schema
 import storage.schema
 import push.schema
+import users.schema
 
 
 class Query(
@@ -12,6 +13,7 @@ class Query(
         board.schema.Query,
         iot.schema.Query,
         push.schema.Query,
+        users.schema.Query,
         graphene.ObjectType,
 ):
     pass

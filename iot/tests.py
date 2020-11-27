@@ -5,7 +5,7 @@ from .models import AutowateringData, Device
 
 
 class DeviceTests(JSONWebTokenTestCase):
-    fixtures = ['user', 'iot']
+    fixtures = ['users', 'iot']
 
     def setUp(self):
         self.user = get_user_model().objects.get(username='test')
