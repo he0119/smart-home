@@ -1,4 +1,6 @@
 import graphene
+from django.conf import settings
+from graphene import ObjectType
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
@@ -12,8 +14,14 @@ class MiPushType(DjangoObjectType):
         fields = '__all__'
 
 
+class MiPushKeyType(ObjectType):
+    app_id = graphene.String()
+    app_key = graphene.String()
+
+
 class Query(graphene.ObjectType):
     mi_push = graphene.Field(MiPushType)
+    mi_push_key = graphene.Field(MiPushKeyType)
 
     @login_required
     def resolve_mi_push(self, info):
@@ -22,6 +30,11 @@ class Query(graphene.ObjectType):
             return mi_push
         except MiPush.DoesNotExist:
             raise GraphQLError('推送未绑定')
+
+    @login_required
+    def resolve_mi_push_key(self, info):
+        return MiPushKeyType(app_id=settings.MI_PUSH_APP_ID,
+                             app_key=settings.MI_PUSH_APP_KEY)
 
 
 class UpdateMiPushInput(graphene.InputObjectType):

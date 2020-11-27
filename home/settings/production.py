@@ -69,4 +69,6 @@ EMQX_HTTP_APPSECRET = os.getenv('EMQX_HTTP_APPSECRET')
 # https://dev.mi.com/console/doc/detail?pId=1788
 
 MI_PUSH_PACKAGE_NAME = os.getenv('MI_PUSH_PACKAGE_NAME')
+MI_PUSH_APP_ID = os.getenv('MI_PUSH_APP_ID')
+MI_PUSH_APP_KEY = os.getenv('MI_PUSH_APP_KEY')
 MI_PUSH_APP_SECRET = os.getenv('MI_PUSH_APP_SECRET')
