@@ -12,6 +12,7 @@ class MiPush(models.Model):
                                 on_delete=models.CASCADE,
                                 verbose_name='用户')
     enable = models.BooleanField(verbose_name='启用')
+    reg_id = models.TextField(verbose_name='注册标识码', null=True, unique=True)
 
     def __str__(self):
         return self.user.username
