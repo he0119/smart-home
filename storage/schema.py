@@ -22,12 +22,6 @@ class ItemType(DjangoObjectType):
         fields = '__all__'
 
 
-class UserType(DjangoObjectType):
-    class Meta:
-        model = get_user_model()
-        fields = '__all__'
-
-
 class SearchType(graphene.ObjectType):
     items = graphene.List(ItemType)
     storages = graphene.List(StorageType)
@@ -72,13 +66,12 @@ class AddItemInput(graphene.InputObjectType):
 
 
 class Query(graphene.ObjectType):
-    me = graphene.Field(UserType)
     root_storage = graphene.List(StorageType)
     storages = graphene.List(StorageType)
     items = graphene.List(ItemType)
     storage = graphene.Field(StorageType, id=graphene.ID(required=True))
     storage_ancestors = graphene.List(StorageType,
-                                       id=graphene.ID(required=True))
+                                      id=graphene.ID(required=True))
     item = graphene.Field(ItemType, id=graphene.ID(required=True))
     search = graphene.Field(SearchType, key=graphene.String(required=True))
     recently_updated_items = graphene.List(ItemType,
@@ -89,10 +82,6 @@ class Query(graphene.ObjectType):
                                        within=graphene.Int(required=True),
                                        number=graphene.Int())
     expired_items = graphene.List(ItemType, number=graphene.Int())
-
-    @login_required
-    def resolve_me(self, info, **kwargs):
-        return info.context.user
 
     @login_required
     def resolve_root_storage(self, info, **kwargs):

@@ -93,11 +93,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 数据相关
     'mptt',
     'import_export',
+    'django_celery_beat',
+    # GraphQL
     'graphene_django',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
-    'django_celery_beat',
+    # 我的应用
+    'users',
     'storage',
     'board',
     'xiaoai',
@@ -250,4 +254,6 @@ EMQX_HTTP_APPSECRET = 'public'
 # https://dev.mi.com/console/doc/detail?pId=1788
 
 MI_PUSH_PACKAGE_NAME = 'package_name'
+MI_PUSH_APP_ID = 'app_ID'
+MI_PUSH_APP_KEY = 'app_key'
 MI_PUSH_APP_SECRET = 'app_secret'

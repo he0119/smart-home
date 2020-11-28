@@ -12,7 +12,7 @@ def query_set_to_list(query_set):
 
 
 class StorageModelTests(TestCase):
-    fixtures = ['user', 'storage']
+    fixtures = ['users', 'storage']
 
     def test_ancestors(self):
         """ 测试父节点 """
@@ -45,39 +45,8 @@ class StorageModelTests(TestCase):
         self.assertEqual(query_set_to_list(toolbox.get_children()), [])
 
 
-class UserTests(JSONWebTokenTestCase):
-    fixtures = ['user']
-
-    def setUp(self):
-        self.user = get_user_model().objects.get(username='test')
-
-    def test_get_user(self):
-        self.client.authenticate(self.user)
-        query = '''
-            query me {
-                me {
-                    username
-                }
-            }
-        '''
-        content = self.client.execute(query)
-        self.assertIsNone(content.errors)
-        self.assertEqual(content.data['me'], {'username': 'test'})
-
-    def test_unauthenticate_user(self):
-        query = '''
-            query me {
-                me {
-                    username
-                }
-            }
-        '''
-        content = self.client.execute(query)
-        self.assertIsNotNone(content.errors)
-
-
 class StorageTests(JSONWebTokenTestCase):
-    fixtures = ['user', 'storage']
+    fixtures = ['users', 'storage']
 
     def setUp(self):
         self.user = get_user_model().objects.get(username='test')
@@ -199,7 +168,7 @@ class StorageTests(JSONWebTokenTestCase):
 
 
 class ItemTests(JSONWebTokenTestCase):
-    fixtures = ['user', 'storage']
+    fixtures = ['users', 'storage']
 
     def setUp(self):
         self.user = get_user_model().objects.get(username='test')
