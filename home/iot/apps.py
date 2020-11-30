@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class IotConfig(AppConfig):
-    name = 'iot'
+    name = 'home.iot'
     verbose_name = '物联网'

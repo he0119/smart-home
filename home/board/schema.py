@@ -6,7 +6,7 @@ from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
 
-from push.tasks import push_to_users
+from home.push.tasks import push_to_users
 
 from .models import Comment, Topic
 

@@ -3,7 +3,7 @@ from typing import List, Tuple
 from celery import shared_task
 
 from .api import DeviceAPI, WeatherAPI
-from push.tasks import push_to_all
+from home.push.tasks import push_to_all
 
 
 @shared_task

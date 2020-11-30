@@ -1,3 +1,3 @@
 """ 留言板 """
 
-default_app_config = "board.apps.BoardConfig"
+default_app_config = "home.board.apps.BoardConfig"

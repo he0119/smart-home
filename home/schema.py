@@ -1,29 +1,29 @@
 import graphene
 import graphql_jwt
 
-import board.schema
-import iot.schema
-import storage.schema
-import push.schema
-import users.schema
+import home.board.schema
+import home.iot.schema
+import home.storage.schema
+import home.push.schema
+import home.users.schema
 
 
 class Query(
-        storage.schema.Query,
-        board.schema.Query,
-        iot.schema.Query,
-        push.schema.Query,
-        users.schema.Query,
+        home.storage.schema.Query,
+        home.board.schema.Query,
+        home.iot.schema.Query,
+        home.push.schema.Query,
+        home.users.schema.Query,
         graphene.ObjectType,
 ):
     pass
 
 
 class Mutation(
-        storage.schema.Mutation,
-        board.schema.Mutation,
-        iot.schema.Mutation,
-        push.schema.Mutation,
+        home.storage.schema.Mutation,
+        home.board.schema.Mutation,
+        home.iot.schema.Mutation,
+        home.push.schema.Mutation,
         graphene.ObjectType,
 ):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()

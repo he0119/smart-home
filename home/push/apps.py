@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class PushConfig(AppConfig):
-    name = 'push'
+    name = 'home.push'
     verbose_name = '推送'

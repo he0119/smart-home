@@ -101,12 +101,12 @@ INSTALLED_APPS = [
     'graphene_django',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     # 我的应用
-    'users',
-    'storage',
-    'board',
-    'xiaoai',
-    'iot',
-    'push',
+    'home.users',
+    'home.storage',
+    'home.board',
+    'home.xiaoai',
+    'home.iot',
+    'home.push',
 ]
 
 MIDDLEWARE = [

@@ -21,6 +21,6 @@ from graphene_django.views import GraphQLView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('graphql', csrf_exempt(GraphQLView.as_view(graphiql=True))),
-    path('xiaoai', include('xiaoai.urls')),
-    path('iot', include('iot.urls')),
+    path('xiaoai', include('home.xiaoai.urls')),
+    path('iot', include('home.iot.urls')),
 ]

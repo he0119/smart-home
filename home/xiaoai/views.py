@@ -8,7 +8,7 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from storage.models import Item
+from home.storage.models import Item
 
 # Get an instance of a logger
 logger = logging.getLogger('xiaoai')
