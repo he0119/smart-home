@@ -1,9 +1,8 @@
 from typing import List, Tuple
 
 from celery import shared_task
-from django.contrib.auth import get_user_model
 
-from home.push.tasks import PushChannel, push_to_users
+from home.push.tasks import PushChannel, get_enable_reg_ids, push_to_users
 
 from .api import DeviceAPI, WeatherAPI
 
@@ -55,8 +54,7 @@ def autowatering(self, location_id: str, limit: float, device_id: str,
         push_message = f'今天的降雨量为 {rainfall}，不需要浇水呢'
 
     # 向用户推送消息
-    users = get_user_model().objects.exclude(mipush__enable=False)
-    reg_ids = [user.mipush.reg_id for user in users if hasattr(user, 'mipush')]
+    reg_ids = get_enable_reg_ids()
     if reg_ids:
         push_to_users.delay(
             reg_ids,

@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from celery import shared_task
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 from .mipush.APIMessage import *
 from .mipush.APISender import APISender
@@ -15,6 +16,19 @@ class PushChannel(Enum):
     IOT = ['pre54', 'IoT消息'],
     STORAGE = ['pre213', '物品管理信息'],
     BOARD = ['pre84', '留言板消息'],
+
+
+def get_enable_reg_ids() -> List[str]:
+    """ 获取所有启用的设备标识码 """
+    users = get_user_model().objects.exclude(mipush__enable=False)
+    return [user.mipush.reg_id for user in users if hasattr(user, 'mipush')]
+
+
+def get_enable_reg_ids_except_user(user) -> List[str]:
+    """ 获取除指定用户的所有启用的设备标识码 """
+    users = get_user_model().objects.exclude(pk=user.id).exclude(
+        mipush__enable=False)
+    return [user.mipush.reg_id for user in users if hasattr(user, 'mipush')]
 
 
 def build_message(title: str, description: str,
