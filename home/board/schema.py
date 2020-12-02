@@ -6,7 +6,7 @@ from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
 
-from home.push.tasks import push_to_users
+from home.push.tasks import PushChannel, push_to_users
 
 from .models import Comment, Topic
 
@@ -137,10 +137,13 @@ class AddTopicMutation(graphene.Mutation):
         reg_ids = [
             user.mipush.reg_id for user in users if hasattr(user, 'mipush')
         ]
-        push_to_users.delay(
-            reg_ids, '新话题',
-            f'{topic.user.username} 刚发布了一个新话题\n{topic.title}\n{topic.description[:30]}'
-        )
+        if reg_ids:
+            push_to_users.delay(
+                reg_ids,
+                '新话题',
+                f'{topic.user.username} 刚发布了一个新话题\n{topic.title}\n{topic.description[:30]}',
+                PushChannel.BOARD,
+            )
 
         return AddTopicMutation(topic=topic)
 
@@ -268,10 +271,13 @@ class AddCommentMutation(graphene.Mutation):
         reg_ids = [
             user.mipush.reg_id for user in users if hasattr(user, 'mipush')
         ]
-        push_to_users.delay(
-            reg_ids, '新回复',
-            f'{comment.user.username} 在 {comment.topic.title} 话题下发表了新回复\n{comment.body[:30]}'
-        )
+        if reg_ids:
+            push_to_users.delay(
+                reg_ids,
+                '新回复',
+                f'{comment.user.username} 在 {comment.topic.title} 话题下发表了新回复\n{comment.body[:30]}',
+                PushChannel.BOARD,
+            )
 
         return AddCommentMutation(comment=comment)
 
