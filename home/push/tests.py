@@ -2,9 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from graphql_jwt.testcases import JSONWebTokenTestCase
 
-from home.push.tasks import get_enable_reg_ids, get_enable_reg_ids_except_user
-
-from .models import MiPush
+from home.push.tasks import (PushChannel, build_message, get_enable_reg_ids,
+                             get_enable_reg_ids_except_user)
 
 
 class PushTests(JSONWebTokenTestCase):
@@ -167,3 +166,34 @@ class DisabledPushTests(TestCase):
         """ 测试获取除指定用户以外的所有启用用户的注册标识码 """
         reg_ids = get_enable_reg_ids_except_user(self.user)
         self.assertEqual(reg_ids, ['regidofuser2'])
+
+
+class MiPushMessageTest(TestCase):
+    fixtures = ['users', 'push']
+
+    def test_mipush_message(self):
+        message = build_message(title='test',
+                                description='test description',
+                                channel=None)
+
+        message_dict = message.message_dict()
+        self.assertEqual(message_dict['title'], 'test')
+        self.assertEqual(message_dict['description'], 'test description')
+        self.assertLessEqual(message_dict['notify_id'], 10000)
+        self.assertEqual(message_dict['extra.notify_effect'], '1')
+        self.assertEqual(message_dict['extra.notification_style_type'], '1')
+
+    def test_board_channel_mipush_message(self):
+        message = build_message(title='test',
+                                description='test description',
+                                channel=PushChannel.BOARD.value)
+
+        message_dict = message.message_dict()
+        self.assertEqual(message_dict['title'], 'test')
+        self.assertEqual(message_dict['description'], 'test description')
+        self.assertLessEqual(message_dict['notify_id'], 10000)
+        self.assertEqual(message_dict['extra.notify_effect'], '1')
+        self.assertEqual(message_dict['extra.notification_style_type'], '1')
+
+        self.assertEqual(message_dict['extra.channel_id'], 'pre84')
+        self.assertEqual(message_dict['extra.channel_name'], '留言板消息')

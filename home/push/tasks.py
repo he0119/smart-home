@@ -13,9 +13,9 @@ sender = APISender(settings.MI_PUSH_APP_SECRET)
 
 class PushChannel(Enum):
     """ 通知类别 """
-    IOT = ['pre54', 'IoT消息'],
-    STORAGE = ['pre213', '物品管理信息'],
-    BOARD = ['pre84', '留言板消息'],
+    IOT = ['pre54', 'IoT消息']
+    STORAGE = ['pre213', '物品管理信息']
+    BOARD = ['pre84', '留言板消息']
 
 
 def get_enable_reg_ids() -> List[str]:
