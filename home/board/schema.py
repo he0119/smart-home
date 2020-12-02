@@ -138,7 +138,7 @@ class AddTopicMutation(graphene.Mutation):
                 reg_ids,
                 '新话题',
                 f'{topic.user.username} 刚发布了一个新话题\n{topic.title}\n{topic.description[:30]}',
-                PushChannel.BOARD,
+                PushChannel.BOARD.value,
             )
 
         return AddTopicMutation(topic=topic)
@@ -267,7 +267,7 @@ class AddCommentMutation(graphene.Mutation):
                 reg_ids,
                 '新回复',
                 f'{comment.user.username} 在 {comment.topic.title} 话题下发表了新回复\n{comment.body[:30]}',
-                PushChannel.BOARD,
+                PushChannel.BOARD.value,
             )
 
         return AddCommentMutation(comment=comment)

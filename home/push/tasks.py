@@ -32,7 +32,7 @@ def get_enable_reg_ids_except_user(user) -> List[str]:
 
 
 def build_message(title: str, description: str,
-                  channel: Optional[PushChannel]) -> PushMessage:
+                  channel: Optional[List]) -> PushMessage:
     # 每条内容相同的消息单独显示，不覆盖
     # 限制最多可以有 10001 条消息共存
     notify_id = abs(hash(title + description)) % (10**4)
@@ -46,10 +46,9 @@ def build_message(title: str, description: str,
 
     # 通知类别
     if channel:
+        message = message.extra({Constants.extra_param_channel_id: channel[0]})
         message = message.extra(
-            {Constants.extra_param_channel_id: channel.value[0]})
-        message = message.extra(
-            {Constants.extra_param_channel_name: channel.value[1]})
+            {Constants.extra_param_channel_name: channel[1]})
 
     return message
 
@@ -58,7 +57,7 @@ def build_message(title: str, description: str,
 def push_to_users(reg_ids: List[str],
                   title: str,
                   description: str,
-                  channel: Optional[PushChannel] = None):
+                  channel: Optional[List] = None):
     """ 向用户推送消息
 
     支持向一个或多个用户推送消息
