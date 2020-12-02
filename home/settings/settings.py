@@ -254,6 +254,6 @@ EMQX_HTTP_APPSECRET = 'public'
 # https://dev.mi.com/console/doc/detail?pId=1788
 
 MI_PUSH_PACKAGE_NAME = 'package_name'
-MI_PUSH_APP_ID = 'app_ID'
+MI_PUSH_APP_ID = 'app_id'
 MI_PUSH_APP_KEY = 'app_key'
 MI_PUSH_APP_SECRET = 'app_secret'
