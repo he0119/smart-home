@@ -1,0 +1,20 @@
+[
+  {
+    "model": "push.mipush",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "enable": false,
+      "reg_id": "regidofuser1"
+    }
+  },
+  {
+    "model": "push.mipush",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "enable": true,
+      "reg_id": "regidofuser2"
+    }
+  }
+]

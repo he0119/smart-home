@@ -109,6 +109,14 @@ class Constants(object):
     extra_param_ios_msg_channel_connection_only = "2"
 
     '''
+        通知类别（Channel）
+        #详述请参考:https://dev.mi.com/console/doc/detail?pId=1163#_11
+    '''
+    extra_param_channel_id = "channel_id"
+    extra_param_channel_name = "channel_name"
+    extra_param_channel_description = "channel_description"
+    
+    '''
         如果app在前台, 这时向客户端app发送非透传消息, 可以根据EXTRA_PARAM_NOTIFY_FOREGROUND参数值决定是否弹出通知栏
         默认情况下, app会弹出通知栏, 为了不弹出通知栏可以将EXTRA_PARAM_NOTIFY_FOREGROUND设置为"0"
     '''

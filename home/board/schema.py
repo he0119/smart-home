@@ -1,12 +1,12 @@
 import graphene
-from django.contrib.auth import get_user_model
 from django.db.models import Max
 from django.db.models.functions import Greatest
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
 
-from home.push.tasks import push_to_users
+from home.push.tasks import (PushChannel, get_enable_reg_ids_except_user,
+                             push_to_users)
 
 from .models import Comment, Topic
 
@@ -131,16 +131,15 @@ class AddTopicMutation(graphene.Mutation):
             is_open=True,
         )
         topic.save()
-        # 获取除发布者以外的所有人
-        users = get_user_model().objects.exclude(pk=topic.user.id).exclude(
-            mipush__enable=False)
-        reg_ids = [
-            user.mipush.reg_id for user in users if hasattr(user, 'mipush')
-        ]
-        push_to_users.delay(
-            reg_ids, '新话题',
-            f'{topic.user.username} 刚发布了一个新话题\n{topic.title}\n{topic.description[:30]}'
-        )
+
+        reg_ids = get_enable_reg_ids_except_user(topic.user)
+        if reg_ids:
+            push_to_users.delay(
+                reg_ids,
+                '新话题',
+                f'{topic.user.username} 刚发布了一个新话题\n{topic.title}\n{topic.description[:30]}',
+                PushChannel.BOARD.value,
+            )
 
         return AddTopicMutation(topic=topic)
 
@@ -262,16 +261,14 @@ class AddCommentMutation(graphene.Mutation):
             comment.reply_to = parent_comment.user
         comment.save()
 
-        # 获取除发布者以外的所有人
-        users = get_user_model().objects.exclude(pk=comment.user.id).exclude(
-            mipush__enable=False)
-        reg_ids = [
-            user.mipush.reg_id for user in users if hasattr(user, 'mipush')
-        ]
-        push_to_users.delay(
-            reg_ids, '新回复',
-            f'{comment.user.username} 在 {comment.topic.title} 话题下发表了新回复\n{comment.body[:30]}'
-        )
+        reg_ids = get_enable_reg_ids_except_user(comment.user)
+        if reg_ids:
+            push_to_users.delay(
+                reg_ids,
+                '新回复',
+                f'{comment.user.username} 在 {comment.topic.title} 话题下发表了新回复\n{comment.body[:30]}',
+                PushChannel.BOARD.value,
+            )
 
         return AddCommentMutation(comment=comment)
 

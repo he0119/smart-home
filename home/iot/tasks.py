@@ -2,8 +2,9 @@ from typing import List, Tuple
 
 from celery import shared_task
 
+from home.push.tasks import PushChannel, get_enable_reg_ids, push_to_users
+
 from .api import DeviceAPI, WeatherAPI
-from home.push.tasks import push_to_all
 
 
 @shared_task
@@ -48,8 +49,17 @@ def autowatering(self, location_id: str, limit: float, device_id: str,
         device_api = DeviceAPI(device_id)
         status = [(valve, True) for valve in valves]
         device_api.set_multiple_status(status)
-        push_to_all.delay('自动浇水', f'今天的降雨量为 {rainfall}，已开启阀门')
+        push_message = f'今天的降雨量为 {rainfall}，已开启阀门'
     else:
-        push_to_all.delay('自动浇水', f'今天的降雨量为 {rainfall}，不需要浇水呢')
+        push_message = f'今天的降雨量为 {rainfall}，不需要浇水呢'
 
+    # 向用户推送消息
+    reg_ids = get_enable_reg_ids()
+    if reg_ids:
+        push_to_users.delay(
+            reg_ids,
+            '自动浇水',
+            push_message,
+            PushChannel.IOT.value,
+        )
     return f'{need_water=}, {rainfall=}'
