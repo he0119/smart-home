@@ -1,5 +1,8 @@
 # Smart Home
 
+![CI](https://github.com/he0119/smart-home/workflows/CI/badge.svg)
+[![codecov](https://codecov.io/gh/he0119/smart-home/branch/master/graph/badge.svg?token=N8K81G7A0Q)](https://codecov.io/gh/he0119/smart-home)
+
 智慧家庭
 
 需配合 [客户端](https://github.com/he0119/smart-home-flutter/releases) 使用

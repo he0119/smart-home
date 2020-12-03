@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.5.6] - 2020-12-03
+
+## Added
+
+- 优化推送的体验，按照不同消息类别进行推送
+
 ## [0.5.5] - 2020-11-28
 
 ### Added
@@ -93,8 +99,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.5.5...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.5.6...HEAD
 
+[0.5.6]: https://github.com/he0119/smart-home/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/he0119/smart-home/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/he0119/smart-home/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/he0119/smart-home/compare/v0.5.2...v0.5.3
