@@ -20,13 +20,15 @@ class MiPushKeyType(ObjectType):
 
 
 class Query(graphene.ObjectType):
-    mi_push = graphene.Field(MiPushType)
+    mi_push = graphene.Field(MiPushType,
+                             device_id=graphene.String(required=True))
     mi_push_key = graphene.Field(MiPushKeyType)
 
     @login_required
-    def resolve_mi_push(self, info):
+    def resolve_mi_push(self, info, device_id):
         try:
-            mi_push = MiPush.objects.get(user=info.context.user)
+            mi_push = MiPush.objects.filter(user=info.context.user).get(
+                device_id=device_id)
             return mi_push
         except MiPush.DoesNotExist:
             raise GraphQLError('推送未绑定')
@@ -39,6 +41,8 @@ class Query(graphene.ObjectType):
 
 class UpdateMiPushInput(graphene.InputObjectType):
     reg_id = graphene.String(required=True)
+    device_id = graphene.String(required=True)
+    model = graphene.String(required=True)
 
 
 class UpdateMiPushMutation(graphene.Mutation):
@@ -52,13 +56,17 @@ class UpdateMiPushMutation(graphene.Mutation):
         input = kwargs.get('input')
 
         try:
-            mi_push = MiPush.objects.get(user=info.context.user)
+            # 查找当前用户下的对应设备标识码的记录
+            mi_push = MiPush.objects.filter(user=info.context.user).get(
+                device_id=input.device_id)
             mi_push.reg_id = input.reg_id
         except MiPush.DoesNotExist:
             # 首次创建时，自动启用
             mi_push = MiPush(
                 user=info.context.user,
                 reg_id=input.reg_id,
+                device_id=input.device_id,
+                model=input.model,
                 enable=True,
             )
 
