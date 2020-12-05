@@ -5,7 +5,9 @@
     "fields": {
       "user": 1,
       "enable": false,
-      "reg_id": "regidofuser1"
+      "reg_id": "regidofuser1",
+      "device_id": "deviceidofuser1",
+      "model": "modelofuser1"
     }
   },
   {
@@ -14,7 +16,20 @@
     "fields": {
       "user": 2,
       "enable": true,
-      "reg_id": "regidofuser2"
+      "reg_id": "regidofuser2",
+      "device_id": "deviceidofuser2",
+      "model": "modelofuser2"
+    }
+  },
+  {
+    "model": "push.mipush",
+    "pk": 3,
+    "fields": {
+      "user": 2,
+      "enable": true,
+      "reg_id": "regid2ofuser2",
+      "device_id": "deviceid2ofuser2",
+      "model": "model2ofuser2"
     }
   }
 ]
