@@ -63,4 +63,9 @@ class Migration(migrations.Migration):
             name='model',
             field=models.CharField(max_length=100, verbose_name='设备型号'),
         ),
+        migrations.AlterField(
+            model_name='mipush',
+            name='reg_id',
+            field=models.TextField(unique=True, verbose_name='注册标识码'),
+        ),
     ]

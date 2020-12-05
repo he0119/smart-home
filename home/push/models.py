@@ -13,7 +13,7 @@ class MiPush(models.Model):
                              related_name='mipush',
                              verbose_name='用户')
     enable = models.BooleanField(verbose_name='启用')
-    reg_id = models.TextField(verbose_name='注册标识码', null=True, unique=True)
+    reg_id = models.TextField(verbose_name='注册标识码', unique=True)
     device_id = models.CharField(max_length=100,
                                  verbose_name='设备标识码',
                                  unique=True)
