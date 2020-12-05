@@ -4,8 +4,8 @@ from .models import MiPush
 
 
 class MiPushAdmin(admin.ModelAdmin):
-    fields = ['user', 'enable', 'reg_id']
-    list_display = ('user', 'enable', 'reg_id')
+    fields = ['user', 'enable', 'reg_id', 'device_id', 'model']
+    list_display = ('user', 'enable', 'reg_id', 'device_id', 'model')
 
 
 admin.site.register(MiPush, MiPushAdmin)

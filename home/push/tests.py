@@ -16,23 +16,40 @@ class PushTests(JSONWebTokenTestCase):
     def test_get_mipush(self):
         """ 获取当前用户的注册标识码 """
         query = '''
-            query miPush {
-                miPush {
+            query miPush($deviceId: String!) {
+                miPush(deviceId: $deviceId) {
                     user {
                         username
                     }
                     enable
                     regId
+                    deviceId
+                    model
                 }
             }
         '''
-        content = self.client.execute(query)
+
+        # 第一个设备
+        variables = {'deviceId': 'deviceidofuser1'}
+        content = self.client.execute(query, variables)
         self.assertIsNone(content.errors)
 
         mipush = content.data['miPush']
         self.assertEqual(mipush['user']['username'], 'test')
         self.assertEqual(mipush['enable'], True)
         self.assertEqual(mipush['regId'], 'regidofuser1')
+        self.assertEqual(mipush['model'], 'modelofuser1')
+
+        # 第二个设备
+        variables = {'deviceId': 'deviceid2ofuser1'}
+        content = self.client.execute(query, variables)
+        self.assertIsNone(content.errors)
+
+        mipush = content.data['miPush']
+        self.assertEqual(mipush['user']['username'], 'test')
+        self.assertEqual(mipush['enable'], True)
+        self.assertEqual(mipush['regId'], 'regid2ofuser1')
+        self.assertEqual(mipush['model'], 'model2ofuser1')
 
     def test_get_mipush_key(self):
         """ 获取当前软件的 AppID 与 AppKey """
@@ -60,6 +77,8 @@ class PushTests(JSONWebTokenTestCase):
                             username
                         }
                         regId
+                        deviceId
+                        model
                     }
                 }
             }
@@ -67,6 +86,8 @@ class PushTests(JSONWebTokenTestCase):
         variables = {
             'input': {
                 'regId': 'testRegId',
+                'deviceId': 'deviceidofuser1',
+                'model': 'modelofuser1',
             }
         }
 
@@ -80,7 +101,7 @@ class PushTests(JSONWebTokenTestCase):
     def test_get_enable_reg_ids(self):
         """ 测试获取所有启用用户的注册标识码 """
         reg_ids = get_enable_reg_ids()
-        self.assertEqual(reg_ids, ['regidofuser1'])
+        self.assertEqual(set(reg_ids), set(['regidofuser1', 'regid2ofuser1']))
 
     def test_get_enable_reg_ids_except_user(self):
         """ 测试获取除指定用户以外的所有启用用户的注册标识码 """
@@ -99,8 +120,8 @@ class EmptyPushTests(JSONWebTokenTestCase):
     def test_get_mipush(self):
         """ 获取当前用户的注册标识码 """
         query = '''
-            query miPush {
-                miPush {
+            query miPush($deviceId: String!) {
+                miPush(deviceId: $deviceId) {
                     user {
                         username
                     }
@@ -109,7 +130,9 @@ class EmptyPushTests(JSONWebTokenTestCase):
                 }
             }
         '''
-        content = self.client.execute(query)
+        variables = {'deviceId': 'deviceidofuser1'}
+
+        content = self.client.execute(query, variables)
         self.assertEqual(str(content.errors[0]), '推送未绑定')
 
     def test_update_mipush_without_create(self):
@@ -122,6 +145,8 @@ class EmptyPushTests(JSONWebTokenTestCase):
                             username
                         }
                         regId
+                        deviceId
+                        model
                     }
                 }
             }
@@ -129,6 +154,8 @@ class EmptyPushTests(JSONWebTokenTestCase):
         variables = {
             'input': {
                 'regId': 'testRegId',
+                'deviceId': 'deviceidofuser1',
+                'model': 'modelofuser1',
             }
         }
 
@@ -160,12 +187,12 @@ class DisabledPushTests(TestCase):
     def test_get_enable_reg_ids(self):
         """ 测试获取所有启用用户的注册标识码 """
         reg_ids = get_enable_reg_ids()
-        self.assertEqual(reg_ids, ['regidofuser2'])
+        self.assertEqual(set(reg_ids), set(['regidofuser2', 'regid2ofuser2']))
 
     def test_get_enable_reg_ids_except_user(self):
         """ 测试获取除指定用户以外的所有启用用户的注册标识码 """
         reg_ids = get_enable_reg_ids_except_user(self.user)
-        self.assertEqual(reg_ids, ['regidofuser2'])
+        self.assertEqual(set(reg_ids), set(['regidofuser2', 'regid2ofuser2']))
 
 
 class MiPushMessageTest(TestCase):

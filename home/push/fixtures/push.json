@@ -5,7 +5,20 @@
     "fields": {
       "user": 1,
       "enable": true,
-      "reg_id": "regidofuser1"
+      "reg_id": "regidofuser1",
+      "device_id": "deviceidofuser1",
+      "model": "modelofuser1"
+    }
+  },
+  {
+    "model": "push.mipush",
+    "pk": 2,
+    "fields": {
+      "user": 1,
+      "enable": true,
+      "reg_id": "regid2ofuser1",
+      "device_id": "deviceid2ofuser1",
+      "model": "model2ofuser1"
     }
   }
 ]

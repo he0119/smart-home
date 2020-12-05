@@ -21,14 +21,14 @@ class PushChannel(Enum):
 def get_enable_reg_ids() -> List[str]:
     """ 获取所有启用的设备标识码 """
     users = get_user_model().objects.exclude(mipush__enable=False)
-    return [user.mipush.reg_id for user in users if hasattr(user, 'mipush')]
+    return [mipush.reg_id for user in users for mipush in user.mipush.all()]
 
 
 def get_enable_reg_ids_except_user(user) -> List[str]:
     """ 获取除指定用户的所有启用的设备标识码 """
     users = get_user_model().objects.exclude(pk=user.id).exclude(
         mipush__enable=False)
-    return [user.mipush.reg_id for user in users if hasattr(user, 'mipush')]
+    return [mipush.reg_id for user in users for mipush in user.mipush.all()]
 
 
 def build_message(title: str, description: str,
