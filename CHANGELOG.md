@@ -7,9 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.5.7] - 2020-12-03
+
+### Added
+
+- 小米推送支持绑定多个设备
+
+### Fixed
+
+- 修复自动浇水推送消息的降雨量未格式化的问题
+
 ## [0.5.6] - 2020-12-03
 
-## Added
+### Added
 
 - 优化推送的体验，按照不同消息类别进行推送
 
@@ -99,8 +109,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.5.6...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.5.7...HEAD
 
+[0.5.7]: https://github.com/he0119/smart-home/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/he0119/smart-home/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/he0119/smart-home/compare/v0.5.4...v0.5.5
 [0.5.4]: https://github.com/he0119/smart-home/compare/v0.5.3...v0.5.4
