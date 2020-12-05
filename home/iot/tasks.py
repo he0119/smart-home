@@ -49,9 +49,9 @@ def autowatering(self, location_id: str, limit: float, device_id: str,
         device_api = DeviceAPI(device_id)
         status = [(valve, True) for valve in valves]
         device_api.set_multiple_status(status)
-        push_message = f'今天的降雨量为 {rainfall}，已开启阀门'
+        push_message = f'今天的降雨量为 {rainfall:.1f}，已开启阀门'
     else:
-        push_message = f'今天的降雨量为 {rainfall}，不需要浇水呢'
+        push_message = f'今天的降雨量为 {rainfall:.1f}，不需要浇水呢'
 
     # 向用户推送消息
     reg_ids = get_enable_reg_ids()
@@ -62,4 +62,4 @@ def autowatering(self, location_id: str, limit: float, device_id: str,
             push_message,
             PushChannel.IOT.value,
         )
-    return f'{need_water=}, {rainfall=}'
+    return push_message
