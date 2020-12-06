@@ -28,7 +28,8 @@ jobs:
         ports:
           - 6379:6379
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -108,4 +109,6 @@ jobs:
           script: |
             cd websites
             sed -i "s#he0119/smart-home:.*#he0119/smart-home:$TAG_NAME#g" docker-compose.yml
-            sudo docker-compose pull && sudo docker-compose up -d
+            sudo docker-compose pull
+            sudo docker-compose up -d
+            sudo docker exec -it smart-home python manage.py migrate
