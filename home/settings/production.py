@@ -45,12 +45,6 @@ ADMINS = [
     )
 ]
 
-# 小米小爱
-# https://developers.xiaoai.mi.com/documents/Home?type=/api/doc/render_markdown/SkillAccess/SkillDocument/CustomSkills/Signature
-
-XIAOAI_KEY_ID = os.getenv('XIAOAI_KEY_ID')
-XIAOAI_SECRET = os.getenv('XIAOAI_SECRET')
-
 # Celery
 # https://docs.celeryproject.org/en/stable/getting-started/brokers/redis.html
 
@@ -64,6 +58,12 @@ EMQX_HTTP_HOST = os.getenv('EMQX_HTTP_HOST')
 EMQX_HTTP_PORT = os.getenv('EMQX_HTTP_PORT')
 EMQX_HTTP_APPID = os.getenv('EMQX_HTTP_APPID')
 EMQX_HTTP_APPSECRET = os.getenv('EMQX_HTTP_APPSECRET')
+
+# 小米小爱
+# https://developers.xiaoai.mi.com/documents/Home?type=/api/doc/render_markdown/SkillAccess/SkillDocument/CustomSkills/Signature
+
+XIAOAI_KEY_ID = os.getenv('XIAOAI_KEY_ID')
+XIAOAI_SECRET = os.getenv('XIAOAI_SECRET')
 
 # 小米推送
 # https://dev.mi.com/console/doc/detail?pId=1788

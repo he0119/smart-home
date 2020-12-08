@@ -250,6 +250,12 @@ EMQX_HTTP_PORT = '8081'
 EMQX_HTTP_APPID = 'admin'
 EMQX_HTTP_APPSECRET = 'public'
 
+# 小米小爱
+# https://developers.xiaoai.mi.com/documents/Home?type=/api/doc/render_markdown/SkillAccess/SkillDocument/CustomSkills/Signature
+
+XIAOAI_KEY_ID = 'key_id'
+XIAOAI_SECRET = 'c2VjcmV0'
+
 # 小米推送
 # https://dev.mi.com/console/doc/detail?pId=1788
 
