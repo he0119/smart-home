@@ -183,3 +183,29 @@ class XiaoaiTest(TestCase):
         }
 
         self.assertEqual(is_xiaomi(headers), True)
+
+    def test_wrong_sign_method(self):
+        """ 测试签名方式版本不正确的情况 """
+        headers = {
+            'Authorization':
+            'Wrong key_id::2ba08b462b8409d51131c661e23609d7575d3fa584713b0e52e9d4d651b0e3c9',
+            'X-Xiaomi-Date': 'Tue, 8 Dec 2020 03:26:17 GMT',
+            'Host': 'smart-test.hehome.xyz',
+            'Content-Type': 'application/json',
+            'Content-Md5': 'Content-Md5'
+        }
+
+        self.assertEqual(is_xiaomi(headers), False)
+
+    def test_wrong_key_id(self):
+        """ 测试密钥ID不正确的情况 """
+        headers = {
+            'Authorization':
+            'MIAI-HmacSHA256-V1 wrong_id::2ba08b462b8409d51131c661e23609d7575d3fa584713b0e52e9d4d651b0e3c9',
+            'X-Xiaomi-Date': 'Tue, 8 Dec 2020 03:26:17 GMT',
+            'Host': 'smart-test.hehome.xyz',
+            'Content-Type': 'application/json',
+            'Content-Md5': 'Content-Md5'
+        }
+
+        self.assertEqual(is_xiaomi(headers), False)
