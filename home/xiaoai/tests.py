@@ -209,3 +209,15 @@ class XiaoaiTest(TestCase):
         }
 
         self.assertEqual(is_xiaomi(headers), False)
+
+    def test_wrong_signature(self):
+        """ 测试签名不正确的情况 """
+        headers = {
+            'Authorization': 'MIAI-HmacSHA256-V1 key_id::wrong_signature',
+            'X-Xiaomi-Date': 'Tue, 8 Dec 2020 03:26:17 GMT',
+            'Host': 'smart-test.hehome.xyz',
+            'Content-Type': 'application/json',
+            'Content-Md5': 'Content-Md5'
+        }
+
+        self.assertEqual(is_xiaomi(headers), False)
