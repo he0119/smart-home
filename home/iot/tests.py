@@ -11,6 +11,7 @@ from requests import sessions
 
 from .api import DeviceAPI, WeatherAPI
 from .models import AutowateringData, Device
+from .tasks import autowatering, set_multiple_status, set_status
 
 
 class DeviceTests(JSONWebTokenTestCase):
@@ -439,6 +440,8 @@ def mocked_requests_get(*args, **kwargs):
         with open(filepath, 'r', encoding='utf8') as f:
             text = f.read()
         return MockResponse(text)
+    if args[0] == 'http://forecast.weather.com.cn/town/weather1dn/1.shtml':
+        return MockResponse('error')
 
 
 def mocked_session_post(*args, **kwargs):
@@ -506,3 +509,90 @@ class ApiTests(TestCase):
                 'payload': '{"valve1": true, "valve2": false}',
                 'qos': 1
             })
+
+
+class TaskTests(TestCase):
+    fixtures = ['users', 'push']
+
+    @mock.patch.object(sessions.Session,
+                       'post',
+                       side_effect=mocked_session_post)
+    def test_set_status(self, mock_post):
+        set_status('1', 'valve1', True)
+
+        self.assertIn(
+            mock.call(
+                f'http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish',
+                json={
+                    'topic': 'device/1/set',
+                    'clientid': 'server',
+                    'payload': '{"valve1": true}',
+                    'qos': 1
+                }), mock_post.call_args_list)
+
+    @mock.patch.object(sessions.Session,
+                       'post',
+                       side_effect=mocked_session_post)
+    def test_set_multiple_status(self, mock_post):
+        set_multiple_status('1', [('valve1', True), ('valve2', False)])
+
+        self.assertIn(
+            mock.call(
+                f'http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish',
+                json={
+                    'topic': 'device/1/set',
+                    'clientid': 'server',
+                    'payload': '{"valve1": true, "valve2": false}',
+                    'qos': 1
+                }), mock_post.call_args_list)
+
+    @mock.patch.object(sessions.Session,
+                       'post',
+                       side_effect=mocked_session_post)
+    @mock.patch('requests.get', side_effect=mocked_requests_get)
+    def test_autowatering(self, mock_get, mock_post):
+        """ 测试自动浇水 """
+        autowatering('101270102006', 10, '1', ['valve1'])
+
+        self.assertIn(
+            mock.call(
+                'http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml'
+            ), mock_get.call_args_list)
+        self.assertIn(
+            mock.call(
+                f'http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish',
+                json={
+                    'topic': 'device/1/set',
+                    'clientid': 'server',
+                    'payload': '{"valve1": true}',
+                    'qos': 1
+                }), mock_post.call_args_list)
+
+    @mock.patch.object(sessions.Session,
+                       'post',
+                       side_effect=mocked_session_post)
+    @mock.patch('requests.get', side_effect=mocked_requests_get)
+    def test_autowatering_do_not_need_water(self, mock_get, mock_post):
+        """ 测试不需要浇水的情况 """
+        autowatering('101270102006', 0, '1', ['valve1'])
+
+        self.assertIn(
+            mock.call(
+                'http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml'
+            ), mock_get.call_args_list)
+        self.assertEqual(mock_post.call_args_list, [])
+
+    @mock.patch.object(sessions.Session,
+                       'post',
+                       side_effect=mocked_session_post)
+    @mock.patch('requests.get', side_effect=mocked_requests_get)
+    def test_autowatering_with_error(self, mock_get, mock_post):
+        """ 测试自动重试 """
+        with self.assertRaises(TypeError):
+            autowatering('1', 0, '1', ['valve1'])
+
+        self.assertIn(
+            mock.call(
+                'http://forecast.weather.com.cn/town/weather1dn/1.shtml'),
+            mock_get.call_args_list)
+        self.assertEqual(mock_post.call_args_list, [])
