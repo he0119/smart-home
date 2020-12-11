@@ -1,9 +1,15 @@
 import json
+import os
+from unittest import mock
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from graphql_jwt.testcases import JSONWebTokenTestCase
+from requests import sessions
 
+from .api import DeviceAPI, WeatherAPI
 from .models import AutowateringData, Device
 
 
@@ -419,3 +425,84 @@ class WebHookTests(TestCase):
         autowatering_data = AutowateringData.objects.last()
         self.assertEqual(autowatering_data.id, 3)
         self.assertEqual(response.json(), {'iot': 'working'})
+
+
+def mocked_requests_get(*args, **kwargs):
+    """ 天气信息的测试数据 """
+    class MockResponse:
+        def __init__(self, text):
+            self.text = text
+
+    if args[0] == 'http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml':
+        filepath = os.path.join(settings.BASE_DIR,
+                                'home/iot/mock/weather.shtml')
+        with open(filepath, 'r', encoding='utf8') as f:
+            text = f.read()
+        return MockResponse(text)
+
+
+def mocked_session_post(*args, **kwargs):
+    """ 天气信息的测试数据 """
+    class MockResponse:
+        def __init__(self, json_data, status_code):
+            self.json_data = json_data
+            self.status_code = status_code
+
+        def json(self):
+            return self.json_data
+
+    if args[0] == f'http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish':
+        json = kwargs['json']
+        return MockResponse(
+            json_data={
+                'topic': json['topic'],
+                'clientid': json['clientid'],
+                'payload': json['payload'],
+                'qos': json['qos'],
+            },
+            status_code=200,
+        )
+
+
+class ApiTests(TestCase):
+    """ 测试 API """
+    @mock.patch('requests.get', side_effect=mocked_requests_get)
+    def test_get_rainfall(self, mock_get):
+        api = WeatherAPI('101270102006')
+        rainfall = api.rainfall_24h()
+        self.assertEqual(rainfall, 1)
+
+        self.assertIn(
+            mock.call(
+                'http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml'
+            ), mock_get.call_args_list)
+
+    @mock.patch.object(sessions.Session,
+                       'post',
+                       side_effect=mocked_session_post)
+    def test_set_status(self, mock_post):
+        device = DeviceAPI('1')
+        r = device.set_status('valve1', True)
+
+        self.assertEqual(
+            r, {
+                'topic': 'device/1/set',
+                'clientid': 'server',
+                'payload': '{"valve1": true}',
+                'qos': 1
+            })
+
+    @mock.patch.object(sessions.Session,
+                       'post',
+                       side_effect=mocked_session_post)
+    def test_set_multiple_status(self, mock_post):
+        device = DeviceAPI('1')
+        r = device.set_multiple_status([('valve1', True), ('valve2', False)])
+
+        self.assertEqual(
+            r, {
+                'topic': 'device/1/set',
+                'clientid': 'server',
+                'payload': '{"valve1": true, "valve2": false}',
+                'qos': 1
+            })
