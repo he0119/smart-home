@@ -5,10 +5,24 @@
     "fields": {
       "name": "test",
       "device_type": "autowatering",
-      "location": "0w0",
+      "location": "location",
       "date_created": "2020-08-02T13:37:42.064Z",
       "date_updated": "2020-08-02T13:41:29.094Z",
       "is_online": false,
+      "date_online": "2020-08-02T13:40:32.826Z",
+      "date_offline": "2020-08-02T13:41:29.094Z"
+    }
+  },
+  {
+    "model": "iot.device",
+    "pk": 2,
+    "fields": {
+      "name": "test2",
+      "device_type": "autowatering",
+      "location": "location2",
+      "date_created": "2020-08-02T13:37:42.064Z",
+      "date_updated": "2020-08-02T13:41:29.094Z",
+      "is_online": true,
       "date_online": "2020-08-02T13:40:32.826Z",
       "date_offline": "2020-08-02T13:41:29.094Z"
     }
@@ -19,7 +33,7 @@
     "fields": {
       "device": 1,
       "time": "2020-08-02T13:40:35Z",
-      "temperature": 0.0,
+      "temperature": 1.0,
       "humidity": 0.0,
       "wifi_signal": -60,
       "valve1": false,
@@ -38,7 +52,7 @@
     "fields": {
       "device": 1,
       "time": "2020-08-02T13:40:45Z",
-      "temperature": 0.0,
+      "temperature": 2.0,
       "humidity": 0.0,
       "wifi_signal": -59,
       "valve1": false,
@@ -57,7 +71,7 @@
     "fields": {
       "device": 1,
       "time": "2020-08-02T13:40:55Z",
-      "temperature": 0.0,
+      "temperature": 3.0,
       "humidity": 0.0,
       "wifi_signal": -60,
       "valve1": false,
