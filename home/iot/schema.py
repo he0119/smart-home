@@ -30,7 +30,7 @@ class Query(graphene.ObjectType):
     )
     device_data = graphene.List(
         AutowateringDataType,
-        device_id=graphene.ID(),
+        device_id=graphene.ID(required=True),
         number=graphene.Int(),
     )
 
@@ -70,7 +70,7 @@ class Query(graphene.ObjectType):
 class AddDeviceInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     device_type = graphene.String(required=True)
-    location = graphene.String()
+    location = graphene.String(required=True)
 
 
 class UpdateDeviceInput(graphene.InputObjectType):
@@ -109,7 +109,7 @@ class AddDeviceMutation(graphene.Mutation):
         input = kwargs.get('input')
 
         device = Device(
-            name=input.title,
+            name=input.name,
             device_type=input.device_type,
             location=input.location,
             is_online=False,
