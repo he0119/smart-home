@@ -14,6 +14,20 @@ from .models import AutowateringData, Device
 from .tasks import autowatering, set_multiple_status, set_status
 
 
+class ModelTests(TestCase):
+    fixtures = ['users', 'iot']
+
+    def test_device_str(self):
+        device = Device.objects.get(name='test')
+
+        self.assertEqual(str(device), 'test')
+
+    def test_autowateringdata_str(self):
+        data = AutowateringData.objects.get(pk=1)
+
+        self.assertEqual(str(data), f'test 2020-08-02T13:40:35+00:00')
+
+
 class DeviceTests(JSONWebTokenTestCase):
     fixtures = ['users', 'iot']
 
@@ -136,6 +150,22 @@ class DeviceTests(JSONWebTokenTestCase):
         # 确认是否同时删除自动浇水数据
         self.assertEqual(list(AutowateringData.objects.all()), [])
 
+    def test_delete_device_not_exist(self):
+        """ 测试删除不存在的设备 """
+        mutation = '''
+            mutation deleteDevice($input: DeleteDeviceInput!) {
+                deleteDevice(input: $input) {
+                    deletedId
+                }
+            }
+        '''
+        variables = {'input': {'deviceId': '3'}}
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '设备不存在')
+
     def test_update_device(self):
         """ 测试更新设备 """
         mutation = '''
@@ -173,6 +203,35 @@ class DeviceTests(JSONWebTokenTestCase):
         self.assertEqual(device['deviceType'], 'newdevicetype')
         self.assertEqual(device['location'], 'newlocation')
 
+    def test_update_device_not_exist(self):
+        """ 测试更新不存在的设备 """
+        mutation = '''
+            mutation updateDevice($input: UpdateDeviceInput!) {
+                updateDevice(input: $input) {
+                    device {
+                        __typename
+                        id
+                        name
+                        deviceType
+                        location
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': 3,
+                'name': 'newtest',
+                'deviceType': 'newdevicetype',
+                'location': 'newlocation',
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '设备不存在')
+
     def test_set_device(self):
         """ 测试设置设备状态 """
         mutation = '''
@@ -194,12 +253,41 @@ class DeviceTests(JSONWebTokenTestCase):
             }
         }
 
-        content = self.client.execute(mutation, variables)
-        self.assertIsNone(content.errors)
-        device = content.data['setDevice']['device']
+        for value_type in ['bool', 'float', 'int', 'str']:
+            variables['input']['valueType'] = value_type
 
-        self.assertEqual(device['__typename'], 'DeviceType')
-        self.assertEqual(device['id'], '1')
+            content = self.client.execute(mutation, variables)
+            self.assertIsNone(content.errors)
+
+            device = content.data['setDevice']['device']
+            self.assertEqual(device['__typename'], 'DeviceType')
+            self.assertEqual(device['id'], '1')
+
+    def test_set_device_not_exist(self):
+        """ 测试设置不存在设备的状态 """
+        mutation = '''
+            mutation setDevice($input: SetDeviceInput!) {
+                setDevice(input: $input) {
+                    device {
+                        __typename
+                        id
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': 3,
+                'key': 'valve1',
+                'value': '1',
+                'valueType': 'bool',
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '设备不存在')
 
     def test_get_device_data(self):
         """ 获取指定设备数据 """
@@ -247,6 +335,23 @@ class WebHookTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {'iot': 'working'})
+
+    def test_unknown_event(self):
+        """ 测试未知的事件 """
+        webhook_data = {
+            'username': 'admin',
+            'proto_ver': 4,
+            'keepalive': 15,
+            'ipaddress': '221.10.55.132',
+            'connected_at': 1607658682703,
+            'clientid': '1',
+            'action': 'unknown'
+        }
+        response = self.client.post(reverse('iot:iot'),
+                                    data=json.dumps(webhook_data),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
 
     def test_client_connected(self):
         """ 测试客户端连接 """
