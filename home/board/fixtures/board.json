@@ -3,8 +3,8 @@
     "model": "board.topic",
     "pk": 1,
     "fields": {
-      "title": "\u4f60\u597d\u4e16\u754c",
-      "description": "\u8fd9\u662f\u4e00\u4e2a\u6d4b\u8bd5\u8bdd\u9898",
+      "title": "Hello World!",
+      "description": "This is a test topic.",
       "is_open": true,
       "user": 1,
       "date_created": "2020-07-11T02:19:43.721Z",
@@ -15,8 +15,8 @@
     "model": "board.topic",
     "pk": 2,
     "fields": {
-      "title": "\u5173\u95ed\u8bdd\u9898",
-      "description": "\u4e00\u4e2a\u5173\u95ed\u7684\u8bdd\u9898",
+      "title": "Closed Topic",
+      "description": "This is a closed topic.",
       "is_open": false,
       "user": 1,
       "date_created": "2020-07-11T07:27:53.093Z",
@@ -29,15 +29,49 @@
     "fields": {
       "topic": 1,
       "user": 1,
-      "body": "\u4f60\u597d\uff01",
+      "body": "testcomment1",
       "date_created": "2020-07-11T02:20:23.803Z",
       "date_modified": "2020-07-11T02:20:23.803Z",
       "parent": null,
       "reply_to": null,
       "lft": 1,
-      "rght": 2,
+      "rght": 4,
       "tree_id": 1,
       "level": 0
+    }
+  },
+  {
+    "model": "board.comment",
+    "pk": 2,
+    "fields": {
+      "topic": 1,
+      "user": 2,
+      "body": "testcomment2",
+      "date_created": "2020-12-12T02:36:14.858Z",
+      "date_modified": "2020-12-12T02:36:14.858Z",
+      "parent": null,
+      "reply_to": null,
+      "lft": 1,
+      "rght": 2,
+      "tree_id": 2,
+      "level": 0
+    }
+  },
+  {
+    "model": "board.comment",
+    "pk": 3,
+    "fields": {
+      "topic": 1,
+      "user": 2,
+      "body": "replytotestcomment1",
+      "date_created": "2020-12-12T03:00:23.593Z",
+      "date_modified": "2020-12-12T03:00:23.593Z",
+      "parent": 1,
+      "reply_to": 1,
+      "lft": 2,
+      "rght": 3,
+      "tree_id": 1,
+      "level": 1
     }
   }
 ]
