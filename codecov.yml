@@ -1,3 +1,4 @@
 ignore:
   - "home/push/mipush"
   - "home/settings"
+  - "manage.py"
