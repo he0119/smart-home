@@ -1,9 +1,23 @@
+from unittest import mock
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from graphql_jwt.testcases import JSONWebTokenTestCase
 
 from home.push.tasks import (PushChannel, build_message, get_enable_reg_ids,
                              get_enable_reg_ids_except_user)
+
+from .models import MiPush
+from .tasks import push_to_users, sender
+
+
+class ModelTests(TestCase):
+    fixtures = ['users', 'push']
+
+    def test_mipush_str(self):
+        mipush = MiPush.objects.get(pk=1)
+
+        self.assertEqual(str(mipush), 'test')
 
 
 class PushTests(JSONWebTokenTestCase):
@@ -224,3 +238,18 @@ class MiPushMessageTest(TestCase):
 
         self.assertEqual(message_dict['extra.channel_id'], 'pre84')
         self.assertEqual(message_dict['extra.channel_name'], '留言板消息')
+
+
+def mocked_sender_send(*args, **kwargs):
+    """ 测试数据 """
+    return None
+
+
+class TaskTests(TestCase):
+    fixtures = ['users', 'push']
+
+    @mock.patch.object(sender, 'send', side_effect=mocked_sender_send)
+    def test_set_status(self, mock_send):
+        push_to_users(['1'], 'title', 'description')
+
+        self.assertTrue(mock_send.call_args_list)

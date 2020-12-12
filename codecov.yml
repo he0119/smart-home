@@ -1,2 +1,5 @@
 ignore:
+  - "**/migrations"
   - "home/push/mipush"
+  - "home/settings"
+  - "manage.py"

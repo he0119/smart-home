@@ -248,8 +248,13 @@ class AddCommentMutation(graphene.Mutation):
     def mutate(self, info, **kwargs):
         input = kwargs.get('input')
 
+        try:
+            topic = Topic.objects.get(pk=input.topic_id)
+        except Topic.DoesNotExist:
+            raise GraphQLError('话题不存在')
+
         comment = Comment(
-            topic=Topic.objects.get(pk=input.topic_id),
+            topic=topic,
             user=info.context.user,
             body=input.body,
         )
