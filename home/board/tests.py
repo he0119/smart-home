@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from graphql_jwt.testcases import JSONWebTokenTestCase
+from graphql_relay import to_global_id
 
 from .models import Comment, Topic
 
@@ -11,12 +12,12 @@ class ModelTests(TestCase):
     def test_topic_str(self):
         topic = Topic.objects.get(pk=1)
 
-        self.assertEqual(str(topic), 'Hello World!')
+        self.assertEqual(str(topic), '你好世界')
 
     def test_comment_str(self):
         comment = Comment.objects.get(pk=1)
 
-        self.assertEqual(str(comment), 'testcomment1')
+        self.assertEqual(str(comment), '测试评论一')
 
 
 class TopicTests(JSONWebTokenTestCase):
@@ -27,54 +28,91 @@ class TopicTests(JSONWebTokenTestCase):
         self.client.authenticate(self.user)
 
     def test_get_topics(self):
+        """ 获取所有话题 """
         query = '''
             query topics {
                 topics {
-                    title
+                    edges {
+                        node {
+                            title
+                        }
+                    }
                 }
             }
         '''
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
-        titles = [item['title'] for item in content.data['topics']]
-        self.assertEqual(set(titles), {'Hello World!', 'Closed Topic'})
 
-    def test_get_topics_with_number(self):
-        """ 测试获取指定数量的话题 """
+        titles = [
+            item['node']['title'] for item in content.data['topics']['edges']
+        ]
+        self.assertEqual(set(titles), {'你好世界', '关闭的话题'})
+
+    def test_get_frist_topics(self):
+        """ 获取最前面一个话题 """
         query = '''
-            query topics($number: Int!) {
-                topics(number: $number) {
-                    title
+            query topics {
+                topics(first: 1) {
+                    edges {
+                        node {
+                            title
+                        }
+                    }
                 }
             }
         '''
-        variables = {'number': 1}
-
-        content = self.client.execute(query, variables)
+        content = self.client.execute(query)
         self.assertIsNone(content.errors)
 
-        titles = [item['title'] for item in content.data['topics']]
-        self.assertEqual(set(titles), {'Hello World!'})
+        titles = [
+            topic['node']['title'] for topic in content.data['topics']['edges']
+        ]
+        self.assertEqual(set(titles), {'你好世界'})
+
+    def test_get_last_topics(self):
+        """ 获取最近一个话题 """
+        query = '''
+            query topics {
+                topics(last: 1) {
+                    edges {
+                        node {
+                            title
+                        }
+                    }
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        titles = [
+            topic['node']['title'] for topic in content.data['topics']['edges']
+        ]
+        self.assertEqual(set(titles), {'关闭的话题'})
 
     def test_get_topic(self):
-        helloworld = Topic.objects.get(title='Hello World!')
+        """ 通过 Node 来获得指定话题 """
+        helloworld = Topic.objects.get(title='你好世界')
+        global_id = to_global_id('TopicType', helloworld.id)
 
         query = f'''
-            query topic {{
-                topic(id: {helloworld.id}) {{
-                    title
+            query node {{
+                node(id: "{global_id}") {{
+                    ... on TopicType {{
+                        title
+                    }}
                 }}
             }}
         '''
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
 
-        title = content.data['topic']['title']
+        title = content.data['node']['title']
         self.assertEqual(title, helloworld.title)
 
     def test_add_topic(self):
         mutation = '''
-            mutation addTopic($input: AddTopicInput!) {
+            mutation addTopic($input: AddTopicMutationInput!) {
                 addTopic(input: $input) {
                     topic {
                         __typename
@@ -103,31 +141,31 @@ class TopicTests(JSONWebTokenTestCase):
 
     def test_delete_topic(self):
         mutation = '''
-            mutation deleteTopic($input: DeleteTopicInput!) {
+            mutation deleteTopic($input: DeleteTopicMutationInput!) {
                 deleteTopic(input: $input) {
-                    deletedId
+                    __typename
                 }
             }
         '''
 
-        helloworld = Topic.objects.get(title='Hello World!')
+        helloworld = Topic.objects.get(title='你好世界')
         variables = {
             'input': {
-                'topicId': helloworld.id,
+                'topicId': to_global_id('TopicType', helloworld.id),
             }
         }
 
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
 
-        deletedId = content.data['deleteTopic']['deletedId']
-        self.assertEqual(deletedId, str(helloworld.id))
+        typename = content.data['deleteTopic']['__typename']
+        self.assertEqual(typename, 'DeleteTopicMutationPayload')
         with self.assertRaises(Topic.DoesNotExist):
-            Topic.objects.get(title='Hello World!')
+            Topic.objects.get(title='你好世界')
 
     def test_update_topic(self):
         mutation = '''
-            mutation updateTopic($input: UpdateTopicInput!) {
+            mutation updateTopic($input: UpdateTopicMutationInput!) {
                 updateTopic(input: $input) {
                     topic {
                         __typename
@@ -140,27 +178,27 @@ class TopicTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 1,
+                'id': to_global_id('TopicType', '1'),
                 'title': 'test',
                 'description': 'some',
             }
         }
 
         old_topic = Topic.objects.get(pk=1)
-        self.assertEqual(old_topic.title, 'Hello World!')
+        self.assertEqual(old_topic.title, '你好世界')
 
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
         topic = content.data['updateTopic']['topic']
 
         self.assertEqual(topic['__typename'], 'TopicType')
-        self.assertEqual(topic['id'], '1')
+        self.assertEqual(topic['id'], to_global_id('TopicType', '1'))
         self.assertEqual(topic['title'], 'test')
         self.assertEqual(topic['description'], 'some')
 
     def test_close_topic(self):
         mutation = '''
-            mutation closeTopic($input: CloseTopicInput!) {
+            mutation closeTopic($input: CloseTopicMutationInput!) {
                 closeTopic(input: $input) {
                     topic {
                         __typename
@@ -172,12 +210,12 @@ class TopicTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'topicId': 1,
+                'topicId': to_global_id('TopicType', '1'),
             }
         }
 
         old_topic = Topic.objects.get(pk=1)
-        self.assertEqual(old_topic.title, 'Hello World!')
+        self.assertEqual(old_topic.title, '你好世界')
         self.assertEqual(old_topic.is_open, True)
 
         content = self.client.execute(mutation, variables)
@@ -185,12 +223,12 @@ class TopicTests(JSONWebTokenTestCase):
         topic = content.data['closeTopic']['topic']
 
         self.assertEqual(topic['__typename'], 'TopicType')
-        self.assertEqual(topic['id'], '1')
+        self.assertEqual(topic['id'], to_global_id('TopicType', '1'))
         self.assertEqual(topic['isOpen'], False)
 
     def test_reopen_topic(self):
         mutation = '''
-            mutation reopenTopic($input: ReopenTopicInput!) {
+            mutation reopenTopic($input: ReopenTopicMutationInput!) {
                 reopenTopic(input: $input) {
                     topic {
                         __typename
@@ -204,12 +242,12 @@ class TopicTests(JSONWebTokenTestCase):
 
         variables = {
             'input': {
-                'topicId': 2,
+                'topicId': to_global_id('TopicType', '2'),
             }
         }
 
         old_topic = Topic.objects.get(pk=2)
-        self.assertEqual(old_topic.title, 'Closed Topic')
+        self.assertEqual(old_topic.title, '关闭的话题')
         self.assertEqual(old_topic.is_open, False)
 
         content = self.client.execute(mutation, variables)
@@ -217,22 +255,22 @@ class TopicTests(JSONWebTokenTestCase):
         topic = content.data['reopenTopic']['topic']
 
         self.assertEqual(topic['__typename'], 'TopicType')
-        self.assertEqual(topic['id'], '2')
-        self.assertEqual(topic['title'], 'Closed Topic')
+        self.assertEqual(topic['id'], to_global_id('TopicType', '2'))
+        self.assertEqual(topic['title'], '关闭的话题')
         self.assertEqual(topic['isOpen'], True)
 
     def test_delete_topic_not_exist(self):
         mutation = '''
-            mutation deleteTopic($input: DeleteTopicInput!) {
+            mutation deleteTopic($input: DeleteTopicMutationInput!) {
                 deleteTopic(input: $input) {
-                    deletedId
+                    __typename
                 }
             }
         '''
 
         variables = {
             'input': {
-                'topicId': 0,
+                'topicId': to_global_id('TopicType', '0'),
             }
         }
 
@@ -243,7 +281,7 @@ class TopicTests(JSONWebTokenTestCase):
 
     def test_update_topic_not_exist(self):
         mutation = '''
-            mutation updateTopic($input: UpdateTopicInput!) {
+            mutation updateTopic($input: UpdateTopicMutationInput!) {
                 updateTopic(input: $input) {
                     topic {
                         __typename
@@ -256,7 +294,7 @@ class TopicTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 0,
+                'id': to_global_id('TopicType', '0'),
                 'title': 'test',
                 'description': 'some',
             }
@@ -269,7 +307,7 @@ class TopicTests(JSONWebTokenTestCase):
 
     def test_close_topic_not_exist(self):
         mutation = '''
-            mutation closeTopic($input: CloseTopicInput!) {
+            mutation closeTopic($input: CloseTopicMutationInput!) {
                 closeTopic(input: $input) {
                     topic {
                         __typename
@@ -281,7 +319,7 @@ class TopicTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'topicId': 0,
+                'topicId': to_global_id('TopicType', '0'),
             }
         }
 
@@ -292,7 +330,7 @@ class TopicTests(JSONWebTokenTestCase):
 
     def test_reopen_topic_not_exist(self):
         mutation = '''
-            mutation reopenTopic($input: ReopenTopicInput!) {
+            mutation reopenTopic($input: ReopenTopicMutationInput!) {
                 reopenTopic(input: $input) {
                     topic {
                         __typename
@@ -306,7 +344,7 @@ class TopicTests(JSONWebTokenTestCase):
 
         variables = {
             'input': {
-                'topicId': 0,
+                'topicId': to_global_id('TopicType', '0'),
             }
         }
 
@@ -325,58 +363,48 @@ class CommentTests(JSONWebTokenTestCase):
 
     def test_get_comments(self):
         query = '''
-            query comments($topicId: ID!) {
-                comments(topicId: $topicId) {
-                    body
+            query comments {
+                comments {
+                    edges {
+                        node {
+                            body
+                        }
+                    }
                 }
             }
         '''
 
-        variables = {'topicId': 1}
-
-        content = self.client.execute(query, variables)
+        content = self.client.execute(query)
         self.assertIsNone(content.errors)
-        comments = [item['body'] for item in content.data['comments']]
-        self.assertEqual(
-            set(comments),
-            {'testcomment1', 'testcomment2', 'replytotestcomment1'})
+        comments = [
+            item['node']['body'] for item in content.data['comments']['edges']
+        ]
+        self.assertEqual(set(comments), {'测试评论一', '测试评论二', '评论测试评论一'})
 
-    def test_get_comments_with_number(self):
+    def test_get_first_comments(self):
         query = '''
-            query comments($topicId: ID!, $number: Int) {
-                comments(topicId: $topicId, number: $number) {
-                    body
+            query comments {
+                comments(first: 1) {
+                    edges {
+                        node {
+                            body
+                        }
+                    }
                 }
             }
         '''
 
-        variables = {'topicId': 1, 'number': 1}
-
-        content = self.client.execute(query, variables)
+        content = self.client.execute(query)
         self.assertIsNone(content.errors)
-        comments = [item['body'] for item in content.data['comments']]
-        self.assertEqual(set(comments), {'testcomment1'})
 
-    def test_get_comments_not_exist(self):
-        """ 测试话题不存在的情况 """
-        query = '''
-            query comments($topicId: ID!) {
-                comments(topicId: $topicId) {
-                    body
-                }
-            }
-        '''
-
-        variables = {'topicId': 3}
-
-        content = self.client.execute(query, variables)
-        self.assertIsNotNone(content.errors)
-
-        self.assertEqual(content.errors[0].message, '话题不存在')
+        comments = [
+            item['node']['body'] for item in content.data['comments']['edges']
+        ]
+        self.assertEqual(set(comments), {'测试评论一'})
 
     def test_add_comment(self):
         mutation = '''
-            mutation addComment($input: AddCommentInput!) {
+            mutation addComment($input: AddCommentMutationInput!) {
                 addComment(input: $input) {
                     comment {
                         __typename
@@ -388,7 +416,7 @@ class CommentTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'topicId': 1,
+                'topicId': to_global_id('TopicType', '1'),
                 'body': 'test',
             }
         }
@@ -402,7 +430,7 @@ class CommentTests(JSONWebTokenTestCase):
 
     def test_add_comment_with_parent_id(self):
         mutation = '''
-            mutation addComment($input: AddCommentInput!) {
+            mutation addComment($input: AddCommentMutationInput!) {
                 addComment(input: $input) {
                     comment {
                         __typename
@@ -420,9 +448,9 @@ class CommentTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'topicId': 1,
-                'body': 'replytotest2',
-                'parentId': 3,
+                'topicId': to_global_id('TopicType', '1'),
+                'body': '测试评论给测试评论二',
+                'parentId': to_global_id('CommentType', '3'),
             }
         }
 
@@ -431,37 +459,36 @@ class CommentTests(JSONWebTokenTestCase):
 
         comment = content.data['addComment']['comment']
         self.assertEqual(comment['__typename'], 'CommentType')
-        self.assertEqual(comment['body'], 'replytotest2')
-        self.assertEqual(comment['parent']['id'], '1')
+        self.assertEqual(comment['body'], '测试评论给测试评论二')
+        self.assertEqual(comment['parent']['id'],
+                         to_global_id('CommentType', '1'))
         self.assertEqual(comment['replyTo']['username'], 'test2')
 
     def test_delete_comment(self):
         mutation = '''
-            mutation deleteComment($input: DeleteCommentInput!) {
+            mutation deleteComment($input: DeleteCommentMutationInput!) {
                 deleteComment(input: $input) {
-                    deletedId
+                    __typename
                 }
             }
         '''
 
-        test_comment = Comment.objects.get(body='testcomment1')
+        test_comment = Comment.objects.get(body='测试评论一')
         variables = {
             'input': {
-                'commentId': test_comment.id,
+                'commentId': to_global_id('CommentType', test_comment.id),
             }
         }
 
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
 
-        deletedId = content.data['deleteComment']['deletedId']
-        self.assertEqual(deletedId, str(test_comment.id))
         with self.assertRaises(Comment.DoesNotExist):
-            Comment.objects.get(body='testcomment1')
+            Comment.objects.get(body='测试评论一')
 
     def test_update_comment(self):
         mutation = '''
-            mutation updateComment($input: UpdateCommentInput!) {
+            mutation updateComment($input: UpdateCommentMutationInput!) {
                 updateComment(input: $input) {
                     comment {
                         __typename
@@ -473,25 +500,25 @@ class CommentTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 1,
+                'id': to_global_id('CommentType', '1'),
                 'body': 'hello',
             }
         }
 
         old_comment = Comment.objects.get(pk=1)
-        self.assertEqual(old_comment.body, 'testcomment1')
+        self.assertEqual(old_comment.body, '测试评论一')
 
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
         comment = content.data['updateComment']['comment']
 
         self.assertEqual(comment['__typename'], 'CommentType')
-        self.assertEqual(comment['id'], '1')
+        self.assertEqual(comment['id'], to_global_id('CommentType', '1'))
         self.assertEqual(comment['body'], 'hello')
 
     def test_add_comment_not_exist(self):
         mutation = '''
-            mutation addComment($input: AddCommentInput!) {
+            mutation addComment($input: AddCommentMutationInput!) {
                 addComment(input: $input) {
                     comment {
                         __typename
@@ -503,7 +530,7 @@ class CommentTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'topicId': 0,
+                'topicId': to_global_id('TopicType', '0'),
                 'body': 'test',
             }
         }
@@ -515,16 +542,16 @@ class CommentTests(JSONWebTokenTestCase):
 
     def test_delete_comment_not_exist(self):
         mutation = '''
-            mutation deleteComment($input: DeleteCommentInput!) {
+            mutation deleteComment($input: DeleteCommentMutationInput!) {
                 deleteComment(input: $input) {
-                    deletedId
+                    __typename
                 }
             }
         '''
 
         variables = {
             'input': {
-                'commentId': 0,
+                'commentId': to_global_id('CommentType', '0'),
             }
         }
 
@@ -535,7 +562,7 @@ class CommentTests(JSONWebTokenTestCase):
 
     def test_update_comment_not_exist(self):
         mutation = '''
-            mutation updateComment($input: UpdateCommentInput!) {
+            mutation updateComment($input: UpdateCommentMutationInput!) {
                 updateComment(input: $input) {
                     comment {
                         __typename
@@ -547,7 +574,7 @@ class CommentTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 0,
+                'id': to_global_id('CommentType', '0'),
                 'body': 'hello',
             }
         }
@@ -568,16 +595,16 @@ class DifferentUserTopicTests(JSONWebTokenTestCase):
 
     def test_delete_topic(self):
         mutation = '''
-            mutation deleteTopic($input: DeleteTopicInput!) {
+            mutation deleteTopic($input: DeleteTopicMutationInput!) {
                 deleteTopic(input: $input) {
-                    deletedId
+                    __typename
                 }
             }
         '''
 
         variables = {
             'input': {
-                'topicId': 1,
+                'topicId': to_global_id('TopicType', '1'),
             }
         }
 
@@ -588,7 +615,7 @@ class DifferentUserTopicTests(JSONWebTokenTestCase):
 
     def test_update_topic(self):
         mutation = '''
-            mutation updateTopic($input: UpdateTopicInput!) {
+            mutation updateTopic($input: UpdateTopicMutationInput!) {
                 updateTopic(input: $input) {
                     topic {
                         __typename
@@ -601,7 +628,7 @@ class DifferentUserTopicTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 1,
+                'id': to_global_id('TopicType', '1'),
                 'title': 'test',
                 'description': 'some',
             }
@@ -614,7 +641,7 @@ class DifferentUserTopicTests(JSONWebTokenTestCase):
 
     def test_close_topic(self):
         mutation = '''
-            mutation closeTopic($input: CloseTopicInput!) {
+            mutation closeTopic($input: CloseTopicMutationInput!) {
                 closeTopic(input: $input) {
                     topic {
                         __typename
@@ -626,7 +653,7 @@ class DifferentUserTopicTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'topicId': 1,
+                'topicId': to_global_id('TopicType', '1'),
             }
         }
 
@@ -637,7 +664,7 @@ class DifferentUserTopicTests(JSONWebTokenTestCase):
 
     def test_reopen_topic(self):
         mutation = '''
-            mutation reopenTopic($input: ReopenTopicInput!) {
+            mutation reopenTopic($input: ReopenTopicMutationInput!) {
                 reopenTopic(input: $input) {
                     topic {
                         __typename
@@ -651,7 +678,7 @@ class DifferentUserTopicTests(JSONWebTokenTestCase):
 
         variables = {
             'input': {
-                'topicId': 1,
+                'topicId': to_global_id('TopicType', '1'),
             }
         }
 
@@ -671,16 +698,16 @@ class DifferentUserCommentTests(JSONWebTokenTestCase):
 
     def test_delete_comment(self):
         mutation = '''
-            mutation deleteComment($input: DeleteCommentInput!) {
+            mutation deleteComment($input: DeleteCommentMutationInput!) {
                 deleteComment(input: $input) {
-                    deletedId
+                    __typename
                 }
             }
         '''
 
         variables = {
             'input': {
-                'commentId': 1,
+                'commentId': to_global_id('CommentType', '1'),
             }
         }
 
@@ -691,7 +718,7 @@ class DifferentUserCommentTests(JSONWebTokenTestCase):
 
     def test_update_comment(self):
         mutation = '''
-            mutation updateComment($input: UpdateCommentInput!) {
+            mutation updateComment($input: UpdateCommentMutationInput!) {
                 updateComment(input: $input) {
                     comment {
                         __typename
@@ -703,7 +730,7 @@ class DifferentUserCommentTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 1,
+                'id': to_global_id('CommentType', '1'),
                 'body': 'hello',
             }
         }
