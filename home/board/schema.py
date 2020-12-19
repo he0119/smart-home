@@ -47,6 +47,7 @@ class CommentType(DjangoObjectType):
         interfaces = (relay.Node, )
 
     @classmethod
+    @login_required
     def get_node(cls, info, id):
         return Comment.objects.get(pk=id)
 
