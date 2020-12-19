@@ -17,6 +17,7 @@ RUN set -ex; \
     postgresql-dev \
     pcre-dev \
     curl \
+    git \
 	; \
 	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python; \
   $HOME/.poetry/bin/poetry config virtualenvs.create false; \
