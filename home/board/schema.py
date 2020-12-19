@@ -38,12 +38,7 @@ class TopicFilter(FilterSet):
 class CommentType(DjangoObjectType):
     class Meta:
         model = Comment
-        exclude = (
-            'lft',
-            'rght',
-            'treeId',
-            'level',
-        )
+        fields = '__all__'
         interfaces = (relay.Node, )
 
     @classmethod
