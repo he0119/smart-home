@@ -349,7 +349,7 @@ class DeviceTests(JSONWebTokenTestCase):
         self.assertEqual(autowatering_data['temperature'],
                          test_autowatering_data.temperature)
 
-    def test_get_autowatering_data(self):
+    def test_get_all_autowatering_data(self):
         """ 获取自动浇水数据 """
         query = '''
             query autowateringData {
