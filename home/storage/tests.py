@@ -480,7 +480,7 @@ class ItemTests(JSONWebTokenTestCase):
                     'id': 1
                 },
                 'description': 'some',
-                'price': '12.0',
+                'price': 12.0,
                 'expirationDate': None,
             }
         }
@@ -547,7 +547,7 @@ class ItemTests(JSONWebTokenTestCase):
                     'id': 2
                 },
                 'description': 'some',
-                'price': '12.0',
+                'price': 12.0,
                 'expirationDate': expiration_date.isoformat(),
             }
         }
@@ -600,7 +600,7 @@ class ItemTests(JSONWebTokenTestCase):
                     'id': 1
                 },
                 'description': 'some',
-                'price': '12.0',
+                'price': 12.0,
                 'expirationDate': None,
             }
         }

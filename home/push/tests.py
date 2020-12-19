@@ -147,7 +147,7 @@ class EmptyPushTests(JSONWebTokenTestCase):
         variables = {'deviceId': 'deviceidofuser1'}
 
         content = self.client.execute(query, variables)
-        self.assertEqual(str(content.errors[0]), '推送未绑定')
+        self.assertEqual(content.errors[0].message, '推送未绑定')
 
     def test_update_mipush_without_create(self):
         """ 在没有创建的情况更新，应该会自动创建 """
