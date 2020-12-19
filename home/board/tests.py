@@ -27,6 +27,38 @@ class TopicTests(JSONWebTokenTestCase):
         self.user = get_user_model().objects.get(username='test')
         self.client.authenticate(self.user)
 
+    def test_get_topic(self):
+        """ 通过 Node 来获得指定话题 """
+        helloworld = Topic.objects.get(title='你好世界')
+        global_id = to_global_id('TopicType', helloworld.id)
+
+        query = f'''
+            query node {{
+                node(id: "{global_id}") {{
+                    ... on TopicType {{
+                        title
+                        comments(first: 1) {{
+                            edges {{
+                                node {{
+                                    body
+                                }}
+                            }}
+                        }}
+                    }}
+                }}
+            }}
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        title = content.data['node']['title']
+        self.assertEqual(title, helloworld.title)
+        comments = [
+            item['node']['body']
+            for item in content.data['node']['comments']['edges']
+        ]
+        self.assertEqual(set(comments), {'测试评论一'})
+
     def test_get_topics(self):
         """ 获取所有话题 """
         query = '''
@@ -89,26 +121,6 @@ class TopicTests(JSONWebTokenTestCase):
             topic['node']['title'] for topic in content.data['topics']['edges']
         ]
         self.assertEqual(set(titles), {'关闭的话题'})
-
-    def test_get_topic(self):
-        """ 通过 Node 来获得指定话题 """
-        helloworld = Topic.objects.get(title='你好世界')
-        global_id = to_global_id('TopicType', helloworld.id)
-
-        query = f'''
-            query node {{
-                node(id: "{global_id}") {{
-                    ... on TopicType {{
-                        title
-                    }}
-                }}
-            }}
-        '''
-        content = self.client.execute(query)
-        self.assertIsNone(content.errors)
-
-        title = content.data['node']['title']
-        self.assertEqual(title, helloworld.title)
 
     def test_add_topic(self):
         mutation = '''
@@ -360,6 +372,26 @@ class CommentTests(JSONWebTokenTestCase):
     def setUp(self):
         self.user = get_user_model().objects.get(username='test')
         self.client.authenticate(self.user)
+
+    def test_get_comment(self):
+        """ 通过 Node 来获得指定评论 """
+        test_comment = Comment.objects.get(body='测试评论一')
+        global_id = to_global_id('CommentType', test_comment.id)
+
+        query = f'''
+            query node {{
+                node(id: "{global_id}") {{
+                    ... on CommentType {{
+                        body
+                    }}
+                }}
+            }}
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        body = content.data['node']['body']
+        self.assertEqual(body, test_comment.body)
 
     def test_get_comments(self):
         query = '''
