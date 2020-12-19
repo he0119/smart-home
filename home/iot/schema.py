@@ -1,196 +1,204 @@
 from distutils.util import strtobool
 
 import graphene
+from django_filters import FilterSet, OrderingFilter
+from graphene import relay
+from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
+from graphql_relay import from_global_id
 
 from .models import AutowateringData, Device
-from .tasks import set_status
+from .tasks import autowatering, set_status
 
 
-#region query
-class DeviceType(DjangoObjectType):
+#region type
+class AutowateringDataFilter(FilterSet):
+    class Meta:
+        model = AutowateringData
+        fields = {
+            'device': ['exact'],
+            'time': ['exact'],
+        }
+
+    order_by = OrderingFilter(fields=(('time', 'time'), ))
+
+
+class DeviceFilter(FilterSet):
     class Meta:
         model = Device
-        fields = '__all__'
+        fields = {
+            'name': ['exact', 'icontains', 'istartswith'],
+            'device_type': ['exact', 'icontains', 'istartswith'],
+            'location': ['exact', 'icontains', 'istartswith'],
+        }
+
+    order_by = OrderingFilter(fields=(
+        ('date_created', 'date_created'),
+        ('date_updated', 'date_updated'),
+        ('is_online', 'is_online'),
+        ('date_online', 'date_online'),
+        ('date_offline', 'date_offline'),
+    ))
 
 
 class AutowateringDataType(DjangoObjectType):
     class Meta:
         model = AutowateringData
         fields = '__all__'
+        interfaces = (relay.Node, )
+
+    @classmethod
+    @login_required
+    def get_node(cls, info, id):
+        return AutowateringData.objects.get(pk=id)
 
 
-class Query(graphene.ObjectType):
-    device = graphene.Field(DeviceType, id=graphene.ID(required=True))
-    devices = graphene.List(
-        DeviceType,
-        number=graphene.Int(),
-    )
-    device_data = graphene.List(
-        AutowateringDataType,
-        device_id=graphene.ID(required=True),
-        number=graphene.Int(),
-    )
+class DeviceType(DjangoObjectType):
+    class Meta:
+        model = Device
+        fields = '__all__'
+        interfaces = (relay.Node, )
+
+    autowatering_data = DjangoFilterConnectionField(
+        AutowateringDataType, filterset_class=AutowateringDataFilter)
 
     @login_required
-    def resolve_device(self, info, id):
+    def resolve_autowatering_data(self, info, **args):
+        return self.data
+
+    @classmethod
+    @login_required
+    def get_node(cls, info, id):
         return Device.objects.get(pk=id)
+
+
+#endregion
+
+
+#region query
+class Query(graphene.ObjectType):
+    devices = DjangoFilterConnectionField(DeviceType,
+                                          filterset_class=DeviceFilter)
+    autowatering_data = DjangoFilterConnectionField(
+        AutowateringDataType, filterset_class=AutowateringDataFilter)
 
     @login_required
     def resolve_devices(self, info, **kwargs):
-        number = kwargs.get('number')
-
-        q = Device.objects.all()
-        if number:
-            return q[:number]
-        return q
+        return Device.objects.all()
 
     @login_required
-    def resolve_device_data(self, info, **kwargs):
-        device_id = kwargs.get('device_id')
-        number = kwargs.get('number')
-
-        # 时间排序，最新的在最上面
-        q = AutowateringData.objects.all().order_by('-id')
-        if device_id:
-            q = q.filter(device__id=device_id)
-        if number:
-            q = q[:number]
-
-        return q
+    def resolve_autowatering_data(self, info, **kwargs):
+        return AutowateringData.objects.all()
 
 
 # endregion
 
 
 #region mutation
-#region inputs
-class AddDeviceInput(graphene.InputObjectType):
-    name = graphene.String(required=True)
-    device_type = graphene.String(required=True)
-    location = graphene.String(required=True)
-
-
-class UpdateDeviceInput(graphene.InputObjectType):
-    id = graphene.ID(required=True)
-    name = graphene.String()
-    device_type = graphene.String()
-    location = graphene.String()
-
-
-class DeleteDeviceInput(graphene.InputObjectType):
-    device_id = graphene.ID(required=True, description='设备的 ID')
-
-
-# region setDevice
-class SetDeviceInput(graphene.InputObjectType):
-    id = graphene.ID(required=True)
-    key = graphene.String(required=True)
-    value = graphene.String(required=True)
-    value_type = graphene.String(required=True,
-                                 description='支持 bool, float, int, str 类型')
-
-
-#endregion
-
-#endregion
-
-
-class AddDeviceMutation(graphene.Mutation):
-    class Arguments:
-        input = AddDeviceInput(required=True)
+class AddDeviceMutation(relay.ClientIDMutation):
+    class Input:
+        name = graphene.String(required=True)
+        device_type = graphene.String(required=True)
+        location = graphene.String(required=True)
 
     device = graphene.Field(DeviceType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
-
+    def mutate_and_get_payload(cls, root, info, **kwargs):
         device = Device(
-            name=input.name,
-            device_type=input.device_type,
-            location=input.location,
+            name=kwargs.get('name'),
+            device_type=kwargs.get('device_type'),
+            location=kwargs.get('location'),
             is_online=False,
         )
         device.save()
         return AddDeviceMutation(device=device)
 
 
-class DeleteDeviceMutation(graphene.Mutation):
-    class Arguments:
-        input = DeleteDeviceInput(required=True)
+class DeleteDeviceMutation(relay.ClientIDMutation):
+    class Input:
+        device_id = graphene.ID(required=True, description='设备的 ID')
 
-    deletedId = graphene.ID()
-
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, device_id = from_global_id(kwargs.get('device_id'))
 
         try:
-            device = Device.objects.get(pk=input.device_id)
+            device = Device.objects.get(pk=device_id)
             device.delete()
-            return DeleteDeviceMutation(deletedId=input.device_id)
+            return DeleteDeviceMutation()
         except Device.DoesNotExist:
             raise GraphQLError('设备不存在')
 
 
-class UpdateDeviceMutation(graphene.Mutation):
-    class Arguments:
-        input = UpdateDeviceInput(required=True)
+class UpdateDeviceMutation(relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True)
+        name = graphene.String()
+        device_type = graphene.String()
+        location = graphene.String()
 
     device = graphene.Field(DeviceType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, device_id = from_global_id(kwargs.get('id'))
 
         try:
-            device = Device.objects.get(pk=input.id)
+            device = Device.objects.get(pk=device_id)
         except Device.DoesNotExist:
             raise GraphQLError('设备不存在')
 
         # 仅在传入数据时修改
-        if input.name is not None:
-            device.name = input.name
-        if input.device_type is not None:
-            device.device_type = input.device_type
-        if input.location is not None:
-            device.location = input.location
+        if kwargs.get('name') is not None:
+            device.name = kwargs.get('name')
+        if kwargs.get('device_type') is not None:
+            device.device_type = kwargs.get('device_type')
+        if kwargs.get('location') is not None:
+            device.location = kwargs.get('location')
         device.save()
         return UpdateDeviceMutation(device=device)
 
 
-class SetDeviceMutation(graphene.Mutation):
-    class Arguments:
-        input = SetDeviceInput(required=True)
+class SetDeviceMutation(relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True)
+        key = graphene.String(required=True)
+        value = graphene.String(required=True)
+        value_type = graphene.String(required=True,
+                                     description='支持 bool, float, int, str 类型')
 
     device = graphene.Field(DeviceType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, device_id = from_global_id(kwargs.get('id'))
 
         try:
-            device = Device.objects.get(pk=input.id)
+            device = Device.objects.get(pk=device_id)
         except Device.DoesNotExist:
             raise GraphQLError('设备不存在')
 
         # 转换 value 的类型
         value = None
-        if input.value_type == 'bool':
-            value = strtobool(input.value)
-        if input.value_type == 'float':
-            value = float(input.value)
-        if input.value_type == 'int':
-            value = int(input.value)
-        if input.value_type == 'str':
-            value = input.value
+        if kwargs.get('value_type') == 'bool':
+            value = strtobool(kwargs.get('value'))
+        elif kwargs.get('value_type') == 'float':
+            value = float(kwargs.get('value'))
+        elif kwargs.get('value_type') == 'int':
+            value = int(kwargs.get('value'))
+        elif kwargs.get('value_type') == 'str':
+            value = kwargs.get('value')
 
-        set_status.delay(device.id, input.key, value)
+        set_status.delay(device_id, kwargs.get('key'), value)
 
-        return UpdateDeviceMutation(device=device)
+        return SetDeviceMutation(device=device)
 
 
 class Mutation(graphene.ObjectType):
