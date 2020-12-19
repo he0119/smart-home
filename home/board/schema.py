@@ -4,6 +4,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
+from graphql_relay import from_global_id
 
 from home.push.tasks import (PushChannel, get_enable_reg_ids_except_user,
                              push_to_users)
@@ -76,60 +77,20 @@ class Query(graphene.ObjectType):
 
 
 #region mutation
-#region inputs
-class AddTopicInput(graphene.InputObjectType):
-    title = graphene.String(required=True, description='话题的标题')
-    description = graphene.String(description='话题的说明')
-
-
-class DeleteTopicInput(graphene.InputObjectType):
-    topic_id = graphene.ID(required=True, description='话题的 ID')
-
-
-class UpdateTopicInput(graphene.InputObjectType):
-    id = graphene.ID(required=True, description='话题的 ID')
-    title = graphene.String(description='话题的标题')
-    description = graphene.String(description='话题的说明')
-
-
-class AddCommentInput(graphene.InputObjectType):
-    topic_id = graphene.ID(required=True, description='属于的话题 ID')
-    body = graphene.String(required=True, description='评论的内容')
-    parent_id = graphene.ID(description='上一级评论的 ID')
-
-
-class DeleteCommentInput(graphene.InputObjectType):
-    comment_id = graphene.ID(required=True, description='评论的 ID')
-
-
-class UpdateCommentInput(graphene.InputObjectType):
-    id = graphene.ID(required=True, description='评论的 ID')
-    body = graphene.String(description='评论的内容')
-
-
-class CloseTopicInput(graphene.InputObjectType):
-    topic_id = graphene.ID(required=True, description='话题的 ID')
-
-
-class ReopenTopicInput(graphene.InputObjectType):
-    topic_id = graphene.ID(required=True, description='话题的 ID')
-
-
-#endregion
 #region Topic
-class AddTopicMutation(graphene.Mutation):
-    class Arguments:
-        input = AddTopicInput(required=True)
+class AddTopicMutation(relay.ClientIDMutation):
+    class Input:
+        title = graphene.String(required=True, description='话题的标题')
+        description = graphene.String(required=True, description='话题的说明')
 
     topic = graphene.Field(TopicType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
-
+    def mutate_and_get_payload(cls, root, info, **kwargs):
         topic = Topic(
-            title=input.title,
-            description=input.description,
+            title=kwargs.get('title'),
+            description=kwargs.get('description'),
             user=info.context.user,
             is_open=True,
         )
@@ -147,64 +108,70 @@ class AddTopicMutation(graphene.Mutation):
         return AddTopicMutation(topic=topic)
 
 
-class DeleteTopicMutation(graphene.Mutation):
-    class Arguments:
-        input = DeleteTopicInput(required=True)
+class DeleteTopicMutation(relay.ClientIDMutation):
+    class Input:
+        topic_id = graphene.ID(required=True, description='话题的 ID')
 
-    deletedId = graphene.ID()
-
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, topic_id = from_global_id(kwargs.get('topic_id'))
 
         try:
-            topic = Topic.objects.get(pk=input.topic_id)
-            if topic.user != info.context.user:
-                raise GraphQLError('只能删除自己创建的话题')
-            topic.delete()
-            return DeleteTopicMutation(deletedId=input.topic_id)
+            topic = Topic.objects.get(pk=topic_id)
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
 
+        if topic.user != info.context.user:
+            raise GraphQLError('只能删除自己创建的话题')
+        topic.delete()
 
-class UpdateTopicMutation(graphene.Mutation):
-    class Arguments:
-        input = UpdateTopicInput(required=True)
+        return DeleteTopicMutation()
+
+
+class UpdateTopicMutation(relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True, description='话题的 ID')
+        title = graphene.String(description='话题的标题')
+        description = graphene.String(description='话题的说明')
 
     topic = graphene.Field(TopicType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, topic_id = from_global_id(kwargs.get('id'))
 
         try:
-            topic = Topic.objects.get(pk=input.id)
+            topic = Topic.objects.get(pk=topic_id)
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
 
         if topic.user != info.context.user:
             raise GraphQLError('只能修改自己创建的话题')
+
         # 仅在传入数据时修改
-        if input.title is not None:
-            topic.title = input.title
-        if input.description is not None:
-            topic.description = input.description
+        if kwargs.get('title') is not None:
+            topic.title = kwargs.get('title')
+        if kwargs.get('description') is not None:
+            topic.description = kwargs.get('description')
         topic.save()
         return UpdateTopicMutation(topic=topic)
 
 
-class CloseTopicMutation(graphene.Mutation):
-    class Arguments:
-        input = CloseTopicInput(required=True)
+class CloseTopicMutation(relay.ClientIDMutation):
+    class Input:
+        topic_id = graphene.ID(required=True, description='话题的 ID')
 
     topic = graphene.Field(TopicType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, topic_id = from_global_id(kwargs.get('topic_id'))
 
         try:
-            topic = Topic.objects.get(pk=input.topic_id)
+            topic = Topic.objects.get(pk=topic_id)
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
 
@@ -216,18 +183,19 @@ class CloseTopicMutation(graphene.Mutation):
         return CloseTopicMutation(topic=topic)
 
 
-class ReopenTopicMutation(graphene.Mutation):
-    class Arguments:
-        input = ReopenTopicInput(required=True)
+class ReopenTopicMutation(relay.ClientIDMutation):
+    class Input:
+        topic_id = graphene.ID(required=True, description='话题的 ID')
 
     topic = graphene.Field(TopicType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, topic_id = from_global_id(kwargs.get('topic_id'))
 
         try:
-            topic = Topic.objects.get(pk=input.topic_id)
+            topic = Topic.objects.get(pk=topic_id)
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
 
@@ -241,28 +209,32 @@ class ReopenTopicMutation(graphene.Mutation):
 
 #endregion
 #region Comment
-class AddCommentMutation(graphene.Mutation):
-    class Arguments:
-        input = AddCommentInput(required=True)
+class AddCommentMutation(relay.ClientIDMutation):
+    class Input:
+        topic_id = graphene.ID(required=True, description='属于的话题 ID')
+        body = graphene.String(required=True, description='评论的内容')
+        parent_id = graphene.ID(description='上一级评论的 ID')
 
     comment = graphene.Field(CommentType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, topic_id = from_global_id(kwargs.get('topic_id'))
 
         try:
-            topic = Topic.objects.get(pk=input.topic_id)
+            topic = Topic.objects.get(pk=topic_id)
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
 
         comment = Comment(
             topic=topic,
             user=info.context.user,
-            body=input.body,
+            body=kwargs.get('body'),
         )
         if input.parent_id:
-            parent_comment = Comment.objects.get(pk=input.parent_id)
+            _, parent_id = from_global_id(kwargs.get('parent_id'))
+            parent_comment = Comment.objects.get(pk=parent_id)
             # 若回复层级超过二级，则转换为二级
             comment.parent_id = parent_comment.get_root().id
             # 被回复人
@@ -281,44 +253,46 @@ class AddCommentMutation(graphene.Mutation):
         return AddCommentMutation(comment=comment)
 
 
-class DeleteCommentMutation(graphene.Mutation):
-    class Arguments:
-        input = DeleteCommentInput(required=True)
+class DeleteCommentMutation(relay.ClientIDMutation):
+    class Input:
+        comment_id = graphene.ID(required=True, description='评论的 ID')
 
-    deletedId = graphene.ID()
-
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, comment_id = from_global_id(kwargs.get('comment_id'))
 
         try:
-            comment = Comment.objects.get(pk=input.comment_id)
+            comment = Comment.objects.get(pk=comment_id)
             if comment.user != info.context.user:
                 raise GraphQLError('只能删除自己创建的评论')
             comment.delete()
-            return DeleteCommentMutation(deletedId=input.comment_id)
+            return DeleteCommentMutation()
         except Comment.DoesNotExist:
             raise GraphQLError('评论不存在')
 
 
-class UpdateCommentMutation(graphene.Mutation):
-    class Arguments:
-        input = UpdateCommentInput(required=True)
+class UpdateCommentMutation(relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True, description='评论的 ID')
+        body = graphene.String(description='评论的内容')
 
     comment = graphene.Field(CommentType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, **kwargs):
-        input = kwargs.get('input')
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, comment_id = from_global_id(kwargs.get('id'))
 
         try:
-            comment = Comment.objects.get(pk=input.id)
+            comment = Comment.objects.get(pk=comment_id)
         except Comment.DoesNotExist:
             raise GraphQLError('评论不存在')
 
         if comment.user != info.context.user:
             raise GraphQLError('只能修改自己创建的评论')
-        comment.body = input.body
+
+        comment.body = kwargs.get('body')
         comment.save()
         return UpdateCommentMutation(comment=comment)
 
