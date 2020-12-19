@@ -37,7 +37,7 @@ class DeviceTests(JSONWebTokenTestCase):
         self.client.authenticate(self.user)
 
     def test_get_device(self):
-        """ 获取指定设备信息 """
+        """ 通过 Node 来获得指定设备信息 """
         test_device = Device.objects.get(name='test')
         global_id = to_global_id('DeviceType', test_device.id)
 
@@ -326,8 +326,31 @@ class DeviceTests(JSONWebTokenTestCase):
 
         self.assertEqual(content.errors[0].message, '设备不存在')
 
-    def test_get_device_data(self):
-        """ 获取指定设备数据 """
+    def test_get_autowatering_data(self):
+        """ 通过 Node 来获得指定自动浇水数据 """
+        test_autowatering_data = AutowateringData.objects.get(pk=1)
+        global_id = to_global_id('AutowateringDataType',
+                                 test_autowatering_data.id)
+
+        query = f'''
+            query node {{
+                node(id: "{global_id}") {{
+                    ... on AutowateringDataType {{
+                        id
+                        temperature
+                    }}
+                }}
+            }}
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        autowatering_data = content.data['node']
+        self.assertEqual(autowatering_data['temperature'],
+                         test_autowatering_data.temperature)
+
+    def test_get_autowatering_data(self):
+        """ 获取自动浇水数据 """
         query = '''
             query autowateringData {
                 autowateringData {
@@ -350,8 +373,8 @@ class DeviceTests(JSONWebTokenTestCase):
         ]
         self.assertEqual(set(data), {1.0, 2.0, 3.0})
 
-    def test_get_first_device_data(self):
-        """ 获取指定数量的设备数据 """
+    def test_get_first_autowatering_data(self):
+        """ 获取指定数量的自动浇水数据 """
         query = '''
             query autowateringData {
                 autowateringData(first: 1) {
