@@ -245,7 +245,7 @@ class AddCommentMutation(relay.ClientIDMutation):
             user=info.context.user,
             body=kwargs.get('body'),
         )
-        if input.parent_id:
+        if kwargs.get('parent_id'):
             _, parent_id = from_global_id(kwargs.get('parent_id'))
             parent_comment = Comment.objects.get(pk=parent_id)
             # 若回复层级超过二级，则转换为二级
