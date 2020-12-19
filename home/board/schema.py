@@ -1,6 +1,6 @@
 import graphene
-from django.db.models import Max
-from django.db.models.functions import Greatest
+from graphene import relay
+from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
@@ -11,62 +11,65 @@ from home.push.tasks import (PushChannel, get_enable_reg_ids_except_user,
 from .models import Comment, Topic
 
 
-#region query
+#region type
+class CommentType(DjangoObjectType):
+    class Meta:
+        model = Comment
+        exclude = (
+            'lft',
+            'rght',
+            'treeId',
+            'level',
+        )
+        filter_fields = {
+            'id': ['exact'],
+            'topic': ['exact'],
+        }
+        interfaces = (relay.Node, )
+
+    @classmethod
+    def get_node(cls, info, id):
+        return Comment.objects.get(pk=id)
+
+
 class TopicType(DjangoObjectType):
     class Meta:
         model = Topic
         fields = '__all__'
+        filter_fields = {
+            'id': ['exact'],
+            'title': ['exact', 'icontains', 'istartswith'],
+        }
+        interfaces = (relay.Node, )
+
+    comments = DjangoFilterConnectionField(CommentType)
+
+    @login_required
+    def resolve_comments(self, info, **args):
+        return self.comments
+
+    @classmethod
+    @login_required
+    def get_node(cls, info, id):
+        return Topic.objects.get(pk=id)
 
 
-class CommentType(DjangoObjectType):
-    class Meta:
-        model = Comment
-        fields = '__all__'
+#endregion
+
+#region query
 
 
 class Query(graphene.ObjectType):
-    topic = graphene.Field(TopicType, id=graphene.ID(required=True))
-    topics = graphene.List(
-        TopicType,
-        number=graphene.Int(),
-    )
-    comments = graphene.List(
-        CommentType,
-        topic_id=graphene.ID(required=True),
-        number=graphene.Int(),
-    )
-
-    @login_required
-    def resolve_topic(self, info, id):
-        return Topic.objects.get(pk=id)
+    topics = DjangoFilterConnectionField(TopicType)
+    comments = DjangoFilterConnectionField(CommentType)
 
     @login_required
     def resolve_topics(self, info, **kwargs):
-        number = kwargs.get('number')
-
-        # 进行中，并且最近回复或修改的话题将排在最前面
-        q = Topic.objects.annotate(latest_modified_date=Greatest(
-            Max('comments__date_created'), 'date_modified')).order_by(
-                '-is_open', '-latest_modified_date')
-
-        if number:
-            return q[:number]
-        return q
+        return Topic.objects.all()
 
     @login_required
     def resolve_comments(self, info, **kwargs):
-        topic_id = kwargs.get('topic_id')
-        number = kwargs.get('number')
-
-        try:
-            topic = Topic.objects.get(pk=topic_id)
-        except Topic.DoesNotExist:
-            raise GraphQLError('话题不存在')
-
-        q = topic.comments.all().order_by('date_created')
-        if number:
-            return q[:number]
-        return q
+        return Comment.objects.all()
 
 
 # endregion
