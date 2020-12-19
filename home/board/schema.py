@@ -1,4 +1,5 @@
 import graphene
+from django_filters import FilterSet, OrderingFilter
 from graphene import relay
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
@@ -13,6 +14,27 @@ from .models import Comment, Topic
 
 
 #region type
+class CommentFilter(FilterSet):
+    class Meta:
+        model = Comment
+        fields = {}
+
+    order_by = OrderingFilter(fields=(('date_created', 'date_created'), ))
+
+
+class TopicFilter(FilterSet):
+    class Meta:
+        model = Topic
+        fields = {
+            'title': ['exact', 'icontains', 'istartswith'],
+        }
+
+    order_by = OrderingFilter(fields=(
+        ('date_created', 'date_created'),
+        ('is_open', 'is_open'),
+    ))
+
+
 class CommentType(DjangoObjectType):
     class Meta:
         model = Comment
@@ -22,10 +44,6 @@ class CommentType(DjangoObjectType):
             'treeId',
             'level',
         )
-        filter_fields = {
-            'id': ['exact'],
-            'topic': ['exact'],
-        }
         interfaces = (relay.Node, )
 
     @classmethod
@@ -37,13 +55,10 @@ class TopicType(DjangoObjectType):
     class Meta:
         model = Topic
         fields = '__all__'
-        filter_fields = {
-            'id': ['exact'],
-            'title': ['exact', 'icontains', 'istartswith'],
-        }
         interfaces = (relay.Node, )
 
-    comments = DjangoFilterConnectionField(CommentType)
+    comments = DjangoFilterConnectionField(CommentType,
+                                           filterset_class=CommentFilter)
 
     @login_required
     def resolve_comments(self, info, **args):
@@ -61,8 +76,10 @@ class TopicType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    topics = DjangoFilterConnectionField(TopicType)
-    comments = DjangoFilterConnectionField(CommentType)
+    topics = DjangoFilterConnectionField(TopicType,
+                                         filterset_class=TopicFilter)
+    comments = DjangoFilterConnectionField(CommentType,
+                                           filterset_class=CommentFilter)
 
     @login_required
     def resolve_topics(self, info, **kwargs):
