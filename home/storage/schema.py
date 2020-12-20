@@ -1,287 +1,271 @@
-from datetime import timedelta
-
 import graphene
-from django.contrib.auth import get_user_model
-from django.utils import timezone
+from django_filters import FilterSet, OrderingFilter
+from graphene import relay
+from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
+from graphql_relay import from_global_id
 
 from .models import Item, Storage
 
 
-class StorageType(DjangoObjectType):
+#region type
+class ItemFilter(FilterSet):
+    class Meta:
+        model = Item
+        fields = {
+            'name': ['exact', 'icontains'],
+            'description': ['exact', 'icontains'],
+            'expiration_date': ['lt', 'gt'],
+        }
+
+    order_by = OrderingFilter(fields=(
+        ('date_added', 'date_added'),
+        ('update_date', 'update_date'),
+        ('expiration_date', 'expiration_date'),
+    ))
+
+
+class StorageFilter(FilterSet):
     class Meta:
         model = Storage
-        fields = '__all__'
+        fields = {
+            'name': ['exact', 'icontains'],
+            'description': ['exact', 'icontains'],
+            'level': ['exact'],
+        }
 
 
 class ItemType(DjangoObjectType):
     class Meta:
         model = Item
         fields = '__all__'
+        interfaces = (relay.Node, )
+
+    @classmethod
+    @login_required
+    def get_node(cls, info, id):
+        return Item.objects.get(pk=id)
 
 
-class SearchType(graphene.ObjectType):
-    items = graphene.List(ItemType)
-    storages = graphene.List(StorageType)
+class StorageType(DjangoObjectType):
+    class Meta:
+        model = Storage
+        fields = '__all__'
+        interfaces = (relay.Node, )
+
+    items = DjangoFilterConnectionField(ItemType, filterset_class=ItemFilter)
+
+    @login_required
+    def resolve_items(self, info, **args):
+        return self.items
+
+    @classmethod
+    @login_required
+    def get_node(cls, info, id):
+        return Storage.objects.get(pk=id)
 
 
-class StorageInput(graphene.InputObjectType):
-    id = graphene.ID(required=True)
-    name = graphene.String()
-    description = graphene.String()
+#endregion
 
 
-class UpdateStorageInput(graphene.InputObjectType):
-    id = graphene.ID(required=True)
-    name = graphene.String()
-    description = graphene.String()
-    parent = StorageInput()
-
-
-class UpdateItemInput(graphene.InputObjectType):
-    id = graphene.ID(required=True)
-    name = graphene.String()
-    number = graphene.Int()
-    description = graphene.String()
-    price = graphene.Float()
-    expiration_date = graphene.DateTime()
-    storage = StorageInput()
-
-
-class AddStorageInput(graphene.InputObjectType):
-    name = graphene.String(required=True)
-    description = graphene.String()
-    parent = StorageInput()
-
-
-class AddItemInput(graphene.InputObjectType):
-    name = graphene.String(required=True)
-    number = graphene.Int(required=True)
-    storage = StorageInput(required=True)
-    description = graphene.String()
-    price = graphene.Float()
-    expiration_date = graphene.DateTime()
-
-
+#region query
 class Query(graphene.ObjectType):
-    root_storage = graphene.List(StorageType)
-    storages = graphene.List(StorageType)
-    items = graphene.List(ItemType)
-    storage = graphene.Field(StorageType, id=graphene.ID(required=True))
-    storage_ancestors = graphene.List(StorageType,
-                                      id=graphene.ID(required=True))
-    item = graphene.Field(ItemType, id=graphene.ID(required=True))
-    search = graphene.Field(SearchType, key=graphene.String(required=True))
-    recently_updated_items = graphene.List(ItemType,
-                                           number=graphene.Int(required=True))
-    recently_added_items = graphene.List(ItemType,
-                                         number=graphene.Int(required=True))
-    near_expired_items = graphene.List(ItemType,
-                                       within=graphene.Int(required=True),
-                                       number=graphene.Int())
-    expired_items = graphene.List(ItemType, number=graphene.Int())
-
-    @login_required
-    def resolve_root_storage(self, info, **kwargs):
-        return Storage.objects.filter(level=0)
-
-    @login_required
-    def resolve_storages(self, info, **kwargs):
-        return Storage.objects.all()
+    item = relay.Node.Field(ItemType)
+    items = DjangoFilterConnectionField(ItemType, filterset_class=ItemFilter)
+    storage = relay.Node.Field(StorageType)
+    storages = DjangoFilterConnectionField(StorageType,
+                                           filterset_class=StorageFilter)
+    storage_ancestors = DjangoFilterConnectionField(
+        StorageType,
+        filterset_class=StorageFilter,
+        id=graphene.ID(required=True))
 
     @login_required
     def resolve_items(self, info, **kwargs):
         return Item.objects.all()
 
     @login_required
-    def resolve_storage(self, info, id):
-        return Storage.objects.get(pk=id)
+    def resolve_storages(self, info, **kwargs):
+        return Storage.objects.all()
 
     @login_required
-    def resolve_storage_ancestors(self, info, id):
-        storage = Storage.objects.get(pk=id)
+    def resolve_storage_ancestors(self, info, **kwargs):
+        _, storage_id = from_global_id(kwargs.get('id'))
+
+        storage = Storage.objects.get(pk=storage_id)
         return storage.get_ancestors(include_self=True)
 
-    @login_required
-    def resolve_item(self, info, id):
-        return Item.objects.get(pk=id)
 
-    @login_required
-    def resolve_search(self, info, key):
-        items = (Item.objects.filter(name__icontains=key)
-                 | Item.objects.filter(description__icontains=key)).distinct()
-        storages = (
-            Storage.objects.filter(name__icontains=key)
-            | Storage.objects.filter(description__icontains=key)).distinct()
-        return SearchType(items=items, storages=storages)
-
-    @login_required
-    def resolve_recently_updated_items(self, info, number):
-        items = Item.objects.all().order_by('-update_date')[:number]
-        return items
-
-    @login_required
-    def resolve_recently_added_items(self, info, number):
-        items = Item.objects.all().order_by('-date_added')[:number]
-        return items
-
-    @login_required
-    def resolve_near_expired_items(self, info, within, number=None):
-        """ 接近过期的物品
-
-        within: 最近多少天内过期
-        number: 显示多少物品，不提供则显示全部
-        """
-        now = timezone.now()
-        expired = now + timedelta(days=within)
-        items = Item.objects.all().filter(
-            expiration_date__isnull=False,
-            expiration_date__range=(now, expired)).order_by('expiration_date')
-        if number:
-            return items[:number]
-        return items
-
-    @login_required
-    def resolve_expired_items(self, info, number=None):
-        """ 已经过期的物品 """
-        now = timezone.now()
-        items = Item.objects.all().filter(
-            expiration_date__isnull=False,
-            expiration_date__lt=now).order_by('expiration_date')
-        if number:
-            return items[:number]
-        return items
+#endregion
 
 
-class UpdateStorageMutation(graphene.Mutation):
-    class Arguments:
-        input = UpdateStorageInput(required=True)
+#region mutation
+#region storage
+class AddStorageMutation(relay.ClientIDMutation):
+    class Input:
+        name = graphene.String(required=True)
+        description = graphene.String()
+        parent_id = graphene.ID()
 
     storage = graphene.Field(StorageType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, input):
-        storage = Storage.objects.get(pk=input.id)
-        if input.name and input.name != storage.name:
-            try:
-                Storage.objects.get(name=input.name)
-            except Storage.DoesNotExist:
-                storage.name = input.name
-            else:
-                raise GraphQLError('名称重复')
-        storage.description = input.description
-        if input.parent:
-            parent = Storage.objects.get(pk=input.parent.id)
-            storage.parent = parent
-        storage.save()
-        return UpdateStorageMutation(storage=storage)
-
-
-class UpdateItemMutation(graphene.Mutation):
-    class Arguments:
-        input = UpdateItemInput(required=True)
-
-    item = graphene.Field(ItemType)
-
-    @login_required
-    def mutate(self, info, input):
-        item = Item.objects.get(pk=input.id)
-        if input.name and input.name != item.name:
-            try:
-                Item.objects.get(name=input.name)
-            except Item.DoesNotExist:
-                item.name = input.name
-            else:
-                raise GraphQLError('名称重复')
-        item.number = input.number
-        item.storage = Storage.objects.get(pk=input.storage.id)
-        item.description = input.description
-        item.price = input.price
-        item.expiration_date = input.expiration_date
-        item.editor = info.context.user
-        item.save()
-        return UpdateItemMutation(item=item)
-
-
-class AddStorageMutation(graphene.Mutation):
-    class Arguments:
-        input = AddStorageInput(required=True)
-
-    storage = graphene.Field(StorageType)
-
-    @login_required
-    def mutate(self, info, input):
+    def mutate_and_get_payload(cls, root, info, **kwargs):
         try:
-            Storage.objects.get(name=input.name)
+            Storage.objects.get(name=kwargs.get('name'))
             raise GraphQLError('名称重复')
         except Storage.DoesNotExist:
-            storage = Storage(name=input.name, description=input.description)
-            if input.parent:
-                parent = Storage.objects.get(pk=input.parent.id)
+            storage = Storage(name=kwargs.get('name'),
+                              description=kwargs.get('description'))
+            if kwargs.get('parent_id'):
+                _, parent_id = from_global_id(kwargs.get('parent_id'))
+                parent = Storage.objects.get(pk=parent_id)
                 storage.parent = parent
             storage.save()
             return AddStorageMutation(storage=storage)
 
 
-class AddItemMutation(graphene.Mutation):
-    class Arguments:
-        input = AddItemInput(required=True)
+class DeleteStorageMutation(relay.ClientIDMutation):
+    class Input:
+        storage_id = graphene.ID(required=True, description='话题的 ID')
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, storage_id = from_global_id(kwargs.get('storage_id'))
+
+        try:
+            storage = Storage.objects.get(pk=storage_id)
+            storage.delete()
+            return DeleteStorageMutation()
+        except Storage.DoesNotExist:
+            raise GraphQLError('位置不存在')
+
+
+class UpdateStorageMutation(relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True)
+        name = graphene.String()
+        description = graphene.String()
+        parent_id = graphene.ID()
+
+    storage = graphene.Field(StorageType)
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, id = from_global_id(kwargs.get('id'))
+
+        storage = Storage.objects.get(pk=id)
+        if kwargs.get('name') and kwargs.get('name') != storage.name:
+            try:
+                Storage.objects.get(name=kwargs.get('name'))
+            except Storage.DoesNotExist:
+                storage.name = kwargs.get('name')
+            else:
+                raise GraphQLError('名称重复')
+        storage.description = kwargs.get('description')
+        if kwargs.get('parent_id'):
+            _, parent_id = from_global_id(kwargs.get('parent_id'))
+            parent = Storage.objects.get(pk=parent_id)
+            storage.parent = parent
+        storage.save()
+        return UpdateStorageMutation(storage=storage)
+
+
+#endregion
+
+
+#region item
+class AddItemMutation(relay.ClientIDMutation):
+    class Input:
+        name = graphene.String(required=True)
+        number = graphene.Int(required=True)
+        storage_id = graphene.ID(required=True)
+        description = graphene.String()
+        price = graphene.Float()
+        expiration_date = graphene.DateTime()
 
     item = graphene.Field(ItemType)
 
+    @classmethod
     @login_required
-    def mutate(self, info, input):
+    def mutate_and_get_payload(cls, root, info, **kwargs):
         try:
-            Item.objects.get(name=input.name)
+            Item.objects.get(name=kwargs.get('name'))
             raise GraphQLError('名称重复')
         except Item.DoesNotExist:
+            _, storage_id = from_global_id(kwargs.get('storage_id'))
             item = Item(
-                name=input.name,
-                number=input.number,
-                description=input.description,
-                storage=Storage.objects.get(pk=input.storage.id),
-                price=input.price,
-                expiration_date=input.expiration_date,
+                name=kwargs.get('name'),
+                number=kwargs.get('number'),
+                description=kwargs.get('description'),
+                storage=Storage.objects.get(pk=storage_id),
+                price=kwargs.get('price'),
+                expiration_date=kwargs.get('expiration_date'),
             )
             item.editor = info.context.user
             item.save()
             return AddItemMutation(item=item)
 
 
-class DeleteStorageMutation(graphene.Mutation):
-    class Arguments:
-        id = graphene.ID(required=True)
+class DeleteItemMutation(relay.ClientIDMutation):
+    class Input:
+        item_id = graphene.ID(required=True, description='话题的 ID')
 
-    deletedId = graphene.ID()
-
+    @classmethod
     @login_required
-    def mutate(self, info, id):
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, item_id = from_global_id(kwargs.get('item_id'))
+
         try:
-            storage = Storage.objects.get(pk=id)
-            storage.delete()
-            return DeleteStorageMutation(deletedId=id)
-        except Storage.DoesNotExist:
-            raise GraphQLError('位置不存在')
-
-
-class DeleteItemMutation(graphene.Mutation):
-    class Arguments:
-        id = graphene.ID(required=True)
-
-    deletedId = graphene.ID()
-
-    @login_required
-    def mutate(self, info, id):
-        try:
-            item = Item.objects.get(pk=id)
+            item = Item.objects.get(pk=item_id)
             item.delete()
-            return DeleteItemMutation(deletedId=id)
+            return DeleteItemMutation()
         except Item.DoesNotExist:
             raise GraphQLError('物品不存在')
 
 
+class UpdateItemMutation(relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True)
+        name = graphene.String()
+        number = graphene.Int()
+        description = graphene.String()
+        price = graphene.Float()
+        expiration_date = graphene.DateTime()
+        storage_id = graphene.ID()
+
+    item = graphene.Field(ItemType)
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        _, id = from_global_id(kwargs.get('id'))
+
+        item = Item.objects.get(pk=id)
+        if kwargs.get('name') and kwargs.get('name') != item.name:
+            try:
+                Item.objects.get(name=kwargs.get('name'))
+            except Item.DoesNotExist:
+                item.name = kwargs.get('name')
+            else:
+                raise GraphQLError('名称重复')
+        item.number = kwargs.get('number')
+        _, storage_id = from_global_id(kwargs.get('storage_id'))
+        item.storage = Storage.objects.get(pk=storage_id)
+        item.description = kwargs.get('description')
+        item.price = kwargs.get('price')
+        item.expiration_date = kwargs.get('expiration_date')
+        item.editor = info.context.user
+        item.save()
+        return UpdateItemMutation(item=item)
+
+
+#endregion
 class Mutation(graphene.ObjectType):
     update_storage = UpdateStorageMutation.Field()
     update_item = UpdateItemMutation.Field()
@@ -289,3 +273,6 @@ class Mutation(graphene.ObjectType):
     add_item = AddItemMutation.Field()
     delete_storage = DeleteStorageMutation.Field()
     delete_item = DeleteItemMutation.Field()
+
+
+#endregion
