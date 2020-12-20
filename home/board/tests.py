@@ -81,10 +81,10 @@ class TopicTests(JSONWebTokenTestCase):
         self.assertEqual(set(titles), {'你好世界', '关闭的话题'})
 
     def test_get_frist_topics(self):
-        """ 获取最前面一个话题 """
+        """ 获取最最近活动的一个话题 """
         query = '''
             query topics {
-                topics(first: 1) {
+                topics(first: 1, orderBy: "-date_active") {
                     edges {
                         node {
                             title
