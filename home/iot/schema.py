@@ -10,7 +10,7 @@ from graphql_jwt.decorators import login_required
 from graphql_relay import from_global_id
 
 from .models import AutowateringData, Device
-from .tasks import autowatering, set_status
+from .tasks import set_status
 
 
 #region type
