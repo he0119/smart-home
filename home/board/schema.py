@@ -28,8 +28,8 @@ class CustomTopicOrderingFilter(OrderingFilter):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.extra['choices'] += [
-            ('date_active', 'Recent active'),
-            ('-date_active', 'Recent active (descending)'),
+            ('date_active', 'Date active'),
+            ('-date_active', 'Date active (descending)'),
         ]
 
     def filter(self, qs, value):
