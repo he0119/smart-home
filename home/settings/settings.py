@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     # GraphQL
     'graphene_django',
+    'django_filters',
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     # 我的应用
     'home.users',

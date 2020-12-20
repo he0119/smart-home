@@ -3,7 +3,7 @@
     "model": "storage.storage",
     "pk": 1,
     "fields": {
-      "name": "\u9633\u53f0",
+      "name": "阳台",
       "parent": null,
       "description": null,
       "lft": 1,
@@ -16,7 +16,7 @@
     "model": "storage.storage",
     "pk": 2,
     "fields": {
-      "name": "\u9633\u53f0\u50a8\u7269\u67dc",
+      "name": "阳台储物柜",
       "parent": 1,
       "description": null,
       "lft": 2,
@@ -29,7 +29,7 @@
     "model": "storage.storage",
     "pk": 3,
     "fields": {
-      "name": "\u5de5\u5177\u7bb1",
+      "name": "工具箱",
       "parent": 2,
       "description": null,
       "lft": 3,
@@ -42,7 +42,7 @@
     "model": "storage.storage",
     "pk": 4,
     "fields": {
-      "name": "\u5de5\u5177\u7bb12",
+      "name": "工具箱2",
       "parent": 2,
       "description": null,
       "lft": 5,
@@ -55,12 +55,12 @@
     "model": "storage.item",
     "pk": 1,
     "fields": {
-      "name": "\u96e8\u4f1e",
+      "name": "雨伞",
       "number": 1,
       "description": null,
       "price": null,
-      "update_date": "2020-03-17T02:34:59.862Z",
-      "expiration_date": null,
+      "update_date": "2020-03-17T02:38:59.862Z",
+      "expiration_date": "2020-03-17T02:38:59.862Z",
       "storage": 1,
       "editor": 1,
       "date_added": "2020-03-17T02:34:59.862Z"
@@ -70,9 +70,9 @@
     "model": "storage.item",
     "pk": 2,
     "fields": {
-      "name": "\u53e3\u7f69",
+      "name": "口罩",
       "number": 1,
-      "description": "\u4e00\u7bb1",
+      "description": "一箱",
       "price": null,
       "update_date": "2020-03-17T02:35:47.342Z",
       "expiration_date": null,

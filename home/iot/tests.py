@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from graphql_jwt.testcases import JSONWebTokenTestCase
+from graphql_relay import to_global_id
 from requests import sessions
 
 from .api import DeviceAPI, WeatherAPI
@@ -36,66 +37,100 @@ class DeviceTests(JSONWebTokenTestCase):
         self.client.authenticate(self.user)
 
     def test_get_device(self):
-        """ 获取指定设备信息 """
-        query = '''
-            query device($id: ID!) {
-                device(id: $id) {
-                    id
-                    name
-                    deviceType
-                    location
-                }
-            }
-        '''
+        """ 通过 Node 来获得指定设备信息 """
         test_device = Device.objects.get(name='test')
-        variables = {'id': test_device.id}
+        global_id = to_global_id('DeviceType', test_device.id)
 
-        content = self.client.execute(query, variables)
+        query = f'''
+            query node {{
+                node(id: "{global_id}") {{
+                    ... on DeviceType {{
+                        id
+                        name
+                        deviceType
+                        location
+                        autowateringData {{
+                            edges {{
+                                node {{
+                                    id
+                                    temperature
+                                }}
+                            }}
+                        }}
+                    }}
+                }}
+            }}
+        '''
+        content = self.client.execute(query)
         self.assertIsNone(content.errors)
 
-        device = content.data['device']
+        device = content.data['node']
         self.assertEqual(device['name'], test_device.name)
         self.assertEqual(device['deviceType'], test_device.device_type)
         self.assertEqual(device['location'], test_device.location)
+        data = [
+            item['node']['temperature']
+            for item in device['autowateringData']['edges']
+        ]
+        self.assertEqual(set(data), {1.0, 2.0, 3.0})
 
     def test_get_devices(self):
         """ 获取所有设备信息 """
         query = '''
             query devices {
                 devices {
-                    id
-                    name
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
                 }
             }
         '''
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
 
-        names = [item['name'] for item in content.data['devices']]
+        names = [
+            item['node']['name'] for item in content.data['devices']['edges']
+        ]
         self.assertEqual(set(names), {'test', 'test2'})
 
-    def test_get_devices_by_number(self):
-        """ 获取指定数量的设备信息 """
+    def test_get_first_devices(self):
+        """ 获取第一个设备的信息 """
         query = '''
-            query devices($number: Int) {
-                devices(number: $number) {
-                    id
-                    name
+            query devices {
+                devices(first: 1) {
+                    edges {
+                        node {
+                            id
+                            name
+                            deviceType
+                            autowateringData {
+                                edges {
+                                    node {
+                                        id
+                                        temperature
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         '''
-        variables = {'number': 1}
-
-        content = self.client.execute(query, variables)
+        content = self.client.execute(query)
         self.assertIsNone(content.errors)
 
-        names = [item['name'] for item in content.data['devices']]
+        names = [
+            item['node']['name'] for item in content.data['devices']['edges']
+        ]
         self.assertEqual(set(names), {'test'})
 
     def test_add_device(self):
         """ 测试添加设备 """
         mutation = '''
-            mutation addDevice($input: AddDeviceInput!) {
+            mutation addDevice($input: AddDeviceMutationInput!) {
                 addDevice(input: $input) {
                     device {
                         __typename
@@ -127,15 +162,19 @@ class DeviceTests(JSONWebTokenTestCase):
     def test_delete_device(self):
         """ 测试删除设备 """
         mutation = '''
-            mutation deleteDevice($input: DeleteDeviceInput!) {
+            mutation deleteDevice($input: DeleteDeviceMutationInput!) {
                 deleteDevice(input: $input) {
-                    deletedId
+                    __typename
                 }
             }
         '''
 
         test_device = Device.objects.get(name='test')
-        variables = {'input': {'deviceId': test_device.id}}
+        variables = {
+            'input': {
+                'deviceId': to_global_id('DeviceType', test_device.id)
+            }
+        }
 
         # 确认自动浇水有数据
         self.assertNotEqual(list(AutowateringData.objects.all()), [])
@@ -143,8 +182,6 @@ class DeviceTests(JSONWebTokenTestCase):
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
 
-        deletedId = content.data['deleteDevice']['deletedId']
-        self.assertEqual(deletedId, str(test_device.id))
         with self.assertRaises(Device.DoesNotExist):
             Device.objects.get(name='test')
         # 确认是否同时删除自动浇水数据
@@ -153,13 +190,13 @@ class DeviceTests(JSONWebTokenTestCase):
     def test_delete_device_not_exist(self):
         """ 测试删除不存在的设备 """
         mutation = '''
-            mutation deleteDevice($input: DeleteDeviceInput!) {
+            mutation deleteDevice($input: DeleteDeviceMutationInput!) {
                 deleteDevice(input: $input) {
-                    deletedId
+                    __typename
                 }
             }
         '''
-        variables = {'input': {'deviceId': '3'}}
+        variables = {'input': {'deviceId': to_global_id('DeviceType', '0')}}
 
         content = self.client.execute(mutation, variables)
         self.assertIsNotNone(content.errors)
@@ -169,7 +206,7 @@ class DeviceTests(JSONWebTokenTestCase):
     def test_update_device(self):
         """ 测试更新设备 """
         mutation = '''
-            mutation updateDevice($input: UpdateDeviceInput!) {
+            mutation updateDevice($input: UpdateDeviceMutationInput!) {
                 updateDevice(input: $input) {
                     device {
                         __typename
@@ -183,7 +220,7 @@ class DeviceTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 1,
+                'id': to_global_id('DeviceType', '1'),
                 'name': 'newtest',
                 'deviceType': 'newdevicetype',
                 'location': 'newlocation',
@@ -198,7 +235,7 @@ class DeviceTests(JSONWebTokenTestCase):
         device = content.data['updateDevice']['device']
 
         self.assertEqual(device['__typename'], 'DeviceType')
-        self.assertEqual(device['id'], '1')
+        self.assertEqual(device['id'], to_global_id('DeviceType', '1'))
         self.assertEqual(device['name'], 'newtest')
         self.assertEqual(device['deviceType'], 'newdevicetype')
         self.assertEqual(device['location'], 'newlocation')
@@ -206,7 +243,7 @@ class DeviceTests(JSONWebTokenTestCase):
     def test_update_device_not_exist(self):
         """ 测试更新不存在的设备 """
         mutation = '''
-            mutation updateDevice($input: UpdateDeviceInput!) {
+            mutation updateDevice($input: UpdateDeviceMutationInput!) {
                 updateDevice(input: $input) {
                     device {
                         __typename
@@ -220,7 +257,7 @@ class DeviceTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 3,
+                'id': to_global_id('DeviceType', '0'),
                 'name': 'newtest',
                 'deviceType': 'newdevicetype',
                 'location': 'newlocation',
@@ -235,7 +272,7 @@ class DeviceTests(JSONWebTokenTestCase):
     def test_set_device(self):
         """ 测试设置设备状态 """
         mutation = '''
-            mutation setDevice($input: SetDeviceInput!) {
+            mutation setDevice($input: SetDeviceMutationInput!) {
                 setDevice(input: $input) {
                     device {
                         __typename
@@ -246,7 +283,7 @@ class DeviceTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 1,
+                'id': to_global_id('DeviceType', '1'),
                 'key': 'valve1',
                 'value': '1',
                 'valueType': 'bool',
@@ -261,12 +298,12 @@ class DeviceTests(JSONWebTokenTestCase):
 
             device = content.data['setDevice']['device']
             self.assertEqual(device['__typename'], 'DeviceType')
-            self.assertEqual(device['id'], '1')
+            self.assertEqual(device['id'], to_global_id('DeviceType', '1'))
 
     def test_set_device_not_exist(self):
         """ 测试设置不存在设备的状态 """
         mutation = '''
-            mutation setDevice($input: SetDeviceInput!) {
+            mutation setDevice($input: SetDeviceMutationInput!) {
                 setDevice(input: $input) {
                     device {
                         __typename
@@ -277,7 +314,7 @@ class DeviceTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 3,
+                'id': to_global_id('DeviceType', '0'),
                 'key': 'valve1',
                 'value': '1',
                 'valueType': 'bool',
@@ -289,41 +326,74 @@ class DeviceTests(JSONWebTokenTestCase):
 
         self.assertEqual(content.errors[0].message, '设备不存在')
 
-    def test_get_device_data(self):
-        """ 获取指定设备数据 """
+    def test_get_autowatering_data(self):
+        """ 通过 Node 来获得指定自动浇水数据 """
+        test_autowatering_data = AutowateringData.objects.get(pk=1)
+        global_id = to_global_id('AutowateringDataType',
+                                 test_autowatering_data.id)
+
+        query = f'''
+            query node {{
+                node(id: "{global_id}") {{
+                    ... on AutowateringDataType {{
+                        id
+                        temperature
+                    }}
+                }}
+            }}
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        autowatering_data = content.data['node']
+        self.assertEqual(autowatering_data['temperature'],
+                         test_autowatering_data.temperature)
+
+    def test_get_all_autowatering_data(self):
+        """ 获取自动浇水数据 """
         query = '''
-            query deviceData($deviceId: ID!, $number: Int) {
-                deviceData(deviceId: $deviceId, number: $number) {
-                    temperature
-                    humidity
+            query autowateringData {
+                autowateringData {
+                    edges {
+                        node {
+                            temperature
+                        }
+                    }
                 }
             }
         '''
-        variables = {'deviceId': 1}
+        variables = {'deviceId': to_global_id('DeviceType', '1')}
 
         content = self.client.execute(query, variables)
         self.assertIsNone(content.errors)
 
-        data = [item['temperature'] for item in content.data['deviceData']]
+        data = [
+            item['node']['temperature']
+            for item in content.data['autowateringData']['edges']
+        ]
         self.assertEqual(set(data), {1.0, 2.0, 3.0})
 
-    def test_get_device_data_by_number(self):
-        """ 获取指定数量的设备数据 """
+    def test_get_first_autowatering_data(self):
+        """ 获取指定数量的自动浇水数据 """
         query = '''
-            query deviceData($deviceId: ID!, $number: Int) {
-                deviceData(deviceId: $deviceId, number: $number) {
-                    temperature
-                    humidity
+            query autowateringData {
+                autowateringData(first: 1) {
+                    edges {
+                        node {
+                            temperature
+                        }
+                    }
                 }
             }
         '''
-        variables = {'deviceId': 1, 'number': 1}
-
-        content = self.client.execute(query, variables)
+        content = self.client.execute(query)
         self.assertIsNone(content.errors)
 
-        data = [item['temperature'] for item in content.data['deviceData']]
-        self.assertEqual(set(data), {3.0})
+        data = [
+            item['node']['temperature']
+            for item in content.data['autowateringData']['edges']
+        ]
+        self.assertEqual(set(data), {1.0})
 
 
 class WebHookTests(TestCase):

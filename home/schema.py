@@ -1,10 +1,11 @@
 import graphene
 import graphql_jwt
+from graphene import relay
 
 import home.board.schema
 import home.iot.schema
-import home.storage.schema
 import home.push.schema
+import home.storage.schema
 import home.users.schema
 
 
@@ -16,7 +17,7 @@ class Query(
         home.users.schema.Query,
         graphene.ObjectType,
 ):
-    pass
+    node = relay.Node.Field()
 
 
 class Mutation(

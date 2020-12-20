@@ -3,8 +3,8 @@
     "model": "board.topic",
     "pk": 1,
     "fields": {
-      "title": "Hello World!",
-      "description": "This is a test topic.",
+      "title": "你好世界",
+      "description": "这是一个测试话题",
       "is_open": true,
       "user": 1,
       "date_created": "2020-07-11T02:19:43.721Z",
@@ -15,8 +15,8 @@
     "model": "board.topic",
     "pk": 2,
     "fields": {
-      "title": "Closed Topic",
-      "description": "This is a closed topic.",
+      "title": "关闭的话题",
+      "description": "这是一个关闭的话题",
       "is_open": false,
       "user": 1,
       "date_created": "2020-07-11T07:27:53.093Z",
@@ -29,7 +29,7 @@
     "fields": {
       "topic": 1,
       "user": 1,
-      "body": "testcomment1",
+      "body": "测试评论一",
       "date_created": "2020-07-11T02:20:23.803Z",
       "date_modified": "2020-07-11T02:20:23.803Z",
       "parent": null,
@@ -46,7 +46,7 @@
     "fields": {
       "topic": 1,
       "user": 2,
-      "body": "testcomment2",
+      "body": "测试评论二",
       "date_created": "2020-12-12T02:36:14.858Z",
       "date_modified": "2020-12-12T02:36:14.858Z",
       "parent": null,
@@ -63,7 +63,7 @@
     "fields": {
       "topic": 1,
       "user": 2,
-      "body": "replytotestcomment1",
+      "body": "评论测试评论一",
       "date_created": "2020-12-12T03:00:23.593Z",
       "date_modified": "2020-12-12T03:00:23.593Z",
       "parent": 1,

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 from graphql_jwt.testcases import JSONWebTokenTestCase
+from graphql_relay.node.node import to_global_id
 
 from .models import Item, Storage
 
@@ -59,77 +60,114 @@ class StorageTests(JSONWebTokenTestCase):
         self.user = get_user_model().objects.get(username='test')
         self.client.authenticate(self.user)
 
-    def test_get_storages(self):
-        query = '''
-            query storage {
-                storages {
-                    name
-                }
-            }
-        '''
-        content = self.client.execute(query)
-        self.assertIsNone(content.errors)
-        names = [storage['name'] for storage in content.data['storages']]
-        self.assertEqual(set(names), set(['阳台', '阳台储物柜', '工具箱', '工具箱2']))
-
     def test_get_storage(self):
         toolbox = Storage.objects.get(name='工具箱')
 
-        query = f'''
-            query storage {{
-                storage(id: {toolbox.id}) {{
+        query = '''
+            query storage($id: ID!) {
+                storage(id: $id) {
+                    id
                     name
-                }}
-            }}
+                    items {
+                        edges {
+                            node {
+                                id
+                                name
+                            }
+                        }
+                    }
+                }
+            }
         '''
-        content = self.client.execute(query)
+        variables = {'id': to_global_id('StorageType', toolbox.id)}
+
+        content = self.client.execute(query, variables)
         self.assertIsNone(content.errors)
 
         name = content.data['storage']['name']
         self.assertEqual(name, toolbox.name)
 
-    def test_get_root_storage(self):
+    def test_get_storages(self):
         query = '''
-            query rootStorage  {
-                rootStorage {
-                    name
+            query storages {
+                storages {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
                 }
             }
         '''
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
 
-        root_storage = content.data['rootStorage']
-        self.assertEqual(set([storage['name'] for storage in root_storage]),
-                         {'阳台'})
+        names = [
+            item['node']['name'] for item in content.data['storages']['edges']
+        ]
+        self.assertEqual(set(names), set(['阳台', '阳台储物柜', '工具箱', '工具箱2']))
+
+    def test_get_root_storage(self):
+        query = '''
+            query storages {
+                storages(level: 0) {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        names = [
+            item['node']['name'] for item in content.data['storages']['edges']
+        ]
+        self.assertEqual(set(names), {'阳台'})
 
     def test_get_storage_ancestors(self):
         query = '''
             query storageAncestors($id: ID!)  {
                 storageAncestors(id: $id) {
-                    name
+                    edges {
+                        node {
+                            name
+                        }
+                    }
                 }
             }
         '''
         storage = Storage.objects.get(name='工具箱')
-        variables = {'id': storage.id}
+        variables = {'id': to_global_id('StorageType', storage.id)}
 
         content = self.client.execute(query, variables)
         self.assertIsNone(content.errors)
 
-        storage_ancestors = content.data['storageAncestors']
-        self.assertEqual([storage['name'] for storage in storage_ancestors],
-                         ['阳台', '阳台储物柜', '工具箱'])
+        names = [
+            item['node']['name']
+            for item in content.data['storageAncestors']['edges']
+        ]
+        self.assertEqual(names, ['阳台', '阳台储物柜', '工具箱'])
 
     def test_search(self):
         query = '''
-            query search($key: String!)  {
-                search(key: $key) {
-                    items {
-                        name
+            query search($key: String!) {
+                storages(name_Icontains: $key) {
+                    edges {
+                        node {
+                            name
+                        }
                     }
-                    storages {
-                        name
+                }
+                items(name_Icontains: $key) {
+                    edges {
+                        node {
+                            name
+                        }
                     }
                 }
             }
@@ -139,14 +177,14 @@ class StorageTests(JSONWebTokenTestCase):
         content = self.client.execute(query, variables)
         self.assertIsNone(content.errors)
 
-        items = content.data['search']['items']
-        storages = content.data['search']['storages']
-        self.assertEqual([item['name'] for item in items], ['口罩'])
+        items = content.data['items']['edges']
+        storages = content.data['storages']['edges']
+        self.assertEqual([item['node']['name'] for item in items], ['口罩'])
         self.assertEqual(storages, [])
 
     def test_add_storage(self):
         mutation = '''
-            mutation addStorage($input: AddStorageInput!) {
+            mutation addStorage($input: AddStorageMutationInput!) {
                 addStorage(input: $input) {
                     storage {
                         __typename
@@ -164,9 +202,7 @@ class StorageTests(JSONWebTokenTestCase):
             'input': {
                 'name': 'test',
                 'description': 'some',
-                'parent': {
-                    'id': 1
-                }
+                'parentId': to_global_id('StorageType', '1')
             }
         }
 
@@ -177,31 +213,34 @@ class StorageTests(JSONWebTokenTestCase):
         self.assertEqual(storage['__typename'], 'StorageType')
         self.assertEqual(storage['name'], 'test')
         self.assertEqual(storage['description'], 'some')
-        self.assertEqual(storage['parent']['id'], '1')
+        self.assertEqual(storage['parent']['id'],
+                         to_global_id('StorageType', '1'))
 
     def test_delete_storage(self):
         mutation = '''
-            mutation deleteStorage($id: ID!) {
-                deleteStorage(id: $id) {
-                    deletedId
+            mutation deleteStorage($input: DeleteStorageMutationInput!) {
+                deleteStorage(input: $input) {
+                    __typename
                 }
             }
         '''
 
         toolbox = Storage.objects.get(name='工具箱')
-        variables = {'id': toolbox.id}
+        variables = {
+            'input': {
+                'storageId': to_global_id('StorageType', toolbox.id),
+            }
+        }
 
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
 
-        deletedId = content.data['deleteStorage']['deletedId']
-        self.assertEqual(deletedId, str(toolbox.id))
         with self.assertRaises(Storage.DoesNotExist):
             Storage.objects.get(name='工具箱')
 
     def test_update_storage(self):
         mutation = '''
-            mutation updateStorage($input: UpdateStorageInput!) {
+            mutation updateStorage($input: UpdateStorageMutationInput!) {
                 updateStorage(input: $input) {
                     storage {
                         __typename
@@ -219,12 +258,10 @@ class StorageTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 3,
+                'id': to_global_id('StorageType', '3'),
                 'name': 'test',
                 'description': 'some',
-                'parent': {
-                    'id': 1
-                }
+                'parentId': to_global_id('StorageType', '1')
             }
         }
 
@@ -236,19 +273,18 @@ class StorageTests(JSONWebTokenTestCase):
 
         storage = content.data['updateStorage']['storage']
         self.assertEqual(storage['__typename'], 'StorageType')
-        self.assertEqual(storage['id'], '3')
+        self.assertEqual(storage['id'], to_global_id('StorageType', '3'))
         self.assertEqual(storage['name'], 'test')
         self.assertEqual(storage['description'], 'some')
-        self.assertEqual(storage['parent']['id'], '1')
+        self.assertEqual(storage['parent']['id'],
+                         to_global_id('StorageType', '1'))
         self.assertEqual(storage['parent']['name'], '阳台')
 
     def test_add_storage_name_duplicate(self):
         mutation = '''
-            mutation addStorage($input: AddStorageInput!) {
+            mutation addStorage($input: AddStorageMutationInput!) {
                 addStorage(input: $input) {
                     storage {
-                        __typename
-                        id
                         name
                         description
                     }
@@ -270,7 +306,7 @@ class StorageTests(JSONWebTokenTestCase):
     def test_update_storage_name_duplicate(self):
         """ 测试修改名称重复 """
         mutation = '''
-            mutation updateStorage($input: UpdateStorageInput!) {
+            mutation updateStorage($input: UpdateStorageMutationInput!) {
                 updateStorage(input: $input) {
                     storage {
                         __typename
@@ -287,7 +323,7 @@ class StorageTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 1,
+                'id': to_global_id('StorageType', '1'),
                 'name': '阳台储物柜',
                 'description': 'some',
             }
@@ -303,14 +339,17 @@ class StorageTests(JSONWebTokenTestCase):
 
     def test_delete_storage_not_exist(self):
         mutation = '''
-            mutation deleteStorage($id: ID!) {
-                deleteStorage(id: $id) {
-                    deletedId
+            mutation deleteStorage($input: DeleteStorageMutationInput!) {
+                deleteStorage(input: $input) {
+                    __typename
                 }
             }
         '''
-
-        variables = {'id': 0}
+        variables = {
+            'input': {
+                'storageId': to_global_id('StorageType', '0'),
+            }
+        }
 
         content = self.client.execute(mutation, variables)
         self.assertIsNotNone(content.errors)
@@ -328,14 +367,19 @@ class ItemTests(JSONWebTokenTestCase):
     def test_get_item(self):
         umbrella = Item.objects.get(name='雨伞')
 
-        query = f'''
-            query item {{
-                item(id: {umbrella.id}) {{
+        query = '''
+            query item($id: ID!) {
+                item(id: $id) {
+                    id
                     name
-                }}
-            }}
+                }
+            }
         '''
-        content = self.client.execute(query)
+        variables = {
+            'id': to_global_id('ItemType', umbrella.id),
+        }
+
+        content = self.client.execute(query, variables)
         self.assertIsNone(content.errors)
 
         name = content.data['item']['name']
@@ -345,112 +389,108 @@ class ItemTests(JSONWebTokenTestCase):
         query = '''
             query items {
                 items {
-                    name
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
                 }
             }
         '''
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
-        names = [item['name'] for item in content.data['items']]
+
+        names = [
+            item['node']['name'] for item in content.data['items']['edges']
+        ]
         self.assertEqual(set(names), set(['雨伞', '口罩']))
 
     def test_get_recently_updated_items(self):
         query = '''
-            query recentlyUpdatedItems($number: Int!)  {
-                recentlyUpdatedItems(number: $number) {
-                    name
-                }
-            }
-        '''
-        variables = {'number': 5}
-
-        content = self.client.execute(query, variables)
-        self.assertIsNone(content.errors)
-
-        items = content.data['recentlyUpdatedItems']
-        self.assertEqual(set([item['name'] for item in items]), {'口罩', '雨伞'})
-
-    def test_get_recently_added_items(self):
-        query = '''
-            query recentlyAddedItems($number: Int!)  {
-                recentlyAddedItems(number: $number) {
-                    name
-                }
-            }
-        '''
-        variables = {'number': 5}
-
-        content = self.client.execute(query, variables)
-        self.assertIsNone(content.errors)
-
-        items = content.data['recentlyAddedItems']
-        self.assertEqual(set([item['name'] for item in items]), {'口罩', '雨伞'})
-
-    def test_get_near_expired_items(self):
-        query = '''
-            query nearExpiredItems($within: Int!, $number: Int)  {
-                nearExpiredItems(within: $within, number: $number) {
-                    name
-                }
-            }
-        '''
-        variables = {'within': 1}
-
-        content = self.client.execute(query, variables)
-        self.assertIsNone(content.errors)
-
-        items = content.data['nearExpiredItems']
-        self.assertEqual(items, [])
-
-    def test_get_near_expired_items_with_number(self):
-        query = '''
-            query nearExpiredItems($within: Int!, $number: Int)  {
-                nearExpiredItems(within: $within, number: $number) {
-                    name
-                }
-            }
-        '''
-        variables = {'within': 1, 'number': 2}
-
-        content = self.client.execute(query, variables)
-        self.assertIsNone(content.errors)
-
-        items = content.data['nearExpiredItems']
-        self.assertEqual(items, [])
-
-    def test_get_expired_items(self):
-        query = '''
-            query expiredItems($number: Int)  {
-                expiredItems(number: $number) {
-                    name
+            query recentlyUpdatedItems  {
+                items(orderBy: "-update_date") {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
                 }
             }
         '''
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
 
-        items = content.data['expiredItems']
-        self.assertEqual(items, [])
+        names = [
+            item['node']['name'] for item in content.data['items']['edges']
+        ]
+        self.assertEqual(names, ['雨伞', '口罩'])
 
-    def test_get_expired_items_with_number(self):
+    def test_get_recently_added_items(self):
         query = '''
-            query expiredItems($number: Int)  {
-                expiredItems(number: $number) {
-                    name
+            query recentlyAddedItems {
+                items(orderBy: "-date_added") {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
                 }
             }
         '''
-        variables = {'number': 2}
-
-        content = self.client.execute(query, variables)
+        content = self.client.execute(query)
         self.assertIsNone(content.errors)
 
-        items = content.data['expiredItems']
+        names = [
+            item['node']['name'] for item in content.data['items']['edges']
+        ]
+        self.assertEqual(names, ['口罩', '雨伞'])
+
+    def test_get_near_expired_items(self):
+        query = '''
+            query nearExpiredItems  {
+                items(expirationDate_Gt: "2020-04-17T02:34:59.862Z") {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        items = content.data['items']['edges']
         self.assertEqual(items, [])
+
+    def test_get_expired_items(self):
+        query = '''
+            query expiredItems  {
+                items(expirationDate_Lt: "2020-04-17T02:34:59.862Z") {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        names = [
+            item['node']['name'] for item in content.data['items']['edges']
+        ]
+        self.assertEqual(set(names), {'雨伞'})
 
     def test_add_item(self):
         mutation = '''
-            mutation addItem($input: AddItemInput!) {
+            mutation addItem($input: AddItemMutationInput!) {
                 addItem(input: $input) {
                     item {
                         __typename
@@ -476,11 +516,9 @@ class ItemTests(JSONWebTokenTestCase):
             'input': {
                 'name': 'test',
                 'number': 1,
-                'storage': {
-                    'id': 1
-                },
+                'storageId': to_global_id('StorageType', '1'),
                 'description': 'some',
-                'price': '12.0',
+                'price': 12.0,
                 'expirationDate': None,
             }
         }
@@ -495,27 +533,29 @@ class ItemTests(JSONWebTokenTestCase):
 
     def test_delete_item(self):
         mutation = '''
-            mutation deleteItem($id: ID!) {
-                deleteItem(id: $id) {
-                    deletedId
+            mutation deleteItem($input: DeleteItemMutationInput!) {
+                deleteItem(input: $input) {
+                    __typename
                 }
             }
         '''
 
         umbrella = Item.objects.get(name='雨伞')
-        variables = {'id': umbrella.id}
+        variables = {
+            'input': {
+                'itemId': to_global_id('ItemType', umbrella.id)
+            },
+        }
 
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
 
-        deletedId = content.data['deleteItem']['deletedId']
-        self.assertEqual(deletedId, str(umbrella.id))
         with self.assertRaises(Item.DoesNotExist):
             Item.objects.get(name='雨伞')
 
     def test_update_item(self):
         mutation = '''
-            mutation updateItem($input: UpdateItemInput!) {
+            mutation updateItem($input: UpdateItemMutationInput!) {
                 updateItem(input: $input) {
                     item {
                         __typename
@@ -540,14 +580,12 @@ class ItemTests(JSONWebTokenTestCase):
         expiration_date = timezone.now()
         variables = {
             'input': {
-                'id': 1,
+                'id': to_global_id('ItemType', '1'),
                 'name': 'test',
                 'number': 2,
-                'storage': {
-                    'id': 2
-                },
+                'storageId': to_global_id('StorageType', '2'),
                 'description': 'some',
-                'price': '12.0',
+                'price': 12.0,
                 'expirationDate': expiration_date.isoformat(),
             }
         }
@@ -560,17 +598,18 @@ class ItemTests(JSONWebTokenTestCase):
         item = content.data['updateItem']['item']
 
         self.assertEqual(item['__typename'], 'ItemType')
-        self.assertEqual(item['id'], '1')
+        self.assertEqual(item['id'], to_global_id('ItemType', '1'))
         self.assertEqual(item['name'], 'test')
         self.assertEqual(item['number'], 2)
         self.assertEqual(item['description'], 'some')
-        self.assertEqual(item['storage']['id'], '2')
+        self.assertEqual(item['storage']['id'],
+                         to_global_id('StorageType', '2'))
         self.assertEqual(item['price'], 12.0)
         self.assertEqual(item['expirationDate'], expiration_date.isoformat())
 
     def test_add_item_name_duplicate(self):
         mutation = '''
-            mutation addItem($input: AddItemInput!) {
+            mutation addItem($input: AddItemMutationInput!) {
                 addItem(input: $input) {
                     item {
                         __typename
@@ -596,11 +635,9 @@ class ItemTests(JSONWebTokenTestCase):
             'input': {
                 'name': '雨伞',
                 'number': 1,
-                'storage': {
-                    'id': 1
-                },
+                'storageId': to_global_id('StorageType', '1'),
                 'description': 'some',
-                'price': '12.0',
+                'price': 12.0,
                 'expirationDate': None,
             }
         }
@@ -612,7 +649,7 @@ class ItemTests(JSONWebTokenTestCase):
 
     def test_update_item_name_duplicate(self):
         mutation = '''
-            mutation updateItem($input: UpdateItemInput!) {
+            mutation updateItem($input: UpdateItemMutationInput!) {
                 updateItem(input: $input) {
                     item {
                         __typename
@@ -636,12 +673,10 @@ class ItemTests(JSONWebTokenTestCase):
         '''
         variables = {
             'input': {
-                'id': 1,
+                'id': to_global_id('ItemType', '1'),
                 'name': '口罩',
                 'number': 2,
-                'storage': {
-                    'id': 2
-                },
+                'storageId': to_global_id('StorageType', '2')
             }
         }
 
@@ -652,14 +687,18 @@ class ItemTests(JSONWebTokenTestCase):
 
     def test_delete_item_not_exist(self):
         mutation = '''
-            mutation deleteItem($id: ID!) {
-                deleteItem(id: $id) {
-                    deletedId
+            mutation deleteItem($input: DeleteItemMutationInput!) {
+                deleteItem(input: $input) {
+                    __typename
                 }
             }
         '''
 
-        variables = {'id': 0}
+        variables = {
+            'input': {
+                'itemId': to_global_id('ItemType', '0'),
+            }
+        }
 
         content = self.client.execute(mutation, variables)
         self.assertIsNotNone(content.errors)
