@@ -3,6 +3,7 @@ from unittest import mock
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from graphql_jwt.testcases import JSONWebTokenTestCase
+from graphql_relay.node.node import to_global_id
 
 from home.push.tasks import (PushChannel, build_message, get_enable_reg_ids,
                              get_enable_reg_ids_except_user)
@@ -65,6 +66,42 @@ class PushTests(JSONWebTokenTestCase):
         self.assertEqual(mipush['regId'], 'regid2ofuser1')
         self.assertEqual(mipush['model'], 'model2ofuser1')
 
+    def test_get_mipushs(self):
+        """ 获取所有注册标识码 """
+        query = '''
+            query miPushs {
+                miPushs {
+                    edges {
+                        node {
+                            user {
+                                username
+                            }
+                            enable
+                            regId
+                            deviceId
+                            model
+                        }
+                    }
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        # 第一个设备
+        mipush = content.data['miPushs']['edges'][0]['node']
+        self.assertEqual(mipush['user']['username'], 'test')
+        self.assertEqual(mipush['enable'], True)
+        self.assertEqual(mipush['regId'], 'regidofuser1')
+        self.assertEqual(mipush['model'], 'modelofuser1')
+
+        # 第二个设备
+        mipush = content.data['miPushs']['edges'][1]['node']
+        self.assertEqual(mipush['user']['username'], 'test')
+        self.assertEqual(mipush['enable'], True)
+        self.assertEqual(mipush['regId'], 'regid2ofuser1')
+        self.assertEqual(mipush['model'], 'model2ofuser1')
+
     def test_get_mipush_key(self):
         """ 获取当前软件的 AppID 与 AppKey """
         query = '''
@@ -81,6 +118,33 @@ class PushTests(JSONWebTokenTestCase):
         mipush_key = content.data['miPushKey']
         self.assertEqual(mipush_key['appId'], 'app_id')
         self.assertEqual(mipush_key['appKey'], 'app_key')
+
+    def test_get_mipush_via_node(self):
+        query = '''
+            query miPush($id: ID!) {
+                node(id: $id) {
+                    ... on MiPushType {
+                        user {
+                            username
+                        }
+                        enable
+                        regId
+                        deviceId
+                        model
+                    }
+                }
+            }
+        '''
+        variables = {'id': to_global_id('MiPushType', '1')}
+
+        content = self.client.execute(query, variables)
+        self.assertIsNone(content.errors)
+
+        mipush = content.data['node']
+        self.assertEqual(mipush['user']['username'], 'test')
+        self.assertEqual(mipush['enable'], True)
+        self.assertEqual(mipush['regId'], 'regidofuser1')
+        self.assertEqual(mipush['model'], 'modelofuser1')
 
     def test_update_mipush(self):
         mutation = '''

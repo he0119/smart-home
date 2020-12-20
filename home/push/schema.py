@@ -2,6 +2,7 @@ import graphene
 from django.conf import settings
 from django_filters import FilterSet
 from graphene import ObjectType, relay
+from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
@@ -14,8 +15,8 @@ class MiPushFilter(FilterSet):
     class Meta:
         model = MiPush
         fields = {
-            'user': ['exact'],
-            'model': ['exact', 'icontains', 'istartswith'],
+            'user__username': ['exact'],
+            'model': ['exact', 'icontains'],
         }
 
 
@@ -43,6 +44,8 @@ class MiPushKeyType(ObjectType):
 class Query(graphene.ObjectType):
     mi_push = graphene.Field(MiPushType,
                              device_id=graphene.String(required=True))
+    mi_pushs = DjangoFilterConnectionField(MiPushType,
+                                           filterset_class=MiPushFilter)
     mi_push_key = graphene.Field(MiPushKeyType)
 
     @login_required
@@ -53,6 +56,10 @@ class Query(graphene.ObjectType):
             return mi_push
         except MiPush.DoesNotExist:
             raise GraphQLError('推送未绑定')
+
+    @login_required
+    def resolve_mi_pushs(self, info, **args):
+        return MiPush.objects.all()
 
     @login_required
     def resolve_mi_push_key(self, info):
