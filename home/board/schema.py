@@ -19,7 +19,9 @@ from .models import Comment, Topic
 class CommentFilter(FilterSet):
     class Meta:
         model = Comment
-        fields = {}
+        fields = {
+            'topic': ['exact'],
+        }
 
     order_by = OrderingFilter(fields=(('date_created', 'date_created'), ))
 
@@ -92,8 +94,10 @@ class TopicType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
+    topic = relay.Node.Field(TopicType)
     topics = DjangoFilterConnectionField(TopicType,
                                          filterset_class=TopicFilter)
+    comment = relay.Node.Field(CommentType)
     comments = DjangoFilterConnectionField(CommentType,
                                            filterset_class=CommentFilter)
 
