@@ -84,7 +84,7 @@ class PushTests(JSONWebTokenTestCase):
 
     def test_update_mipush(self):
         mutation = '''
-            mutation updateMiPush($input: UpdateMiPushInput!) {
+            mutation updateMiPush($input: UpdateMiPushMutationInput!) {
                 updateMiPush(input: $input) {
                     miPush {
                         user {
@@ -152,7 +152,7 @@ class EmptyPushTests(JSONWebTokenTestCase):
     def test_update_mipush_without_create(self):
         """ 在没有创建的情况更新，应该会自动创建 """
         mutation = '''
-            mutation updateMiPush($input: UpdateMiPushInput!) {
+            mutation updateMiPush($input: UpdateMiPushMutationInput!) {
                 updateMiPush(input: $input) {
                     miPush {
                         user {
