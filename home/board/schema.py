@@ -78,11 +78,11 @@ class Query(graphene.ObjectType):
                                            filterset_class=CommentFilter)
 
     @login_required
-    def resolve_topics(self, info, **kwargs):
+    def resolve_topics(self, info, **args):
         return Topic.objects.all()
 
     @login_required
-    def resolve_comments(self, info, **kwargs):
+    def resolve_comments(self, info, **args):
         return Comment.objects.all()
 
 
@@ -100,10 +100,13 @@ class AddTopicMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
+    def mutate_and_get_payload(cls, root, info, **input):
+        title = input.get('title')
+        description = input.get('description')
+
         topic = Topic(
-            title=kwargs.get('title'),
-            description=kwargs.get('description'),
+            title=title,
+            description=description,
             user=info.context.user,
             is_open=True,
         )
@@ -127,8 +130,8 @@ class DeleteTopicMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, topic_id = from_global_id(kwargs.get('topic_id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, topic_id = from_global_id(input.get('topic_id'))
 
         try:
             topic = Topic.objects.get(pk=topic_id)
@@ -152,8 +155,10 @@ class UpdateTopicMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, topic_id = from_global_id(kwargs.get('id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, topic_id = from_global_id(input.get('id'))
+        title = input.get('title')
+        description = input.get('description')
 
         try:
             topic = Topic.objects.get(pk=topic_id)
@@ -164,10 +169,10 @@ class UpdateTopicMutation(relay.ClientIDMutation):
             raise GraphQLError('只能修改自己创建的话题')
 
         # 仅在传入数据时修改
-        if kwargs.get('title') is not None:
-            topic.title = kwargs.get('title')
-        if kwargs.get('description') is not None:
-            topic.description = kwargs.get('description')
+        if title is not None:
+            topic.title = title
+        if description is not None:
+            topic.description = description
         topic.save()
         return UpdateTopicMutation(topic=topic)
 
@@ -180,8 +185,8 @@ class CloseTopicMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, topic_id = from_global_id(kwargs.get('topic_id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, topic_id = from_global_id(input.get('topic_id'))
 
         try:
             topic = Topic.objects.get(pk=topic_id)
@@ -204,8 +209,8 @@ class ReopenTopicMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, topic_id = from_global_id(kwargs.get('topic_id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, topic_id = from_global_id(input.get('topic_id'))
 
         try:
             topic = Topic.objects.get(pk=topic_id)
@@ -232,8 +237,10 @@ class AddCommentMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, topic_id = from_global_id(kwargs.get('topic_id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, topic_id = from_global_id(input.get('topic_id'))
+        body = input.get('body')
+        parent_id = input.get('parent_id')
 
         try:
             topic = Topic.objects.get(pk=topic_id)
@@ -243,10 +250,10 @@ class AddCommentMutation(relay.ClientIDMutation):
         comment = Comment(
             topic=topic,
             user=info.context.user,
-            body=kwargs.get('body'),
+            body=body,
         )
-        if kwargs.get('parent_id'):
-            _, parent_id = from_global_id(kwargs.get('parent_id'))
+        if parent_id:
+            _, parent_id = from_global_id(parent_id)
             parent_comment = Comment.objects.get(pk=parent_id)
             # 若回复层级超过二级，则转换为二级
             comment.parent_id = parent_comment.get_root().id
@@ -272,8 +279,8 @@ class DeleteCommentMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, comment_id = from_global_id(kwargs.get('comment_id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, comment_id = from_global_id(input.get('comment_id'))
 
         try:
             comment = Comment.objects.get(pk=comment_id)
@@ -294,8 +301,9 @@ class UpdateCommentMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, comment_id = from_global_id(kwargs.get('id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, comment_id = from_global_id(input.get('id'))
+        body = input.get('body')
 
         try:
             comment = Comment.objects.get(pk=comment_id)
@@ -305,7 +313,7 @@ class UpdateCommentMutation(relay.ClientIDMutation):
         if comment.user != info.context.user:
             raise GraphQLError('只能修改自己创建的评论')
 
-        comment.body = kwargs.get('body')
+        comment.body = body
         comment.save()
         return UpdateCommentMutation(comment=comment)
 

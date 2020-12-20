@@ -74,19 +74,23 @@ class UpdateMiPushMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
+    def mutate_and_get_payload(cls, root, info, **input):
+        reg_id = input.get('reg_id')
+        device_id = input.get('device_id')
+        model = input.get('model')
+
         try:
             # 查找当前用户下的对应设备标识码的记录
             mi_push = MiPush.objects.filter(user=info.context.user).get(
-                device_id=kwargs.get('device_id'))
-            mi_push.reg_id = kwargs.get('reg_id')
+                device_id=device_id)
+            mi_push.reg_id = reg_id
         except MiPush.DoesNotExist:
             # 首次创建时，自动启用
             mi_push = MiPush(
                 user=info.context.user,
-                reg_id=kwargs.get('reg_id'),
-                device_id=kwargs.get('device_id'),
-                model=kwargs.get('model'),
+                reg_id=reg_id,
+                device_id=device_id,
+                model=model,
                 enable=True,
             )
 

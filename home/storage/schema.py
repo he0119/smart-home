@@ -83,16 +83,16 @@ class Query(graphene.ObjectType):
         id=graphene.ID(required=True))
 
     @login_required
-    def resolve_items(self, info, **kwargs):
+    def resolve_items(self, info, **args):
         return Item.objects.all()
 
     @login_required
-    def resolve_storages(self, info, **kwargs):
+    def resolve_storages(self, info, **args):
         return Storage.objects.all()
 
     @login_required
-    def resolve_storage_ancestors(self, info, **kwargs):
-        _, storage_id = from_global_id(kwargs.get('id'))
+    def resolve_storage_ancestors(self, info, **args):
+        _, storage_id = from_global_id(args.get('id'))
 
         storage = Storage.objects.get(pk=storage_id)
         return storage.get_ancestors(include_self=True)
@@ -113,15 +113,18 @@ class AddStorageMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
+    def mutate_and_get_payload(cls, root, info, **input):
+        name = input.get('name')
+        description = input.get('description')
+        parent_id = input.get('parent_id')
+
         try:
-            Storage.objects.get(name=kwargs.get('name'))
+            Storage.objects.get(name=name)
             raise GraphQLError('名称重复')
         except Storage.DoesNotExist:
-            storage = Storage(name=kwargs.get('name'),
-                              description=kwargs.get('description'))
-            if kwargs.get('parent_id'):
-                _, parent_id = from_global_id(kwargs.get('parent_id'))
+            storage = Storage(name=name, description=description)
+            if parent_id:
+                _, parent_id = from_global_id(parent_id)
                 parent = Storage.objects.get(pk=parent_id)
                 storage.parent = parent
             storage.save()
@@ -134,8 +137,8 @@ class DeleteStorageMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, storage_id = from_global_id(kwargs.get('storage_id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, storage_id = from_global_id(input.get('storage_id'))
 
         try:
             storage = Storage.objects.get(pk=storage_id)
@@ -156,20 +159,23 @@ class UpdateStorageMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, id = from_global_id(kwargs.get('id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, id = from_global_id(input.get('id'))
+        name = input.get('name')
+        description = input.get('description')
+        parent_id = input.get('parent_id')
 
         storage = Storage.objects.get(pk=id)
-        if kwargs.get('name') and kwargs.get('name') != storage.name:
+        if name and name != storage.name:
             try:
-                Storage.objects.get(name=kwargs.get('name'))
+                Storage.objects.get(name=name)
             except Storage.DoesNotExist:
-                storage.name = kwargs.get('name')
+                storage.name = name
             else:
                 raise GraphQLError('名称重复')
-        storage.description = kwargs.get('description')
-        if kwargs.get('parent_id'):
-            _, parent_id = from_global_id(kwargs.get('parent_id'))
+        storage.description = description
+        if parent_id:
+            _, parent_id = from_global_id(parent_id)
             parent = Storage.objects.get(pk=parent_id)
             storage.parent = parent
         storage.save()
@@ -193,19 +199,26 @@ class AddItemMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
+    def mutate_and_get_payload(cls, root, info, **input):
+        name = input.get('name')
+        number = input.get('number')
+        storage_id = input.get('storage_id')
+        description = input.get('description')
+        price = input.get('price')
+        expiration_date = input.get('expiration_date')
+
         try:
-            Item.objects.get(name=kwargs.get('name'))
+            Item.objects.get(name=name)
             raise GraphQLError('名称重复')
         except Item.DoesNotExist:
-            _, storage_id = from_global_id(kwargs.get('storage_id'))
+            _, storage_id = from_global_id(storage_id)
             item = Item(
-                name=kwargs.get('name'),
-                number=kwargs.get('number'),
-                description=kwargs.get('description'),
+                name=name,
+                number=number,
+                description=description,
                 storage=Storage.objects.get(pk=storage_id),
-                price=kwargs.get('price'),
-                expiration_date=kwargs.get('expiration_date'),
+                price=price,
+                expiration_date=expiration_date,
             )
             item.editor = info.context.user
             item.save()
@@ -218,8 +231,8 @@ class DeleteItemMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, item_id = from_global_id(kwargs.get('item_id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, item_id = from_global_id(input.get('item_id'))
 
         try:
             item = Item.objects.get(pk=item_id)
@@ -243,23 +256,29 @@ class UpdateItemMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, id = from_global_id(kwargs.get('id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, id = from_global_id(input.get('id'))
+        name = input.get('name')
+        number = input.get('number')
+        storage_id = input.get('storage_id')
+        description = input.get('description')
+        price = input.get('price')
+        expiration_date = input.get('expiration_date')
 
         item = Item.objects.get(pk=id)
-        if kwargs.get('name') and kwargs.get('name') != item.name:
+        if name and name != item.name:
             try:
-                Item.objects.get(name=kwargs.get('name'))
+                Item.objects.get(name=name)
             except Item.DoesNotExist:
-                item.name = kwargs.get('name')
+                item.name = name
             else:
                 raise GraphQLError('名称重复')
-        item.number = kwargs.get('number')
-        _, storage_id = from_global_id(kwargs.get('storage_id'))
+        item.number = number
+        _, storage_id = from_global_id(input.get('storage_id'))
         item.storage = Storage.objects.get(pk=storage_id)
-        item.description = kwargs.get('description')
-        item.price = kwargs.get('price')
-        item.expiration_date = kwargs.get('expiration_date')
+        item.description = description
+        item.price = price
+        item.expiration_date = expiration_date
         item.editor = info.context.user
         item.save()
         return UpdateItemMutation(item=item)

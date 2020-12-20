@@ -85,11 +85,11 @@ class Query(graphene.ObjectType):
         AutowateringDataType, filterset_class=AutowateringDataFilter)
 
     @login_required
-    def resolve_devices(self, info, **kwargs):
+    def resolve_devices(self, info, **args):
         return Device.objects.all()
 
     @login_required
-    def resolve_autowatering_data(self, info, **kwargs):
+    def resolve_autowatering_data(self, info, **args):
         return AutowateringData.objects.all()
 
 
@@ -107,11 +107,15 @@ class AddDeviceMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
+    def mutate_and_get_payload(cls, root, info, **input):
+        name = input.get('name')
+        device_type = input.get('device_type')
+        location = input.get('location')
+
         device = Device(
-            name=kwargs.get('name'),
-            device_type=kwargs.get('device_type'),
-            location=kwargs.get('location'),
+            name=name,
+            device_type=device_type,
+            location=location,
             is_online=False,
         )
         device.save()
@@ -124,8 +128,8 @@ class DeleteDeviceMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, device_id = from_global_id(kwargs.get('device_id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, device_id = from_global_id(input.get('device_id'))
 
         try:
             device = Device.objects.get(pk=device_id)
@@ -146,8 +150,11 @@ class UpdateDeviceMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, device_id = from_global_id(kwargs.get('id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, device_id = from_global_id(input.get('id'))
+        name = input.get('name')
+        device_type = input.get('device_type')
+        location = input.get('location')
 
         try:
             device = Device.objects.get(pk=device_id)
@@ -155,12 +162,13 @@ class UpdateDeviceMutation(relay.ClientIDMutation):
             raise GraphQLError('设备不存在')
 
         # 仅在传入数据时修改
-        if kwargs.get('name') is not None:
-            device.name = kwargs.get('name')
-        if kwargs.get('device_type') is not None:
-            device.device_type = kwargs.get('device_type')
-        if kwargs.get('location') is not None:
-            device.location = kwargs.get('location')
+        if name is not None:
+            device.name = name
+        if device_type is not None:
+            device.device_type = device_type
+        if location is not None:
+            device.location = location
+
         device.save()
         return UpdateDeviceMutation(device=device)
 
@@ -177,8 +185,11 @@ class SetDeviceMutation(relay.ClientIDMutation):
 
     @classmethod
     @login_required
-    def mutate_and_get_payload(cls, root, info, **kwargs):
-        _, device_id = from_global_id(kwargs.get('id'))
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, device_id = from_global_id(input.get('id'))
+        key = input.get('key')
+        value = input.get('value')
+        value_type = input.get('value_type')
 
         try:
             device = Device.objects.get(pk=device_id)
@@ -186,17 +197,16 @@ class SetDeviceMutation(relay.ClientIDMutation):
             raise GraphQLError('设备不存在')
 
         # 转换 value 的类型
-        value = None
-        if kwargs.get('value_type') == 'bool':
-            value = strtobool(kwargs.get('value'))
-        elif kwargs.get('value_type') == 'float':
-            value = float(kwargs.get('value'))
-        elif kwargs.get('value_type') == 'int':
-            value = int(kwargs.get('value'))
-        elif kwargs.get('value_type') == 'str':
-            value = kwargs.get('value')
+        if value_type == 'bool':
+            value = strtobool(value)
+        elif value_type == 'float':
+            value = float(value)
+        elif value_type == 'int':
+            value = int(value)
+        elif value_type == 'str':
+            pass
 
-        set_status.delay(device_id, kwargs.get('key'), value)
+        set_status.delay(device_id, key, value)
 
         return SetDeviceMutation(device=device)
 
