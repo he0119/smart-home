@@ -1,4 +1,6 @@
 import graphene
+from django.db.models import Max
+from django.db.models.functions import Greatest
 from django_filters import FilterSet, OrderingFilter
 from graphene import relay
 from graphene_django.filter import DjangoFilterConnectionField
@@ -22,6 +24,24 @@ class CommentFilter(FilterSet):
     order_by = OrderingFilter(fields=(('date_created', 'date_created'), ))
 
 
+class CustomTopicOrderingFilter(OrderingFilter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.extra['choices'] += [
+            ('date_active', 'Recent active'),
+            ('-date_active', 'Recent active (descending)'),
+        ]
+
+    def filter(self, qs, value):
+        if value and any(v in ['date_active', '-date_active'] for v in value):
+            # 新增一个最近活动的时间
+            # 取话题修改时间与最新评论的创建时间的最大值
+            qs = qs.annotate(date_active=Greatest(
+                Max('comments__date_created'), 'date_modified'))
+
+        return super().filter(qs, value)
+
+
 class TopicFilter(FilterSet):
     class Meta:
         model = Topic
@@ -29,7 +49,7 @@ class TopicFilter(FilterSet):
             'title': ['exact', 'icontains', 'istartswith'],
         }
 
-    order_by = OrderingFilter(fields=(
+    order_by = CustomTopicOrderingFilter(fields=(
         ('date_created', 'date_created'),
         ('is_open', 'is_open'),
     ))
