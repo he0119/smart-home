@@ -70,11 +70,6 @@ class Migration(migrations.Migration):
                 verbose_name='属于'),
         ),
         migrations.AlterField(
-            model_name='storage',
-            name='name',
-            field=models.CharField(max_length=200, verbose_name='名字'),
-        ),
-        migrations.AlterField(
             model_name='item',
             name='created_by',
             field=models.ForeignKey(

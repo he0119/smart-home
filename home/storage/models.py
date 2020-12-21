@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from mptt.models import MPTTModel, TreeForeignKey
 
 
@@ -12,7 +13,7 @@ class Storage(MPTTModel):
     class MPTTMeta:
         order_insertion_by = ['name']
 
-    name = models.CharField(max_length=200, verbose_name='名字')
+    name = models.CharField(max_length=200, unique=True, verbose_name='名字')
     parent = TreeForeignKey('self',
                             on_delete=models.CASCADE,
                             null=True,
@@ -74,6 +75,16 @@ class Item(models.Model):
     deleted_at = models.DateTimeField(null=True,
                                       blank=True,
                                       verbose_name='删除时间')
+
+    def delete(self):
+        self.is_delete = True
+        self.deleted_at = timezone.now()
+        self.save()
+
+    def restore(self):
+        self.is_delete = False
+        self.deleted_at = None
+        self.save()
 
     def __str__(self):
         return self.name
