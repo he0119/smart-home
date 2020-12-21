@@ -35,9 +35,12 @@ class ItemResource(ModelResource):
     storage = Field(column_name='storage',
                     attribute='storage',
                     widget=ForeignKeyWidget(Storage, 'name'))
-    editor = Field(column_name='editor',
-                   attribute='editor',
-                   widget=ForeignKeyWidget(get_user_model(), 'username'))
+    created_by = Field(column_name='created_by',
+                       attribute='created_by',
+                       widget=ForeignKeyWidget(get_user_model(), 'username'))
+    edited_by = Field(column_name='edited_by',
+                      attribute='edited_by',
+                      widget=ForeignKeyWidget(get_user_model(), 'username'))
 
     class Meta:
         model = Item
@@ -48,9 +51,11 @@ class ItemResource(ModelResource):
             'number',
             'price',
             'description',
-            'expiration_date',
-            'update_date',
-            'editor',
+            'expired_at',
+            'edited_at',
+            'edited_by',
+            'created_at',
+            'created_by',
         )
         skip_unchanged = True
         report_skipped = False
@@ -63,8 +68,9 @@ class StorageAdmin(ImportExportModelAdmin):
 
 class ItemAdmin(ImportExportModelAdmin):
     resource_class = ItemResource
-    list_display = ('name', 'number', 'price', 'description',
-                    'expiration_date', 'update_date', 'storage', 'editor')
+    list_display = ('name', 'storage', 'number', 'price', 'description',
+                    'expired_at', 'edited_at', 'edited_by', 'created_at',
+                    'created_by')
 
 
 admin.site.register(Storage, StorageAdmin)
