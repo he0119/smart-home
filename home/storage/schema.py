@@ -16,14 +16,16 @@ class ItemFilter(FilterSet):
         model = Item
         fields = {
             'name': ['exact', 'icontains'],
+            'storage': ['exact', 'isnull'],
             'description': ['exact', 'icontains'],
-            'expiration_date': ['lt', 'gt'],
+            'expired_at': ['lt', 'gt'],
+            'is_deleted': ['exact'],
         }
 
     order_by = OrderingFilter(fields=(
-        ('date_added', 'date_added'),
-        ('update_date', 'update_date'),
-        ('expiration_date', 'expiration_date'),
+        ('created_at', 'created_at'),
+        ('edited_at', 'edited_at'),
+        ('expired_at', 'expired_at'),
     ))
 
 
@@ -120,8 +122,15 @@ class AddStorageMutation(relay.ClientIDMutation):
             storage = Storage(name=name, description=description)
             if parent_id:
                 _, parent_id = from_global_id(parent_id)
-                parent = Storage.objects.get(pk=parent_id)
+
+                # 检查上一级位置是否存在
+                try:
+                    parent = Storage.objects.get(pk=parent_id)
+                except Storage.DoesNotExist:
+                    raise GraphQLError('上一级位置不存在')
+
                 storage.parent = parent
+
             storage.save()
             return AddStorageMutation(storage=storage)
 
@@ -140,7 +149,7 @@ class DeleteStorageMutation(relay.ClientIDMutation):
             storage.delete()
             return DeleteStorageMutation()
         except Storage.DoesNotExist:
-            raise GraphQLError('位置不存在')
+            raise GraphQLError('无法删除不存在的位置')
 
 
 class UpdateStorageMutation(relay.ClientIDMutation):
@@ -160,19 +169,33 @@ class UpdateStorageMutation(relay.ClientIDMutation):
         description = input.get('description')
         parent_id = input.get('parent_id')
 
-        storage = Storage.objects.get(pk=id)
+        # 检查需要修改的位置是否存在
+        try:
+            storage = Storage.objects.get(pk=id)
+        except Storage.DoesNotExist:
+            raise GraphQLError('无法修改不存在的位置')
+
+        # 当名称不为空，且与当前名称不同时，才需要修改名称
         if name and name != storage.name:
             try:
                 Storage.objects.get(name=name)
+                raise GraphQLError('名称重复')
             except Storage.DoesNotExist:
                 storage.name = name
-            else:
-                raise GraphQLError('名称重复')
+
         storage.description = description
+
         if parent_id:
             _, parent_id = from_global_id(parent_id)
-            parent = Storage.objects.get(pk=parent_id)
+
+            # 检查上一级位置是否存在
+            try:
+                parent = Storage.objects.get(pk=parent_id)
+            except Storage.DoesNotExist:
+                raise GraphQLError('上一级位置不存在')
+
             storage.parent = parent
+
         storage.save()
         return UpdateStorageMutation(storage=storage)
 
@@ -188,7 +211,7 @@ class AddItemMutation(relay.ClientIDMutation):
         storage_id = graphene.ID(required=True)
         description = graphene.String()
         price = graphene.Float()
-        expiration_date = graphene.DateTime()
+        expired_at = graphene.DateTime()
 
     item = graphene.Field(ItemType)
 
@@ -200,22 +223,28 @@ class AddItemMutation(relay.ClientIDMutation):
         storage_id = input.get('storage_id')
         description = input.get('description')
         price = input.get('price')
-        expiration_date = input.get('expiration_date')
+        expired_at = input.get('expired_at')
 
         try:
             Item.objects.get(name=name)
             raise GraphQLError('名称重复')
         except Item.DoesNotExist:
             _, storage_id = from_global_id(storage_id)
+            try:
+                storage = Storage.objects.get(pk=storage_id)
+            except Storage.DoesNotExist:
+                raise GraphQLError('位置不存在')
+
             item = Item(
                 name=name,
                 number=number,
                 description=description,
-                storage=Storage.objects.get(pk=storage_id),
+                storage=storage,
                 price=price,
-                expiration_date=expiration_date,
+                expired_at=expired_at,
             )
-            item.editor = info.context.user
+            item.created_by = info.context.user
+            item.edited_by = info.context.user
             item.save()
             return AddItemMutation(item=item)
 
@@ -234,6 +263,23 @@ class DeleteItemMutation(relay.ClientIDMutation):
             item.delete()
             return DeleteItemMutation()
         except Item.DoesNotExist:
+            raise GraphQLError('无法删除不存在的物品')
+
+
+class RestoreItemMutation(relay.ClientIDMutation):
+    class Input:
+        item_id = graphene.ID(required=True, description='话题的 ID')
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, item_id = from_global_id(input.get('item_id'))
+
+        try:
+            item = Item.objects.get(pk=item_id)
+            item.restore()
+            return DeleteItemMutation()
+        except Item.DoesNotExist:
             raise GraphQLError('物品不存在')
 
 
@@ -244,7 +290,7 @@ class UpdateItemMutation(relay.ClientIDMutation):
         number = graphene.Int()
         description = graphene.String()
         price = graphene.Float()
-        expiration_date = graphene.DateTime()
+        expired_at = graphene.DateTime()
         storage_id = graphene.ID()
 
     item = graphene.Field(ItemType)
@@ -258,23 +304,32 @@ class UpdateItemMutation(relay.ClientIDMutation):
         storage_id = input.get('storage_id')
         description = input.get('description')
         price = input.get('price')
-        expiration_date = input.get('expiration_date')
+        expired_at = input.get('expired_at')
 
-        item = Item.objects.get(pk=id)
+        try:
+            item = Item.objects.get(pk=id)
+        except Item.DoesNotExist:
+            raise GraphQLError('无法修改不存在的物品')
+
         if name and name != item.name:
             try:
                 Item.objects.get(name=name)
+                raise GraphQLError('名称重复')
             except Item.DoesNotExist:
                 item.name = name
-            else:
-                raise GraphQLError('名称重复')
-        item.number = number
+
         _, storage_id = from_global_id(input.get('storage_id'))
-        item.storage = Storage.objects.get(pk=storage_id)
+        try:
+            storage = Storage.objects.get(pk=storage_id)
+        except Storage.DoesNotExist:
+            raise GraphQLError('位置不存在')
+
+        item.storage = storage
+        item.number = number
         item.description = description
         item.price = price
-        item.expiration_date = expiration_date
-        item.editor = info.context.user
+        item.expired_at = expired_at
+        item.edited_by = info.context.user
         item.save()
         return UpdateItemMutation(item=item)
 
@@ -287,6 +342,7 @@ class Mutation(graphene.ObjectType):
     add_item = AddItemMutation.Field()
     delete_storage = DeleteStorageMutation.Field()
     delete_item = DeleteItemMutation.Field()
+    restore_item = RestoreItemMutation.Field()
 
 
 #endregion

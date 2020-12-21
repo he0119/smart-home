@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from mptt.models import MPTTModel, TreeForeignKey
 
 
@@ -46,22 +47,44 @@ class Item(models.Model):
                                 null=True,
                                 blank=True,
                                 verbose_name='价格')
-    update_date = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    expiration_date = models.DateTimeField(
-        verbose_name='有效期至',
-        null=True,
-        blank=True,
-    )
+    expired_at = models.DateTimeField(null=True,
+                                      blank=True,
+                                      verbose_name='有效日期')
+    # 如果值为 null，指未分类，没有设定存放位置
     storage = models.ForeignKey(Storage,
-                                on_delete=models.CASCADE,
+                                on_delete=models.SET_NULL,
+                                null=True,
+                                blank=True,
                                 related_name='items',
                                 verbose_name='属于')
-    editor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        verbose_name='录入者',
-    )
-    date_added = models.DateTimeField(auto_now_add=True, verbose_name='添加时间')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='添加时间')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                   on_delete=models.SET_NULL,
+                                   related_name='created_items',
+                                   null=True,
+                                   blank=True,
+                                   verbose_name='录入人')
+    edited_at = models.DateTimeField(auto_now=True, verbose_name='修改时间')
+    edited_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                  on_delete=models.SET_NULL,
+                                  related_name='edited_items',
+                                  null=True,
+                                  blank=True,
+                                  verbose_name='修改人')
+    is_deleted = models.BooleanField(default=False, verbose_name='逻辑删除')
+    deleted_at = models.DateTimeField(null=True,
+                                      blank=True,
+                                      verbose_name='删除时间')
+
+    def delete(self):
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
+    def restore(self):
+        self.is_deleted = False
+        self.deleted_at = None
+        self.save()
 
     def __str__(self):
         return self.name

@@ -224,7 +224,7 @@ class StorageTests(JSONWebTokenTestCase):
         mutation = '''
             mutation deleteStorage($input: DeleteStorageMutationInput!) {
                 deleteStorage(input: $input) {
-                    __typename
+                    clientMutationId
                 }
             }
         '''
@@ -341,11 +341,44 @@ class StorageTests(JSONWebTokenTestCase):
 
         self.assertEqual(content.errors[0].message, '名称重复')
 
+    def test_update_storage_not_exist(self):
+        mutation = '''
+            mutation updateStorage($input: UpdateStorageMutationInput!) {
+                updateStorage(input: $input) {
+                    storage {
+                        __typename
+                        id
+                        name
+                        description
+                        parent {
+                            __typename
+                            id
+                        }
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('StorageType', '0'),
+                'name': '阳台储物柜',
+                'description': 'some',
+            }
+        }
+
+        old_storage = Storage.objects.get(pk=1)
+        self.assertEqual(old_storage.name, '阳台')
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '无法修改不存在的位置')
+
     def test_delete_storage_not_exist(self):
         mutation = '''
             mutation deleteStorage($input: DeleteStorageMutationInput!) {
                 deleteStorage(input: $input) {
-                    __typename
+                    clientMutationId
                 }
             }
         '''
@@ -358,7 +391,64 @@ class StorageTests(JSONWebTokenTestCase):
         content = self.client.execute(mutation, variables)
         self.assertIsNotNone(content.errors)
 
-        self.assertEqual(content.errors[0].message, '位置不存在')
+        self.assertEqual(content.errors[0].message, '无法删除不存在的位置')
+
+    def test_add_storage_parent_not_exist(self):
+        mutation = '''
+            mutation addStorage($input: AddStorageMutationInput!) {
+                addStorage(input: $input) {
+                    storage {
+                        __typename
+                        id
+                        name
+                        description
+                        parent {
+                            id
+                        }
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'name': 'test',
+                'description': 'some',
+                'parentId': to_global_id('StorageType', '0')
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '上一级位置不存在')
+
+    def test_update_storage_parent_not_exist(self):
+        mutation = '''
+            mutation updateStorage($input: UpdateStorageMutationInput!) {
+                updateStorage(input: $input) {
+                    storage {
+                        __typename
+                        id
+                        name
+                        description
+                        parent {
+                            id
+                        }
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('StorageType', '1'),
+                'parentId': to_global_id('StorageType', '0')
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '上一级位置不存在')
 
 
 class ItemTests(JSONWebTokenTestCase):
@@ -410,10 +500,10 @@ class ItemTests(JSONWebTokenTestCase):
         ]
         self.assertEqual(set(names), set(['雨伞', '口罩']))
 
-    def test_get_recently_updated_items(self):
+    def test_get_recently_edited_items(self):
         query = '''
-            query recentlyUpdatedItems  {
-                items(orderBy: "-update_date") {
+            query recentlyEditedItems  {
+                items(orderBy: "-edited_at") {
                     edges {
                         node {
                             id
@@ -434,7 +524,7 @@ class ItemTests(JSONWebTokenTestCase):
     def test_get_recently_added_items(self):
         query = '''
             query recentlyAddedItems {
-                items(orderBy: "-date_added") {
+                items(orderBy: "-created_at") {
                     edges {
                         node {
                             id
@@ -455,7 +545,7 @@ class ItemTests(JSONWebTokenTestCase):
     def test_get_near_expired_items(self):
         query = '''
             query nearExpiredItems  {
-                items(expirationDate_Gt: "2020-04-17T02:34:59.862Z") {
+                items(expiredAt_Gt: "2020-04-17T02:34:59.862Z") {
                     edges {
                         node {
                             id
@@ -474,7 +564,7 @@ class ItemTests(JSONWebTokenTestCase):
     def test_get_expired_items(self):
         query = '''
             query expiredItems  {
-                items(expirationDate_Lt: "2020-04-17T02:34:59.862Z") {
+                items(expiredAt_Lt: "2020-03-01T00:00:00.000Z") {
                     edges {
                         node {
                             id
@@ -507,9 +597,9 @@ class ItemTests(JSONWebTokenTestCase):
                         }
                         description
                         price
-                        expirationDate
-                        updateDate
-                        editor {
+                        expiredAt
+                        editedAt
+                        editedBy {
                             username
                         }
                     }
@@ -523,7 +613,7 @@ class ItemTests(JSONWebTokenTestCase):
                 'storageId': to_global_id('StorageType', '1'),
                 'description': 'some',
                 'price': 12.0,
-                'expirationDate': None,
+                'expiredAt': None,
             }
         }
 
@@ -539,7 +629,7 @@ class ItemTests(JSONWebTokenTestCase):
         mutation = '''
             mutation deleteItem($input: DeleteItemMutationInput!) {
                 deleteItem(input: $input) {
-                    __typename
+                    clientMutationId
                 }
             }
         '''
@@ -554,8 +644,30 @@ class ItemTests(JSONWebTokenTestCase):
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
 
-        with self.assertRaises(Item.DoesNotExist):
-            Item.objects.get(name='雨伞')
+        deleted_umbrella = Item.objects.get(name='雨伞')
+        self.assertEqual(deleted_umbrella.is_deleted, True)
+
+    def test_restore_item(self):
+        mutation = '''
+            mutation restoreItem($input: RestoreItemMutationInput!) {
+                restoreItem(input: $input) {
+                    clientMutationId
+                }
+            }
+        '''
+
+        umbrella = Item.objects.get(name='雨伞')
+        variables = {
+            'input': {
+                'itemId': to_global_id('ItemType', umbrella.id)
+            },
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        restore_umbrella = Item.objects.get(name='雨伞')
+        self.assertEqual(restore_umbrella.is_deleted, False)
 
     def test_update_item(self):
         mutation = '''
@@ -572,9 +684,9 @@ class ItemTests(JSONWebTokenTestCase):
                         }
                         description
                         price
-                        expirationDate
-                        updateDate
-                        editor {
+                        expiredAt
+                        editedAt
+                        editedBy {
                             username
                         }
                     }
@@ -590,7 +702,7 @@ class ItemTests(JSONWebTokenTestCase):
                 'storageId': to_global_id('StorageType', '2'),
                 'description': 'some',
                 'price': 12.0,
-                'expirationDate': expiration_date.isoformat(),
+                'expiredAt': expiration_date.isoformat(),
             }
         }
 
@@ -609,7 +721,7 @@ class ItemTests(JSONWebTokenTestCase):
         self.assertEqual(item['storage']['id'],
                          to_global_id('StorageType', '2'))
         self.assertEqual(item['price'], 12.0)
-        self.assertEqual(item['expirationDate'], expiration_date.isoformat())
+        self.assertEqual(item['expiredAt'], expiration_date.isoformat())
 
     def test_add_item_name_duplicate(self):
         mutation = '''
@@ -626,9 +738,9 @@ class ItemTests(JSONWebTokenTestCase):
                         }
                         description
                         price
-                        expirationDate
-                        updateDate
-                        editor {
+                        expiredAt
+                        editedAt
+                        editedBy {
                             username
                         }
                     }
@@ -642,7 +754,7 @@ class ItemTests(JSONWebTokenTestCase):
                 'storageId': to_global_id('StorageType', '1'),
                 'description': 'some',
                 'price': 12.0,
-                'expirationDate': None,
+                'expiredAt': None,
             }
         }
 
@@ -666,9 +778,9 @@ class ItemTests(JSONWebTokenTestCase):
                         }
                         description
                         price
-                        expirationDate
-                        updateDate
-                        editor {
+                        expiredAt
+                        editedAt
+                        editedBy {
                             username
                         }
                     }
@@ -693,11 +805,10 @@ class ItemTests(JSONWebTokenTestCase):
         mutation = '''
             mutation deleteItem($input: DeleteItemMutationInput!) {
                 deleteItem(input: $input) {
-                    __typename
+                    clientMutationId
                 }
             }
         '''
-
         variables = {
             'input': {
                 'itemId': to_global_id('ItemType', '0'),
@@ -707,4 +818,90 @@ class ItemTests(JSONWebTokenTestCase):
         content = self.client.execute(mutation, variables)
         self.assertIsNotNone(content.errors)
 
+        self.assertEqual(content.errors[0].message, '无法删除不存在的物品')
+
+    def test_restore_item_not_exist(self):
+        mutation = '''
+            mutation restoreItem($input: RestoreItemMutationInput!) {
+                restoreItem(input: $input) {
+                    clientMutationId
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'itemId': to_global_id('ItemType', '0')
+            },
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
         self.assertEqual(content.errors[0].message, '物品不存在')
+
+    def test_update_item_not_exist(self):
+        mutation = '''
+            mutation updateItem($input: UpdateItemMutationInput!) {
+                updateItem(input: $input) {
+                    item {
+                        id
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '0'),
+                'storageId': to_global_id('StorageType', '2')
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '无法修改不存在的物品')
+
+    def test_add_item_storage_not_exist(self):
+        mutation = '''
+            mutation addItem($input: AddItemMutationInput!) {
+                addItem(input: $input) {
+                    item {
+                        id
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'name': 'test',
+                'number': 1,
+                'storageId': to_global_id('StorageType', '0')
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '位置不存在')
+
+    def test_update_item_storage_not_exist(self):
+        mutation = '''
+            mutation updateItem($input: UpdateItemMutationInput!) {
+                updateItem(input: $input) {
+                    item {
+                        id
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '1'),
+                'storageId': to_global_id('StorageType', '0')
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '位置不存在')
