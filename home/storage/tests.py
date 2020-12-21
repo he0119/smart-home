@@ -358,7 +358,7 @@ class StorageTests(JSONWebTokenTestCase):
         content = self.client.execute(mutation, variables)
         self.assertIsNotNone(content.errors)
 
-        self.assertEqual(content.errors[0].message, '位置不存在')
+        self.assertEqual(content.errors[0].message, '位置不存在，无法删除')
 
 
 class ItemTests(JSONWebTokenTestCase):
@@ -410,10 +410,10 @@ class ItemTests(JSONWebTokenTestCase):
         ]
         self.assertEqual(set(names), set(['雨伞', '口罩']))
 
-    def test_get_recently_updated_items(self):
+    def test_get_recently_edited_items(self):
         query = '''
-            query recentlyUpdatedItems  {
-                items(orderBy: "-update_date") {
+            query recentlyEditedItems  {
+                items(orderBy: "-edited_at") {
                     edges {
                         node {
                             id
@@ -434,7 +434,7 @@ class ItemTests(JSONWebTokenTestCase):
     def test_get_recently_added_items(self):
         query = '''
             query recentlyAddedItems {
-                items(orderBy: "-date_added") {
+                items(orderBy: "-created_at") {
                     edges {
                         node {
                             id
@@ -455,7 +455,7 @@ class ItemTests(JSONWebTokenTestCase):
     def test_get_near_expired_items(self):
         query = '''
             query nearExpiredItems  {
-                items(expirationDate_Gt: "2020-04-17T02:34:59.862Z") {
+                items(expiredAt_Gt: "2020-04-17T02:34:59.862Z") {
                     edges {
                         node {
                             id
@@ -474,7 +474,7 @@ class ItemTests(JSONWebTokenTestCase):
     def test_get_expired_items(self):
         query = '''
             query expiredItems  {
-                items(expirationDate_Lt: "2020-04-17T02:34:59.862Z") {
+                items(expiredAt_Lt: "2020-03-01T00:00:00.000Z") {
                     edges {
                         node {
                             id
@@ -507,9 +507,9 @@ class ItemTests(JSONWebTokenTestCase):
                         }
                         description
                         price
-                        expirationDate
-                        updateDate
-                        editor {
+                        expiredAt
+                        editedAt
+                        editedBy {
                             username
                         }
                     }
@@ -523,7 +523,7 @@ class ItemTests(JSONWebTokenTestCase):
                 'storageId': to_global_id('StorageType', '1'),
                 'description': 'some',
                 'price': 12.0,
-                'expirationDate': None,
+                'expiredAt': None,
             }
         }
 
@@ -554,8 +554,8 @@ class ItemTests(JSONWebTokenTestCase):
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
 
-        with self.assertRaises(Item.DoesNotExist):
-            Item.objects.get(name='雨伞')
+        deleted_umbrella = Item.objects.get(name='雨伞')
+        self.assertEqual(deleted_umbrella.is_deleted, True)
 
     def test_update_item(self):
         mutation = '''
@@ -572,9 +572,9 @@ class ItemTests(JSONWebTokenTestCase):
                         }
                         description
                         price
-                        expirationDate
-                        updateDate
-                        editor {
+                        expiredAt
+                        editedAt
+                        editedBy {
                             username
                         }
                     }
@@ -590,7 +590,7 @@ class ItemTests(JSONWebTokenTestCase):
                 'storageId': to_global_id('StorageType', '2'),
                 'description': 'some',
                 'price': 12.0,
-                'expirationDate': expiration_date.isoformat(),
+                'expiredAt': expiration_date.isoformat(),
             }
         }
 
@@ -609,7 +609,7 @@ class ItemTests(JSONWebTokenTestCase):
         self.assertEqual(item['storage']['id'],
                          to_global_id('StorageType', '2'))
         self.assertEqual(item['price'], 12.0)
-        self.assertEqual(item['expirationDate'], expiration_date.isoformat())
+        self.assertEqual(item['expiredAt'], expiration_date.isoformat())
 
     def test_add_item_name_duplicate(self):
         mutation = '''
@@ -626,9 +626,9 @@ class ItemTests(JSONWebTokenTestCase):
                         }
                         description
                         price
-                        expirationDate
-                        updateDate
-                        editor {
+                        expiredAt
+                        editedAt
+                        editedBy {
                             username
                         }
                     }
@@ -642,7 +642,7 @@ class ItemTests(JSONWebTokenTestCase):
                 'storageId': to_global_id('StorageType', '1'),
                 'description': 'some',
                 'price': 12.0,
-                'expirationDate': None,
+                'expiredAt': None,
             }
         }
 
@@ -666,9 +666,9 @@ class ItemTests(JSONWebTokenTestCase):
                         }
                         description
                         price
-                        expirationDate
-                        updateDate
-                        editor {
+                        expiredAt
+                        editedAt
+                        editedBy {
                             username
                         }
                     }

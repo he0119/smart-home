@@ -14,8 +14,10 @@ def set_edited_by(apps, schema_editor):
 
 
 def reverse_set_edited_by(apps, schema_editor):
-    """ 不需要做任何事情 """
-    pass
+    """ 删除 storage_id 为空的物品 """
+    Item = apps.get_model('storage', 'Item')
+    for item in Item.objects.filter(storage_id__isnull=True).all():
+        item.delete()
 
 
 class Migration(migrations.Migration):
@@ -91,6 +93,18 @@ class Migration(migrations.Migration):
                 to=settings.AUTH_USER_MODEL,
                 verbose_name='修改人'),
         ),
+        migrations.AddField(
+            model_name='item',
+            name='deleted_at',
+            field=models.DateTimeField(blank=True,
+                                       null=True,
+                                       verbose_name='删除时间'),
+        ),
+        migrations.AddField(
+            model_name='item',
+            name='is_deleted',
+            field=models.BooleanField(default=False, verbose_name='逻辑删除'),
+        ),
         # 临时取消自动设置为当前时间
         # 等待执行完脚本后恢复
         migrations.AlterField(
@@ -104,17 +118,5 @@ class Migration(migrations.Migration):
             model_name='item',
             name='edited_at',
             field=models.DateTimeField(auto_now=True, verbose_name='修改时间'),
-        ),
-        migrations.AddField(
-            model_name='item',
-            name='deleted_at',
-            field=models.DateTimeField(blank=True,
-                                       null=True,
-                                       verbose_name='删除时间'),
-        ),
-        migrations.AddField(
-            model_name='item',
-            name='is_delete',
-            field=models.BooleanField(default=False, verbose_name='逻辑删除'),
         ),
     ]

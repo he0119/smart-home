@@ -19,12 +19,12 @@ class ItemFilter(FilterSet):
             'storage': ['exact', 'isnull'],
             'description': ['exact', 'icontains'],
             'expired_at': ['lt', 'gt'],
-            'is_delete': ['exact'],
+            'is_deleted': ['exact'],
         }
 
     order_by = OrderingFilter(fields=(
         ('created_at', 'created_at'),
-        ('updated_at', 'updated_at'),
+        ('edited_at', 'edited_at'),
         ('expired_at', 'expired_at'),
     ))
 

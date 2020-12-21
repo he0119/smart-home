@@ -71,18 +71,18 @@ class Item(models.Model):
                                   null=True,
                                   blank=True,
                                   verbose_name='修改人')
-    is_delete = models.BooleanField(default=False, verbose_name='逻辑删除')
+    is_deleted = models.BooleanField(default=False, verbose_name='逻辑删除')
     deleted_at = models.DateTimeField(null=True,
                                       blank=True,
                                       verbose_name='删除时间')
 
     def delete(self):
-        self.is_delete = True
+        self.is_deleted = True
         self.deleted_at = timezone.now()
         self.save()
 
     def restore(self):
-        self.is_delete = False
+        self.is_deleted = False
         self.deleted_at = None
         self.save()
 
