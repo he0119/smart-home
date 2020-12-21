@@ -149,7 +149,7 @@ class DeleteStorageMutation(relay.ClientIDMutation):
             storage.delete()
             return DeleteStorageMutation()
         except Storage.DoesNotExist:
-            raise GraphQLError('位置不存在')
+            raise GraphQLError('无法删除不存在的位置')
 
 
 class UpdateStorageMutation(relay.ClientIDMutation):
@@ -263,7 +263,7 @@ class DeleteItemMutation(relay.ClientIDMutation):
             item.delete()
             return DeleteItemMutation()
         except Item.DoesNotExist:
-            raise GraphQLError('物品不存在')
+            raise GraphQLError('无法删除不存在的物品')
 
 
 class RestoreItemMutation(relay.ClientIDMutation):
