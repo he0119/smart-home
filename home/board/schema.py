@@ -21,6 +21,7 @@ class CommentFilter(FilterSet):
         model = Comment
         fields = {
             'topic': ['exact'],
+            'level': ['exact'],
         }
 
     order_by = OrderingFilter(fields=(('date_created', 'date_created'), ))
@@ -63,6 +64,9 @@ class CommentType(DjangoObjectType):
         fields = '__all__'
         interfaces = (relay.Node, )
 
+    children = DjangoFilterConnectionField(lambda: CommentType,
+                                           filterset_class=CommentFilter)
+
     @classmethod
     @login_required
     def get_node(cls, info, id):
@@ -77,10 +81,6 @@ class TopicType(DjangoObjectType):
 
     comments = DjangoFilterConnectionField(CommentType,
                                            filterset_class=CommentFilter)
-
-    @login_required
-    def resolve_comments(self, info, **args):
-        return self.comments
 
     @classmethod
     @login_required
