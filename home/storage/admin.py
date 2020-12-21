@@ -1,73 +1,13 @@
 from django.contrib import admin
-from django.contrib.auth import get_user_model
-from import_export.admin import ImportExportModelAdmin
-from import_export.fields import Field
-from import_export.resources import ModelResource
-from import_export.widgets import ForeignKeyWidget
 
 from .models import Item, Storage
 
 
-class StorageResource(ModelResource):
-    parent = Field(column_name='parent',
-                   attribute='parent',
-                   widget=ForeignKeyWidget(Storage, 'name'))
-
-    class Meta:
-        model = Storage
-        exclude = (
-            'lft',
-            'rght',
-            'tree_id',
-            'level',
-        )
-        export_order = (
-            'id',
-            'name',
-            'parent',
-            'description',
-        )
-        skip_unchanged = True
-        report_skipped = False
-
-
-class ItemResource(ModelResource):
-    storage = Field(column_name='storage',
-                    attribute='storage',
-                    widget=ForeignKeyWidget(Storage, 'name'))
-    created_by = Field(column_name='created_by',
-                       attribute='created_by',
-                       widget=ForeignKeyWidget(get_user_model(), 'username'))
-    edited_by = Field(column_name='edited_by',
-                      attribute='edited_by',
-                      widget=ForeignKeyWidget(get_user_model(), 'username'))
-
-    class Meta:
-        model = Item
-        export_order = (
-            'id',
-            'storage',
-            'name',
-            'number',
-            'price',
-            'description',
-            'expired_at',
-            'edited_at',
-            'edited_by',
-            'created_at',
-            'created_by',
-        )
-        skip_unchanged = True
-        report_skipped = False
-
-
-class StorageAdmin(ImportExportModelAdmin):
-    resource_class = StorageResource
+class StorageAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent', 'description')
 
 
-class ItemAdmin(ImportExportModelAdmin):
-    resource_class = ItemResource
+class ItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'storage', 'number', 'price', 'description',
                     'expired_at', 'edited_at', 'edited_by', 'created_at',
                     'created_by')
