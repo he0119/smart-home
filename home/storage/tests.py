@@ -358,7 +358,7 @@ class StorageTests(JSONWebTokenTestCase):
         content = self.client.execute(mutation, variables)
         self.assertIsNotNone(content.errors)
 
-        self.assertEqual(content.errors[0].message, '位置不存在，无法删除')
+        self.assertEqual(content.errors[0].message, '位置不存在')
 
 
 class ItemTests(JSONWebTokenTestCase):
