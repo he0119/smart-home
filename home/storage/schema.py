@@ -56,10 +56,16 @@ class StorageType(DjangoObjectType):
         interfaces = (relay.Node, )
 
     items = DjangoFilterConnectionField(ItemType, filterset_class=ItemFilter)
+    ancestors = DjangoFilterConnectionField(lambda: StorageType,
+                                            filterset_class=StorageFilter)
 
     @login_required
     def resolve_items(self, info, **args):
         return self.items
+
+    @login_required
+    def resolve_ancestors(self, info, **args):
+        return self.get_ancestors()
 
     @classmethod
     @login_required
@@ -77,10 +83,6 @@ class Query(graphene.ObjectType):
     storage = relay.Node.Field(StorageType)
     storages = DjangoFilterConnectionField(StorageType,
                                            filterset_class=StorageFilter)
-    storage_ancestors = DjangoFilterConnectionField(
-        StorageType,
-        filterset_class=StorageFilter,
-        id=graphene.ID(required=True))
 
     @login_required
     def resolve_items(self, info, **args):
@@ -89,13 +91,6 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_storages(self, info, **args):
         return Storage.objects.all()
-
-    @login_required
-    def resolve_storage_ancestors(self, info, **args):
-        _, storage_id = from_global_id(args.get('id'))
-
-        storage = Storage.objects.get(pk=storage_id)
-        return storage.get_ancestors(include_self=True)
 
 
 #endregion

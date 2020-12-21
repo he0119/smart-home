@@ -131,11 +131,14 @@ class StorageTests(JSONWebTokenTestCase):
 
     def test_get_storage_ancestors(self):
         query = '''
-            query storageAncestors($id: ID!)  {
-                storageAncestors(id: $id) {
-                    edges {
-                        node {
-                            name
+            query storage($id: ID!)  {
+                storage(id: $id) {
+                    name
+                    ancestors {
+                        edges {
+                            node {
+                                name
+                            }
                         }
                     }
                 }
@@ -147,11 +150,12 @@ class StorageTests(JSONWebTokenTestCase):
         content = self.client.execute(query, variables)
         self.assertIsNone(content.errors)
 
+        self.assertEqual(content.data['storage']['name'], storage.name)
         names = [
             item['node']['name']
-            for item in content.data['storageAncestors']['edges']
+            for item in content.data['storage']['ancestors']['edges']
         ]
-        self.assertEqual(names, ['阳台', '阳台储物柜', '工具箱'])
+        self.assertEqual(names, ['阳台', '阳台储物柜'])
 
     def test_search(self):
         query = '''
