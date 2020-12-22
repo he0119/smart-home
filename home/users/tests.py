@@ -1,4 +1,6 @@
+from home.users.tasks import clear_expired_tokens
 from django.contrib.auth import get_user_model
+from django.test.testcases import TestCase
 from graphql_jwt.testcases import JSONWebTokenTestCase
 
 
@@ -31,3 +33,10 @@ class UserTests(JSONWebTokenTestCase):
         '''
         content = self.client.execute(query)
         self.assertIsNotNone(content.errors)
+
+
+class TokenTests(TestCase):
+    fixtures = ['users']
+
+    def test_clear_expired_tokens(self):
+        clear_expired_tokens()
