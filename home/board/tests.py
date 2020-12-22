@@ -4,6 +4,7 @@ from graphql_jwt.testcases import JSONWebTokenTestCase
 from graphql_relay import to_global_id
 
 from .models import Comment, Topic
+from .utils import unmark
 
 
 class ModelTests(TestCase):
@@ -771,3 +772,19 @@ class DifferentUserCommentTests(JSONWebTokenTestCase):
         self.assertIsNotNone(content.errors)
 
         self.assertEqual(content.errors[0].message, '只能修改自己创建的评论')
+
+
+class MarkdownTests(TestCase):
+    def test_unmark(self):
+        markdown = '# 标题\n\n- 列表一\n- 列表二'
+
+        plaintext = unmark(markdown)
+
+        self.assertEqual(plaintext, '标题\n\n列表一\n列表二')
+
+    def test_unmark_url(self):
+        markdown = '# 标题\n\n- 列表一\n- [列表二](https://test.com)'
+
+        plaintext = unmark(markdown)
+
+        self.assertEqual(plaintext, '标题\n\n列表一\n列表二')

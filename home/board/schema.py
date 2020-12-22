@@ -13,6 +13,7 @@ from home.push.tasks import (PushChannel, get_enable_reg_ids_except_user,
                              push_to_users)
 
 from .models import Comment, Topic
+from .utils import unmark
 
 
 #region type
@@ -138,10 +139,11 @@ class AddTopicMutation(relay.ClientIDMutation):
 
         reg_ids = get_enable_reg_ids_except_user(topic.user)
         if reg_ids:
+            topic_description = unmark(topic.description[:30])
             push_to_users.delay(
                 reg_ids,
                 '新话题',
-                f'{topic.user.username} 刚发布了一个新话题\n{topic.title}\n{topic.description[:30]}',
+                f'{topic.user.username} 刚发布了一个新话题\n{topic.title}\n{topic_description}',
                 PushChannel.BOARD.value,
             )
 
@@ -287,10 +289,11 @@ class AddCommentMutation(relay.ClientIDMutation):
 
         reg_ids = get_enable_reg_ids_except_user(comment.user)
         if reg_ids:
+            comment_body = unmark(comment.body[:30])
             push_to_users.delay(
                 reg_ids,
                 '新回复',
-                f'{comment.user.username} 在 {comment.topic.title} 话题下发表了新回复\n{comment.body[:30]}',
+                f'{comment.user.username} 在 {comment.topic.title} 话题下发表了新回复\n{comment_body}',
                 PushChannel.BOARD.value,
             )
 
