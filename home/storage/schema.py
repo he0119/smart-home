@@ -27,6 +27,7 @@ class ItemFilter(FilterSet):
         ('created_at', 'created_at'),
         ('edited_at', 'edited_at'),
         ('expired_at', 'expired_at'),
+        ('deleted_at', 'deleted_at'),
     ))
 
 
