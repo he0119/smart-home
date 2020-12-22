@@ -495,15 +495,12 @@ class ItemTests(JSONWebTokenTestCase):
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
 
-        names = [
-            item['node']['name'] for item in content.data['items']['edges']
-        ]
-        self.assertEqual(set(names), set(['雨伞', '口罩']))
+        self.assertEqual(len(content.data['items']['edges']), 4)
 
     def test_get_recently_edited_items(self):
         query = '''
             query recentlyEditedItems  {
-                items(orderBy: "-edited_at") {
+                items(first: 2, orderBy: "-edited_at") {
                     edges {
                         node {
                             id
@@ -524,7 +521,7 @@ class ItemTests(JSONWebTokenTestCase):
     def test_get_recently_added_items(self):
         query = '''
             query recentlyAddedItems {
-                items(orderBy: "-created_at") {
+                items(first: 2, orderBy: "-created_at") {
                     edges {
                         node {
                             id
@@ -905,3 +902,233 @@ class ItemTests(JSONWebTokenTestCase):
         self.assertIsNotNone(content.errors)
 
         self.assertEqual(content.errors[0].message, '位置不存在')
+
+
+class ConsumableTests(JSONWebTokenTestCase):
+    """ 耗材相关的测试 """
+    fixtures = ['users', 'storage']
+
+    def setUp(self):
+        self.user = get_user_model().objects.get(username='test')
+        self.client.authenticate(self.user)
+
+    def test_get_consumable(self):
+        """ 获取设置了耗材的物品，与其耗材 """
+        query = '''
+            query consumable {
+                items(consumables_Isnull: false) {
+                    edges {
+                        node {
+                            name
+                            consumables {
+                                edges {
+                                    node {
+                                       name
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        names = [
+            item['node']['name'] for item in content.data['items']['edges']
+        ]
+        self.assertEqual(set(names), {'手表'})
+
+        names = [
+            item['node']['name'] for item in content.data['items']['edges'][0]
+            ['node']['consumables']['edges']
+        ]
+        self.assertEqual(set(names), {'电池'})
+
+    def test_add_consumable(self):
+        """ 添加耗材 """
+        mutation = '''
+            mutation addConsumable($input: AddConsumableMutationInput!) {
+                addConsumable(input: $input) {
+                    item {
+                        id
+                        consumables {
+                            edges {
+                                node {
+                                    name
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '1'),
+                'consumableIds': [to_global_id('ItemType', '2')]
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        names = [
+            item['node']['name'] for item in content.data['addConsumable']
+            ['item']['consumables']['edges']
+        ]
+        self.assertEqual(set(names), {'口罩'})
+
+    def test_error_add_consumable_item_not_exist(self):
+        """ 物品不存在的情况 """
+        mutation = '''
+            mutation addConsumable($input: AddConsumableMutationInput!) {
+                addConsumable(input: $input) {
+                    item {
+                        id
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '0'),
+                'consumableIds': [to_global_id('ItemType', '1')]
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '无法修改不存在的物品')
+
+    def test_error_add_consumable_not_exist(self):
+        """ 耗材不存在的情况 """
+        mutation = '''
+            mutation addConsumable($input: AddConsumableMutationInput!) {
+                addConsumable(input: $input) {
+                    item {
+                        id
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '1'),
+                'consumableIds': [to_global_id('ItemType', '0')]
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '耗材不存在')
+
+    def test_error_add_consumable_self(self):
+        """ 耗材是自己的情况 """
+        mutation = '''
+            mutation addConsumable($input: AddConsumableMutationInput!) {
+                addConsumable(input: $input) {
+                    item {
+                        id
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '1'),
+                'consumableIds': [to_global_id('ItemType', '1')]
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '不能添加自己作为自己的耗材')
+
+    def test_delete_consumable(self):
+        """ 删除耗材 """
+        mutation = '''
+            mutation deleteConsumable($input: DeleteConsumableMutationInput!) {
+                deleteConsumable(input: $input) {
+                    item {
+                        id
+                        consumables {
+                            edges {
+                                node {
+                                    name
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '3'),
+                'consumableIds': [to_global_id('ItemType', '4')]
+            }
+        }
+
+        item = Item.objects.get(pk='3')
+        consumable = Item.objects.get(pk='4')
+        self.assertCountEqual(item.consumables.all(), [consumable])
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        names = [
+            item['node']['name'] for item in content.data['deleteConsumable']
+            ['item']['consumables']['edges']
+        ]
+        self.assertCountEqual(names, [])
+
+    def test_error_delete_consumable_item_not_exist(self):
+        """ 物品不存在的情况 """
+        mutation = '''
+            mutation deleteConsumable($input: DeleteConsumableMutationInput!) {
+                deleteConsumable(input: $input) {
+                    item {
+                        id
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '0'),
+                'consumableIds': [to_global_id('ItemType', '1')]
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '无法修改不存在的物品')
+
+    def test_error_delete_consumable_not_exist(self):
+        """ 耗材不存在的情况 """
+        mutation = '''
+            mutation deleteConsumable($input: DeleteConsumableMutationInput!) {
+                deleteConsumable(input: $input) {
+                    item {
+                        id
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '1'),
+                'consumableIds': [to_global_id('ItemType', '0')]
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '耗材不存在')

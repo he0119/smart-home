@@ -75,6 +75,11 @@ class Item(models.Model):
     deleted_at = models.DateTimeField(null=True,
                                       blank=True,
                                       verbose_name='删除时间')
+    consumables = models.ManyToManyField('self',
+                                         related_name='consumed_by',
+                                         symmetrical=False,
+                                         blank=True,
+                                         verbose_name='耗材')
 
     def delete(self):
         self.is_deleted = True

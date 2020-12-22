@@ -1,5 +1,6 @@
 ignore:
   - "**/migrations"
+  - "**/admin.py"
   - "home/push/mipush"
   - "home/settings"
   - "manage.py"
