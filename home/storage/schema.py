@@ -20,6 +20,7 @@ class ItemFilter(FilterSet):
             'description': ['exact', 'icontains'],
             'expired_at': ['lt', 'gt'],
             'is_deleted': ['exact'],
+            'consumables': ['isnull'],
         }
 
     order_by = OrderingFilter(fields=(

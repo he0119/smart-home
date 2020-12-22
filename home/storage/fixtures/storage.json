@@ -61,12 +61,13 @@
       "price": null,
       "expired_at": "2020-02-01T00:00:00.000Z",
       "storage": 1,
-      "created_at": "2020-01-01T00:00:00.000Z",
+      "created_at": "2020-12-01T00:00:00.000Z",
       "created_by": 1,
-      "edited_at": "2020-01-03T00:00:00.000Z",
+      "edited_at": "2020-12-31T00:00:00.000Z",
       "edited_by": 1,
       "is_deleted": false,
-      "deleted_at": null
+      "deleted_at": null,
+      "consumables": []
     }
   },
   {
@@ -79,12 +80,51 @@
       "price": null,
       "expired_at": null,
       "storage": 2,
-      "created_at": "2020-01-02T00:00:00.000Z",
+      "created_at": "2020-12-02T00:00:00.000Z",
       "created_by": 1,
-      "edited_at": "2020-01-02T00:00:00.000Z",
+      "edited_at": "2020-12-30T00:00:00.000Z",
       "edited_by": 1,
       "is_deleted": false,
-      "deleted_at": null
+      "deleted_at": null,
+      "consumables": []
+    }
+  },
+  {
+    "model": "storage.item",
+    "pk": 3,
+    "fields": {
+      "name": "手表",
+      "number": 1,
+      "description": "需要电池",
+      "price": null,
+      "expired_at": null,
+      "storage": 2,
+      "created_at": "2020-01-03T00:00:00.000Z",
+      "created_by": 1,
+      "edited_at": "2020-01-03T00:00:00.000Z",
+      "edited_by": 1,
+      "is_deleted": false,
+      "deleted_at": null,
+      "consumables": [4]
+    }
+  },
+  {
+    "model": "storage.item",
+    "pk": 4,
+    "fields": {
+      "name": "电池",
+      "number": 1,
+      "description": "手表要用",
+      "price": null,
+      "expired_at": null,
+      "storage": 2,
+      "created_at": "2020-01-04T00:00:00.000Z",
+      "created_by": 1,
+      "edited_at": "2020-01-04T00:00:00.000Z",
+      "edited_by": 1,
+      "is_deleted": false,
+      "deleted_at": null,
+      "consumables": []
     }
   }
 ]
