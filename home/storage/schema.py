@@ -201,8 +201,6 @@ class UpdateStorageMutation(relay.ClientIDMutation):
 
 
 #endregion
-
-
 #region item
 class AddItemMutation(relay.ClientIDMutation):
     class Input:
@@ -334,6 +332,73 @@ class UpdateItemMutation(relay.ClientIDMutation):
         return UpdateItemMutation(item=item)
 
 
+class AddConsumableMutation(relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True, description='物品的 ID')
+        consumable_ids = graphene.List(graphene.ID,
+                                       required=True,
+                                       description='耗材的 ID')
+
+    item = graphene.Field(ItemType)
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, id = from_global_id(input.get('id'))
+        consumable_ids = input.get('consumable_ids')
+
+        try:
+            item = Item.objects.get(pk=id)
+        except Item.DoesNotExist:
+            raise GraphQLError('无法修改不存在的物品')
+
+        for consumable_id in consumable_ids:
+            try:
+                _, consumable_id = from_global_id(consumable_id)
+                consumable = Item.objects.get(pk=consumable_id)
+            except Item.DoesNotExist:
+                raise GraphQLError('耗材不存在')
+            # 不能添加自己作为自己的耗材
+            if item.name == consumable.name:
+                raise GraphQLError('不能添加自己作为自己的耗材')
+            item.consumables.add(consumable)
+
+        item.save()
+        return AddConsumableMutation(item=item)
+
+
+class DeleteConsumableMutation(relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True, description='物品的 ID')
+        consumable_ids = graphene.List(graphene.ID,
+                                       required=True,
+                                       description='耗材的 ID')
+
+    item = graphene.Field(ItemType)
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, id = from_global_id(input.get('id'))
+        consumable_ids = input.get('consumable_ids')
+
+        try:
+            item = Item.objects.get(pk=id)
+        except Item.DoesNotExist:
+            raise GraphQLError('无法修改不存在的物品')
+
+        for consumable_id in consumable_ids:
+            try:
+                _, consumable_id = from_global_id(consumable_id)
+                consumable = Item.objects.get(pk=consumable_id)
+            except Item.DoesNotExist:
+                raise GraphQLError('耗材不存在')
+            item.consumables.remove(consumable)
+
+        item.save()
+        return DeleteConsumableMutation(item=item)
+
+
 #endregion
 class Mutation(graphene.ObjectType):
     update_storage = UpdateStorageMutation.Field()
@@ -343,6 +408,8 @@ class Mutation(graphene.ObjectType):
     delete_storage = DeleteStorageMutation.Field()
     delete_item = DeleteItemMutation.Field()
     restore_item = RestoreItemMutation.Field()
+    add_consumable = AddConsumableMutation.Field()
+    delete_consumable = DeleteConsumableMutation.Field()
 
 
 #endregion
