@@ -316,6 +316,9 @@ class AddCommentMutation(relay.ClientIDMutation):
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
 
+        if not topic.is_open:
+            raise GraphQLError('无法向关闭的话题添加评论')
+
         comment = Comment(
             topic=topic,
             user=info.context.user,

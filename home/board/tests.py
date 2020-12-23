@@ -682,6 +682,30 @@ class CommentTests(JSONWebTokenTestCase):
 
         self.assertEqual(content.errors[0].message, '话题不存在')
 
+    def test_add_comment_to_closed_topic(self):
+        mutation = '''
+            mutation addComment($input: AddCommentMutationInput!) {
+                addComment(input: $input) {
+                    comment {
+                        __typename
+                        id
+                        body
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'topicId': to_global_id('TopicType', '2'),
+                'body': 'test',
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '无法向关闭的话题添加评论')
+
     def test_delete_comment_not_exist(self):
         mutation = '''
             mutation deleteComment($input: DeleteCommentMutationInput!) {
