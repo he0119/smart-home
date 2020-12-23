@@ -8,7 +8,6 @@ class Topic(models.Model):
     class Meta:
         verbose_name = '话题'
         verbose_name_plural = '话题'
-        ordering = ['date_created']
 
     title = models.CharField(max_length=200, verbose_name='标题')
     description = models.TextField(verbose_name='说明')
@@ -17,8 +16,9 @@ class Topic(models.Model):
                              on_delete=models.CASCADE,
                              related_name='topics',
                              verbose_name='创建者')
-    date_created = models.DateTimeField(auto_now_add=True, verbose_name='发布时间')
-    date_modified = models.DateTimeField(auto_now=True, verbose_name='修改时间')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='发布时间')
+    edited_at = models.DateTimeField(auto_now=True, verbose_name='修改时间')
+    is_pin = models.BooleanField(default=False, verbose_name='置顶')
 
     def __str__(self):
         return self.title
@@ -39,8 +39,8 @@ class Comment(MPTTModel):
                              related_name='comments',
                              verbose_name='评论者')
     body = models.TextField(verbose_name='内容')
-    date_created = models.DateTimeField(auto_now_add=True, verbose_name='发布时间')
-    date_modified = models.DateTimeField(auto_now=True, verbose_name='修改时间')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='发布时间')
+    edited_at = models.DateTimeField(auto_now=True, verbose_name='修改时间')
     parent = TreeForeignKey('self',
                             on_delete=models.CASCADE,
                             null=True,

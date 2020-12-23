@@ -25,23 +25,23 @@ class CommentFilter(FilterSet):
             'level': ['exact'],
         }
 
-    order_by = OrderingFilter(fields=(('date_created', 'date_created'), ))
+    order_by = OrderingFilter(fields=(('created_at', 'created_at'), ))
 
 
 class CustomTopicOrderingFilter(OrderingFilter):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.extra['choices'] += [
-            ('date_active', 'Date active'),
-            ('-date_active', 'Date active (descending)'),
+            ('active_at', 'Active At'),
+            ('-active_at', 'Active At (descending)'),
         ]
 
     def filter(self, qs, value):
-        if value and any(v in ['date_active', '-date_active'] for v in value):
+        if value and any(v in ['active_at', '-active_at'] for v in value):
             # 新增一个最近活动的时间
             # 取话题修改时间与最新评论的创建时间的最大值
-            qs = qs.annotate(date_active=Greatest(
-                Max('comments__date_created'), 'date_modified'))
+            qs = qs.annotate(
+                active_at=Greatest(Max('comments__created_at'), 'edited_at'))
 
         return super().filter(qs, value)
 
@@ -54,8 +54,9 @@ class TopicFilter(FilterSet):
         }
 
     order_by = CustomTopicOrderingFilter(fields=(
-        ('date_created', 'date_created'),
+        ('created_at', 'created_at'),
         ('is_open', 'is_open'),
+        ('is_pin', 'is_pin'),
     ))
 
 

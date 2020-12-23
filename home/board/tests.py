@@ -85,7 +85,7 @@ class TopicTests(JSONWebTokenTestCase):
         """ 获取最最近活动的一个话题 """
         query = '''
             query topics {
-                topics(first: 1, orderBy: "-date_active") {
+                topics(first: 1, orderBy: "-active_at") {
                     edges {
                         node {
                             title
