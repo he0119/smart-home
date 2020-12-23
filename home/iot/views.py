@@ -77,7 +77,7 @@ def process_client_disconnected(event):
     try:
         device = Device.objects.get(pk=device_id)
         device.is_online = False
-        device.date_offline = timezone.now()
+        device.offline_at = timezone.now()
         device.save()
         logger.info(f'{device.name} 离线')
     except Device.DoesNotExist:
@@ -93,7 +93,7 @@ def process_client_connected(event):
     try:
         device = Device.objects.get(pk=device_id)
         device.is_online = True
-        device.date_online = timezone.now()
+        device.online_at = timezone.now()
         device.save()
         logger.info(f'{device.name} 在线')
     except Device.DoesNotExist:

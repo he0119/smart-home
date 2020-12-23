@@ -35,11 +35,11 @@ class DeviceFilter(FilterSet):
         }
 
     order_by = OrderingFilter(fields=(
-        ('date_created', 'date_created'),
-        ('date_updated', 'date_updated'),
+        ('created_at', 'created_at'),
+        ('edited_at', 'edited_at'),
         ('is_online', 'is_online'),
-        ('date_online', 'date_online'),
-        ('date_offline', 'date_offline'),
+        ('online_at', 'online_at'),
+        ('offline_at', 'offline_at'),
     ))
 
 

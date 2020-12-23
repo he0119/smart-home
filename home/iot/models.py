@@ -10,15 +10,15 @@ class Device(models.Model):
     name = models.CharField(max_length=100, verbose_name='名字')
     device_type = models.CharField(max_length=100, verbose_name='类型')
     location = models.CharField(max_length=100, verbose_name='位置')
-    date_created = models.DateTimeField(auto_now_add=True, verbose_name='创建日期')
-    date_updated = models.DateTimeField(auto_now=True, verbose_name='更新日期')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    edited_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     is_online = models.BooleanField(verbose_name='在线状态')
-    date_online = models.DateTimeField(null=True,
-                                       blank=True,
-                                       verbose_name='在线日期')
-    date_offline = models.DateTimeField(null=True,
-                                        blank=True,
-                                        verbose_name='离线日期')
+    online_at = models.DateTimeField(null=True,
+                                     blank=True,
+                                     verbose_name='在线时间')
+    offline_at = models.DateTimeField(null=True,
+                                      blank=True,
+                                      verbose_name='离线时间')
 
     def __str__(self):
         return self.name

@@ -6,11 +6,11 @@
       "name": "test",
       "device_type": "autowatering",
       "location": "location",
-      "date_created": "2020-08-02T13:37:42.064Z",
-      "date_updated": "2020-08-02T13:41:29.094Z",
+      "created_at": "2020-08-02T13:37:42.064Z",
+      "edited_at": "2020-08-02T13:41:29.094Z",
       "is_online": false,
-      "date_online": "2020-08-02T13:40:32.826Z",
-      "date_offline": "2020-08-02T13:41:29.094Z"
+      "online_at": "2020-08-02T13:40:32.826Z",
+      "offline_at": "2020-08-02T13:41:29.094Z"
     }
   },
   {
@@ -20,11 +20,11 @@
       "name": "test2",
       "device_type": "autowatering",
       "location": "location2",
-      "date_created": "2020-08-02T13:37:42.064Z",
-      "date_updated": "2020-08-02T13:41:29.094Z",
+      "created_at": "2020-08-02T13:37:42.064Z",
+      "edited_at": "2020-08-02T13:41:29.094Z",
       "is_online": true,
-      "date_online": "2020-08-02T13:40:32.826Z",
-      "date_offline": "2020-08-02T13:41:29.094Z"
+      "online_at": "2020-08-02T13:40:32.826Z",
+      "offline_at": "2020-08-02T13:41:29.094Z"
     }
   },
   {

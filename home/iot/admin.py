@@ -4,8 +4,8 @@ from .models import Device, AutowateringData
 
 
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'device_type', 'location', 'date_created',
-                    'date_updated', 'is_online', 'date_online', 'date_offline')
+    list_display = ('name', 'device_type', 'location', 'created_at',
+                    'edited_at', 'is_online', 'online_at', 'offline_at')
 
 
 class AutowateringDataAdmin(admin.ModelAdmin):
