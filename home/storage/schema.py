@@ -47,6 +47,9 @@ class ItemType(DjangoObjectType):
         fields = '__all__'
         interfaces = (relay.Node, )
 
+    consumables = DjangoFilterConnectionField(lambda: ItemType,
+                                              filterset_class=ItemFilter)
+
     @classmethod
     @login_required
     def get_node(cls, info, id):
