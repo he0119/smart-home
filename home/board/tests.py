@@ -64,7 +64,7 @@ class TopicTests(JSONWebTokenTestCase):
         """ 获取所有话题 """
         query = '''
             query topics {
-                topics {
+                topics(first: 2) {
                     edges {
                         node {
                             title
@@ -82,10 +82,10 @@ class TopicTests(JSONWebTokenTestCase):
         self.assertEqual(set(titles), {'你好世界', '关闭的话题'})
 
     def test_get_frist_topics(self):
-        """ 获取最最近活动的一个话题 """
+        """ 获取最近活动的一个话题 """
         query = '''
             query topics {
-                topics(first: 1, orderBy: "-date_active") {
+                topics(first: 1, orderBy: "-active_at") {
                     edges {
                         node {
                             title
@@ -102,11 +102,11 @@ class TopicTests(JSONWebTokenTestCase):
         ]
         self.assertEqual(set(titles), {'你好世界'})
 
-    def test_get_last_topics(self):
-        """ 获取最近一个话题 """
+    def test_get_pinned_topics(self):
+        """ 获取置顶的一个话题 """
         query = '''
             query topics {
-                topics(last: 1) {
+                topics(first: 1, orderBy: "-is_pin") {
                     edges {
                         node {
                             title
@@ -121,7 +121,7 @@ class TopicTests(JSONWebTokenTestCase):
         titles = [
             topic['node']['title'] for topic in content.data['topics']['edges']
         ]
-        self.assertEqual(set(titles), {'关闭的话题'})
+        self.assertEqual(set(titles), {'置顶的话题'})
 
     def test_add_topic(self):
         mutation = '''
@@ -345,6 +345,115 @@ class TopicTests(JSONWebTokenTestCase):
         mutation = '''
             mutation reopenTopic($input: ReopenTopicMutationInput!) {
                 reopenTopic(input: $input) {
+                    topic {
+                        __typename
+                        id
+                        title
+                        isOpen
+                    }
+                }
+            }
+        '''
+
+        variables = {
+            'input': {
+                'topicId': to_global_id('TopicType', '0'),
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '话题不存在')
+
+    def test_pin_topic(self):
+        mutation = '''
+            mutation pinTopic($input: PinTopicMutationInput!) {
+                pinTopic(input: $input) {
+                    topic {
+                        __typename
+                        id
+                        isPin
+                    }
+                }
+            }
+        '''
+        old_topic = Topic.objects.get(pk=1)
+        self.assertEqual(old_topic.is_pin, False)
+
+        variables = {
+            'input': {
+                'topicId': to_global_id('TopicType', old_topic.id),
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        topic = content.data['pinTopic']['topic']
+
+        self.assertEqual(topic['__typename'], 'TopicType')
+        self.assertEqual(topic['id'], to_global_id('TopicType', old_topic.id))
+        self.assertEqual(topic['isPin'], True)
+
+    def test_unpin_topic(self):
+        mutation = '''
+            mutation unpinTopic($input: UnpinTopicMutationInput!) {
+                unpinTopic(input: $input) {
+                    topic {
+                        __typename
+                        id
+                        title
+                        isPin
+                    }
+                }
+            }
+        '''
+        old_topic = Topic.objects.get(pk=3)
+
+        variables = {
+            'input': {
+                'topicId': to_global_id('TopicType', old_topic.id),
+            }
+        }
+
+        self.assertEqual(old_topic.is_pin, True)
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+        topic = content.data['unpinTopic']['topic']
+
+        self.assertEqual(topic['__typename'], 'TopicType')
+        self.assertEqual(topic['id'], to_global_id('TopicType', old_topic.id))
+        self.assertEqual(topic['isPin'], False)
+
+    def test_pin_topic_not_exist(self):
+        mutation = '''
+            mutation pinTopic($input: PinTopicMutationInput!) {
+                pinTopic(input: $input) {
+                    topic {
+                        __typename
+                        id
+                        isPin
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'topicId': to_global_id('TopicType', '0'),
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '话题不存在')
+
+    def test_unpin_topic_not_exist(self):
+        mutation = '''
+            mutation unpinTopic($input: UnpinTopicMutationInput!) {
+                unpinTopic(input: $input) {
                     topic {
                         __typename
                         id

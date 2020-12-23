@@ -20,8 +20,8 @@ class TopicResource(ModelResource):
             'title',
             'description',
             'user',
-            'date_created',
-            'date_modified',
+            'created_at',
+            'edited_at',
         )
         skip_unchanged = True
         report_skipped = False
@@ -50,8 +50,8 @@ class CommentResource(ModelResource):
             'user',
             'reply_to',
             'body',
-            'date_created',
-            'date_modified',
+            'created_at',
+            'edited_at',
             'parent',
         )
         skip_unchanged = True
