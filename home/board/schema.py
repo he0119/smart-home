@@ -252,6 +252,48 @@ class ReopenTopicMutation(relay.ClientIDMutation):
         return ReopenTopicMutation(topic=topic)
 
 
+class PinTopicMutation(relay.ClientIDMutation):
+    class Input:
+        topic_id = graphene.ID(required=True, description='话题的 ID')
+
+    topic = graphene.Field(TopicType)
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, topic_id = from_global_id(input.get('topic_id'))
+
+        try:
+            topic = Topic.objects.get(pk=topic_id)
+        except Topic.DoesNotExist:
+            raise GraphQLError('话题不存在')
+
+        topic.is_pin = True
+        topic.save()
+        return PinTopicMutation(topic=topic)
+
+
+class UnpinTopicMutation(relay.ClientIDMutation):
+    class Input:
+        topic_id = graphene.ID(required=True, description='话题的 ID')
+
+    topic = graphene.Field(TopicType)
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, topic_id = from_global_id(input.get('topic_id'))
+
+        try:
+            topic = Topic.objects.get(pk=topic_id)
+        except Topic.DoesNotExist:
+            raise GraphQLError('话题不存在')
+
+        topic.is_pin = False
+        topic.save()
+        return UnpinTopicMutation(topic=topic)
+
+
 #endregion
 #region Comment
 class AddCommentMutation(relay.ClientIDMutation):
@@ -358,6 +400,8 @@ class Mutation(graphene.ObjectType):
     add_comment = AddCommentMutation.Field()
     delete_comment = DeleteCommentMutation.Field()
     update_comment = UpdateCommentMutation.Field()
+    pin_topic = PinTopicMutation.Field()
+    unpin_topic = UnpinTopicMutation.Field()
 
 
 #endregion
