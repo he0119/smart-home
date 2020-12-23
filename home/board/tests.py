@@ -64,7 +64,7 @@ class TopicTests(JSONWebTokenTestCase):
         """ 获取所有话题 """
         query = '''
             query topics {
-                topics {
+                topics(first: 2) {
                     edges {
                         node {
                             title
@@ -82,7 +82,7 @@ class TopicTests(JSONWebTokenTestCase):
         self.assertEqual(set(titles), {'你好世界', '关闭的话题'})
 
     def test_get_frist_topics(self):
-        """ 获取最最近活动的一个话题 """
+        """ 获取最近活动的一个话题 """
         query = '''
             query topics {
                 topics(first: 1, orderBy: "-active_at") {
@@ -102,11 +102,11 @@ class TopicTests(JSONWebTokenTestCase):
         ]
         self.assertEqual(set(titles), {'你好世界'})
 
-    def test_get_last_topics(self):
-        """ 获取最近一个话题 """
+    def test_get_pinned_topics(self):
+        """ 获取置顶的一个话题 """
         query = '''
             query topics {
-                topics(last: 1) {
+                topics(first: 1, orderBy: "-is_pin") {
                     edges {
                         node {
                             title
@@ -121,7 +121,7 @@ class TopicTests(JSONWebTokenTestCase):
         titles = [
             topic['node']['title'] for topic in content.data['topics']['edges']
         ]
-        self.assertEqual(set(titles), {'关闭的话题'})
+        self.assertEqual(set(titles), {'置顶的话题'})
 
     def test_add_topic(self):
         mutation = '''
