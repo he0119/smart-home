@@ -90,10 +90,39 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
 
-  deploy:
-    name: Deploy
+  deploy_dev:
+    name: Deploy Dev
     runs-on: ubuntu-latest
     needs: docker
+    environment:
+      name: dev
+      url: https://smart-test.hehome.xyz
+    if: ${{ github.ref == 'refs/heads/dev' }}
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script_stop: true
+          envs: TAG_NAME
+          script: |
+            cd websites
+            sed -i "s#he0119/smart-home:.*#he0119/smart-home:dev#g" docker-compose.yml
+            sudo docker-compose pull
+            sudo docker-compose up -d
+            sudo docker exec -it smart-home python manage.py migrate
+
+  deploy_prod:
+    name: Deploy Prod
+    runs-on: ubuntu-latest
+    needs: docker
+    environment:
+      name: prod
+      url: https://smart-test.hehome.xyz
     if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
     steps:
       - name: Deploy to server
