@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.6.0] - 2020-12-25
+
+### Added
+
+- 留言板增加置顶功能
+- 添加清除过期的令牌的任务
+- 物品管理添加针对耗材的管理
+- 物品管理添加回收站
+
+### Changed
+
+- 调整服务器 API，使用 Relay 格式
+
+### Fixed
+
+- 修复留言板推送消息，没有转换 markdown 格式的问题
+
 ## [0.5.7] - 2020-12-03
 
 ### Added
@@ -109,8 +126,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.5.7...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.6.0...HEAD
 
+[0.6.0]: https://github.com/he0119/smart-home/compare/v0.5.7...v0.6.0
 [0.5.7]: https://github.com/he0119/smart-home/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/he0119/smart-home/compare/v0.5.5...v0.5.6
 [0.5.5]: https://github.com/he0119/smart-home/compare/v0.5.4...v0.5.5
