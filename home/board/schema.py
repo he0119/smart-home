@@ -220,9 +220,6 @@ class CloseTopicMutation(relay.ClientIDMutation):
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
 
-        if topic.user != info.context.user:
-            raise GraphQLError('只能修改自己创建的话题')
-
         topic.is_open = False
         topic.save()
         return CloseTopicMutation(topic=topic)
@@ -243,9 +240,6 @@ class ReopenTopicMutation(relay.ClientIDMutation):
             topic = Topic.objects.get(pk=topic_id)
         except Topic.DoesNotExist:
             raise GraphQLError('话题不存在')
-
-        if topic.user != info.context.user:
-            raise GraphQLError('只能修改自己创建的话题')
 
         topic.is_open = True
         topic.save()

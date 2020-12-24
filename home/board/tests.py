@@ -805,54 +805,6 @@ class DifferentUserTopicTests(JSONWebTokenTestCase):
 
         self.assertEqual(content.errors[0].message, '只能修改自己创建的话题')
 
-    def test_close_topic(self):
-        mutation = '''
-            mutation closeTopic($input: CloseTopicMutationInput!) {
-                closeTopic(input: $input) {
-                    topic {
-                        __typename
-                        id
-                        isOpen
-                    }
-                }
-            }
-        '''
-        variables = {
-            'input': {
-                'topicId': to_global_id('TopicType', '1'),
-            }
-        }
-
-        content = self.client.execute(mutation, variables)
-        self.assertIsNotNone(content.errors)
-
-        self.assertEqual(content.errors[0].message, '只能修改自己创建的话题')
-
-    def test_reopen_topic(self):
-        mutation = '''
-            mutation reopenTopic($input: ReopenTopicMutationInput!) {
-                reopenTopic(input: $input) {
-                    topic {
-                        __typename
-                        id
-                        title
-                        isOpen
-                    }
-                }
-            }
-        '''
-
-        variables = {
-            'input': {
-                'topicId': to_global_id('TopicType', '1'),
-            }
-        }
-
-        content = self.client.execute(mutation, variables)
-        self.assertIsNotNone(content.errors)
-
-        self.assertEqual(content.errors[0].message, '只能修改自己创建的话题')
-
 
 class DifferentUserCommentTests(JSONWebTokenTestCase):
     """ 测试用户操作其他用户创建的东西 """
