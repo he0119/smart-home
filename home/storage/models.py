@@ -64,7 +64,7 @@ class Item(models.Model):
                                    null=True,
                                    blank=True,
                                    verbose_name='录入人')
-    edited_at = models.DateTimeField(auto_now=True, verbose_name='修改时间')
+    edited_at = models.DateTimeField(verbose_name='修改时间')
     edited_by = models.ForeignKey(settings.AUTH_USER_MODEL,
                                   on_delete=models.SET_NULL,
                                   related_name='edited_items',
