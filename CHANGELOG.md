@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.6.1] - 2020-12-25
+
+### Changed
+
+- 调整物品管理与留言板的时间处理逻辑
+
 ## [0.6.0] - 2020-12-25
 
 ### Added
@@ -126,8 +132,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.6.1...HEAD
 
+[0.6.1]: https://github.com/he0119/smart-home/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/he0119/smart-home/compare/v0.5.7...v0.6.0
 [0.5.7]: https://github.com/he0119/smart-home/compare/v0.5.6...v0.5.7
 [0.5.6]: https://github.com/he0119/smart-home/compare/v0.5.5...v0.5.6
