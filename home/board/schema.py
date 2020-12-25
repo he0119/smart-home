@@ -56,6 +56,8 @@ class TopicFilter(FilterSet):
 
     order_by = CustomTopicOrderingFilter(fields=(
         ('created_at', 'created_at'),
+        ('edited_at', 'edited_at'),
+        ('closed_at', 'closed_at'),
         ('is_open', 'is_open'),
         ('is_pin', 'is_pin'),
     ))
