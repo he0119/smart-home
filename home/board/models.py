@@ -11,13 +11,18 @@ class Topic(models.Model):
 
     title = models.CharField(max_length=200, verbose_name='标题')
     description = models.TextField(verbose_name='说明')
+    # TODO: 下个版本调整这个字段名称，并设置默认值
+    # is_closed, default=False
     is_open = models.BooleanField(verbose_name='进行中')
+    closed_at = models.DateTimeField(null=True,
+                                     blank=True,
+                                     verbose_name='关闭时间')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE,
                              related_name='topics',
                              verbose_name='创建者')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='发布时间')
-    edited_at = models.DateTimeField(auto_now=True, verbose_name='修改时间')
+    edited_at = models.DateTimeField(verbose_name='修改时间')
     is_pin = models.BooleanField(default=False, verbose_name='置顶')
 
     def __str__(self):
