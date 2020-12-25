@@ -114,7 +114,7 @@ jobs:
             sed -i "s#he0119/smart-home:.*#he0119/smart-home:dev#g" docker-compose.yml
             sudo docker-compose pull
             sudo docker-compose up -d
-            sudo docker exec -it smart-home python manage.py migrate
+            sudo docker exec smart-home python manage.py migrate
 
   deploy_prod:
     name: Deploy Prod
@@ -140,4 +140,4 @@ jobs:
             sed -i "s#he0119/smart-home:.*#he0119/smart-home:$TAG_NAME#g" docker-compose.yml
             sudo docker-compose pull
             sudo docker-compose up -d
-            sudo docker exec -it smart-home python manage.py migrate
+            sudo docker exec smart-home python manage.py migrate
