@@ -1,6 +1,7 @@
 import graphene
 from django.db.models import Max
 from django.db.models.functions import Greatest
+from django.utils import timezone
 from django_filters import FilterSet, OrderingFilter
 from graphene import relay
 from graphene_django.filter import DjangoFilterConnectionField
@@ -55,6 +56,8 @@ class TopicFilter(FilterSet):
 
     order_by = CustomTopicOrderingFilter(fields=(
         ('created_at', 'created_at'),
+        ('edited_at', 'edited_at'),
+        ('closed_at', 'closed_at'),
         ('is_open', 'is_open'),
         ('is_pin', 'is_pin'),
     ))
@@ -136,6 +139,8 @@ class AddTopicMutation(relay.ClientIDMutation):
             user=info.context.user,
             is_open=True,
         )
+
+        topic.edited_at = timezone.now()
         topic.save()
 
         reg_ids = get_enable_reg_ids_except_user(topic.user)
@@ -200,6 +205,8 @@ class UpdateTopicMutation(relay.ClientIDMutation):
             topic.title = title
         if description is not None:
             topic.description = description
+
+        topic.edited_at = timezone.now()
         topic.save()
         return UpdateTopicMutation(topic=topic)
 
@@ -221,6 +228,7 @@ class CloseTopicMutation(relay.ClientIDMutation):
             raise GraphQLError('话题不存在')
 
         topic.is_open = False
+        topic.closed_at = timezone.now()
         topic.save()
         return CloseTopicMutation(topic=topic)
 

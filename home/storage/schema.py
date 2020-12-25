@@ -1,4 +1,5 @@
 import graphene
+from django.utils import timezone
 from django_filters import FilterSet, OrderingFilter
 from graphene import relay
 from graphene_django.filter import DjangoFilterConnectionField
@@ -248,6 +249,7 @@ class AddItemMutation(relay.ClientIDMutation):
             )
             item.created_by = info.context.user
             item.edited_by = info.context.user
+            item.edited_at = timezone.now()
             item.save()
             return AddItemMutation(item=item)
 
@@ -333,6 +335,7 @@ class UpdateItemMutation(relay.ClientIDMutation):
         item.price = price
         item.expired_at = expired_at
         item.edited_by = info.context.user
+        item.edited_at = timezone.now()
         item.save()
         return UpdateItemMutation(item=item)
 
@@ -368,6 +371,8 @@ class AddConsumableMutation(relay.ClientIDMutation):
                 raise GraphQLError('不能添加自己作为自己的耗材')
             item.consumables.add(consumable)
 
+        item.edited_by = info.context.user
+        item.edited_at = timezone.now()
         item.save()
         return AddConsumableMutation(item=item)
 
@@ -400,6 +405,8 @@ class DeleteConsumableMutation(relay.ClientIDMutation):
                 raise GraphQLError('耗材不存在')
             item.consumables.remove(consumable)
 
+        item.edited_by = info.context.user
+        item.edited_at = timezone.now()
         item.save()
         return DeleteConsumableMutation(item=item)
 
