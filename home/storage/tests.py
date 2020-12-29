@@ -916,7 +916,7 @@ class ConsumableTests(JSONWebTokenTestCase):
         """ 获取设置了耗材的物品，与其耗材 """
         query = '''
             query consumable {
-                items(consumables_Isnull: false) {
+                items(consumables: true) {
                     edges {
                         node {
                             name
@@ -945,6 +945,34 @@ class ConsumableTests(JSONWebTokenTestCase):
             ['node']['consumables']['edges']
         ]
         self.assertEqual(set(names), {'电池'})
+
+    def test_get_consumable_is_empty(self):
+        """ 获取没有设置耗材的物品 """
+        query = '''
+            query consumable {
+                items(consumables: false) {
+                    edges {
+                        node {
+                            name
+                            consumables {
+                                edges {
+                                    node {
+                                       name
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        names = [
+            item['node']['name'] for item in content.data['items']['edges']
+        ]
+        self.assertCountEqual(names, ['电池', '口罩', '雨伞'])
 
     def test_add_consumable(self):
         """ 添加耗材 """
