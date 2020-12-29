@@ -19,7 +19,7 @@ class AutowateringDataFilter(FilterSet):
         model = AutowateringData
         fields = {
             'device': ['exact'],
-            'time': ['exact'],
+            'time': ['exact', 'lt', 'gt'],
         }
 
     order_by = OrderingFilter(fields=(('time', 'time'), ))

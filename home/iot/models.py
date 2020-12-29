@@ -29,6 +29,7 @@ class AutowateringData(models.Model):
     class Meta:
         verbose_name = '自动浇水设备数据'
         verbose_name_plural = '自动浇水设备数据'
+        indexes = [models.Index(fields=['-time'])]
 
     device = models.ForeignKey(Device,
                                on_delete=models.CASCADE,
