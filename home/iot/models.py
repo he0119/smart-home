@@ -50,3 +50,43 @@ class AutowateringData(models.Model):
 
     def __str__(self):
         return f'{self.device.name} {self.time.isoformat()}'
+
+
+class MQTTUser(models.Model):
+    class Meta:
+        verbose_name = 'MQTT 用户'
+        verbose_name_plural = 'MQTT 用户'
+        db_table = 'mqtt_user'
+
+    device = models.OneToOneField(Device,
+                                  on_delete=models.CASCADE,
+                                  related_name='auth',
+                                  verbose_name='设备')
+    password = models.CharField(max_length=100, verbose_name='密码')
+    salt = models.CharField(max_length=40,
+                            null=True,
+                            blank=True,
+                            verbose_name='盐')
+
+
+class MQTTAcl(models.Model):
+    class Meta:
+        verbose_name = 'ACL 规则'
+        verbose_name_plural = 'ACL 规则'
+        db_table = 'mqtt_acl'
+
+    allow = models.IntegerField(verbose_name='允许')
+    ipaddr = models.CharField(max_length=60,
+                              null=True,
+                              blank=True,
+                              verbose_name='IP 地址')
+    username = models.CharField(max_length=100,
+                                null=True,
+                                blank=True,
+                                verbose_name='用户名')
+    clientid = models.CharField(max_length=100,
+                                null=True,
+                                blank=True,
+                                verbose_name='客户端 ID')
+    access = models.IntegerField(verbose_name='操作')
+    topic = models.CharField(max_length=100, verbose_name='主题')

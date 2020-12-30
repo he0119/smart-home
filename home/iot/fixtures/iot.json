@@ -83,5 +83,23 @@
       "valve3_delay": 60,
       "pump_delay": 60
     }
+  },
+  {
+    "model": "iot.mqttuser",
+    "pk": 1,
+    "fields": {
+      "device": 1,
+      "password": "efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7",
+      "salt": null
+    }
+  },
+  {
+    "model": "iot.mqttuser",
+    "pk": 2,
+    "fields": {
+      "device": 2,
+      "password": "efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7",
+      "salt": null
+    }
   }
 ]
