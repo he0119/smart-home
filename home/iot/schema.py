@@ -1,3 +1,4 @@
+import hashlib
 from distutils.util import strtobool
 
 import graphene
@@ -97,11 +98,18 @@ class Query(graphene.ObjectType):
 
 
 #region mutation
+def sha256(s: str) -> str:
+    m = hashlib.sha256()
+    m.update(s.encode('utf8'))
+    return m.hexdigest()
+
+
 class AddDeviceMutation(relay.ClientIDMutation):
     class Input:
         name = graphene.String(required=True)
         device_type = graphene.String(required=True)
         location = graphene.String(required=True)
+        password = graphene.String(required=True)
 
     device = graphene.Field(DeviceType)
 
@@ -111,13 +119,13 @@ class AddDeviceMutation(relay.ClientIDMutation):
         name = input.get('name')
         device_type = input.get('device_type')
         location = input.get('location')
+        password = input.get('password')
 
-        device = Device(
-            name=name,
-            device_type=device_type,
-            location=location,
-            is_online=False,
-        )
+        device = Device(name=name,
+                        device_type=device_type,
+                        location=location,
+                        is_online=False,
+                        password=sha256(password))
         device.save()
         return AddDeviceMutation(device=device)
 
@@ -145,6 +153,7 @@ class UpdateDeviceMutation(relay.ClientIDMutation):
         name = graphene.String()
         device_type = graphene.String()
         location = graphene.String()
+        password = graphene.String()
 
     device = graphene.Field(DeviceType)
 
@@ -155,6 +164,7 @@ class UpdateDeviceMutation(relay.ClientIDMutation):
         name = input.get('name')
         device_type = input.get('device_type')
         location = input.get('location')
+        password = input.get('password')
 
         try:
             device = Device.objects.get(pk=device_id)
@@ -168,6 +178,8 @@ class UpdateDeviceMutation(relay.ClientIDMutation):
             device.device_type = device_type
         if location is not None:
             device.location = location
+        if password is not None:
+            device.password = sha256(password)
 
         device.save()
         return UpdateDeviceMutation(device=device)

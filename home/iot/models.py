@@ -19,6 +19,7 @@ class Device(models.Model):
     offline_at = models.DateTimeField(null=True,
                                       blank=True,
                                       verbose_name='离线时间')
+    password = models.CharField(max_length=100, verbose_name='密码')
 
     def __str__(self):
         return self.name
@@ -50,23 +51,6 @@ class AutowateringData(models.Model):
 
     def __str__(self):
         return f'{self.device.name} {self.time.isoformat()}'
-
-
-class MQTTUser(models.Model):
-    class Meta:
-        verbose_name = 'MQTT 用户'
-        verbose_name_plural = 'MQTT 用户'
-        db_table = 'mqtt_user'
-
-    device = models.OneToOneField(Device,
-                                  on_delete=models.CASCADE,
-                                  related_name='auth',
-                                  verbose_name='设备')
-    password = models.CharField(max_length=100, verbose_name='密码')
-    salt = models.CharField(max_length=40,
-                            null=True,
-                            blank=True,
-                            verbose_name='盐')
 
 
 class MQTTAcl(models.Model):

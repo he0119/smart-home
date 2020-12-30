@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import AutowateringData, Device, MQTTAcl, MQTTUser
+from .models import AutowateringData, Device, MQTTAcl
 
 
 class DeviceAdmin(admin.ModelAdmin):
@@ -18,11 +18,6 @@ class MQTTAclAdmin(admin.ModelAdmin):
                     'topic')
 
 
-class MQTTUserAdmin(admin.ModelAdmin):
-    list_display = ('device', 'password', 'salt')
-
-
 admin.site.register(Device, DeviceAdmin)
 admin.site.register(AutowateringData, AutowateringDataAdmin)
 admin.site.register(MQTTAcl, MQTTAclAdmin)
-admin.site.register(MQTTUser, MQTTUserAdmin)
