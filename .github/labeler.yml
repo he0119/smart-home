@@ -1,0 +1,13 @@
+# https://github.com/actions/labeler
+board:
+  - home/board/**/*
+iot:
+  - home/iot/**/*
+push:
+  - home/push/**/*
+storage:
+  - home/storage/**/*
+xiaoai:
+  - home/xiaoai/**/*
+ci:
+  - .github/**/*
