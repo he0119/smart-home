@@ -6,6 +6,7 @@ categories:
       - 'enhancement'
   - title: 'Changed'
     labels:
+      - 'improve'
       - 'change'
   - title: 'Deprecated'
     labels:
