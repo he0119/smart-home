@@ -138,6 +138,7 @@ class DeviceTests(JSONWebTokenTestCase):
                         name
                         deviceType
                         location
+                        password
                     }
                 }
             }
@@ -147,6 +148,7 @@ class DeviceTests(JSONWebTokenTestCase):
                 'name': 'test2',
                 'deviceType': 'sometype',
                 'location': 'somelocation',
+                'password': 'public',
             }
         }
 
@@ -158,6 +160,9 @@ class DeviceTests(JSONWebTokenTestCase):
         self.assertEqual(device['name'], 'test2')
         self.assertEqual(device['deviceType'], 'sometype')
         self.assertEqual(device['location'], 'somelocation')
+        self.assertEqual(
+            device['password'],
+            'efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7')
 
     def test_delete_device(self):
         """ 测试删除设备 """
@@ -214,6 +219,7 @@ class DeviceTests(JSONWebTokenTestCase):
                         name
                         deviceType
                         location
+                        password
                     }
                 }
             }
@@ -224,6 +230,7 @@ class DeviceTests(JSONWebTokenTestCase):
                 'name': 'newtest',
                 'deviceType': 'newdevicetype',
                 'location': 'newlocation',
+                'password': 'mqtt',
             }
         }
 
@@ -239,6 +246,9 @@ class DeviceTests(JSONWebTokenTestCase):
         self.assertEqual(device['name'], 'newtest')
         self.assertEqual(device['deviceType'], 'newdevicetype')
         self.assertEqual(device['location'], 'newlocation')
+        self.assertEqual(
+            device['password'],
+            '046adb88a188465c6ba56443392821e60e97d3806445ba0e9daea6fb7a94271e')
 
     def test_update_device_not_exist(self):
         """ 测试更新不存在的设备 """
