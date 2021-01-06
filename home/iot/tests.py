@@ -138,6 +138,7 @@ class DeviceTests(JSONWebTokenTestCase):
                         name
                         deviceType
                         location
+                        password
                     }
                 }
             }
@@ -147,6 +148,7 @@ class DeviceTests(JSONWebTokenTestCase):
                 'name': 'test2',
                 'deviceType': 'sometype',
                 'location': 'somelocation',
+                'password': 'public',
             }
         }
 
@@ -158,6 +160,9 @@ class DeviceTests(JSONWebTokenTestCase):
         self.assertEqual(device['name'], 'test2')
         self.assertEqual(device['deviceType'], 'sometype')
         self.assertEqual(device['location'], 'somelocation')
+        self.assertEqual(
+            device['password'],
+            'efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7')
 
     def test_delete_device(self):
         """ 测试删除设备 """
