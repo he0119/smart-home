@@ -1,6 +1,7 @@
 import graphene
 from django.utils import timezone
 from django_filters import FilterSet, OrderingFilter
+from django_filters.filters import BooleanFilter
 from graphene import relay
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
@@ -13,6 +14,15 @@ from .models import Item, Storage
 
 #region type
 class ItemFilter(FilterSet):
+    consumables = BooleanFilter(field_name='consumables',
+                                method='filter_consumables')
+
+    def filter_consumables(self, queryset, name, value):
+        if value:
+            return queryset.exclude(consumables=None)
+        else:
+            return queryset.filter(consumables=None)
+
     class Meta:
         model = Item
         fields = {
@@ -21,7 +31,7 @@ class ItemFilter(FilterSet):
             'description': ['exact', 'icontains'],
             'expired_at': ['lt', 'gt'],
             'is_deleted': ['exact'],
-            'consumables': ['isnull'],
+            'consumables': ['exact'],
         }
 
     order_by = OrderingFilter(fields=(
