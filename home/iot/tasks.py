@@ -60,6 +60,7 @@ def autowatering(self, location_id: str, limit: float, device_id: str,
             reg_ids,
             '自动浇水',
             push_message,
+            '/iot',
             PushChannel.IOT.value,
         )
     return push_message
