@@ -31,7 +31,7 @@ def get_enable_reg_ids_except_user(user) -> List[str]:
     return [mipush.reg_id for user in users for mipush in user.mipush.all()]
 
 
-def build_message(title: str, description: str,
+def build_message(title: str, description: str, payload: str,
                   channel: Optional[List]) -> PushMessage:
     # 每条内容相同的消息单独显示，不覆盖
     # 限制最多可以有 10001 条消息共存
@@ -40,8 +40,8 @@ def build_message(title: str, description: str,
     message = PushMessage() \
         .restricted_package_name(settings.MI_PUSH_PACKAGE_NAME) \
         .title(title).description(description) \
+        .payload(payload) \
         .notify_id(notify_id) \
-        .extra({Constants.extra_param_notify_effect: Constants.notify_launcher_activity}) \
         .extra({'notification_style_type': '1'})
 
     # 通知类别
@@ -57,6 +57,7 @@ def build_message(title: str, description: str,
 def push_to_users(reg_ids: List[str],
                   title: str,
                   description: str,
+                  payload: str,
                   channel: Optional[List] = None):
     """ 向用户推送消息
 
@@ -65,5 +66,5 @@ def push_to_users(reg_ids: List[str],
     根据 regids, 发送消息到指定的一组设备上, regids 的个数不得超过 1000 个。
     <https://dev.mi.com/console/doc/detail?pId=1278#_2_1>
     """
-    message = build_message(title, description, channel)
+    message = build_message(title, description, payload, channel)
     return sender.send(message.message_dict(), reg_ids)
