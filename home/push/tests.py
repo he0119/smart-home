@@ -279,25 +279,27 @@ class MiPushMessageTest(TestCase):
     def test_mipush_message(self):
         message = build_message(title='test',
                                 description='test description',
+                                payload='/iot',
                                 channel=None)
 
         message_dict = message.message_dict()
         self.assertEqual(message_dict['title'], 'test')
         self.assertEqual(message_dict['description'], 'test description')
         self.assertLessEqual(message_dict['notify_id'], 10000)
-        self.assertEqual(message_dict['extra.notify_effect'], '1')
+        self.assertEqual(message_dict['payload'], '/iot')
         self.assertEqual(message_dict['extra.notification_style_type'], '1')
 
     def test_board_channel_mipush_message(self):
         message = build_message(title='test',
                                 description='test description',
+                                payload='/iot',
                                 channel=PushChannel.BOARD.value)
 
         message_dict = message.message_dict()
         self.assertEqual(message_dict['title'], 'test')
         self.assertEqual(message_dict['description'], 'test description')
         self.assertLessEqual(message_dict['notify_id'], 10000)
-        self.assertEqual(message_dict['extra.notify_effect'], '1')
+        self.assertEqual(message_dict['payload'], '/iot')
         self.assertEqual(message_dict['extra.notification_style_type'], '1')
 
         self.assertEqual(message_dict['extra.channel_id'], 'pre84')
@@ -314,6 +316,6 @@ class TaskTests(TestCase):
 
     @mock.patch.object(sender, 'send', side_effect=mocked_sender_send)
     def test_set_status(self, mock_send):
-        push_to_users(['1'], 'title', 'description')
+        push_to_users(['1'], 'title', 'description', '/iot')
 
         self.assertTrue(mock_send.call_args_list)
