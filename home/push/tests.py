@@ -187,6 +187,45 @@ class PushTests(JSONWebTokenTestCase):
         self.assertEqual(reg_ids, [])
 
 
+class DifferentUserPushTests(JSONWebTokenTestCase):
+    fixtures = ['users', 'push']
+
+    def setUp(self):
+        self.user = get_user_model().objects.get(username='test2')
+        self.client.authenticate(self.user)
+
+    def test_update_mipush(self):
+        """ 测试同一个设备更换用户名 """
+        mutation = '''
+            mutation updateMiPush($input: UpdateMiPushMutationInput!) {
+                updateMiPush(input: $input) {
+                    miPush {
+                        user {
+                            username
+                        }
+                        regId
+                        deviceId
+                        model
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'regId': 'testRegId',
+                'deviceId': 'deviceidofuser1',
+                'model': 'modelofuser1',
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        mipush = content.data['updateMiPush']['miPush']
+        self.assertEqual(mipush['user']['username'], 'test2')
+        self.assertEqual(mipush['regId'], 'testRegId')
+
+
 class EmptyPushTests(JSONWebTokenTestCase):
     """ 测试数据库是空的情况 """
     fixtures = ['users']

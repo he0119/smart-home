@@ -87,10 +87,14 @@ class UpdateMiPushMutation(relay.ClientIDMutation):
         model = input.get('model')
 
         try:
-            # 查找当前用户下的对应设备标识码的记录
-            mi_push = MiPush.objects.filter(user=info.context.user).get(
-                device_id=device_id)
+            # 因为一个设备可能登录其他账号
+            # 并且一个设备只有一个设备标识码
+            # 查找设备标识码对应的记录
+            # 并更新相关信息
+            mi_push = MiPush.objects.get(device_id=device_id)
+            mi_push.user = info.context.user
             mi_push.reg_id = reg_id
+            mi_push.model = model
         except MiPush.DoesNotExist:
             # 首次创建时，自动启用
             mi_push = MiPush(
