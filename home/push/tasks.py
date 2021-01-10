@@ -67,4 +67,4 @@ def push_to_users(reg_ids: List[str],
     <https://dev.mi.com/console/doc/detail?pId=1278#_2_1>
     """
     message = build_message(title, description, payload, channel)
-    return sender.send(message.message_dict(), reg_ids)
+    return sender.send(message.message_dict(), ','.join(reg_ids))
