@@ -6,7 +6,7 @@ license = "MIT"
 name = "smart-home"
 readme = "README.md"
 repository = "https://github.com/he0119/smart-home"
-version = "0.6.1"
+version = "0.7.0"
 
 [tool.poetry.dependencies]
 celery = "^5.0.0"

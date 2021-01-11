@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.7.0] - 2021-01-11
+
+### Added
+
+- 添加深层链接支持
+
+### Changed
+
+- 使用设备名称来判断设备
+- 切换 EMQX 的认证方式为 PostgreSQL 认证
+
+### Fixed
+
+- 修复切换账号后无法绑定推送服务的问题
+- 修复推送时，只有一个设备接收到的问题
+- 修复查询拥有耗材的物品时，会返回重复的物品的问题
+- 修复自动浇水设备数据查询慢的问题
+
 ## [0.6.1] - 2020-12-25
 
 ### Changed
@@ -132,8 +150,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.7.0...HEAD
 
+[0.7.0]: https://github.com/he0119/smart-home/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/he0119/smart-home/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/he0119/smart-home/compare/v0.5.7...v0.6.0
 [0.5.7]: https://github.com/he0119/smart-home/compare/v0.5.6...v0.5.7
