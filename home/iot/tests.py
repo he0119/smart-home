@@ -436,12 +436,12 @@ class WebHookTests(TestCase):
     def test_client_connected(self):
         """ 测试客户端连接 """
         webhook_data = {
-            'username': 'test',
+            'username': 'admin',
             'proto_ver': 4,
             'keepalive': 15,
             'ipaddress': '221.10.55.132',
             'connected_at': 1607658682703,
-            'clientid': 'test',
+            'clientid': '1',
             'action': 'client_connected'
         }
         response = self.client.post(reverse('iot:iot'),
@@ -450,18 +450,40 @@ class WebHookTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        device = Device.objects.get(name='test')
+        device = Device.objects.get(pk=1)
         self.assertEqual(device.is_online, True)
 
-    def test_client_connected_not_exist(self):
-        """ 测试客户端连接，但设备不存在 """
+    def test_client_connected_not_iot(self):
+        """ 测试客户端连接，但不是物联网设备 """
         webhook_data = {
-            'username': 'test0',
+            'username': 'admin',
             'proto_ver': 4,
             'keepalive': 15,
             'ipaddress': '221.10.55.132',
             'connected_at': 1607658682703,
-            'clientid': 'test0',
+            'clientid': 'notiot',
+            'action': 'client_connected'
+        }
+        response = self.client.post(reverse('iot:iot'),
+                                    data=json.dumps(webhook_data),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+
+        device = Device.objects.get(pk=1)
+        self.assertEqual(device.is_online, False)
+        device = Device.objects.get(pk=2)
+        self.assertEqual(device.is_online, True)
+
+    def test_client_connected_not_exist(self):
+        """ 测试客户端连接，但不是设备不存在 """
+        webhook_data = {
+            'username': 'admin',
+            'proto_ver': 4,
+            'keepalive': 15,
+            'ipaddress': '221.10.55.132',
+            'connected_at': 1607658682703,
+            'clientid': '3',
             'action': 'client_connected'
         }
         response = self.client.post(reverse('iot:iot'),
@@ -474,9 +496,9 @@ class WebHookTests(TestCase):
     def test_client_disconnected(self):
         """ 测试客户端断开连接 """
         webhook_data = {
-            'username': 'test',
+            'username': 'admin',
             'reason': 'keepalive_timeout',
-            'clientid': 'test',
+            'clientid': '2',
             'action': 'client_disconnected'
         }
         response = self.client.post(reverse('iot:iot'),
@@ -485,15 +507,34 @@ class WebHookTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        device = Device.objects.get(name='test')
+        device = Device.objects.get(pk=2)
         self.assertEqual(device.is_online, False)
 
-    def test_client_disconnected_not_exist(self):
-        """ 测试客户端断开连接，但设备不存在 """
+    def test_client_disconnected_not_iot(self):
+        """ 测试客户端断开连接，但不是物联网设备 """
         webhook_data = {
-            'username': 'test0',
+            'username': 'admin',
             'reason': 'keepalive_timeout',
-            'clientid': 'test0',
+            'clientid': 'notiot',
+            'action': 'client_disconnected'
+        }
+        response = self.client.post(reverse('iot:iot'),
+                                    data=json.dumps(webhook_data),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+
+        device = Device.objects.get(pk=1)
+        self.assertEqual(device.is_online, False)
+        device = Device.objects.get(pk=2)
+        self.assertEqual(device.is_online, True)
+
+    def test_client_disconnected_not_exist(self):
+        """ 测试客户端断开连接，但不是设备不存在 """
+        webhook_data = {
+            'username': 'admin',
+            'reason': 'keepalive_timeout',
+            'clientid': '3',
             'action': 'client_disconnected'
         }
         response = self.client.post(reverse('iot:iot'),
@@ -507,13 +548,13 @@ class WebHookTests(TestCase):
         """ 测试上报数据 """
         webhook_data = {
             'ts': 1607658685693,
-            'topic': 'device/test/status',
+            'topic': 'device/1/status',
             'retain': False,
             'qos': 0,
             'payload':
-            '{"timestamp":1607658685,"data":{"temperature":4.0,"humidity":0,"valve1":false,"valve2":false,"valve3":false,"pump":false,"valve1_delay":60,"valve2_delay":60,"valve3_delay":60,"pump_delay":60,"wifi_signal":-43}}',
-            'from_username': 'test',
-            'from_client_id': 'test',
+            '{"device_id":1,"timestamp":1607658685,"data":{"temperature":4.0,"humidity":0,"valve1":false,"valve2":false,"valve3":false,"pump":false,"valve1_delay":60,"valve2_delay":60,"valve3_delay":60,"pump_delay":60,"wifi_signal":-43}}',
+            'from_username': 'admin',
+            'from_client_id': '1',
             'action': 'message_publish'
         }
         response = self.client.post(reverse('iot:iot'),
@@ -526,17 +567,39 @@ class WebHookTests(TestCase):
         self.assertEqual(autowatering_data.temperature, 4.0)
         self.assertEqual(autowatering_data.wifi_signal, -43)
 
-    def test_message_publish_not_exist(self):
-        """ 测试上报数据，但设备不存在 """
+    def test_message_publish_not_iot(self):
+        """ 测试上报数据，但不是物联网设备 """
         webhook_data = {
             'ts': 1607658685693,
-            'topic': 'device/test0/status',
+            'topic': 'device/1/status',
             'retain': False,
             'qos': 0,
             'payload':
-            '{"timestamp":1607658685,"data":{"temperature":4.0,"humidity":0,"valve1":false,"valve2":false,"valve3":false,"pump":false,"valve1_delay":60,"valve2_delay":60,"valve3_delay":60,"pump_delay":60,"wifi_signal":-43}}',
-            'from_username': 'test0',
-            'from_client_id': 'test0',
+            '{"device_id":1,"timestamp":1607658685,"data":{"temperature":4.0,"humidity":0,"valve1":false,"valve2":false,"valve3":false,"pump":false,"valve1_delay":60,"valve2_delay":60,"valve3_delay":60,"pump_delay":60,"wifi_signal":-43}}',
+            'from_username': 'admin',
+            'from_client_id': 'notiot',
+            'action': 'message_publish'
+        }
+        response = self.client.post(reverse('iot:iot'),
+                                    data=json.dumps(webhook_data),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code, 200)
+
+        autowatering_data = AutowateringData.objects.last()
+        self.assertEqual(autowatering_data.id, 3)
+
+    def test_message_publish_not_exist(self):
+        """ 测试上报数据，但不是设备不存在 """
+        webhook_data = {
+            'ts': 1607658685693,
+            'topic': 'device/1/status',
+            'retain': False,
+            'qos': 0,
+            'payload':
+            '{"device_id":1,"timestamp":1607658685,"data":{"temperature":4.0,"humidity":0,"valve1":false,"valve2":false,"valve3":false,"pump":false,"valve1_delay":60,"valve2_delay":60,"valve3_delay":60,"pump_delay":60,"wifi_signal":-43}}',
+            'from_username': 'admin',
+            'from_client_id': '3',
             'action': 'message_publish'
         }
         response = self.client.post(reverse('iot:iot'),

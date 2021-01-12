@@ -36,12 +36,15 @@ def iot(request):
 
 def process_message_publish(event):
     """ 处理消息发布事件 """
-    device_name = event['from_username']
+    device_id = event['from_client_id']
+    if not device_id.isdigit():
+        logger.warning(f'{device_id} 不是物联网设备，已忽略')
+        return
     topic = event['topic']
     if 'status' in topic:
         payload = json.loads(event['payload'])
         try:
-            device = Device.objects.get(name=device_name)
+            device = Device.objects.get(pk=device_id)
             if device.device_type == 'autowatering':
                 autowatering_data = AutowateringData(
                     device=device,
@@ -62,30 +65,36 @@ def process_message_publish(event):
                 autowatering_data.save()
                 logger.debug(f'{device.name} {autowatering_data.time} 保存成功')
         except Device.DoesNotExist:
-            logger.error(f'设备({device_name}) 不存在')
+            logger.error(f'设备 ID({device_id}) 不存在')
 
 
 def process_client_disconnected(event):
     """ 处理设备下线事件 """
-    device_name = event['username']
+    device_id = event['clientid']
+    if not device_id.isdigit():
+        logger.warning(f'{device_id} 离线。因不属于物联网设备，已忽略')
+        return
     try:
-        device = Device.objects.get(name=device_name)
+        device = Device.objects.get(pk=device_id)
         device.is_online = False
         device.offline_at = timezone.now()
         device.save()
         logger.info(f'{device.name} 离线')
     except Device.DoesNotExist:
-        logger.error(f'设备({device_name}) 不存在')
+        logger.error(f'设备 ID({device_id}) 不存在')
 
 
 def process_client_connected(event):
     """ 处理设备上线事件 """
-    device_name = event['username']
+    device_id = event['clientid']
+    if not device_id.isdigit():
+        logger.warning(f'{device_id} 在线。因不属于物联网设备，已忽略')
+        return
     try:
-        device = Device.objects.get(name=device_name)
+        device = Device.objects.get(pk=device_id)
         device.is_online = True
         device.online_at = timezone.now()
         device.save()
         logger.info(f'{device.name} 在线')
     except Device.DoesNotExist:
-        logger.error(f'设备({device_name}) 不存在')
+        logger.error(f'设备 ID({device_id}) 不存在')

@@ -218,7 +218,7 @@ class SetDeviceMutation(relay.ClientIDMutation):
         elif value_type == 'str':
             pass
 
-        set_status.delay(device.name, key, value)
+        set_status.delay(device_id, key, value)
 
         return SetDeviceMutation(device=device)
 

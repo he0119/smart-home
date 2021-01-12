@@ -25,20 +25,20 @@ class MQTTClient:
 
 
 class DeviceAPI:
-    def __init__(self, device_name: str) -> None:
-        self.device_name = device_name
+    def __init__(self, device_id: str) -> None:
+        self.device_id = device_id
         self._client = MQTTClient()
 
     def set_status(self, key, value):
         """ 设置设备参数 """
-        topic = f'device/{self.device_name}/set'
+        topic = f'device/{self.device_id}/set'
         payload = {key: value}
         r = self._client.publish(topic, payload, 1)
         return r
 
     def set_multiple_status(self, status: List[Tuple]):
         """ 设置设备的多个参数 """
-        topic = f'device/{self.device_name}/set'
+        topic = f'device/{self.device_id}/set'
         payload = {key: value for key, value in status}
         r = self._client.publish(topic, payload, 1)
         return r
