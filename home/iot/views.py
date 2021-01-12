@@ -36,10 +36,7 @@ def iot(request):
 
 def process_message_publish(event):
     """ 处理消息发布事件 """
-    device_id = event['from_client_id']
-    if not device_id.isdigit():
-        logger.warning(f'{device_id} 不是物联网设备，已忽略')
-        return
+    device_id = event['from_username']
     topic = event['topic']
     if 'status' in topic:
         payload = json.loads(event['payload'])
@@ -70,10 +67,7 @@ def process_message_publish(event):
 
 def process_client_disconnected(event):
     """ 处理设备下线事件 """
-    device_id = event['clientid']
-    if not device_id.isdigit():
-        logger.warning(f'{device_id} 离线。因不属于物联网设备，已忽略')
-        return
+    device_id = event['username']
     try:
         device = Device.objects.get(pk=device_id)
         device.is_online = False
@@ -86,10 +80,7 @@ def process_client_disconnected(event):
 
 def process_client_connected(event):
     """ 处理设备上线事件 """
-    device_id = event['clientid']
-    if not device_id.isdigit():
-        logger.warning(f'{device_id} 在线。因不属于物联网设备，已忽略')
-        return
+    device_id = event['username']
     try:
         device = Device.objects.get(pk=device_id)
         device.is_online = True
