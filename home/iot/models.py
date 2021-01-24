@@ -60,16 +60,9 @@ class MQTTAcl(models.Model):
         db_table = 'mqtt_acl'
 
     allow = models.IntegerField(verbose_name='允许')
-    ipaddr = models.CharField(max_length=60,
-                              null=True,
-                              blank=True,
-                              verbose_name='IP 地址')
-    username = models.CharField(max_length=100,
-                                null=True,
-                                blank=True,
-                                verbose_name='用户名')
+    ipaddr = models.CharField(max_length=60, blank=True, verbose_name='IP 地址')
+    username = models.CharField(max_length=100, blank=True, verbose_name='用户名')
     clientid = models.CharField(max_length=100,
-                                null=True,
                                 blank=True,
                                 verbose_name='客户端 ID')
     access = models.IntegerField(verbose_name='操作')
