@@ -5,7 +5,7 @@
     "fields": {
       "name": "阳台",
       "parent": null,
-      "description": null,
+      "description": "",
       "lft": 1,
       "rght": 8,
       "tree_id": 1,
@@ -18,7 +18,7 @@
     "fields": {
       "name": "阳台储物柜",
       "parent": 1,
-      "description": null,
+      "description": "",
       "lft": 2,
       "rght": 7,
       "tree_id": 1,
@@ -31,7 +31,7 @@
     "fields": {
       "name": "工具箱",
       "parent": 2,
-      "description": null,
+      "description": "",
       "lft": 3,
       "rght": 4,
       "tree_id": 1,
@@ -44,7 +44,7 @@
     "fields": {
       "name": "工具箱2",
       "parent": 2,
-      "description": null,
+      "description": "",
       "lft": 5,
       "rght": 6,
       "tree_id": 1,
@@ -57,7 +57,7 @@
     "fields": {
       "name": "雨伞",
       "number": 1,
-      "description": null,
+      "description": "",
       "price": null,
       "expired_at": "2020-02-01T00:00:00.000Z",
       "storage": 1,

@@ -21,7 +21,6 @@ class Storage(MPTTModel):
                             related_name='children',
                             verbose_name='属于')
     description = models.CharField(max_length=200,
-                                   null=True,
                                    blank=True,
                                    verbose_name='备注')
 
@@ -39,7 +38,6 @@ class Item(models.Model):
     name = models.CharField(max_length=200, unique=True, verbose_name='名字')
     number = models.IntegerField(verbose_name='数量')
     description = models.CharField(max_length=200,
-                                   null=True,
                                    blank=True,
                                    verbose_name='备注')
     price = models.DecimalField(max_digits=10,
