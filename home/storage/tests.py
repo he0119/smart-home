@@ -741,6 +741,64 @@ class ItemTests(JSONWebTokenTestCase):
         self.assertEqual(item['price'], 12.0)
         self.assertEqual(item['expiredAt'], expiration_date.isoformat())
 
+    def test_update_deleted_item(self):
+        """ 测试修改已删除的物品 """
+        mutation = '''
+            mutation updateItem($input: UpdateItemMutationInput!) {
+                updateItem(input: $input) {
+                    item {
+                        __typename
+                        id
+                        name
+                        number
+                        storage {
+                            id
+                            name
+                        }
+                        description
+                        price
+                        expiredAt
+                        editedAt
+                        editedBy {
+                            username
+                        }
+                        isDeleted
+                    }
+                }
+            }
+        '''
+        expiration_date = timezone.now()
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '5'),
+                'name': 'test',
+                'number': 2,
+                'storageId': to_global_id('StorageType', '2'),
+                'description': 'some',
+                'price': 12.0,
+                'expiredAt': expiration_date.isoformat(),
+            }
+        }
+
+        old_item = Item.objects.get(pk=5)
+        self.assertEqual(old_item.name, '垃圾')
+        self.assertEqual(old_item.is_deleted, True)
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+        item = content.data['updateItem']['item']
+
+        self.assertEqual(item['__typename'], 'ItemType')
+        self.assertEqual(item['id'], to_global_id('ItemType', '5'))
+        self.assertEqual(item['name'], 'test')
+        self.assertEqual(item['number'], 2)
+        self.assertEqual(item['description'], 'some')
+        self.assertEqual(item['storage']['id'],
+                         to_global_id('StorageType', '2'))
+        self.assertEqual(item['price'], 12.0)
+        self.assertEqual(item['expiredAt'], expiration_date.isoformat())
+        self.assertEqual(item['isDeleted'], False)
+
     def test_add_item_name_duplicate(self):
         mutation = '''
             mutation addItem($input: AddItemMutationInput!) {
