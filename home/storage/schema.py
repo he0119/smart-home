@@ -346,7 +346,11 @@ class UpdateItemMutation(relay.ClientIDMutation):
         item.expired_at = expired_at
         item.edited_by = info.context.user
         item.edited_at = timezone.now()
-        item.save()
+        # 如果修改已删除的物品，则自动恢复它
+        if item.is_deleted:
+            item.restore()
+        else:
+            item.save()
         return UpdateItemMutation(item=item)
 
 
