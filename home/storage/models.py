@@ -13,16 +13,14 @@ class Storage(MPTTModel):
     class MPTTMeta:
         order_insertion_by = ['name']
 
-    name = models.CharField(max_length=200, unique=True, verbose_name='名字')
+    name = models.CharField('名字', max_length=200, unique=True)
     parent = TreeForeignKey('self',
+                            verbose_name='属于',
                             on_delete=models.CASCADE,
                             null=True,
                             blank=True,
-                            related_name='children',
-                            verbose_name='属于')
-    description = models.CharField(max_length=200,
-                                   blank=True,
-                                   verbose_name='备注')
+                            related_name='children')
+    description = models.CharField('备注', max_length=200, blank=True)
 
     def __str__(self):
         return self.name
@@ -35,49 +33,43 @@ class Item(models.Model):
         verbose_name_plural = '物品'
         ordering = ['name']
 
-    name = models.CharField(max_length=200, unique=True, verbose_name='名字')
-    number = models.IntegerField(verbose_name='数量')
-    description = models.CharField(max_length=200,
-                                   blank=True,
-                                   verbose_name='备注')
-    price = models.DecimalField(max_digits=10,
+    name = models.CharField('名字', max_length=200, unique=True)
+    number = models.IntegerField('数量')
+    description = models.CharField('备注', max_length=200, blank=True)
+    price = models.DecimalField('价格',
+                                max_digits=10,
                                 decimal_places=2,
                                 null=True,
-                                blank=True,
-                                verbose_name='价格')
-    expired_at = models.DateTimeField(null=True,
-                                      blank=True,
-                                      verbose_name='有效日期')
+                                blank=True)
+    expired_at = models.DateTimeField('有效日期', null=True, blank=True)
     # 如果值为 null，指未分类，没有设定存放位置
     storage = models.ForeignKey(Storage,
+                                verbose_name='属于',
                                 on_delete=models.SET_NULL,
                                 null=True,
                                 blank=True,
-                                related_name='items',
-                                verbose_name='属于')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='添加时间')
+                                related_name='items')
+    created_at = models.DateTimeField('添加时间', auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                   verbose_name='录入人',
                                    on_delete=models.SET_NULL,
                                    related_name='created_items',
                                    null=True,
-                                   blank=True,
-                                   verbose_name='录入人')
-    edited_at = models.DateTimeField(verbose_name='修改时间')
+                                   blank=True)
+    edited_at = models.DateTimeField('修改时间')
     edited_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                  verbose_name='修改人',
                                   on_delete=models.SET_NULL,
                                   related_name='edited_items',
                                   null=True,
-                                  blank=True,
-                                  verbose_name='修改人')
-    is_deleted = models.BooleanField(default=False, verbose_name='逻辑删除')
-    deleted_at = models.DateTimeField(null=True,
-                                      blank=True,
-                                      verbose_name='删除时间')
+                                  blank=True)
+    is_deleted = models.BooleanField('逻辑删除', default=False)
+    deleted_at = models.DateTimeField('删除时间', null=True, blank=True)
     consumables = models.ManyToManyField('self',
+                                         verbose_name='耗材',
                                          related_name='consumed_by',
                                          symmetrical=False,
-                                         blank=True,
-                                         verbose_name='耗材')
+                                         blank=True)
 
     def delete(self):
         self.is_deleted = True
