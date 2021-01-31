@@ -17,6 +17,14 @@ class ItemFilter(FilterSet):
     consumables = BooleanFilter(field_name='consumables',
                                 method='filter_consumables')
 
+    def __init__(self, data=None, *args, **kwargs):
+        if data is not None:
+            # 默认不显示已删除的物品
+            if data.get('is_deleted') is None:
+                data['is_deleted'] = False
+
+        super().__init__(data, *args, **kwargs)
+
     def filter_consumables(self, queryset, name, value):
         if value:
             return queryset.exclude(consumables=None)
