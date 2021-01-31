@@ -497,6 +497,27 @@ class ItemTests(JSONWebTokenTestCase):
 
         self.assertEqual(len(content.data['items']['edges']), 4)
 
+    def test_get_deleted_items(self):
+        """ 测试获取已删除的物品 """
+        query = '''
+            query items {
+                items(isDeleted: true) {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        '''
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        self.assertEqual(len(content.data['items']['edges']), 1)
+        self.assertEqual(content.data['items']['edges'][0]['node']['name'],
+                         '垃圾')
+
     def test_get_recently_edited_items(self):
         query = '''
             query recentlyEditedItems  {
