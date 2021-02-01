@@ -14,6 +14,10 @@ class Migration(migrations.Migration):
         migrations.SeparateDatabaseAndState(
             database_operations=[
                 migrations.RunSQL(
+                    sql='ALTER TABLE storage_item_consumables DROP CONSTRAINT storage_item_consumables_from_item_id_to_item_id_1fba0b1f_uniq',
+                    reverse_sql='ALTER TABLE storage_item_consumables ADD CONSTRAINT storage_item_consumables_from_item_id_to_item_id_1fba0b1f_uniq UNIQUE (from_item_id, to_item_id)',
+                ),
+                migrations.RunSQL(
                     sql='ALTER TABLE storage_item_consumables RENAME TO storage_itemconsumables',
                     reverse_sql='ALTER TABLE storage_itemconsumables RENAME TO storage_item_consumables',
                 ),
