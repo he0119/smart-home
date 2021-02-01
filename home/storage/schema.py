@@ -17,6 +17,14 @@ class ItemFilter(FilterSet):
     consumables = BooleanFilter(field_name='consumables',
                                 method='filter_consumables')
 
+    def __init__(self, data=None, *args, **kwargs):
+        if data is not None:
+            # 默认不显示已删除的物品
+            if data.get('is_deleted') is None:
+                data['is_deleted'] = False
+
+        super().__init__(data, *args, **kwargs)
+
     def filter_consumables(self, queryset, name, value):
         if value:
             return queryset.exclude(consumables=None)
@@ -346,7 +354,11 @@ class UpdateItemMutation(relay.ClientIDMutation):
         item.expired_at = expired_at
         item.edited_by = info.context.user
         item.edited_at = timezone.now()
-        item.save()
+        # 如果修改已删除的物品，则自动恢复它
+        if item.is_deleted:
+            item.restore()
+        else:
+            item.save()
         return UpdateItemMutation(item=item)
 
 
