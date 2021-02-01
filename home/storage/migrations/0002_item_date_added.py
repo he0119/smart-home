@@ -11,11 +11,6 @@ def set_date_added(apps, schema_editor):
         item.save()
 
 
-def reverse_set_date_added(apps, schema_editor):
-    """ 不需要做任何事情 """
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -36,7 +31,7 @@ class Migration(migrations.Migration):
                                        verbose_name='添加时间'),
         ),
         migrations.RunPython(set_date_added,
-                             reverse_code=reverse_set_date_added),
+                             reverse_code=migrations.RunPython.noop),
         migrations.AlterField(
             model_name='item',
             name='date_added',
