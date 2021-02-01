@@ -1,10 +1,16 @@
 from django.contrib import admin
 
-from .models import Item, Storage
+from .models import Item, ItemConsumables, Storage
 
 
 class StorageAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent', 'description')
+
+
+class ItemConsumablesInline(admin.TabularInline):
+    model = ItemConsumables
+    extra = 1
+    fk_name = 'item'
 
 
 class ItemAdmin(admin.ModelAdmin):
@@ -12,8 +18,10 @@ class ItemAdmin(admin.ModelAdmin):
                     'expired_at', 'get_consumables', 'edited_at', 'edited_by',
                     'created_at', 'created_by')
 
+    inlines = (ItemConsumablesInline, )
+
     def get_consumables(self, obj):
-        return '\n'.join([p.name for p in obj.consumables.all()])
+        return ','.join([p.name for p in obj.consumables.all()])
 
     get_consumables.short_description = '耗材'
 
