@@ -9,6 +9,7 @@ repository = "https://github.com/he0119/smart-home"
 version = "0.7.0"
 
 [tool.poetry.dependencies]
+boto3 = "^1.17.17"
 celery = "^5.0.0"
 django = "^3.0.8"
 django-celery-beat = "^2.1.0"
@@ -24,7 +25,6 @@ psycopg2 = "^2.8.5"
 python = "~3.8"
 redis = "^3.5.3"
 requests = "^2.24.0"
-boto3 = "^1.17.17"
 
 [tool.poetry.dev-dependencies]
 django-cors-headers = "^3.4.0"
