@@ -67,7 +67,7 @@ class ImageType(ObjectType):
 
     @login_required
     def resolve_name(self, info, **args):
-        return self.name
+        return self.name.split('/')[-1]
 
     @login_required
     def resolve_url(self, info, **args):

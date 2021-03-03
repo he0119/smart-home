@@ -109,10 +109,33 @@ class Picture(models.Model):
         verbose_name = '图片'
         verbose_name_plural = '图片'
 
+    description = models.CharField(
+        verbose_name='备注',
+        max_length=200,
+        blank=True,
+    )
     item = models.ForeignKey(
         Item,
-        verbose_name='图片',
+        verbose_name='物品',
         on_delete=models.CASCADE,
         related_name='pictures',
     )
-    picture = models.ImageField(upload_to=get_file_path)
+    picture = models.ImageField(
+        verbose_name='图片',
+        upload_to=get_file_path,
+    )
+    created_at = models.DateTimeField(
+        verbose_name='添加时间',
+        auto_now_add=True,
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name='添加人',
+        on_delete=models.SET_NULL,
+        related_name='+',
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.description or self.picture.name.split('/')[-1]
