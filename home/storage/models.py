@@ -97,10 +97,13 @@ class Item(models.Model):
 
 
 def get_file_path(instance, filename):
-    """ 生成独一无二的 ID """
+    """ 生成独一无二的 ID
+
+    物品 ID + UUID4
+    """
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join('item_pictrues', instance.item.name, filename)
+    return os.path.join('item_pictrues', f'{instance.item.id}-{filename}')
 
 
 class Picture(models.Model):
