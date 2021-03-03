@@ -1,3 +1,6 @@
+import os
+import uuid
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -91,3 +94,25 @@ class Item(models.Model):
 
     def __str__(self):
         return self.name
+
+
+def get_file_path(instance, filename):
+    """ 生成独一无二的 ID """
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join('item_pictrues', instance.item.name, filename)
+
+
+class Picture(models.Model):
+    """ 图片 """
+    class Meta:
+        verbose_name = '图片'
+        verbose_name_plural = '图片'
+
+    item = models.ForeignKey(
+        Item,
+        verbose_name='图片',
+        on_delete=models.CASCADE,
+        related_name='pictures',
+    )
+    picture = models.ImageField(upload_to=get_file_path)

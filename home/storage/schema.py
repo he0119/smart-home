@@ -2,14 +2,15 @@ import graphene
 from django.utils import timezone
 from django_filters import FilterSet, OrderingFilter
 from django_filters.filters import BooleanFilter
-from graphene import relay
+from graphene import ObjectType, relay
+from graphene_django.fields import DjangoConnectionField
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
 from graphql_relay import from_global_id
 
-from .models import Item, Storage
+from .models import Item, Picture, Storage
 
 
 #region type
@@ -60,6 +61,37 @@ class StorageFilter(FilterSet):
         }
 
 
+class ImageType(ObjectType):
+    name = graphene.String(required=True)
+    url = graphene.String(required=True)
+
+    @login_required
+    def resolve_name(self, info, **args):
+        return self.name
+
+    @login_required
+    def resolve_url(self, info, **args):
+        return self.url
+
+
+class ItemPictureType(DjangoObjectType):
+    class Meta:
+        model = Picture
+        fields = '__all__'
+        interfaces = (relay.Node, )
+
+    picture = graphene.Field(ImageType, required=True)
+
+    @login_required
+    def resolve_picture(self, info, **args):
+        return self.picture
+
+    @classmethod
+    @login_required
+    def get_node(cls, info, id):
+        return Picture.objects.get(pk=id)
+
+
 class ItemType(DjangoObjectType):
     class Meta:
         model = Item
@@ -68,6 +100,11 @@ class ItemType(DjangoObjectType):
 
     consumables = DjangoFilterConnectionField(lambda: ItemType,
                                               filterset_class=ItemFilter)
+    pictures = DjangoConnectionField(ItemPictureType)
+
+    @login_required
+    def resolve_pictures(self, info, **args):
+        return self.pictures
 
     @classmethod
     @login_required

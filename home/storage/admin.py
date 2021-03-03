@@ -1,13 +1,20 @@
 from django.contrib import admin
 
-from .models import Item, Storage
+from .models import Item, Picture, Storage
 
 
 class StorageAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent', 'description')
 
 
+class PictureInline(admin.TabularInline):
+    model = Picture
+    extra = 1
+
+
 class ItemAdmin(admin.ModelAdmin):
+    inlines = [PictureInline]
+
     list_display = ('name', 'storage', 'number', 'price', 'description',
                     'expired_at', 'get_consumables', 'edited_at', 'edited_by',
                     'created_at', 'created_by')
