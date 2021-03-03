@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     'mptt',
     'import_export',
     'django_celery_beat',
+    'django_cleanup.apps.CleanupConfig',
     # GraphQL
     'graphene_django',
     'django_filters',

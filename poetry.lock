@@ -309,6 +309,19 @@ url = "https://mirrors.aliyun.com/pypi/simple"
 reference = 'aliyun'
 
 [[package]]
+name = "django-cleanup"
+version = "5.1.0"
+description = "Deletes old files."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = 'aliyun'
+
+[[package]]
 name = "django-cors-headers"
 version = "3.7.0"
 description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
@@ -1100,7 +1113,7 @@ reference = 'aliyun'
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.8"
-content-hash = "f179f6aecdad41f46b77be319165e9d58fadeca7ef623909497d06686d44c18e"
+content-hash = "426b6f8c9b41a449e5614beb0a42ae3f65987f48d9e98ec8bf46c27371d10127"
 
 [metadata.files]
 amqp = [
@@ -1169,6 +1182,10 @@ django = [
 django-celery-beat = [
     {file = "django-celery-beat-2.2.0.tar.gz", hash = "sha256:b8a13afb15e7c53fc04f4f847ac71a6d32088959aba701eb7c4a59f0c28ba543"},
     {file = "django_celery_beat-2.2.0-py2.py3-none-any.whl", hash = "sha256:c4c72a9579f20eff4c4ccf1b58ebdca5ef940f4210065057db1754ea5f8dffdc"},
+]
+django-cleanup = [
+    {file = "django-cleanup-5.1.0.tar.gz", hash = "sha256:8976aec12a22913afb3d1fcb541b1aedde2f5ec243e4260c5ff78bb6aa75a089"},
+    {file = "django_cleanup-5.1.0-py2.py3-none-any.whl", hash = "sha256:71e098c7d9ac3f3da40b95cff9c0bc51218d40ef419261232f46ba3141c50acc"},
 ]
 django-cors-headers = [
     {file = "django-cors-headers-3.7.0.tar.gz", hash = "sha256:96069c4aaacace786a34ee7894ff680780ec2644e4268b31181044410fecd12e"},
