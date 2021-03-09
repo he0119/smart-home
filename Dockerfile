@@ -18,6 +18,7 @@ RUN set -ex; \
     pcre-dev \
     curl \
     git \
+    jpeg-dev zlib-dev libjpeg \
 	; \
 	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python; \
   $HOME/.poetry/bin/poetry config virtualenvs.create false; \
