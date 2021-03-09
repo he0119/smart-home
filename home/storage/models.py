@@ -34,10 +34,8 @@ class Item(models.Model):
     name = models.CharField('名字', max_length=200, unique=True)
     number = models.IntegerField('数量')
     description = models.CharField('备注', max_length=200, blank=True)
-    price = models.DecimalField(
+    price = models.FloatField(
         '价格',
-        max_digits=10,
-        decimal_places=2,
         null=True,
         blank=True,
     )

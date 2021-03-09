@@ -951,6 +951,7 @@ class ItemTests(JSONWebTokenTestCase):
             'input': {
                 'name': 'test',
                 'number': 1,
+                'description': '',
                 'storageId': to_global_id('StorageType', '0')
             }
         }
