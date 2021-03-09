@@ -113,7 +113,7 @@ class Picture(models.Model):
         verbose_name_plural = '图片'
 
     description = models.CharField(
-        verbose_name='备注',
+        '备注',
         max_length=200,
         blank=True,
     )
@@ -124,11 +124,11 @@ class Picture(models.Model):
         related_name='pictures',
     )
     picture = models.ImageField(
-        verbose_name='图片',
+        '图片',
         upload_to=get_file_path,
     )
     created_at = models.DateTimeField(
-        verbose_name='添加时间',
+        '添加时间',
         auto_now_add=True,
     )
     created_by = models.ForeignKey(
@@ -139,6 +139,10 @@ class Picture(models.Model):
         null=True,
         blank=True,
     )
+    box_x = models.FloatField('边界框中心点 X')
+    box_y = models.FloatField('边界框中心点 Y')
+    box_h = models.FloatField('边界框高')
+    box_w = models.FloatField('边界框宽')
 
     def __str__(self):
         return self.description or self.picture.name.split('/')[-1]
