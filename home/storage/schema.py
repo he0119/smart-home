@@ -6,6 +6,7 @@ from graphene import ObjectType, relay
 from graphene_django.fields import DjangoConnectionField
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
+from graphene_file_upload.scalars import Upload
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
 from graphql_relay import from_global_id
@@ -470,6 +471,65 @@ class DeleteConsumableMutation(relay.ClientIDMutation):
         return DeleteConsumableMutation(item=item)
 
 
+class AddPictureMutation(graphene.ClientIDMutation):
+    class Input:
+        item_id = graphene.ID(required=True, description='物品的 ID')
+        file = Upload(required=True)
+        description = graphene.String(description='备注')
+        box_x = graphene.Float(required=True, description='边界框中心点 X')
+        box_y = graphene.Float(required=True, description='边界框中心点 Y')
+        box_h = graphene.Float(required=True, description='边界框高')
+        box_w = graphene.Float(required=True, description='边界框宽')
+
+    success = graphene.String()
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, item_id = from_global_id(input.get('item_id'))
+        description = input.get('description')
+        file = input.get('file')
+        box_x = input.get('box_x')
+        box_y = input.get('box_y')
+        box_h = input.get('box_h')
+        box_w = input.get('box_w')
+
+        try:
+            item = Item.objects.get(pk=item_id)
+        except Item.DoesNotExist:
+            raise GraphQLError('无法给不存在的物品添加图片')
+
+        picture = Picture(
+            item=item,
+            picture=file,
+            description=description,
+            box_x=box_x,
+            box_y=box_y,
+            box_h=box_h,
+            box_w=box_w,
+            created_by=info.context.user,
+        )
+        picture.save()
+
+        return AddPictureMutation(success=True)
+
+
+class DeletePictureMutation(relay.ClientIDMutation):
+    class Input:
+        picture_id = graphene.ID(required=True, description='图片的 ID')
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, picture_id = from_global_id(input.get('picture_id'))
+
+        try:
+            picture = Picture.objects.get(pk=picture_id)
+            picture.delete()
+            return DeletePictureMutation()
+        except Picture.DoesNotExist:
+            raise GraphQLError('无法删除不存在的图片')
+
+
 #endregion
 class Mutation(graphene.ObjectType):
     update_storage = UpdateStorageMutation.Field()
@@ -481,6 +541,8 @@ class Mutation(graphene.ObjectType):
     restore_item = RestoreItemMutation.Field()
     add_consumable = AddConsumableMutation.Field()
     delete_consumable = DeleteConsumableMutation.Field()
+    add_picture = AddPictureMutation.Field()
+    delete_picture = DeletePictureMutation.Field()
 
 
 #endregion
