@@ -2,14 +2,16 @@ import graphene
 from django.utils import timezone
 from django_filters import FilterSet, OrderingFilter
 from django_filters.filters import BooleanFilter
-from graphene import relay
+from graphene import ObjectType, relay
+from graphene_django.fields import DjangoConnectionField
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
+from graphene_file_upload.scalars import Upload
 from graphql.error import GraphQLError
 from graphql_jwt.decorators import login_required
 from graphql_relay import from_global_id
 
-from .models import Item, Storage
+from .models import Item, Picture, Storage
 
 
 #region type
@@ -60,6 +62,37 @@ class StorageFilter(FilterSet):
         }
 
 
+class ImageType(ObjectType):
+    name = graphene.String(required=True)
+    url = graphene.String(required=True)
+
+    @login_required
+    def resolve_name(self, info, **args):
+        return self.name.split('/')[-1]
+
+    @login_required
+    def resolve_url(self, info, **args):
+        return self.url
+
+
+class ItemPictureType(DjangoObjectType):
+    class Meta:
+        model = Picture
+        fields = '__all__'
+        interfaces = (relay.Node, )
+
+    picture = graphene.Field(ImageType, required=True)
+
+    @login_required
+    def resolve_picture(self, info, **args):
+        return self.picture
+
+    @classmethod
+    @login_required
+    def get_node(cls, info, id):
+        return Picture.objects.get(pk=id)
+
+
 class ItemType(DjangoObjectType):
     class Meta:
         model = Item
@@ -68,6 +101,11 @@ class ItemType(DjangoObjectType):
 
     consumables = DjangoFilterConnectionField(lambda: ItemType,
                                               filterset_class=ItemFilter)
+    pictures = DjangoConnectionField(ItemPictureType)
+
+    @login_required
+    def resolve_pictures(self, info, **args):
+        return self.pictures
 
     @classmethod
     @login_required
@@ -127,7 +165,7 @@ class Query(graphene.ObjectType):
 class AddStorageMutation(relay.ClientIDMutation):
     class Input:
         name = graphene.String(required=True)
-        description = graphene.String()
+        description = graphene.String(required=True, description='备注')
         parent_id = graphene.ID()
 
     storage = graphene.Field(StorageType)
@@ -231,7 +269,7 @@ class AddItemMutation(relay.ClientIDMutation):
         name = graphene.String(required=True)
         number = graphene.Int(required=True)
         storage_id = graphene.ID(required=True)
-        description = graphene.String()
+        description = graphene.String(required=True, description='备注')
         price = graphene.Float()
         expired_at = graphene.DateTime()
 
@@ -433,6 +471,65 @@ class DeleteConsumableMutation(relay.ClientIDMutation):
         return DeleteConsumableMutation(item=item)
 
 
+class AddPictureMutation(graphene.ClientIDMutation):
+    class Input:
+        item_id = graphene.ID(required=True, description='物品的 ID')
+        file = Upload(required=True)
+        description = graphene.String(required=True, description='备注')
+        box_x = graphene.Float(required=True, description='边界框中心点 X')
+        box_y = graphene.Float(required=True, description='边界框中心点 Y')
+        box_h = graphene.Float(required=True, description='边界框高')
+        box_w = graphene.Float(required=True, description='边界框宽')
+
+    picture = graphene.Field(ItemPictureType)
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, item_id = from_global_id(input.get('item_id'))
+        description = input.get('description')
+        file = input.get('file')
+        box_x = input.get('box_x')
+        box_y = input.get('box_y')
+        box_h = input.get('box_h')
+        box_w = input.get('box_w')
+
+        try:
+            item = Item.objects.get(pk=item_id)
+        except Item.DoesNotExist:
+            raise GraphQLError('无法给不存在的物品添加图片')
+
+        picture = Picture(
+            item=item,
+            picture=file,
+            description=description,
+            box_x=box_x,
+            box_y=box_y,
+            box_h=box_h,
+            box_w=box_w,
+            created_by=info.context.user,
+        )
+        picture.save()
+
+        return AddPictureMutation(picture=picture)
+
+
+class DeletePictureMutation(relay.ClientIDMutation):
+    class Input:
+        picture_id = graphene.ID(required=True, description='图片的 ID')
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, picture_id = from_global_id(input.get('picture_id'))
+
+        try:
+            picture = Picture.objects.get(pk=picture_id)
+            picture.delete()
+            return DeletePictureMutation()
+        except Picture.DoesNotExist:
+            raise GraphQLError('无法删除不存在的图片')
+
+
 #endregion
 class Mutation(graphene.ObjectType):
     update_storage = UpdateStorageMutation.Field()
@@ -444,6 +541,8 @@ class Mutation(graphene.ObjectType):
     restore_item = RestoreItemMutation.Field()
     add_consumable = AddConsumableMutation.Field()
     delete_consumable = DeleteConsumableMutation.Field()
+    add_picture = AddPictureMutation.Field()
+    delete_picture = DeletePictureMutation.Field()
 
 
 #endregion

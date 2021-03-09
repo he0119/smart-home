@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     'mptt',
     'import_export',
     'django_celery_beat',
+    'django_cleanup.apps.CleanupConfig',
     # GraphQL
     'graphene_django',
     'django_filters',
@@ -264,3 +265,8 @@ MI_PUSH_PACKAGE_NAME = 'package_name'
 MI_PUSH_APP_ID = 'app_id'
 MI_PUSH_APP_KEY = 'app_key'
 MI_PUSH_APP_SECRET = 'app_secret'
+
+# Files
+# https://docs.djangoproject.com/zh-hans/3.1/topics/files/
+
+MEDIA_ROOT = 'media'

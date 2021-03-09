@@ -9,19 +9,25 @@ repository = "https://github.com/he0119/smart-home"
 version = "0.7.0"
 
 [tool.poetry.dependencies]
+boto3 = "^1.17.17"
 celery = "^5.0.0"
 django = "^3.0.8"
 django-celery-beat = "^2.1.0"
+django-cleanup = "^5.1.0"
 django-filter = "^2.4.0"
 django-graphql-jwt = {git = "https://github.com/flavors/django-graphql-jwt.git"}
 django-import-export = "^2.2.0"
 django-mptt = "^0.11.0"
+django-storages = "^1.11.1"
 graphene-django = "^3.0.0b6"
+graphene-file-upload = "^1.3.0"
+markdown = "^3.3.3"
+pillow = "^8.1.0"
 psycopg2 = "^2.8.5"
+pyjwt = ">=1.5.0,<2"
 python = "~3.8"
 redis = "^3.5.3"
 requests = "^2.24.0"
-markdown = "^3.3.3"
 
 [tool.poetry.dev-dependencies]
 django-cors-headers = "^3.4.0"

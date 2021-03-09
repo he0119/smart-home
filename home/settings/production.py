@@ -72,3 +72,18 @@ MI_PUSH_PACKAGE_NAME = os.getenv('MI_PUSH_PACKAGE_NAME')
 MI_PUSH_APP_ID = os.getenv('MI_PUSH_APP_ID')
 MI_PUSH_APP_KEY = os.getenv('MI_PUSH_APP_KEY')
 MI_PUSH_APP_SECRET = os.getenv('MI_PUSH_APP_SECRET')
+
+# Django Storages(S3)
+# https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
+
+if os.getenv('AWS_S3_ENDPOINT_URL'):
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    MEDIA_URL = os.getenv('MEDIA_URL')
+    MEDIA_ROOT = ''
+
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
