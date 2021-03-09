@@ -21,6 +21,11 @@ class ModelTests(TestCase):
 
         self.assertEqual(str(item), '雨伞')
 
+    def test_picture_str(self):
+        picture = Picture.objects.get(pk=1)
+
+        self.assertEqual(str(picture), 'test')
+
 
 class StorageModelTests(TestCase):
     fixtures = ['users', 'storage']
@@ -1287,6 +1292,35 @@ class PictureTests(JSONWebTokenTestCase):
             picture['picture']['url'],
             '/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
 
+    def test_get_picture_via_node(self):
+        query = '''
+            query node($id: ID!) {
+                node(id: $id) {
+                    __typename
+                    ... on ItemPictureType {
+                        id
+                        picture {
+                            name
+                            url
+                        }
+                    }
+                }
+            }
+        '''
+        variables = {
+            'id': to_global_id('ItemPictureType', '1'),
+        }
+
+        content = self.client.execute(query, variables)
+        self.assertIsNone(content.errors)
+
+        picture = content.data['node']
+        self.assertEqual(picture['picture']['name'],
+                         '1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
+        self.assertEqual(
+            picture['picture']['url'],
+            '/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
+
     def test_add_picture(self):
         test_file = SimpleUploadedFile(name='test.txt',
                                        content='file_text'.encode('utf-8'))
@@ -1331,6 +1365,49 @@ class PictureTests(JSONWebTokenTestCase):
         picture = content.data['addPicture']['picture']
         self.assertEqual(picture['__typename'], 'ItemPictureType')
         self.assertEqual(picture['description'], 'test')
+
+    def test_add_picture_not_exist(self):
+        test_file = SimpleUploadedFile(name='test.txt',
+                                       content='file_text'.encode('utf-8'))
+
+        mutation = '''
+            mutation addPicture($input: AddPictureMutationInput!) {
+                addPicture(input: $input) {
+                    picture {
+                        __typename
+                        id
+                        description
+                        item {
+                            id
+                        }
+                        picture {
+                            name
+                            url
+                        }
+                        boxX
+                        boxY
+                        boxH
+                        boxW
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'itemId': to_global_id('ItemType', '0'),
+                'description': 'test',
+                'boxX': 0.1,
+                'boxY': 0.1,
+                'boxH': 0.1,
+                'boxW': 0.1,
+                'file': test_file,
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '无法给不存在的物品添加图片')
 
     def test_delete_picture(self):
         mutation = '''
