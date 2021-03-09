@@ -9,7 +9,7 @@ ENV TZ=Asia/Shanghai
 # 安装依赖
 COPY poetry.lock pyproject.toml ./
 RUN set -ex; \
-  apk add --no-cache postgresql-libs pcre; \
+  apk add --no-cache postgresql-libs pcre jpeg-dev zlib-dev; \
 	apk add --no-cache --virtual .build-deps \
 		gcc \
 		libc-dev \
@@ -18,7 +18,6 @@ RUN set -ex; \
     pcre-dev \
     curl \
     git \
-    jpeg-dev zlib-dev libjpeg \
 	; \
 	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python; \
   $HOME/.poetry/bin/poetry config virtualenvs.create false; \
