@@ -165,7 +165,7 @@ class Query(graphene.ObjectType):
 class AddStorageMutation(relay.ClientIDMutation):
     class Input:
         name = graphene.String(required=True)
-        description = graphene.String()
+        description = graphene.String(required=True, description='备注')
         parent_id = graphene.ID()
 
     storage = graphene.Field(StorageType)
@@ -269,7 +269,7 @@ class AddItemMutation(relay.ClientIDMutation):
         name = graphene.String(required=True)
         number = graphene.Int(required=True)
         storage_id = graphene.ID(required=True)
-        description = graphene.String()
+        description = graphene.String(required=True, description='备注')
         price = graphene.Float()
         expired_at = graphene.DateTime()
 
@@ -475,7 +475,7 @@ class AddPictureMutation(graphene.ClientIDMutation):
     class Input:
         item_id = graphene.ID(required=True, description='物品的 ID')
         file = Upload(required=True)
-        description = graphene.String(description='备注')
+        description = graphene.String(required=True, description='备注')
         box_x = graphene.Float(required=True, description='边界框中心点 X')
         box_y = graphene.Float(required=True, description='边界框中心点 Y')
         box_h = graphene.Float(required=True, description='边界框高')
