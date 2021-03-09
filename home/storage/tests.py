@@ -1266,10 +1266,8 @@ class PictureTests(JSONWebTokenTestCase):
                     pictures {
                         edges {
                             node {
-                                picture {
-                                    name
-                                    url
-                                }
+                                name
+                                url
                             }
                         }
                     }
@@ -1286,10 +1284,10 @@ class PictureTests(JSONWebTokenTestCase):
         name = content.data['item']['name']
         self.assertEqual(name, umbrella.name)
         picture = content.data['item']['pictures']['edges'][0]['node']
-        self.assertEqual(picture['picture']['name'],
+        self.assertEqual(picture['name'],
                          '1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
         self.assertEqual(
-            picture['picture']['url'],
+            picture['url'],
             '/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
 
     def test_get_picture_via_node(self):
@@ -1299,10 +1297,8 @@ class PictureTests(JSONWebTokenTestCase):
                     __typename
                     ... on ItemPictureType {
                         id
-                        picture {
-                            name
-                            url
-                        }
+                        name
+                        url
                     }
                 }
             }
@@ -1315,10 +1311,10 @@ class PictureTests(JSONWebTokenTestCase):
         self.assertIsNone(content.errors)
 
         picture = content.data['node']
-        self.assertEqual(picture['picture']['name'],
+        self.assertEqual(picture['name'],
                          '1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
         self.assertEqual(
-            picture['picture']['url'],
+            picture['url'],
             '/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
 
     def test_add_picture(self):
@@ -1335,10 +1331,8 @@ class PictureTests(JSONWebTokenTestCase):
                         item {
                             id
                         }
-                        picture {
-                            name
-                            url
-                        }
+                        name
+                        url
                         boxX
                         boxY
                         boxH
@@ -1380,10 +1374,8 @@ class PictureTests(JSONWebTokenTestCase):
                         item {
                             id
                         }
-                        picture {
-                            name
-                            url
-                        }
+                        name
+                        url
                         boxX
                         boxY
                         boxH

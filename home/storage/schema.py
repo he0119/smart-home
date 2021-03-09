@@ -62,30 +62,22 @@ class StorageFilter(FilterSet):
         }
 
 
-class ImageType(ObjectType):
-    name = graphene.String(required=True)
-    url = graphene.String(required=True)
-
-    @login_required
-    def resolve_name(self, info, **args):
-        return self.name.split('/')[-1]
-
-    @login_required
-    def resolve_url(self, info, **args):
-        return self.url
-
-
 class ItemPictureType(DjangoObjectType):
     class Meta:
         model = Picture
         fields = '__all__'
         interfaces = (relay.Node, )
 
-    picture = graphene.Field(ImageType, required=True)
+    name = graphene.String(required=True)
+    url = graphene.String(required=True)
 
     @login_required
-    def resolve_picture(self, info, **args):
-        return self.picture
+    def resolve_name(self, info, **args):
+        return self.picture.name.split('/')[-1]
+
+    @login_required
+    def resolve_url(self, info, **args):
+        return self.picture.url
 
     @classmethod
     @login_required
