@@ -481,7 +481,7 @@ class AddPictureMutation(graphene.ClientIDMutation):
         box_h = graphene.Float(required=True, description='边界框高')
         box_w = graphene.Float(required=True, description='边界框宽')
 
-    success = graphene.String()
+    picture = graphene.Field(ItemPictureType)
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
@@ -510,7 +510,7 @@ class AddPictureMutation(graphene.ClientIDMutation):
         )
         picture.save()
 
-        return AddPictureMutation(success=True)
+        return AddPictureMutation(picture=picture)
 
 
 class DeletePictureMutation(relay.ClientIDMutation):

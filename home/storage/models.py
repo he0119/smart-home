@@ -103,7 +103,7 @@ def get_file_path(instance, filename):
     """
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join('item_pictrues', f'{instance.item.id}-{filename}')
+    return os.path.join('item_pictures', f'{instance.item.id}-{filename}')
 
 
 class Picture(models.Model):

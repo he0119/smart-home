@@ -1,10 +1,11 @@
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.utils import timezone
 from graphql_jwt.testcases import JSONWebTokenTestCase
 from graphql_relay.node.node import to_global_id
 
-from .models import Item, Storage
+from .models import Item, Picture, Storage
 
 
 class ModelTests(TestCase):
@@ -1240,3 +1241,134 @@ class ConsumableTests(JSONWebTokenTestCase):
         self.assertIsNotNone(content.errors)
 
         self.assertEqual(content.errors[0].message, '耗材不存在')
+
+
+class PictureTests(JSONWebTokenTestCase):
+    fixtures = ['users', 'storage']
+
+    def setUp(self):
+        self.user = get_user_model().objects.get(username='test')
+        self.client.authenticate(self.user)
+
+    def test_get_picture(self):
+        umbrella = Item.objects.get(name='雨伞')
+
+        query = '''
+            query item($id: ID!) {
+                item(id: $id) {
+                    id
+                    name
+                    pictures {
+                        edges {
+                            node {
+                                picture {
+                                    name
+                                    url
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        '''
+        variables = {
+            'id': to_global_id('ItemType', umbrella.id),
+        }
+
+        content = self.client.execute(query, variables)
+        self.assertIsNone(content.errors)
+
+        name = content.data['item']['name']
+        self.assertEqual(name, umbrella.name)
+        picture = content.data['item']['pictures']['edges'][0]['node']
+        self.assertEqual(picture['picture']['name'],
+                         '1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
+        self.assertEqual(
+            picture['picture']['url'],
+            '/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
+
+    def test_add_picture(self):
+        test_file = SimpleUploadedFile(name='test.txt',
+                                       content='file_text'.encode('utf-8'))
+
+        mutation = '''
+            mutation addPicture($input: AddPictureMutationInput!) {
+                addPicture(input: $input) {
+                    picture {
+                        __typename
+                        id
+                        description
+                        item {
+                            id
+                        }
+                        picture {
+                            name
+                            url
+                        }
+                        boxX
+                        boxY
+                        boxH
+                        boxW
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'itemId': to_global_id('ItemType', '1'),
+                'description': 'test',
+                'boxX': 0.1,
+                'boxY': 0.1,
+                'boxH': 0.1,
+                'boxW': 0.1,
+                'file': test_file,
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        picture = content.data['addPicture']['picture']
+        self.assertEqual(picture['__typename'], 'ItemPictureType')
+        self.assertEqual(picture['description'], 'test')
+
+    def test_delete_picture(self):
+        mutation = '''
+            mutation deletePicture($input: DeletePictureMutationInput!) {
+                deletePicture(input: $input) {
+                    clientMutationId
+                }
+            }
+        '''
+
+        picture = Picture.objects.get(pk=1)
+        variables = {
+            'input': {
+                'pictureId': to_global_id('ItemPictureType', picture.id)
+            },
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        with self.assertRaises(Picture.DoesNotExist):
+            Picture.objects.get(pk=1)
+
+    def test_delete_picture_not_exist(self):
+        mutation = '''
+            mutation deletePicture($input: DeletePictureMutationInput!) {
+                deletePicture(input: $input) {
+                    clientMutationId
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'pictureId': to_global_id('ItemPictureType', '0')
+            },
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '无法删除不存在的图片')

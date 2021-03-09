@@ -105,7 +105,9 @@
       "edited_by": 1,
       "is_deleted": false,
       "deleted_at": null,
-      "consumables": [4]
+      "consumables": [
+        4
+      ]
     }
   },
   {
@@ -144,6 +146,21 @@
       "is_deleted": true,
       "deleted_at": "2020-01-05T01:00:00.000Z",
       "consumables": []
+    }
+  },
+  {
+    "model": "storage.picture",
+    "pk": 1,
+    "fields": {
+      "description": "test",
+      "item": 1,
+      "picture": "item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg",
+      "created_at": "2021-01-01T00:00:00.000Z",
+      "created_by": 1,
+      "box_x": 0.1,
+      "box_y": 0.1,
+      "box_h": 0.1,
+      "box_w": 0.1
     }
   }
 ]
