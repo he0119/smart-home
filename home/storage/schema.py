@@ -2,7 +2,7 @@ import graphene
 from django.utils import timezone
 from django_filters import FilterSet, OrderingFilter
 from django_filters.filters import BooleanFilter
-from graphene import ObjectType, relay
+from graphene import relay
 from graphene_django.fields import DjangoConnectionField
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
@@ -62,7 +62,7 @@ class StorageFilter(FilterSet):
         }
 
 
-class ItemPictureType(DjangoObjectType):
+class PictureType(DjangoObjectType):
     class Meta:
         model = Picture
         fields = '__all__'
@@ -93,7 +93,7 @@ class ItemType(DjangoObjectType):
 
     consumables = DjangoFilterConnectionField(lambda: ItemType,
                                               filterset_class=ItemFilter)
-    pictures = DjangoConnectionField(ItemPictureType)
+    pictures = DjangoConnectionField(PictureType)
 
     @login_required
     def resolve_pictures(self, info, **args):
@@ -473,7 +473,7 @@ class AddPictureMutation(graphene.ClientIDMutation):
         box_h = graphene.Float(required=True, description='边界框高')
         box_w = graphene.Float(required=True, description='边界框宽')
 
-    picture = graphene.Field(ItemPictureType)
+    picture = graphene.Field(PictureType)
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **input):
@@ -522,6 +522,45 @@ class DeletePictureMutation(relay.ClientIDMutation):
             raise GraphQLError('无法删除不存在的图片')
 
 
+class UpdatePictureMutation(relay.ClientIDMutation):
+    class Input:
+        id = graphene.ID(required=True)
+        file = Upload(description='图片')
+        description = graphene.String(description='备注')
+        box_x = graphene.Float(description='边界框中心点 X')
+        box_y = graphene.Float(description='边界框中心点 Y')
+        box_h = graphene.Float(description='边界框高')
+        box_w = graphene.Float(description='边界框宽')
+
+    picture = graphene.Field(PictureType)
+
+    @classmethod
+    @login_required
+    def mutate_and_get_payload(cls, root, info, **input):
+        _, id = from_global_id(input.get('id'))
+        description = input.get('description')
+        file = input.get('file')
+        box_x = input.get('box_x')
+        box_y = input.get('box_y')
+        box_h = input.get('box_h')
+        box_w = input.get('box_w')
+
+        try:
+            picture: Picture = Picture.objects.get(pk=id)
+        except Picture.DoesNotExist:
+            raise GraphQLError('无法修改不存在的图片')
+
+        picture.description = description
+        picture.picture = file
+        picture.box_x = box_x
+        picture.box_y = box_y
+        picture.box_h = box_h
+        picture.box_w = box_w
+        picture.save()
+
+        return UpdatePictureMutation(picture=picture)
+
+
 #endregion
 class Mutation(graphene.ObjectType):
     update_storage = UpdateStorageMutation.Field()
@@ -535,6 +574,7 @@ class Mutation(graphene.ObjectType):
     delete_consumable = DeleteConsumableMutation.Field()
     add_picture = AddPictureMutation.Field()
     delete_picture = DeletePictureMutation.Field()
+    update_picture = UpdatePictureMutation.Field()
 
 
 #endregion

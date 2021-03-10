@@ -1295,7 +1295,7 @@ class PictureTests(JSONWebTokenTestCase):
             query node($id: ID!) {
                 node(id: $id) {
                     __typename
-                    ... on ItemPictureType {
+                    ... on PictureType {
                         id
                         name
                         url
@@ -1304,7 +1304,7 @@ class PictureTests(JSONWebTokenTestCase):
             }
         '''
         variables = {
-            'id': to_global_id('ItemPictureType', '1'),
+            'id': to_global_id('PictureType', '1'),
         }
 
         content = self.client.execute(query, variables)
@@ -1357,7 +1357,7 @@ class PictureTests(JSONWebTokenTestCase):
         self.assertIsNone(content.errors)
 
         picture = content.data['addPicture']['picture']
-        self.assertEqual(picture['__typename'], 'ItemPictureType')
+        self.assertEqual(picture['__typename'], 'PictureType')
         self.assertEqual(picture['description'], 'test')
 
     def test_add_picture_not_exist(self):
@@ -1441,3 +1441,91 @@ class PictureTests(JSONWebTokenTestCase):
         self.assertIsNotNone(content.errors)
 
         self.assertEqual(content.errors[0].message, '无法删除不存在的图片')
+
+    def test_update_picture(self):
+        test_file = SimpleUploadedFile(name='test.txt',
+                                       content='file_text'.encode('utf-8'))
+
+        mutation = '''
+            mutation updatePicture($input: UpdatePictureMutationInput!) {
+                updatePicture(input: $input) {
+                    picture {
+                        __typename
+                        id
+                        description
+                        item {
+                            id
+                        }
+                        name
+                        url
+                        boxX
+                        boxY
+                        boxH
+                        boxW
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '1'),
+                'description': 'test',
+                'boxX': 0.1,
+                'boxY': 0.2,
+                'boxH': 0.3,
+                'boxW': 0.4,
+                'file': test_file,
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        picture = content.data['updatePicture']['picture']
+        self.assertEqual(picture['__typename'], 'PictureType')
+        self.assertEqual(picture['description'], 'test')
+        self.assertEqual(picture['boxX'], 0.1)
+        self.assertEqual(picture['boxY'], 0.2)
+        self.assertEqual(picture['boxH'], 0.3)
+        self.assertEqual(picture['boxW'], 0.4)
+
+    def test_update_picture_not_exist(self):
+        test_file = SimpleUploadedFile(name='test.txt',
+                                       content='file_text'.encode('utf-8'))
+
+        mutation = '''
+            mutation updatePicture($input: UpdatePictureMutationInput!) {
+                updatePicture(input: $input) {
+                    picture {
+                        __typename
+                        id
+                        description
+                        item {
+                            id
+                        }
+                        name
+                        url
+                        boxX
+                        boxY
+                        boxH
+                        boxW
+                    }
+                }
+            }
+        '''
+        variables = {
+            'input': {
+                'id': to_global_id('ItemType', '0'),
+                'description': 'test',
+                'boxX': 0.1,
+                'boxY': 0.1,
+                'boxH': 0.1,
+                'boxW': 0.1,
+                'file': test_file,
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNotNone(content.errors)
+
+        self.assertEqual(content.errors[0].message, '无法修改不存在的图片')
