@@ -139,6 +139,7 @@ class Query(graphene.ObjectType):
     storage = relay.Node.Field(StorageType)
     storages = DjangoFilterConnectionField(StorageType,
                                            filterset_class=StorageFilter)
+    picture = relay.Node.Field(PictureType)
 
     @login_required
     def resolve_items(self, info, **args):
