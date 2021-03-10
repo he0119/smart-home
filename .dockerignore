@@ -1,0 +1,11 @@
+# 文件夹
+.github
+.vscode
+
+# 文件
+.gitignore
+.editorconfig
+.example.env
+docker-compose.yml
+Dockerfile
+codecov.yml
