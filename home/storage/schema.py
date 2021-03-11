@@ -467,7 +467,7 @@ class DeleteConsumableMutation(relay.ClientIDMutation):
 class AddPictureMutation(graphene.ClientIDMutation):
     class Input:
         item_id = graphene.ID(required=True, description='物品的 ID')
-        file = Upload(required=True)
+        file = Upload(required=True, description='图片')
         description = graphene.String(required=True, description='备注')
         box_x = graphene.Float(required=True, description='边界框中心点 X')
         box_y = graphene.Float(required=True, description='边界框中心点 Y')
@@ -527,11 +527,11 @@ class UpdatePictureMutation(relay.ClientIDMutation):
     class Input:
         id = graphene.ID(required=True)
         file = Upload(description='图片')
-        description = graphene.String(description='备注')
-        box_x = graphene.Float(description='边界框中心点 X')
-        box_y = graphene.Float(description='边界框中心点 Y')
-        box_h = graphene.Float(description='边界框高')
-        box_w = graphene.Float(description='边界框宽')
+        description = graphene.String(required=True, description='备注')
+        box_x = graphene.Float(required=True, description='边界框中心点 X')
+        box_y = graphene.Float(required=True, description='边界框中心点 Y')
+        box_h = graphene.Float(required=True, description='边界框高')
+        box_w = graphene.Float(required=True, description='边界框宽')
 
     picture = graphene.Field(PictureType)
 
@@ -552,7 +552,8 @@ class UpdatePictureMutation(relay.ClientIDMutation):
             raise GraphQLError('无法修改不存在的图片')
 
         picture.description = description
-        picture.picture = file
+        if file:
+            picture.picture = file
         picture.box_x = box_x
         picture.box_y = box_y
         picture.box_h = box_h
