@@ -544,6 +544,49 @@ class CommentTests(JSONWebTokenTestCase):
         ]
         self.assertEqual(set(comments), {'测试评论一'})
 
+    def test_get_last_comments(self):
+        query = '''
+            query topics {
+                topics(orderBy: "-is_pin,-is_open,-active_at") {
+                    pageInfo {
+                        hasNextPage
+                        endCursor
+                    }
+                    edges {
+                        node {
+                            id
+                            title
+                            description
+                            isOpen
+                            isPin
+                            createdAt
+                            editedAt
+                            user {
+                            username
+                            email
+                            }
+                            comments(last: 1, after: null) {
+                                edges {
+                                    node {
+                                        body
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        '''
+
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        comments = [
+            item['node']['body'] for item in content.data['topics']['edges'][1]
+            ['node']['comments']['edges']
+        ]
+        self.assertEqual(set(comments), {'测试评论二'})
+
     def test_add_comment(self):
         mutation = '''
             mutation addComment($input: AddCommentMutationInput!) {
