@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.7.1] - 2021-03-12
+
+### Added
+
+- 添加上传图片的功能
+
+### Changed
+
+- 如果修改已删除的物品，则自动恢复它
+- 默认不显示已删除的物品
+- CharField 和 TextField 默认应该不为 null
+
 ## [0.7.0] - 2021-01-11
 
 ### Added
@@ -150,8 +162,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.7.1...HEAD
 
+[0.7.1]: https://github.com/he0119/smart-home/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/he0119/smart-home/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/he0119/smart-home/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/he0119/smart-home/compare/v0.5.7...v0.6.0
