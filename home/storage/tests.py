@@ -1280,6 +1280,37 @@ class PictureTests(JSONWebTokenTestCase):
             picture['url'],
             '/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
 
+    def test_get_pictures(self):
+        query = '''
+            query pictures($itemName: String!) {
+              pictures(item_Name:$itemName) {
+                edges {
+                  node {
+                    id
+                    item {
+                      id
+                      name
+                    }
+                    description
+                    url
+                  }
+                }
+              }
+            }
+        '''
+        variables = {
+            'itemName': '雨伞',
+        }
+
+        content = self.client.execute(query, variables)
+        self.assertIsNone(content.errors)
+
+        picture = content.data['pictures']['edges'][0]['node']
+        self.assertEqual(picture['description'], 'test')
+        self.assertEqual(
+            picture['url'],
+            '/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
+
     def test_get_item_pictures(self):
         umbrella = Item.objects.get(name='雨伞')
 
