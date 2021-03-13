@@ -152,10 +152,25 @@
     "model": "storage.picture",
     "pk": 1,
     "fields": {
-      "description": "test",
+      "description": "测试一",
       "item": 1,
       "picture": "item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg",
       "created_at": "2021-01-01T00:00:00.000Z",
+      "created_by": 1,
+      "box_x": 0.1,
+      "box_y": 0.1,
+      "box_h": 0.1,
+      "box_w": 0.1
+    }
+  },
+  {
+    "model": "storage.picture",
+    "pk": 2,
+    "fields": {
+      "description": "测试二",
+      "item": 1,
+      "picture": "item_pictures/1-57f3cd93-f838-4281-9bd8-18e64aa7b3dd.jpg",
+      "created_at": "2021-01-01T01:00:00.000Z",
       "created_by": 1,
       "box_x": 0.1,
       "box_y": 0.1,

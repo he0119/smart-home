@@ -24,7 +24,7 @@ class ModelTests(TestCase):
     def test_picture_str(self):
         picture = Picture.objects.get(pk=1)
 
-        self.assertEqual(str(picture), 'test')
+        self.assertEqual(str(picture), '测试一')
 
 
 class StorageModelTests(TestCase):
@@ -1283,7 +1283,7 @@ class PictureTests(JSONWebTokenTestCase):
     def test_get_pictures(self):
         query = '''
             query pictures($itemName: String!) {
-              pictures(item_Name:$itemName) {
+              pictures(item_Name: $itemName, orderBy: "-created_at") {
                 edges {
                   node {
                     id
@@ -1306,10 +1306,10 @@ class PictureTests(JSONWebTokenTestCase):
         self.assertIsNone(content.errors)
 
         picture = content.data['pictures']['edges'][0]['node']
-        self.assertEqual(picture['description'], 'test')
+        self.assertEqual(picture['description'], '测试二')
         self.assertEqual(
             picture['url'],
-            '/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg')
+            '/item_pictures/1-57f3cd93-f838-4281-9bd8-18e64aa7b3dd.jpg')
 
     def test_get_item_pictures(self):
         umbrella = Item.objects.get(name='雨伞')
