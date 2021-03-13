@@ -4,7 +4,7 @@ from .models import MiPush
 
 
 class MiPushAdmin(admin.ModelAdmin):
-    fields = ['user', 'enable', 'reg_id', 'device_id', 'model']
+    list_filter = ('user', )
     list_display = ('user', 'enable', 'reg_id', 'device_id', 'model')
 
 
