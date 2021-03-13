@@ -62,6 +62,18 @@ class StorageFilter(FilterSet):
         }
 
 
+class PictureFilter(FilterSet):
+    class Meta:
+        model = Picture
+        fields = {
+            'item__id': ['exact'],
+            'item__name': ['exact', 'icontains'],
+            'description': ['exact', 'icontains'],
+        }
+
+    order_by = OrderingFilter(fields=(('created_at', 'created_at'), ))
+
+
 class PictureType(DjangoObjectType):
     class Meta:
         model = Picture
@@ -140,6 +152,8 @@ class Query(graphene.ObjectType):
     storages = DjangoFilterConnectionField(StorageType,
                                            filterset_class=StorageFilter)
     picture = relay.Node.Field(PictureType)
+    pictures = DjangoFilterConnectionField(PictureType,
+                                           filterset_class=PictureFilter)
 
     @login_required
     def resolve_items(self, info, **args):
@@ -148,6 +162,10 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_storages(self, info, **args):
         return Storage.objects.all()
+
+    @login_required
+    def resolve_pictures(self, info, **args):
+        return Picture.objects.all()
 
 
 #endregion
