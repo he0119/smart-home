@@ -95,7 +95,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 数据相关
     'mptt',
-    'import_export',
     'django_celery_beat',
     'django_cleanup.apps.CleanupConfig',
     # GraphQL
