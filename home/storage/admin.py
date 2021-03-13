@@ -7,6 +7,10 @@ class StorageAdmin(admin.ModelAdmin):
     list_display = ('name', 'parent', 'description')
 
 
+class PictureAdmin(admin.ModelAdmin):
+    list_display = ('item', 'picture', 'description')
+
+
 class PictureInline(admin.TabularInline):
     model = Picture
     extra = 1
@@ -27,3 +31,4 @@ class ItemAdmin(admin.ModelAdmin):
 
 admin.site.register(Storage, StorageAdmin)
 admin.site.register(Item, ItemAdmin)
+admin.site.register(Picture, PictureAdmin)
