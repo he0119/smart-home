@@ -9,6 +9,7 @@ class DeviceAdmin(admin.ModelAdmin):
 
 
 class AutowateringDataAdmin(admin.ModelAdmin):
+    list_filter = ('valve1', 'valve2', 'valve3', 'pump')
     list_display = ('device', 'time', 'temperature', 'humidity', 'wifi_signal',
                     'valve1', 'valve2', 'valve3', 'pump')
 
