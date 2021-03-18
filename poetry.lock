@@ -362,11 +362,11 @@ reference = "aliyun"
 
 [[package]]
 name = "django-mptt"
-version = "0.11.0"
+version = "0.12.0"
 description = "Utilities for implementing Modified Preorder Tree Traversal with your Django Models and working with trees of Model instances."
 category = "main"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.6"
 
 [package.dependencies]
 Django = ">=1.11"
@@ -943,7 +943,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.8"
-content-hash = "66b244a55c60988f85a188b1235fe661fee1bca51cd613bccdf87e04dbbbb03d"
+content-hash = "07433073779b97f9e8e5bd692be6f98c3266f58cb66f716f670b015113eb5663"
 
 [metadata.files]
 amqp = [
@@ -1023,8 +1023,8 @@ django-js-asset = [
     {file = "django_js_asset-1.2.2-py2.py3-none-any.whl", hash = "sha256:8ec12017f26eec524cab436c64ae73033368a372970af4cf42d9354fcb166bdd"},
 ]
 django-mptt = [
-    {file = "django-mptt-0.11.0.tar.gz", hash = "sha256:dfdb3af75ad27cdd4458b0544ec8574174f2b90f99bc2cafab6a15b4bc1895a8"},
-    {file = "django_mptt-0.11.0-py2.py3-none-any.whl", hash = "sha256:90eb236eb4f1a92124bd7c37852bbe09c0d21158477cc237556d59842a91c509"},
+    {file = "django-mptt-0.12.0.tar.gz", hash = "sha256:8ae6c3821127b529bb2f938de27bf0771b1bcbe9dbccdfba33986af78611f13a"},
+    {file = "django_mptt-0.12.0-py2.py3-none-any.whl", hash = "sha256:63b421a054bceb7406582e2be876a80b3848a5106765baea1003696348ffd628"},
 ]
 django-storages = [
     {file = "django-storages-1.11.1.tar.gz", hash = "sha256:c823dbf56c9e35b0999a13d7e05062b837bae36c518a40255d522fbe3750fbb4"},
