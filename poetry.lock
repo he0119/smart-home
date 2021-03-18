@@ -484,7 +484,7 @@ reference = "aliyun"
 
 [[package]]
 name = "graphene-django"
-version = "3.0.0b6"
+version = "3.0.0b7"
 description = "Graphene Django integration"
 category = "main"
 optional = false
@@ -495,7 +495,7 @@ Django = ">=2.2"
 graphene = ">=3.0.0b5,<4"
 graphql-core = ">=3.1.0,<4"
 promise = ">=2.1"
-unidecode = ">=1.1.1,<2"
+text-unidecode = "*"
 
 [package.extras]
 dev = ["black (==19.10b0)", "flake8 (==3.7.9)", "flake8-black (==0.1.1)", "flake8-bugbear (==20.1.4)", "pytest (>=3.6.3)", "pytest-cov", "pytest-random-order", "coveralls", "mock", "pytz", "django-filter (>=2)", "pytest-django (>=3.3.2)", "djangorestframework (>=3.6.3)"]
@@ -871,12 +871,12 @@ url = "https://mirrors.aliyun.com/pypi/simple"
 reference = "aliyun"
 
 [[package]]
-name = "unidecode"
-version = "1.2.0"
-description = "ASCII transliterations of Unicode text"
+name = "text-unidecode"
+version = "1.3"
+description = "The most basic Text::Unidecode port"
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+python-versions = "*"
 
 [package.source]
 type = "legacy"
@@ -943,7 +943,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.8"
-content-hash = "07433073779b97f9e8e5bd692be6f98c3266f58cb66f716f670b015113eb5663"
+content-hash = "13cc6d342fd1e03520776313d29a54204cbfef1c00b1c1deab5896f441303706"
 
 [metadata.files]
 amqp = [
@@ -1047,8 +1047,8 @@ graphene = [
     {file = "graphene-3.0b7.tar.gz", hash = "sha256:03e1cb640ad48669eaf5a4228be216f7dce72b6ca3e9b1dd568e429001897642"},
 ]
 graphene-django = [
-    {file = "graphene-django-3.0.0b6.tar.gz", hash = "sha256:189cb7f70427c3d74bab3c9116542f2b72ecd4e95594239931c4a6afaf519f18"},
-    {file = "graphene_django-3.0.0b6-py2.py3-none-any.whl", hash = "sha256:92918fea5093b714a4a90a2f8963406727718910c871c046d7aef1d625dc5119"},
+    {file = "graphene-django-3.0.0b7.tar.gz", hash = "sha256:b1a4ce1a2227b1e77f67f0bc2fadd59c1d05016cb9aced45ab65f8612fba2c87"},
+    {file = "graphene_django-3.0.0b7-py2.py3-none-any.whl", hash = "sha256:0f226ec7db744a54dbc5d6db2aa52d945701ae800e1055046dec2b76a539550a"},
 ]
 graphene-file-upload = [
     {file = "graphene_file_upload-1.3.0-py3-none-any.whl", hash = "sha256:5afe50f409f50e3d198fd92c883d98d868e6c6aaadf5df3a3f4d88ecad90ed97"},
@@ -1221,9 +1221,9 @@ sqlparse = [
     {file = "sqlparse-0.4.1-py3-none-any.whl", hash = "sha256:017cde379adbd6a1f15a61873f43e8274179378e95ef3fede90b5aa64d304ed0"},
     {file = "sqlparse-0.4.1.tar.gz", hash = "sha256:0f91fd2e829c44362cbcfab3e9ae12e22badaa8a29ad5ff599f9ec109f0454e8"},
 ]
-unidecode = [
-    {file = "Unidecode-1.2.0-py2.py3-none-any.whl", hash = "sha256:12435ef2fc4cdfd9cf1035a1db7e98b6b047fe591892e81f34e94959591fad00"},
-    {file = "Unidecode-1.2.0.tar.gz", hash = "sha256:8d73a97d387a956922344f6b74243c2c6771594659778744b2dbdaad8f6b727d"},
+text-unidecode = [
+    {file = "text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
+    {file = "text_unidecode-1.3-py2.py3-none-any.whl", hash = "sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8"},
 ]
 urllib3 = [
     {file = "urllib3-1.26.3-py2.py3-none-any.whl", hash = "sha256:1b465e494e3e0d8939b50680403e3aedaa2bc434b7d5af64dfd3c958d7f5ae80"},
