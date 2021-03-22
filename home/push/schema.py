@@ -35,7 +35,6 @@ class Query(graphene.ObjectType):
                              app_key=settings.MI_PUSH_APP_KEY)
 
 
-
 class Mutation(graphene.ObjectType):
     update_mi_push = UpdateMiPushMutation.Field()
 

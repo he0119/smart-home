@@ -37,7 +37,6 @@ class Query(graphene.ObjectType):
         return Picture.objects.all()
 
 
-
 class Mutation(graphene.ObjectType):
     update_storage = UpdateStorageMutation.Field()
     update_item = UpdateItemMutation.Field()
@@ -51,4 +50,3 @@ class Mutation(graphene.ObjectType):
     add_picture = AddPictureMutation.Field()
     delete_picture = DeletePictureMutation.Field()
     update_picture = UpdatePictureMutation.Field()
-

@@ -24,6 +24,7 @@ class Query(graphene.ObjectType):
     def resolve_autowatering_data(self, info, **args):
         return AutowateringData.objects.all()
 
+
 class Mutation(graphene.ObjectType):
     add_device = AddDeviceMutation.Field()
     delete_device = DeleteDeviceMutation.Field()

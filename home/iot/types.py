@@ -65,4 +65,3 @@ class DeviceType(DjangoObjectType):
     @login_required
     def get_node(cls, info, id):
         return Device.objects.get(pk=id)
-

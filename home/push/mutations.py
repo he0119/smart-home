@@ -42,4 +42,3 @@ class UpdateMiPushMutation(relay.ClientIDMutation):
 
         mi_push.save()
         return UpdateMiPushMutation(mi_push=mi_push)
-
