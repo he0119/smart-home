@@ -110,8 +110,6 @@ class UpdateStorageMutation(relay.ClientIDMutation):
         return UpdateStorageMutation(storage=storage)
 
 
-#endregion
-#region item
 class AddItemMutation(relay.ClientIDMutation):
     class Input:
         name = graphene.String(required=True)

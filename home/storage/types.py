@@ -10,7 +10,6 @@ from graphql_jwt.decorators import login_required
 from .models import Item, Picture, Storage
 
 
-#region type
 class ItemFilter(FilterSet):
     consumables = BooleanFilter(field_name='consumables',
                                 method='filter_consumables')
