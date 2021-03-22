@@ -32,6 +32,7 @@ requests = "^2.24.0"
 django-cors-headers = "^3.4.0"
 eventlet = "^0.30.2"
 yapf = ">=0.30.0"
+toml = "^0.10.2"
 
 [[tool.poetry.source]]
 default = true
