@@ -269,3 +269,8 @@ MI_PUSH_APP_SECRET = 'app_secret'
 # https://docs.djangoproject.com/zh-hans/3.1/topics/files/
 
 MEDIA_ROOT = 'media'
+
+# AutoField
+# https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
