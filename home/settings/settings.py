@@ -96,11 +96,11 @@ INSTALLED_APPS = [
     # 数据相关
     'mptt',
     'django_celery_beat',
-    'django_cleanup.apps.CleanupConfig',
+    'django_cleanup',
     # GraphQL
     'graphene_django',
     'django_filters',
-    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
+    'graphql_jwt.refresh_token',
     # 我的应用
     'home.users',
     'home.storage',
@@ -269,3 +269,8 @@ MI_PUSH_APP_SECRET = 'app_secret'
 # https://docs.djangoproject.com/zh-hans/3.1/topics/files/
 
 MEDIA_ROOT = 'media'
+
+# AutoField
+# https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
