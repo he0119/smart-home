@@ -1,5 +1,4 @@
 import json
-from typing import Dict
 
 from django.test import TestCase
 from django.urls import reverse
@@ -7,7 +6,7 @@ from django.urls import reverse
 from .views import is_xiaomi, xiaomi_hmac
 
 
-def get_command_data(name: str, intent_name: str = 'find_item') -> Dict:
+def get_command_data(name: str, intent_name: str = 'find_item') -> str:
     """ 生成小爱同学的命令 """
     data = {
         'version': '1.0',
