@@ -12,7 +12,7 @@ vine = "5.0.0"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "aniso8601"
@@ -25,7 +25,7 @@ python-versions = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "asgiref"
@@ -41,7 +41,7 @@ tests = ["pytest", "pytest-asyncio", "mypy (>=0.800)"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "billiard"
@@ -54,7 +54,7 @@ python-versions = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "boto3"
@@ -72,7 +72,7 @@ s3transfer = ">=0.3.0,<0.4.0"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "botocore"
@@ -93,7 +93,7 @@ crt = ["awscrt (==0.10.8)"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "celery"
@@ -150,7 +150,7 @@ zstd = ["zstandard"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "certifi"
@@ -163,7 +163,7 @@ python-versions = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "chardet"
@@ -176,7 +176,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "click"
@@ -189,7 +189,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "click-didyoumean"
@@ -205,7 +205,7 @@ click = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "click-plugins"
@@ -224,7 +224,7 @@ dev = ["pytest (>=3.6)", "pytest-cov", "wheel", "coveralls"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "click-repl"
@@ -242,7 +242,7 @@ six = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "django"
@@ -264,7 +264,7 @@ bcrypt = ["bcrypt"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "django-celery-beat"
@@ -283,11 +283,11 @@ python-crontab = ">=2.3.4"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "django-cleanup"
-version = "5.1.0"
+version = "5.2.0"
 description = "Deletes old files."
 category = "main"
 optional = false
@@ -296,7 +296,7 @@ python-versions = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "django-cors-headers"
@@ -312,7 +312,7 @@ Django = ">=2.2"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "django-filter"
@@ -328,7 +328,7 @@ Django = ">=2.2"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "django-graphql-jwt"
@@ -346,7 +346,7 @@ PyJWT = ">=2,<3"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "django-js-asset"
@@ -359,7 +359,7 @@ python-versions = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "django-mptt"
@@ -376,7 +376,7 @@ django-js-asset = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "django-storages"
@@ -400,7 +400,7 @@ sftp = ["paramiko"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "django-timezone-field"
@@ -420,7 +420,7 @@ rest_framework = ["djangorestframework (>=3.0.0)"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "dnspython"
@@ -437,7 +437,7 @@ IDNA = ["idna (>=2.1)"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "eventlet"
@@ -455,7 +455,7 @@ six = ">=1.10.0"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "graphene"
@@ -477,7 +477,7 @@ test = ["pytest (>=5.3,<6)", "pytest-benchmark (>=3.2,<4)", "pytest-cov (>=2.8,<
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "graphene-django"
@@ -502,7 +502,7 @@ test = ["pytest (>=3.6.3)", "pytest-cov", "pytest-random-order", "coveralls", "m
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "graphene-file-upload"
@@ -524,7 +524,7 @@ tests = ["coverage", "pytest", "pytest-cov", "pytest-django"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "graphql-core"
@@ -537,7 +537,7 @@ python-versions = ">=3.6,<4"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "graphql-relay"
@@ -553,7 +553,7 @@ graphql-core = ">=3.1"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "greenlet"
@@ -569,7 +569,7 @@ docs = ["sphinx"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "idna"
@@ -582,7 +582,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "jmespath"
@@ -595,7 +595,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "kombu"
@@ -627,7 +627,7 @@ zookeeper = ["kazoo (>=1.3.1)"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "markdown"
@@ -643,7 +643,7 @@ testing = ["coverage", "pyyaml"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "pillow"
@@ -656,7 +656,7 @@ python-versions = ">=3.6"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "promise"
@@ -675,7 +675,7 @@ test = ["pytest (>=2.7.3)", "pytest-cov", "coveralls", "futures", "pytest-benchm
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "prompt-toolkit"
@@ -691,7 +691,7 @@ wcwidth = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "psycopg2"
@@ -704,7 +704,7 @@ python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "pyjwt"
@@ -723,7 +723,7 @@ tests = ["pytest (>=6.0.0,<7.0.0)", "coverage[toml] (==5.0.4)"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "python-crontab"
@@ -743,7 +743,7 @@ cron-schedule = ["croniter"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "python-dateutil"
@@ -759,7 +759,7 @@ six = ">=1.5"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "pytz"
@@ -772,7 +772,7 @@ python-versions = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "redis"
@@ -788,7 +788,7 @@ hiredis = ["hiredis (>=0.1.3)"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "requests"
@@ -811,7 +811,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "s3transfer"
@@ -827,7 +827,7 @@ botocore = ">=1.12.36,<2.0a.0"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "six"
@@ -840,7 +840,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "sqlparse"
@@ -853,7 +853,7 @@ python-versions = ">=3.5"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "toml"
@@ -866,7 +866,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "unidecode"
@@ -879,7 +879,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "urllib3"
@@ -897,7 +897,7 @@ brotli = ["brotlipy (>=0.6.0)"]
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "vine"
@@ -910,7 +910,7 @@ python-versions = ">=3.6"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "wcwidth"
@@ -923,7 +923,7 @@ python-versions = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [[package]]
 name = "yapf"
@@ -936,12 +936,12 @@ python-versions = "*"
 [package.source]
 type = "legacy"
 url = "https://mirrors.aliyun.com/pypi/simple"
-reference = 'aliyun'
+reference = "aliyun"
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "f150414f94b1c2519d5cf25a6897988f3f144d7cc67cf93a0fe4c91da8c1e0d1"
+content-hash = "5e9d61ace24deed092e5badadca8e0b92b93dd03b9656290bbaf0daace07fa6f"
 
 [metadata.files]
 amqp = [
@@ -1004,8 +1004,8 @@ django-celery-beat = [
     {file = "django_celery_beat-2.2.0-py2.py3-none-any.whl", hash = "sha256:c4c72a9579f20eff4c4ccf1b58ebdca5ef940f4210065057db1754ea5f8dffdc"},
 ]
 django-cleanup = [
-    {file = "django-cleanup-5.1.0.tar.gz", hash = "sha256:8976aec12a22913afb3d1fcb541b1aedde2f5ec243e4260c5ff78bb6aa75a089"},
-    {file = "django_cleanup-5.1.0-py2.py3-none-any.whl", hash = "sha256:71e098c7d9ac3f3da40b95cff9c0bc51218d40ef419261232f46ba3141c50acc"},
+    {file = "django-cleanup-5.2.0.tar.gz", hash = "sha256:909d10ff574f5ce1a40fa63bd5c94c9ed866fd7ae770994c46cdf66c3db3e846"},
+    {file = "django_cleanup-5.2.0-py2.py3-none-any.whl", hash = "sha256:193cf69de54b9fc0a0f4547edbb3a63bbe01728cb029f9f4b7912098cc1bced7"},
 ]
 django-cors-headers = [
     {file = "django-cors-headers-3.7.0.tar.gz", hash = "sha256:96069c4aaacace786a34ee7894ff680780ec2644e4268b31181044410fecd12e"},
