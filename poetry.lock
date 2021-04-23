@@ -58,16 +58,16 @@ reference = "aliyun"
 
 [[package]]
 name = "boto3"
-version = "1.17.52"
+version = "1.17.55"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [package.dependencies]
-botocore = ">=1.20.52,<1.21.0"
+botocore = ">=1.20.55,<1.21.0"
 jmespath = ">=0.7.1,<1.0.0"
-s3transfer = ">=0.3.0,<0.4.0"
+s3transfer = ">=0.4.0,<0.5.0"
 
 [package.source]
 type = "legacy"
@@ -76,7 +76,7 @@ reference = "aliyun"
 
 [[package]]
 name = "botocore"
-version = "1.20.53"
+version = "1.20.55"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -88,7 +88,7 @@ python-dateutil = ">=2.1,<3.0.0"
 urllib3 = ">=1.25.4,<1.27"
 
 [package.extras]
-crt = ["awscrt (==0.10.8)"]
+crt = ["awscrt (==0.11.11)"]
 
 [package.source]
 type = "legacy"
@@ -815,7 +815,7 @@ reference = "aliyun"
 
 [[package]]
 name = "s3transfer"
-version = "0.3.7"
+version = "0.4.0"
 description = "An Amazon S3 Transfer Manager"
 category = "main"
 optional = false
@@ -823,6 +823,9 @@ python-versions = "*"
 
 [package.dependencies]
 botocore = ">=1.12.36,<2.0a.0"
+
+[package.extras]
+crt = ["botocore[crt] (>=1.20.29,<2.0a.0)"]
 
 [package.source]
 type = "legacy"
@@ -941,7 +944,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "5e9d61ace24deed092e5badadca8e0b92b93dd03b9656290bbaf0daace07fa6f"
+content-hash = "d7e5bde2a055e4039e163ca9d30d19f540677398d72cb2f5fa3adf72a92c0161"
 
 [metadata.files]
 amqp = [
@@ -961,12 +964,12 @@ billiard = [
     {file = "billiard-3.6.4.0.tar.gz", hash = "sha256:299de5a8da28a783d51b197d496bef4f1595dd023a93a4f59dde1886ae905547"},
 ]
 boto3 = [
-    {file = "boto3-1.17.52-py2.py3-none-any.whl", hash = "sha256:41b1ba590e887b85520c0e97e811630b8eeb71860c9b1faa3190c3bd45856176"},
-    {file = "boto3-1.17.52.tar.gz", hash = "sha256:ed640c17c97af289be4693740c1cbf95a456e9c495e3973a1ed6f51a396846d2"},
+    {file = "boto3-1.17.55-py2.py3-none-any.whl", hash = "sha256:5910c868c2cf0d30b6c9caed1d38a2b2c2c83e9713eadae0f43de4f42bfe863f"},
+    {file = "boto3-1.17.55.tar.gz", hash = "sha256:d0d1e8ca76a8e1b74f87a8324f97001d60bd8bbe6cca35a8e9e7b9abe5aa9ddb"},
 ]
 botocore = [
-    {file = "botocore-1.20.53-py2.py3-none-any.whl", hash = "sha256:d5e70d17b91c9b5867be7d6de0caa7dde9ed789bed62f03ea9b60718dc9350bf"},
-    {file = "botocore-1.20.53.tar.gz", hash = "sha256:e303500c4e80f6a706602da53daa6f751cfa8f491665c99a24ee732ab6321573"},
+    {file = "botocore-1.20.55-py2.py3-none-any.whl", hash = "sha256:94a62f7f848b37757c3419193727e183bccdf5cb74167df30bafee5d8d649b7a"},
+    {file = "botocore-1.20.55.tar.gz", hash = "sha256:5632c129e6c1c1a15e273fd3ec6f4431490e99ec61b6cff833538f456202e833"},
 ]
 celery = [
     {file = "celery-5.0.5-py3-none-any.whl", hash = "sha256:5e8d364e058554e83bbb116e8377d90c79be254785f357cb2cec026e79febe13"},
@@ -1207,8 +1210,8 @@ requests = [
     {file = "requests-2.25.1.tar.gz", hash = "sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804"},
 ]
 s3transfer = [
-    {file = "s3transfer-0.3.7-py2.py3-none-any.whl", hash = "sha256:efa5bd92a897b6a8d5c1383828dca3d52d0790e0756d49740563a3fb6ed03246"},
-    {file = "s3transfer-0.3.7.tar.gz", hash = "sha256:35627b86af8ff97e7ac27975fe0a98a312814b46c6333d8a6b889627bcd80994"},
+    {file = "s3transfer-0.4.0-py2.py3-none-any.whl", hash = "sha256:af1af6384bd7fb8208b06480f9be73d0295d965c4c073a5c95ea5b6661dccc18"},
+    {file = "s3transfer-0.4.0.tar.gz", hash = "sha256:f3dfd791cad2799403e3c8051810a7ca6ee1d2e630e5d2a8f9649d892bdb3db6"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
