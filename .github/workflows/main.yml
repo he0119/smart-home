@@ -48,12 +48,20 @@ jobs:
         env:
           TESTING_SERVER: true
       - name: Publish unit test results
-        uses: EnricoMi/publish-unit-test-result-action@v1.5
-        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: >
+          always() &&
+          github.event.sender.login != 'dependabot[bot]' &&
+          ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           files: "**/TEST-*.xml"
           comment_on_pr: false
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Unit Test Results
+          path: "**/TEST-*.xml"
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
