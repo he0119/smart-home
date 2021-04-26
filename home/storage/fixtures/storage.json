@@ -5,11 +5,7 @@
     "fields": {
       "name": "阳台",
       "parent": null,
-      "description": "",
-      "lft": 1,
-      "rght": 8,
-      "tree_id": 1,
-      "level": 0
+      "description": ""
     }
   },
   {
@@ -18,11 +14,7 @@
     "fields": {
       "name": "阳台储物柜",
       "parent": 1,
-      "description": "",
-      "lft": 2,
-      "rght": 7,
-      "tree_id": 1,
-      "level": 1
+      "description": ""
     }
   },
   {
@@ -31,11 +23,7 @@
     "fields": {
       "name": "工具箱",
       "parent": 2,
-      "description": "",
-      "lft": 3,
-      "rght": 4,
-      "tree_id": 1,
-      "level": 2
+      "description": ""
     }
   },
   {
@@ -44,11 +32,7 @@
     "fields": {
       "name": "工具箱2",
       "parent": 2,
-      "description": "",
-      "lft": 5,
-      "rght": 6,
-      "tree_id": 1,
-      "level": 2
+      "description": ""
     }
   },
   {

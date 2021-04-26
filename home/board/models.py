@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-from mptt.models import MPTTModel, TreeForeignKey
+from tree_queries.models import TreeNode, TreeNodeForeignKey
 
 
 class Topic(models.Model):
@@ -29,7 +29,7 @@ class Topic(models.Model):
         return self.title
 
 
-class Comment(MPTTModel):
+class Comment(TreeNode):
     """ 评论 """
     class Meta:
         verbose_name = '评论'
@@ -46,12 +46,12 @@ class Comment(MPTTModel):
     body = models.TextField(verbose_name='内容')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='发布时间')
     edited_at = models.DateTimeField(auto_now=True, verbose_name='修改时间')
-    parent = TreeForeignKey('self',
-                            on_delete=models.CASCADE,
-                            null=True,
-                            blank=True,
-                            related_name='children',
-                            verbose_name='属于')
+    parent = TreeNodeForeignKey('self',
+                                on_delete=models.CASCADE,
+                                null=True,
+                                blank=True,
+                                related_name='children',
+                                verbose_name='属于')
     reply_to = models.ForeignKey(settings.AUTH_USER_MODEL,
                                  null=True,
                                  blank=True,

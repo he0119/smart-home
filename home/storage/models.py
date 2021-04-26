@@ -4,12 +4,12 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from mptt.models import MPTTModel, TreeForeignKey
+from tree_queries.models import TreeNode, TreeNodeForeignKey
 
 
-class Storage(MPTTModel):
+class Storage(TreeNode):
     name = models.CharField('名字', max_length=200, unique=True)
-    parent = TreeForeignKey(
+    parent = TreeNodeForeignKey(
         'self',
         verbose_name='属于',
         related_name='children',
@@ -22,9 +22,6 @@ class Storage(MPTTModel):
     class Meta:
         verbose_name = '位置'
         verbose_name_plural = '位置'
-
-    class MPTTMeta:
-        order_insertion_by = ['name']
 
     def __str__(self):
         return self.name

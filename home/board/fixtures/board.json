@@ -48,11 +48,7 @@
       "created_at": "2020-07-11T02:20:23.803Z",
       "edited_at": "2020-07-11T02:20:23.803Z",
       "parent": null,
-      "reply_to": null,
-      "lft": 1,
-      "rght": 4,
-      "tree_id": 1,
-      "level": 0
+      "reply_to": null
     }
   },
   {
@@ -65,11 +61,7 @@
       "created_at": "2020-12-12T02:36:14.858Z",
       "edited_at": "2020-12-12T02:36:14.858Z",
       "parent": null,
-      "reply_to": null,
-      "lft": 1,
-      "rght": 2,
-      "tree_id": 2,
-      "level": 0
+      "reply_to": null
     }
   },
   {
@@ -82,11 +74,7 @@
       "created_at": "2020-12-12T03:00:23.593Z",
       "edited_at": "2020-12-12T03:00:23.593Z",
       "parent": 1,
-      "reply_to": 1,
-      "lft": 2,
-      "rght": 3,
-      "tree_id": 1,
-      "level": 1
+      "reply_to": 1
     }
   }
 ]

@@ -94,7 +94,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 数据相关
-    'mptt',
     'django_celery_beat',
     'django_cleanup',
     # GraphQL
@@ -203,11 +202,6 @@ AUTHENTICATION_BACKENDS = [
     'graphql_jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
-
-# MPTT
-# https://django-mptt.readthedocs.io/en/latest/forms.html
-
-MPTT_DEFAULT_LEVEL_INDICATOR = '--'
 
 # Graphene(GraphQL)
 # https://docs.graphene-python.org/projects/django/en/latest/installation/
