@@ -22,6 +22,7 @@ class Storage(TreeNode):
     class Meta:
         verbose_name = '位置'
         verbose_name_plural = '位置'
+        ordering = ['name']
 
     def __str__(self):
         return self.name

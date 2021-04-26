@@ -53,7 +53,6 @@ class StorageFilter(FilterSet):
         fields = {
             'name': ['exact', 'icontains'],
             'description': ['exact', 'icontains'],
-            'level': ['exact'],
         }
 
 
@@ -128,7 +127,7 @@ class StorageType(DjangoObjectType):
 
     @login_required
     def resolve_ancestors(self, info, **args):
-        return self.get_ancestors()
+        return self.ancestors()
 
     @classmethod
     @login_required

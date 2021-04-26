@@ -38,13 +38,13 @@ class StorageModelTests(TestCase):
         toolbox2 = Storage.objects.get(name="工具箱2")
 
         self.assertEqual(balcony.parent, None)
-        self.assertEqual(list(balcony.get_ancestors()), [])
+        self.assertEqual(list(balcony.ancestors()), [])
 
         self.assertEqual(locker.parent, balcony)
-        self.assertEqual(list(locker.get_ancestors()), [balcony])
+        self.assertEqual(list(locker.ancestors()), [balcony])
 
         self.assertEqual(toolbox.parent, locker)
-        self.assertEqual(list(toolbox.get_ancestors()), [balcony, locker])
+        self.assertEqual(list(toolbox.ancestors()), [balcony, locker])
 
     def test_children(self):
         balcony = Storage.objects.get(name="阳台")
@@ -52,11 +52,11 @@ class StorageModelTests(TestCase):
         toolbox = Storage.objects.get(name="工具箱")
         toolbox2 = Storage.objects.get(name="工具箱2")
 
-        self.assertEqual(list(balcony.get_children()), [locker])
+        self.assertEqual(list(balcony.descendants()), [locker])
 
-        self.assertEqual(list(locker.get_children()), [toolbox, toolbox2])
+        self.assertEqual(list(locker.descendants()), [toolbox, toolbox2])
 
-        self.assertEqual(list(toolbox.get_children()), [])
+        self.assertEqual(list(toolbox.descendants()), [])
 
 
 class StorageTests(JSONWebTokenTestCase):

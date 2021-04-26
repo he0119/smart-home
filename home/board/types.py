@@ -14,7 +14,6 @@ class CommentFilter(FilterSet):
         model = Comment
         fields = {
             'topic': ['exact'],
-            'level': ['exact'],
         }
 
     order_by = OrderingFilter(fields=(('created_at', 'created_at'), ))
