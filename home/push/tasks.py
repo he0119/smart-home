@@ -11,13 +11,6 @@ from .mipush.APISender import APISender
 sender = APISender(settings.MI_PUSH_APP_SECRET)
 
 
-class PushChannel(Enum):
-    """ 通知类别 """
-    IOT = ['pre54', 'IoT消息']
-    STORAGE = ['pre213', '物品管理信息']
-    BOARD = ['pre84', '留言板消息']
-
-
 def get_enable_reg_ids() -> List[str]:
     """ 获取所有启用的设备标识码 """
     users = get_user_model().objects.exclude(mipush__enable=False)
@@ -32,7 +25,7 @@ def get_enable_reg_ids_except_user(user) -> List[str]:
 
 
 def build_message(title: str, description: str, payload: str,
-                  channel: Optional[List]) -> PushMessage:
+                  is_important: bool) -> PushMessage:
     # 每条内容相同的消息单独显示，不覆盖
     # 限制最多可以有 10001 条消息共存
     notify_id = abs(hash(title + description)) % (10**4)
@@ -44,11 +37,11 @@ def build_message(title: str, description: str, payload: str,
         .notify_id(notify_id) \
         .extra({'notification_style_type': '1'})
 
-    # 通知类别
-    if channel:
-        message = message.extra({Constants.extra_param_channel_id: channel[0]})
+    # 重要通知
+    if is_important:
         message = message.extra(
-            {Constants.extra_param_channel_name: channel[1]})
+            {Constants.extra_param_channel_id: 'high_system'})
+        message = message.extra({Constants.extra_param_channel_name: '服务提醒'})
 
     return message
 
@@ -58,7 +51,7 @@ def push_to_users(reg_ids: List[str],
                   title: str,
                   description: str,
                   payload: str,
-                  channel: Optional[List] = None):
+                  is_important: bool = False):
     """ 向用户推送消息
 
     支持向一个或多个用户推送消息
@@ -66,5 +59,5 @@ def push_to_users(reg_ids: List[str],
     根据 regids, 发送消息到指定的一组设备上, regids 的个数不得超过 1000 个。
     <https://dev.mi.com/console/doc/detail?pId=1278#_2_1>
     """
-    message = build_message(title, description, payload, channel)
+    message = build_message(title, description, payload, is_important)
     return sender.send(message.message_dict(), ','.join(reg_ids))

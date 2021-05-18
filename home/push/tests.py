@@ -5,7 +5,7 @@ from django.test import TestCase
 from graphql_jwt.testcases import JSONWebTokenTestCase
 from graphql_relay.node.node import to_global_id
 
-from home.push.tasks import (PushChannel, build_message, get_enable_reg_ids,
+from home.push.tasks import (build_message, get_enable_reg_ids,
                              get_enable_reg_ids_except_user)
 
 from .models import MiPush
@@ -316,10 +316,12 @@ class MiPushMessageTest(TestCase):
     fixtures = ['users', 'push']
 
     def test_mipush_message(self):
-        message = build_message(title='test',
-                                description='test description',
-                                payload='/iot',
-                                channel=None)
+        message = build_message(
+            title='test',
+            description='test description',
+            payload='/iot',
+            is_important=False,
+        )
 
         message_dict = message.message_dict()
         self.assertEqual(message_dict['title'], 'test')
@@ -332,7 +334,7 @@ class MiPushMessageTest(TestCase):
         message = build_message(title='test',
                                 description='test description',
                                 payload='/iot',
-                                channel=PushChannel.BOARD.value)
+                                is_important=True)
 
         message_dict = message.message_dict()
         self.assertEqual(message_dict['title'], 'test')
@@ -341,8 +343,8 @@ class MiPushMessageTest(TestCase):
         self.assertEqual(message_dict['payload'], '/iot')
         self.assertEqual(message_dict['extra.notification_style_type'], '1')
 
-        self.assertEqual(message_dict['extra.channel_id'], 'pre84')
-        self.assertEqual(message_dict['extra.channel_name'], '留言板消息')
+        self.assertEqual(message_dict['extra.channel_id'], 'high_system')
+        self.assertEqual(message_dict['extra.channel_name'], '服务提醒')
 
 
 def mocked_sender_send(*args, **kwargs):

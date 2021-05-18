@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 from celery import shared_task
 
-from home.push.tasks import PushChannel, get_enable_reg_ids, push_to_users
+from home.push.tasks import get_enable_reg_ids, push_to_users
 
 from .api import DeviceAPI, WeatherAPI
 
@@ -61,6 +61,6 @@ def autowatering(self, location_id: str, limit: float, device_name: str,
             '自动浇水',
             push_message,
             '/iot',
-            PushChannel.IOT.value,
+            True,
         )
     return push_message
