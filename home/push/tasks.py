@@ -1,6 +1,3 @@
-from enum import Enum
-from typing import List, Optional
-
 from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -11,21 +8,26 @@ from .mipush.APISender import APISender
 sender = APISender(settings.MI_PUSH_APP_SECRET)
 
 
-def get_enable_reg_ids() -> List[str]:
+def get_enable_reg_ids() -> list[str]:
     """ 获取所有启用的设备标识码 """
     users = get_user_model().objects.exclude(mipush__enable=False)
     return [mipush.reg_id for user in users for mipush in user.mipush.all()]
 
 
-def get_enable_reg_ids_except_user(user) -> List[str]:
+def get_enable_reg_ids_except_user(user) -> list[str]:
     """ 获取除指定用户的所有启用的设备标识码 """
     users = get_user_model().objects.exclude(pk=user.id).exclude(
         mipush__enable=False)
     return [mipush.reg_id for user in users for mipush in user.mipush.all()]
 
 
-def build_message(title: str, description: str, payload: str,
-                  is_important: bool) -> PushMessage:
+def build_message(
+    title: str,
+    description: str,
+    payload: str,
+    is_important: bool,
+) -> PushMessage:
+    """ 生成推送消息 """
     # 每条内容相同的消息单独显示，不覆盖
     # 限制最多可以有 10001 条消息共存
     notify_id = abs(hash(title + description)) % (10**4)
@@ -47,11 +49,13 @@ def build_message(title: str, description: str, payload: str,
 
 
 @shared_task(max_retries=3, default_retry_delay=5)
-def push_to_users(reg_ids: List[str],
-                  title: str,
-                  description: str,
-                  payload: str,
-                  is_important: bool = False):
+def push_to_users(
+    reg_ids: list[str],
+    title: str,
+    description: str,
+    payload: str,
+    is_important: bool = False,
+):
     """ 向用户推送消息
 
     支持向一个或多个用户推送消息
