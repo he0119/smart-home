@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Changed
+
+- 支持小米推送消息分类新规
+
 ## [0.7.2] - 2021-03-13
 
 ### Changed
