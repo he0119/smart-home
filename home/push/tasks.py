@@ -27,7 +27,14 @@ def build_message(
     payload: str,
     is_important: bool,
 ) -> PushMessage:
-    """ 生成推送消息 """
+    """ 生成推送消息
+
+    使用多文字模式，最多支持 128 字。
+    <https://dev.mi.com/console/doc/detail?pId=1278#_3_3>
+    """
+    # 去掉过多的字符
+    description = description[:128]
+
     # 每条内容相同的消息单独显示，不覆盖
     # 限制最多可以有 10001 条消息共存
     notify_id = abs(hash(title + description)) % (10**4)
