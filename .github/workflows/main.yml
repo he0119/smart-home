@@ -55,7 +55,6 @@ jobs:
           ( github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository )
         with:
           files: "**/TEST-*.xml"
-          comment_on_pr: false
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v2
