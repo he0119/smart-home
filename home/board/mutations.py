@@ -6,8 +6,7 @@ from graphql_jwt.decorators import login_required
 from graphql_relay import from_global_id
 from graphql_relay.node.node import to_global_id
 
-from home.push.tasks import (PushChannel, get_enable_reg_ids_except_user,
-                             push_to_users)
+from home.push.tasks import get_enable_reg_ids_except_user, push_to_users
 
 from .models import Comment, Topic
 from .types import CommentType, TopicType
@@ -39,13 +38,12 @@ class AddTopicMutation(relay.ClientIDMutation):
 
         reg_ids = get_enable_reg_ids_except_user(topic.user)
         if reg_ids:
-            topic_description = unmark(topic.description[:30])
             push_to_users.delay(
                 reg_ids,
-                '新话题',
-                f'{topic.user.username} 刚发布了一个新话题\n{topic.title}\n{topic_description}',
+                f'{topic.user.username} 发布新话题',
+                f'{topic.title}\n{unmark(topic.description)}',
                 f'/topic/{to_global_id("TopicType", topic.id)}',
-                PushChannel.BOARD.value,
+                True,
             )
 
         return AddTopicMutation(topic=topic)
@@ -230,13 +228,12 @@ class AddCommentMutation(relay.ClientIDMutation):
 
         reg_ids = get_enable_reg_ids_except_user(comment.user)
         if reg_ids:
-            comment_body = unmark(comment.body[:30])
             push_to_users.delay(
                 reg_ids,
-                '新回复',
-                f'{comment.user.username} 在 {comment.topic.title} 话题下发表了新回复\n{comment_body}',
+                f'{comment.topic.title} 下有新回复',
+                f'{comment.user.username}：{unmark(comment.body)}',
                 f'/topic/{to_global_id("TopicType", topic.id)}',
-                PushChannel.BOARD.value,
+                True,
             )
 
         return AddCommentMutation(comment=comment)
