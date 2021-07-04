@@ -268,14 +268,14 @@ reference = "aliyun"
 
 [[package]]
 name = "django-celery-beat"
-version = "2.2.0"
+version = "2.2.1"
 description = "Database-backed Periodic Tasks."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-celery = ">=4.4,<6.0"
+celery = ">=5.0,<6.0"
 Django = ">=2.2,<4.0"
 django-timezone-field = ">=4.1.0,<5.0"
 python-crontab = ">=2.3.4"
@@ -941,7 +941,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "3eb11f25bdf31cb0f6501805ac64e4b324baa23977115a9ae3f14f3606454841"
+content-hash = "44271be42b96c603768145101f9644d8667440628358a712d140a789354b64b9"
 
 [metadata.files]
 amqp = [
@@ -1000,8 +1000,8 @@ django = [
     {file = "Django-3.2.5.tar.gz", hash = "sha256:3da05fea54fdec2315b54a563d5b59f3b4e2b1e69c3a5841dda35019c01855cd"},
 ]
 django-celery-beat = [
-    {file = "django-celery-beat-2.2.0.tar.gz", hash = "sha256:b8a13afb15e7c53fc04f4f847ac71a6d32088959aba701eb7c4a59f0c28ba543"},
-    {file = "django_celery_beat-2.2.0-py2.py3-none-any.whl", hash = "sha256:c4c72a9579f20eff4c4ccf1b58ebdca5ef940f4210065057db1754ea5f8dffdc"},
+    {file = "django-celery-beat-2.2.1.tar.gz", hash = "sha256:97ae5eb309541551bdb07bf60cc57cadacf42a74287560ced2d2c06298620234"},
+    {file = "django_celery_beat-2.2.1-py2.py3-none-any.whl", hash = "sha256:ab43049634fd18dc037927d7c2c7d5f67f95283a20ebbda55f42f8606412e66c"},
 ]
 django-cleanup = [
     {file = "django-cleanup-5.2.0.tar.gz", hash = "sha256:909d10ff574f5ce1a40fa63bd5c94c9ed866fd7ae770994c46cdf66c3db3e846"},
