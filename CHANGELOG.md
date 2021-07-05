@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.7.3] - 2021-07-05
+
 ### Changed
 
 - 支持小米推送消息分类新规
+- 拆分 Schema
+- 更新至 Django 3.2
 
 ## [0.7.2] - 2021-03-13
 
@@ -177,8 +181,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.7.2...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.7.3...HEAD
 
+[0.7.3]: https://github.com/he0119/smart-home/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/he0119/smart-home/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/he0119/smart-home/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/he0119/smart-home/compare/v0.6.1...v0.7.0
