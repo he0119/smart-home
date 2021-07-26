@@ -331,15 +331,16 @@ reference = "aliyun"
 
 [[package]]
 name = "django-graphql-jwt"
-version = "0.3.2"
+version = "0.3.3"
 description = "JSON Web Token for Django GraphQL"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-Django = ">=1.11"
-graphene-django = ">=3.0.0b1"
+Django = ">=2.0"
+graphene = ">=2.1.5"
+graphene-django = ">=2.0.0"
 PyJWT = ">=2,<3"
 
 [package.source]
@@ -944,7 +945,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "44271be42b96c603768145101f9644d8667440628358a712d140a789354b64b9"
+content-hash = "08210d641ff556eb1e8b80478ca0e25bd14a88ac6a398d1ac1ed98cfca9c48bf"
 
 [metadata.files]
 amqp = [
@@ -1019,8 +1020,8 @@ django-filter = [
     {file = "django_filter-2.4.0-py3-none-any.whl", hash = "sha256:e00d32cebdb3d54273c48f4f878f898dced8d5dfaad009438fe61ebdf535ace1"},
 ]
 django-graphql-jwt = [
-    {file = "django-graphql-jwt-0.3.2.tar.gz", hash = "sha256:36735d7d53dca2ec888f3587c05c412efb4a98c9a3f49f19771c5afcc959058d"},
-    {file = "django_graphql_jwt-0.3.2-py2.py3-none-any.whl", hash = "sha256:3ba1a9472daf8c2464a521e4d415a54e820a30fdcf7be79ccb7d0fa39c00452f"},
+    {file = "django-graphql-jwt-0.3.3.tar.gz", hash = "sha256:a8e7d8a9d4a4ddc87d65d99a5e62b696d18209370c3ce6917b33fb23c98555af"},
+    {file = "django_graphql_jwt-0.3.3-py2.py3-none-any.whl", hash = "sha256:d784b5daf5e40b22c15c3b00988919daea08f3ed5aea47426da1167fc46d7dc1"},
 ]
 django-js-asset = [
     {file = "django-js-asset-1.2.2.tar.gz", hash = "sha256:c163ae80d2e0b22d8fb598047cd0dcef31f81830e127cfecae278ad574167260"},
