@@ -25,7 +25,7 @@ pillow = "^8.3.2"
 psycopg2 = "^2.8.5"
 python = "^3.9"
 redis = "^3.5.3"
-requests = "^2.24.0"
+requests = "^2.26.0"
 
 [tool.poetry.dev-dependencies]
 django-cors-headers = "^3.4.0"
