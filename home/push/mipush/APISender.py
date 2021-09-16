@@ -4,7 +4,7 @@ from .APIError import APIError
 from .APISenderBase import Base
 
 _BROADCAST_TOPIC_MAX = 5
-_TOPIC_SPLITTER = ';$;'
+_TOPIC_SPLITTER = ";$;"
 
 
 class APISender(Base):
@@ -14,6 +14,7 @@ class APISender(Base):
     @:param security 必须 - APP_SECRET
     @:param token 可选 - 发送topic消息数超过1w所需要的验证token, 需到push运营平台申请
     """
+
     def send(self, push_message, reg_id, retry_times=3):
         """
         发送reg_id消息
@@ -22,8 +23,9 @@ class APISender(Base):
         :param retry_times: 重试次数
         """
         push_message[Constants.http_param_registration_id] = reg_id
-        return self._try_http_request(Constants.request_path.V3_REGID_MESSAGE,
-                                      retry_times, **push_message)
+        return self._try_http_request(
+            Constants.request_path.V3_REGID_MESSAGE, retry_times, **push_message
+        )
 
     def send_to_alias(self, push_message, alias, retry_times=3):
         """
@@ -33,8 +35,9 @@ class APISender(Base):
         :param retry_times: 重试次数
         """
         push_message[Constants.http_param_alias] = alias
-        return self._try_http_request(Constants.request_path.V3_ALIAS_MESSAGE,
-                                      retry_times, **push_message)
+        return self._try_http_request(
+            Constants.request_path.V3_ALIAS_MESSAGE, retry_times, **push_message
+        )
 
     def send_to_user_account(self, push_message, user_account, retry_times=3):
         """
@@ -45,8 +48,8 @@ class APISender(Base):
         """
         push_message[Constants.http_param_user_account] = user_account
         return self._try_http_request(
-            Constants.request_path.V2_USER_ACCOUNT_MESSAGE, retry_times,
-            **push_message)
+            Constants.request_path.V2_USER_ACCOUNT_MESSAGE, retry_times, **push_message
+        )
 
     def broadcast(self, push_message, topic, retry_times=3):
         """
@@ -56,8 +59,9 @@ class APISender(Base):
         :param retry_times: 重试次数
         """
         push_message[Constants.http_param_topic] = topic
-        return self._try_http_request(Constants.request_path.V2_BROADCAST,
-                                      retry_times, **push_message)
+        return self._try_http_request(
+            Constants.request_path.V2_BROADCAST, retry_times, **push_message
+        )
 
     def broadcast_all(self, push_message, retry_times=3):
         """
@@ -65,19 +69,13 @@ class APISender(Base):
         :param push_message: 消息体(请求参数对象)
         :param retry_times: 重试次数
         """
-        package_names = push_message[
-            Constants.http_param_restricted_package_name]
+        package_names = push_message[Constants.http_param_restricted_package_name]
         request_path = Constants.request_path.V2_BROADCAST_TO_ALL
         if len(package_names) > 1:
             request_path = Constants.request_path.V3_BROADCAST_TO_ALL
-        return self._try_http_request(request_path, retry_times,
-                                      **push_message)
+        return self._try_http_request(request_path, retry_times, **push_message)
 
-    def multi_broadcast(self,
-                        push_message,
-                        topics,
-                        broadcast_topic_op,
-                        retry_times=3):
+    def multi_broadcast(self, push_message, topics, broadcast_topic_op, retry_times=3):
         """
         发送多topic消息(multi)
         :param push_message: 消息体(请求参数对象)
@@ -87,13 +85,13 @@ class APISender(Base):
         """
         if isinstance(topics, list):
             if len(topics) > _BROADCAST_TOPIC_MAX:
-                raise APIError(-1, 'topics more than max topic 5',
-                               'args limit')
-            push_message[Constants.http_param_topics] = _TOPIC_SPLITTER.join(
-                topics)
+                raise APIError(-1, "topics more than max topic 5", "args limit")
+            push_message[Constants.http_param_topics] = _TOPIC_SPLITTER.join(topics)
             push_message[Constants.http_param_topic_op] = broadcast_topic_op
             return self._try_http_request(
-                Constants.request_path.V3_MILTI_TOPIC_BROADCAST, retry_times,
-                **push_message)
+                Constants.request_path.V3_MILTI_TOPIC_BROADCAST,
+                retry_times,
+                **push_message
+            )
         else:
-            raise APIError(-1, 'topic must be list', 'args illegal')
+            raise APIError(-1, "topic must be list", "args illegal")

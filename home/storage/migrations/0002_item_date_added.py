@@ -4,47 +4,46 @@ from django.db import migrations, models
 
 
 def set_date_added(apps, schema_editor):
-    """ 将添加时间设置为更新时间 """
-    Item = apps.get_model('storage', 'Item')
+    """将添加时间设置为更新时间"""
+    Item = apps.get_model("storage", "Item")
     for item in Item.objects.all():
         item.date_added = item.update_date
         item.save()
 
 
 def reverse_set_date_added(apps, schema_editor):
-    """ 不需要做任何事情 """
+    """不需要做任何事情"""
     pass
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('storage', '0001_initial'),
+        ("storage", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='item',
-            name='update_date',
-            field=models.DateTimeField(verbose_name='更新时间'),
+            model_name="item",
+            name="update_date",
+            field=models.DateTimeField(verbose_name="更新时间"),
         ),
         migrations.AddField(
-            model_name='item',
-            name='date_added',
-            field=models.DateTimeField(auto_now_add=True,
-                                       null=True,
-                                       verbose_name='添加时间'),
+            model_name="item",
+            name="date_added",
+            field=models.DateTimeField(
+                auto_now_add=True, null=True, verbose_name="添加时间"
+            ),
         ),
-        migrations.RunPython(set_date_added,
-                             reverse_code=reverse_set_date_added),
+        migrations.RunPython(set_date_added, reverse_code=reverse_set_date_added),
         migrations.AlterField(
-            model_name='item',
-            name='date_added',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='添加时间'),
+            model_name="item",
+            name="date_added",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="添加时间"),
         ),
         migrations.AlterField(
-            model_name='item',
-            name='update_date',
-            field=models.DateTimeField(auto_now=True, verbose_name='更新时间'),
+            model_name="item",
+            name="update_date",
+            field=models.DateTimeField(auto_now=True, verbose_name="更新时间"),
         ),
     ]

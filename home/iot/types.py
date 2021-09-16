@@ -11,36 +11,38 @@ class AutowateringDataFilter(FilterSet):
     class Meta:
         model = AutowateringData
         fields = {
-            'device': ['exact'],
-            'time': ['exact', 'lt', 'gt'],
+            "device": ["exact"],
+            "time": ["exact", "lt", "gt"],
         }
 
-    order_by = OrderingFilter(fields=(('time', 'time'), ))
+    order_by = OrderingFilter(fields=(("time", "time"),))
 
 
 class DeviceFilter(FilterSet):
     class Meta:
         model = Device
         fields = {
-            'name': ['exact', 'icontains', 'istartswith'],
-            'device_type': ['exact', 'icontains', 'istartswith'],
-            'location': ['exact', 'icontains', 'istartswith'],
+            "name": ["exact", "icontains", "istartswith"],
+            "device_type": ["exact", "icontains", "istartswith"],
+            "location": ["exact", "icontains", "istartswith"],
         }
 
-    order_by = OrderingFilter(fields=(
-        ('created_at', 'created_at'),
-        ('edited_at', 'edited_at'),
-        ('is_online', 'is_online'),
-        ('online_at', 'online_at'),
-        ('offline_at', 'offline_at'),
-    ))
+    order_by = OrderingFilter(
+        fields=(
+            ("created_at", "created_at"),
+            ("edited_at", "edited_at"),
+            ("is_online", "is_online"),
+            ("online_at", "online_at"),
+            ("offline_at", "offline_at"),
+        )
+    )
 
 
 class AutowateringDataType(DjangoObjectType):
     class Meta:
         model = AutowateringData
-        fields = '__all__'
-        interfaces = (relay.Node, )
+        fields = "__all__"
+        interfaces = (relay.Node,)
 
     @classmethod
     @login_required
@@ -51,11 +53,12 @@ class AutowateringDataType(DjangoObjectType):
 class DeviceType(DjangoObjectType):
     class Meta:
         model = Device
-        fields = '__all__'
-        interfaces = (relay.Node, )
+        fields = "__all__"
+        interfaces = (relay.Node,)
 
     autowatering_data = DjangoFilterConnectionField(
-        AutowateringDataType, filterset_class=AutowateringDataFilter)
+        AutowateringDataType, filterset_class=AutowateringDataFilter
+    )
 
     @login_required
     def resolve_autowatering_data(self, info, **args):

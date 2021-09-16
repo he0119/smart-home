@@ -6,12 +6,12 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('iot', '0003_rename_field'),
+        ("iot", "0003_rename_field"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='autowateringdata',
-            index=models.Index(fields=['-time'], name='iot_autowat_time_3b702b_idx'),
+            model_name="autowateringdata",
+            index=models.Index(fields=["-time"], name="iot_autowat_time_3b702b_idx"),
         ),
     ]

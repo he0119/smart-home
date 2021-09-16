@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('push', '0003_device_id_model'),
+        ("push", "0003_device_id_model"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='mipush',
-            name='reg_id',
-            field=models.CharField(max_length=100, unique=True, verbose_name='注册标识码'),
+            model_name="mipush",
+            name="reg_id",
+            field=models.CharField(max_length=100, unique=True, verbose_name="注册标识码"),
         ),
     ]

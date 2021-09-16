@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('iot', '0001_initial'),
+        ("iot", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='autowateringdata',
-            options={'verbose_name': '自动浇水设备数据', 'verbose_name_plural': '自动浇水设备数据'},
+            name="autowateringdata",
+            options={"verbose_name": "自动浇水设备数据", "verbose_name_plural": "自动浇水设备数据"},
         ),
         migrations.AlterField(
-            model_name='device',
-            name='date_online',
-            field=models.DateTimeField(blank=True, null=True, verbose_name='上线日期'),
+            model_name="device",
+            name="date_online",
+            field=models.DateTimeField(blank=True, null=True, verbose_name="上线日期"),
         ),
     ]
