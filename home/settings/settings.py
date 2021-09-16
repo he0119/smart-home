@@ -277,9 +277,19 @@ MEDIA_ROOT = "media"
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Sentry
+def traces_sampler(sampling_context):
+    path: str = sampling_context["wsgi_environ"]["PATH_INFO"]
+    # Sentry 一个月只支持接受 10000 次 Transactions
+    # 传感器每 10 秒就会上报一次数据，所以降低频率
+    if path.startswith("/iot"):
+        return 0.0001
+    else:
+        return 1
+
+
 sentry_sdk.init(
     integrations=[DjangoIntegration(), RedisIntegration()],
-    traces_sample_rate=1.0,
+    traces_sampler=traces_sampler,
     send_default_pii=True,
     # 会在 Actions 自动编译的过程中修改
     release="version",
