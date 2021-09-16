@@ -14,8 +14,8 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     outputs:
+      environment: ${{ steps.setVersion.outputs.environment }}
       version: ${{ steps.setVersion.outputs.version }}
-      commit_id: ${{ steps.setVersion.outputs.commit_id }}
     services:
       postgres:
         image: postgres:13.2
@@ -42,8 +42,15 @@ jobs:
       - name: Set build version
         id: setVersion
         run: |
-          echo "::set-output name=version::$($HOME/.poetry/bin/poetry version -s)"
-          echo "::set-output name=commit_id::$(git rev-parse --short HEAD)"
+          VERSION=$($HOME/.poetry/bin/poetry version -s)
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          if [[ "${{github.event_name}}" == "release" && "${{github.event.action}}" == "published" ]]; then
+            echo "::set-output name=environment::prod"
+            echo "::set-output name=version::$VERSION"
+          else
+            echo "::set-output name=environment::dev"
+            echo "::set-output name=version::$VERSION-git.$COMMIT_ID"
+          fi
       - name: Install prerequisites
         run: |
           $HOME/.poetry/bin/poetry config virtualenvs.create false
@@ -83,19 +90,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set prod version name
-        if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+      - name: Set version name
         run: |
           sed -ri "s#release=\"version\"#release=\"$VERSION\"#g" home/settings/settings.py
         env:
           VERSION: ${{ needs.test.outputs.version }}
-      - name: Set dev version name
-        if: ${{ github.event_name != 'release' || github.event.action != 'published' }}
-        run: |
-          sed -ri "s#release=\"version\"#release=\"$VERSION-git.$COMMIT_ID\"#g" home/settings/settings.py
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
         env:
-          VERSION: ${{ needs.test.outputs.version }}
-          COMMIT_ID: ${{ needs.test.outputs.commit_id }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: ${{ needs.test.outputs.environment }}
+          version: ${{ needs.test.outputs.version }}
       - name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
