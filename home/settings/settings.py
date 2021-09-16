@@ -11,7 +11,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from datetime import time, timedelta
+from datetime import timedelta
+
+import pkg_resources
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.getcwd()
@@ -270,3 +275,12 @@ MEDIA_ROOT = "media"
 # https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# Sentry
+sentry_sdk.init(
+    integrations=[DjangoIntegration(), RedisIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True,
+    # 会在 Actions 自动编译的过程中修改
+    release="version",
+)
