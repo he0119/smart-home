@@ -125,7 +125,7 @@ jobs:
     needs: docker
     environment:
       name: dev
-      url: https://smart-test.hehome.xyz
+      url: https://test.hehome.xyz
     if: ${{ github.ref == 'refs/heads/dev' }}
     steps:
       - name: Deploy to server
@@ -142,6 +142,7 @@ jobs:
             cd websites
             sed -i "s#he0119/smart-home:.*#he0119/smart-home:dev#g" docker-compose.yml
             sudo docker-compose pull
+            sudo docker-compose down
             sudo docker-compose up -d
             sudo docker exec smart-home python manage.py migrate
 
@@ -168,5 +169,6 @@ jobs:
             cd websites
             sed -i "s#he0119/smart-home:.*#he0119/smart-home:$TAG_NAME#g" docker-compose.yml
             sudo docker-compose pull
+            sudo docker-compose down
             sudo docker-compose up -d
             sudo docker exec smart-home python manage.py migrate
