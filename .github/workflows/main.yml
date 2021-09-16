@@ -42,7 +42,7 @@ jobs:
       - name: Set build version
         id: setVersion
         run: |
-          echo "::set-output name=version::$(poetry version -s)"
+          echo "::set-output name=version::$($HOME/.poetry/bin/poetry version -s)"
           echo "::set-output name=commit_id::$(git rev-parse --short HEAD)"
       - name: Install prerequisites
         run: |
