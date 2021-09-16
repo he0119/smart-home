@@ -13,6 +13,9 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.setVersion.outputs.environment }}
+      version: ${{ steps.setVersion.outputs.version }}
     services:
       postgres:
         image: postgres:13.2
@@ -36,6 +39,18 @@ jobs:
           python-version: 3.9
       - name: Install poetry
         run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+      - name: Set build version
+        id: setVersion
+        run: |
+          VERSION=$($HOME/.poetry/bin/poetry version -s)
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          if [[ "${{github.event_name}}" == "release" && "${{github.event.action}}" == "published" ]]; then
+            echo "::set-output name=environment::prod"
+            echo "::set-output name=version::$VERSION"
+          else
+            echo "::set-output name=environment::dev"
+            echo "::set-output name=version::$VERSION-git.$COMMIT_ID"
+          fi
       - name: Install prerequisites
         run: |
           $HOME/.poetry/bin/poetry config virtualenvs.create false
@@ -75,6 +90,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Set version name
+        run: |
+          sed -ri "s#release=\"version\"#release=\"$VERSION\"#g" home/settings/settings.py
+        env:
+          VERSION: ${{ needs.test.outputs.version }}
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: ${{ needs.test.outputs.environment }}
+          version: ${{ needs.test.outputs.version }}
       - name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
@@ -104,7 +133,7 @@ jobs:
     needs: docker
     environment:
       name: dev
-      url: https://smart-test.hehome.xyz
+      url: https://test.hehome.xyz
     if: ${{ github.ref == 'refs/heads/dev' }}
     steps:
       - name: Deploy to server
@@ -121,6 +150,7 @@ jobs:
             cd websites
             sed -i "s#he0119/smart-home:.*#he0119/smart-home:dev#g" docker-compose.yml
             sudo docker-compose pull
+            sudo docker-compose down
             sudo docker-compose up -d
             sudo docker exec smart-home python manage.py migrate
 
@@ -147,5 +177,6 @@ jobs:
             cd websites
             sed -i "s#he0119/smart-home:.*#he0119/smart-home:$TAG_NAME#g" docker-compose.yml
             sudo docker-compose pull
+            sudo docker-compose down
             sudo docker-compose up -d
             sudo docker exec smart-home python manage.py migrate

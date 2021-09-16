@@ -6,5 +6,5 @@ from graphene_django.types import DjangoObjectType
 class UserType(DjangoObjectType):
     class Meta:
         model = get_user_model()
-        fields = '__all__'
-        interfaces = (relay.Node, )
+        fields = "__all__"
+        interfaces = (relay.Node,)

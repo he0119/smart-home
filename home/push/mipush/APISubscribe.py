@@ -12,6 +12,7 @@ class APISubscribe(Base):
     构造方法接收一个参数:
     @:param security 必须 - APP_SECRET
     """
+
     def subscribe_topic(self, reg_ids, topic, retry_times=3, **option_args):
         """
         订阅某个topic(reg_id)
@@ -27,8 +28,12 @@ class APISubscribe(Base):
         """
         return self.__common_subscribe(
             Constants.request_path.V2_SUBSCRIBE_TOPIC,
-            Constants.subscribe_type.RegId, reg_ids, topic, retry_times,
-            **option_args)
+            Constants.subscribe_type.RegId,
+            reg_ids,
+            topic,
+            retry_times,
+            **option_args
+        )
 
     def unsubscribe_topic(self, reg_ids, topic, retry_times=3, **option_args):
         """
@@ -40,14 +45,14 @@ class APISubscribe(Base):
         """
         return self.__common_subscribe(
             Constants.request_path.V2_UNSUBSCRIBE_TOPIC,
-            Constants.subscribe_type.RegId, reg_ids, topic, retry_times,
-            **option_args)
+            Constants.subscribe_type.RegId,
+            reg_ids,
+            topic,
+            retry_times,
+            **option_args
+        )
 
-    def subscribe_topic_alias(self,
-                              aliases,
-                              topic,
-                              retry_times=3,
-                              **option_args):
+    def subscribe_topic_alias(self, aliases, topic, retry_times=3, **option_args):
         """
         订阅某个topic(alias)
         :param aliases: alias列表
@@ -57,14 +62,14 @@ class APISubscribe(Base):
         """
         return self.__common_subscribe(
             Constants.request_path.V2_SUBSCRIBE_TOPIC_BY_ALIAS,
-            Constants.subscribe_type.Alias, aliases, topic, retry_times,
-            **option_args)
+            Constants.subscribe_type.Alias,
+            aliases,
+            topic,
+            retry_times,
+            **option_args
+        )
 
-    def unsubscribe_topic_alias(self,
-                                aliases,
-                                topic,
-                                retry_times=3,
-                                **option_args):
+    def unsubscribe_topic_alias(self, aliases, topic, retry_times=3, **option_args):
         """
         取消订阅某个topic(alias)
         :param aliases: alias列表
@@ -74,16 +79,16 @@ class APISubscribe(Base):
         """
         return self.__common_subscribe(
             Constants.request_path.V2_UNSUBSCRIBE_TOPIC_BY_ALIAS,
-            Constants.subscribe_type.Alias, aliases, topic, retry_times,
-            **option_args)
+            Constants.subscribe_type.Alias,
+            aliases,
+            topic,
+            retry_times,
+            **option_args
+        )
 
-    def __common_subscribe(self,
-                           request_path,
-                           subscribe_type,
-                           target,
-                           topic,
-                           retry_times=3,
-                           **option_args):
+    def __common_subscribe(
+        self, request_path, subscribe_type, target, topic, retry_times=3, **option_args
+    ):
         params = dict()
         target_str = target
         if isinstance(target, list):
@@ -94,8 +99,7 @@ class APISubscribe(Base):
         elif subscribe_type == Constants.subscribe_type.Alias:
             params[Constants.http_param_alias] = target_str
         else:
-            raise APIError(-1, 'subscribe type %s error' % subscribe_type,
-                           'args error')
+            raise APIError(-1, "subscribe type %s error" % subscribe_type, "args error")
 
         params[Constants.http_param_topic] = topic
         for option_name in option_args:

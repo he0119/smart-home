@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('storage', '0003_logical_delete'),
+        ("storage", "0003_logical_delete"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='item',
-            name='consumables',
-            field=models.ManyToManyField(blank=True, related_name='consumed_by', to='storage.Item', verbose_name='耗材'),
+            model_name="item",
+            name="consumables",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="consumed_by",
+                to="storage.Item",
+                verbose_name="耗材",
+            ),
         ),
     ]

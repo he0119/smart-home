@@ -12,6 +12,7 @@ class Singleton(type):
     """
     singleton design
     """
+
     def __init__(cls, name, bases, kw):
         super(Singleton, cls).__init__(name, bases, kw)
         cls._instance = None
@@ -26,6 +27,7 @@ class Server(object):
     """
     服务model(包含host, 最小权重, 最大权重, 权重速率)
     """
+
     def __init__(self, host, min_priority, max_priority, decr_step, incr_step):
         self.host = host
         self.priority = max_priority
@@ -56,9 +58,9 @@ class ServerSwitch(object, metaclass=Singleton):
     服务host选举类(单例)
     加权轮询算法
     """
+
     def __init__(self):
-        self.feedback = Server(Constants.host_production_feedback, 100, 100, 0,
-                               0)
+        self.feedback = Server(Constants.host_production_feedback, 100, 100, 0, 0)
         self.sandbox = Server(Constants.host_sandbox, 100, 100, 0, 0)
         self.specified = Server(Constants.host, 100, 100, 0, 0)
         self.emq = Server(Constants.host_emq, 100, 100, 0, 0)
@@ -68,20 +70,24 @@ class ServerSwitch(object, metaclass=Singleton):
         self.last_refresh_time = time.time()
 
     def need_refresh_host_list(self):
-        return not self.inited or (time.time() - self.last_refresh_time
-                                   ) >= Constants.refresh_server_host_interval
+        return (
+            not self.inited
+            or (time.time() - self.last_refresh_time)
+            >= Constants.refresh_server_host_interval
+        )
 
     def initialize(self, host_list):
         if not self.need_refresh_host_list():
             return
-        vs = host_list.split(',')
+        vs = host_list.split(",")
         for s in vs:
-            sp = s.split(':')
+            sp = s.split(":")
             if len(sp) < 5:
                 self.servers.append(self.default_server)
                 continue
             self.servers.append(
-                Server(sp[0], int(sp[1]), int(sp[2]), int(sp[3]), int(sp[4])))
+                Server(sp[0], int(sp[1]), int(sp[2]), int(sp[3]), int(sp[4]))
+            )
 
         self.inited = True
         self.last_refresh_time = time.time()
@@ -106,8 +112,7 @@ class ServerSwitch(object, metaclass=Singleton):
             return self.default_server
 
         priority_list = [sever.priority for sever in self.servers]
-        all_priority = reduce(lambda x, y: x + [x[-1] + y], priority_list,
-                              [0])[-1]
+        all_priority = reduce(lambda x, y: x + [x[-1] + y], priority_list, [0])[-1]
         random_point = random.randint(0, all_priority)
 
         priority_sum = 0

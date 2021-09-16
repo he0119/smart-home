@@ -9,15 +9,14 @@ sender = APISender(settings.MI_PUSH_APP_SECRET)
 
 
 def get_enable_reg_ids() -> list[str]:
-    """ 获取所有启用的设备标识码 """
+    """获取所有启用的设备标识码"""
     users = get_user_model().objects.exclude(mipush__enable=False)
     return [mipush.reg_id for user in users for mipush in user.mipush.all()]
 
 
 def get_enable_reg_ids_except_user(user) -> list[str]:
-    """ 获取除指定用户的所有启用的设备标识码 """
-    users = get_user_model().objects.exclude(pk=user.id).exclude(
-        mipush__enable=False)
+    """获取除指定用户的所有启用的设备标识码"""
+    users = get_user_model().objects.exclude(pk=user.id).exclude(mipush__enable=False)
     return [mipush.reg_id for user in users for mipush in user.mipush.all()]
 
 
@@ -27,7 +26,7 @@ def build_message(
     payload: str,
     is_important: bool,
 ) -> PushMessage:
-    """ 生成推送消息
+    """生成推送消息
 
     使用多文字模式，最多支持 128 字。
     <https://dev.mi.com/console/doc/detail?pId=1278#_3_3>
@@ -37,20 +36,22 @@ def build_message(
 
     # 每条内容相同的消息单独显示，不覆盖
     # 限制最多可以有 10001 条消息共存
-    notify_id = abs(hash(title + description)) % (10**4)
+    notify_id = abs(hash(title + description)) % (10 ** 4)
 
-    message = PushMessage() \
-        .restricted_package_name(settings.MI_PUSH_PACKAGE_NAME) \
-        .title(title).description(description) \
-        .payload(payload) \
-        .notify_id(notify_id) \
-        .extra({'notification_style_type': '1'})
+    message = (
+        PushMessage()
+        .restricted_package_name(settings.MI_PUSH_PACKAGE_NAME)
+        .title(title)
+        .description(description)
+        .payload(payload)
+        .notify_id(notify_id)
+        .extra({"notification_style_type": "1"})
+    )
 
     # 重要通知
     if is_important:
-        message = message.extra(
-            {Constants.extra_param_channel_id: 'high_system'})
-        message = message.extra({Constants.extra_param_channel_name: '服务提醒'})
+        message = message.extra({Constants.extra_param_channel_id: "high_system"})
+        message = message.extra({Constants.extra_param_channel_name: "服务提醒"})
 
     return message
 
@@ -63,7 +64,7 @@ def push_to_users(
     payload: str,
     is_important: bool = False,
 ):
-    """ 向用户推送消息
+    """向用户推送消息
 
     支持向一个或多个用户推送消息
 
@@ -71,4 +72,4 @@ def push_to_users(
     <https://dev.mi.com/console/doc/detail?pId=1278#_2_1>
     """
     message = build_message(title, description, payload, is_important)
-    return sender.send(message.message_dict(), ','.join(reg_ids))
+    return sender.send(message.message_dict(), ",".join(reg_ids))

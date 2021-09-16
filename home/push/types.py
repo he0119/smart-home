@@ -11,16 +11,16 @@ class MiPushFilter(FilterSet):
     class Meta:
         model = MiPush
         fields = {
-            'user__username': ['exact'],
-            'model': ['exact', 'icontains'],
+            "user__username": ["exact"],
+            "model": ["exact", "icontains"],
         }
 
 
 class MiPushType(DjangoObjectType):
     class Meta:
         model = MiPush
-        fields = '__all__'
-        interfaces = (relay.Node, )
+        fields = "__all__"
+        interfaces = (relay.Node,)
 
     @classmethod
     @login_required

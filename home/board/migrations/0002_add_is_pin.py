@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('board', '0001_initial'),
+        ("board", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='topic',
-            options={'verbose_name': '话题', 'verbose_name_plural': '话题'},
+            name="topic",
+            options={"verbose_name": "话题", "verbose_name_plural": "话题"},
         ),
         migrations.AddField(
-            model_name='topic',
-            name='is_pin',
-            field=models.BooleanField(default=False, verbose_name='置顶'),
+            model_name="topic",
+            name="is_pin",
+            field=models.BooleanField(default=False, verbose_name="置顶"),
         ),
     ]

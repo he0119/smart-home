@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('storage', '0007_add_picture'),
+        ("storage", "0007_add_picture"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='item',
-            name='price',
-            field=models.FloatField(blank=True, null=True, verbose_name='价格'),
+            model_name="item",
+            name="price",
+            field=models.FloatField(blank=True, null=True, verbose_name="价格"),
         ),
     ]

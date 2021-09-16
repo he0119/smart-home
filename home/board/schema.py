@@ -4,21 +4,26 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import login_required
 
 from .models import Comment, Topic
-from .mutations import (AddCommentMutation, AddTopicMutation,
-                        CloseTopicMutation, DeleteCommentMutation,
-                        DeleteTopicMutation, PinTopicMutation,
-                        ReopenTopicMutation, UnpinTopicMutation,
-                        UpdateCommentMutation, UpdateTopicMutation)
+from .mutations import (
+    AddCommentMutation,
+    AddTopicMutation,
+    CloseTopicMutation,
+    DeleteCommentMutation,
+    DeleteTopicMutation,
+    PinTopicMutation,
+    ReopenTopicMutation,
+    UnpinTopicMutation,
+    UpdateCommentMutation,
+    UpdateTopicMutation,
+)
 from .types import CommentFilter, CommentType, TopicFilter, TopicType
 
 
 class Query(graphene.ObjectType):
     topic = relay.Node.Field(TopicType)
-    topics = DjangoFilterConnectionField(TopicType,
-                                         filterset_class=TopicFilter)
+    topics = DjangoFilterConnectionField(TopicType, filterset_class=TopicFilter)
     comment = relay.Node.Field(CommentType)
-    comments = DjangoFilterConnectionField(CommentType,
-                                           filterset_class=CommentFilter)
+    comments = DjangoFilterConnectionField(CommentType, filterset_class=CommentFilter)
 
     @login_required
     def resolve_topics(self, info, **args):

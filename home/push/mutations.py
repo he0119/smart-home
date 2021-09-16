@@ -17,9 +17,9 @@ class UpdateMiPushMutation(relay.ClientIDMutation):
     @classmethod
     @login_required
     def mutate_and_get_payload(cls, root, info, **input):
-        reg_id = input.get('reg_id')
-        device_id = input.get('device_id')
-        model = input.get('model')
+        reg_id = input.get("reg_id")
+        device_id = input.get("device_id")
+        model = input.get("model")
 
         try:
             # 因为一个设备可能登录其他账号

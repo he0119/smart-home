@@ -2,19 +2,27 @@ import graphene
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import login_required
 
-from home.iot.mutations import (AddDeviceMutation, DeleteDeviceMutation,
-                                SetDeviceMutation, UpdateDeviceMutation)
+from home.iot.mutations import (
+    AddDeviceMutation,
+    DeleteDeviceMutation,
+    SetDeviceMutation,
+    UpdateDeviceMutation,
+)
 
 from .models import AutowateringData, Device
-from .types import (AutowateringDataFilter, AutowateringDataType, DeviceFilter,
-                    DeviceType)
+from .types import (
+    AutowateringDataFilter,
+    AutowateringDataType,
+    DeviceFilter,
+    DeviceType,
+)
 
 
 class Query(graphene.ObjectType):
-    devices = DjangoFilterConnectionField(DeviceType,
-                                          filterset_class=DeviceFilter)
+    devices = DjangoFilterConnectionField(DeviceType, filterset_class=DeviceFilter)
     autowatering_data = DjangoFilterConnectionField(
-        AutowateringDataType, filterset_class=AutowateringDataFilter)
+        AutowateringDataType, filterset_class=AutowateringDataFilter
+    )
 
     @login_required
     def resolve_devices(self, info, **args):

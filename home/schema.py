@@ -10,22 +10,22 @@ import home.users.schema
 
 
 class Query(
-        home.storage.schema.Query,
-        home.board.schema.Query,
-        home.iot.schema.Query,
-        home.push.schema.Query,
-        home.users.schema.Query,
-        graphene.ObjectType,
+    home.storage.schema.Query,
+    home.board.schema.Query,
+    home.iot.schema.Query,
+    home.push.schema.Query,
+    home.users.schema.Query,
+    graphene.ObjectType,
 ):
     node = relay.Node.Field()
 
 
 class Mutation(
-        home.storage.schema.Mutation,
-        home.board.schema.Mutation,
-        home.iot.schema.Mutation,
-        home.push.schema.Mutation,
-        graphene.ObjectType,
+    home.storage.schema.Mutation,
+    home.board.schema.Mutation,
+    home.iot.schema.Mutation,
+    home.push.schema.Mutation,
+    graphene.ObjectType,
 ):
     token_auth = graphql_jwt.relay.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.relay.Verify.Field()

@@ -11,7 +11,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from datetime import time, timedelta
+from datetime import timedelta
+
+import pkg_resources
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.getcwd()
@@ -20,7 +25,7 @@ BASE_DIR = os.getcwd()
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'nu$#aq5e6x27t*j&hc4joq7y*wsvktqm-98oa=tqe6l+ch@hsq'
+SECRET_KEY = "nu$#aq5e6x27t*j&hc4joq7y*wsvktqm-98oa=tqe6l+ch@hsq"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,126 +36,126 @@ ALLOWED_HOSTS = []
 # https://docs.djangoproject.com/zh-hans/3.0/topics/logging/
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
         },
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
-        },
-    },
-    'formatters': {
-        'verbose': {
-            'format': '{asctime} - {name} - {levelname} - {message}',
-            'style': '{',
-            'datefmt': '%Y-%m-%d %H:%M:%S %Z',
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
         },
     },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'filters': ['require_debug_true'],
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
+    "formatters": {
+        "verbose": {
+            "format": "{asctime} - {name} - {levelname} - {message}",
+            "style": "{",
+            "datefmt": "%Y-%m-%d %H:%M:%S %Z",
         },
-        'file': {
-            'level': 'INFO',
-            'filters': ['require_debug_false'],
-            'class': 'logging.handlers.RotatingFileHandler',
-            'formatter': 'verbose',
-            'filename': os.path.join(BASE_DIR, 'logs', 'smart-home.log'),
-            'maxBytes': 1024 * 1024 * 5,  # 5 MB
-            'backupCount': 10,
-            'encoding': 'utf8'
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler',
-            'formatter': 'verbose'
-        }
     },
-    'loggers': {
-        'iot': {
-            'handlers': ['console', 'file', 'mail_admins'],
-            'level': 'DEBUG',
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "filters": ["require_debug_true"],
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
-        'xiaoai': {
-            'handlers': ['console', 'file', 'mail_admins'],
-            'level': 'DEBUG',
+        "file": {
+            "level": "INFO",
+            "filters": ["require_debug_false"],
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "verbose",
+            "filename": os.path.join(BASE_DIR, "logs", "smart-home.log"),
+            "maxBytes": 1024 * 1024 * 5,  # 5 MB
+            "backupCount": 10,
+            "encoding": "utf8",
         },
-    }
+        "mail_admins": {
+            "level": "ERROR",
+            "filters": ["require_debug_false"],
+            "class": "django.utils.log.AdminEmailHandler",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "iot": {
+            "handlers": ["console", "file", "mail_admins"],
+            "level": "DEBUG",
+        },
+        "xiaoai": {
+            "handlers": ["console", "file", "mail_admins"],
+            "level": "DEBUG",
+        },
+    },
 }
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
     # 数据相关
-    'mptt',
-    'django_celery_beat',
-    'django_cleanup',
+    "mptt",
+    "django_celery_beat",
+    "django_cleanup",
     # GraphQL
-    'graphene_django',
-    'django_filters',
-    'graphql_jwt.refresh_token',
+    "graphene_django",
+    "django_filters",
+    "graphql_jwt.refresh_token",
     # 我的应用
-    'home.users',
-    'home.storage',
-    'home.board',
-    'home.xiaoai',
-    'home.iot',
-    'home.push',
+    "home.users",
+    "home.storage",
+    "home.board",
+    "home.xiaoai",
+    "home.iot",
+    "home.push",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'home.urls'
+ROOT_URLCONF = "home.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'home.wsgi.application'
+WSGI_APPLICATION = "home.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
@@ -159,29 +164,25 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME':
-        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME':
-        'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME':
-        'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME':
-        'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'zh-Hans'
+LANGUAGE_CODE = "zh-Hans"
 
-TIME_ZONE = 'Asia/Shanghai'
+TIME_ZONE = "Asia/Shanghai"
 
 USE_I18N = True
 
@@ -192,30 +193,30 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Login
 # https://docs.djangoproject.com/zh-hans/3.0/topics/auth/default/
 
-LOGIN_URL = '/admin/'
+LOGIN_URL = "/admin/"
 AUTHENTICATION_BACKENDS = [
-    'graphql_jwt.backends.JSONWebTokenBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 # MPTT
 # https://django-mptt.readthedocs.io/en/latest/forms.html
 
-MPTT_DEFAULT_LEVEL_INDICATOR = '--'
+MPTT_DEFAULT_LEVEL_INDICATOR = "--"
 
 # Graphene(GraphQL)
 # https://docs.graphene-python.org/projects/django/en/latest/installation/
 
 GRAPHENE = {
-    'SCHEMA': 'home.schema.schema',
-    'MIDDLEWARE': [
-        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    "SCHEMA": "home.schema.schema",
+    "MIDDLEWARE": [
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",
     ],
 }
 
@@ -223,54 +224,76 @@ GRAPHENE = {
 # https://django-graphql-jwt.domake.io/en/latest/refresh_token.html
 
 GRAPHQL_JWT = {
-    'JWT_VERIFY_EXPIRATION': True,
-    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
-    'JWT_EXPIRATION_DELTA': timedelta(minutes=5),
-    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=30),
+    "JWT_VERIFY_EXPIRATION": True,
+    "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
+    "JWT_EXPIRATION_DELTA": timedelta(minutes=5),
+    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(days=30),
 }
 
 # Celery
 # https://docs.celeryproject.org/en/stable/getting-started/brokers/redis.html
 
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 
 # Celery Beats
 # https://docs.celeryproject.org/en/stable/userguide/periodic-tasks.html#beat-custom-schedulers
 
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 # EMQX HTTP
 # https://docs.emqx.io/broker/latest/cn/advanced/http-api.html
 
-EMQX_HTTP_HOST = 'localhost'
-EMQX_HTTP_PORT = '8081'
-EMQX_HTTP_APPID = 'admin'
-EMQX_HTTP_APPSECRET = 'public'
+EMQX_HTTP_HOST = "localhost"
+EMQX_HTTP_PORT = "8081"
+EMQX_HTTP_APPID = "admin"
+EMQX_HTTP_APPSECRET = "public"
 
 # 小米小爱
 # https://developers.xiaoai.mi.com/documents/Home?type=/api/doc/render_markdown/SkillAccess/SkillDocument/CustomSkills/Signature
 
-XIAOAI_KEY_ID = 'key_id'
-XIAOAI_SECRET = 'c2VjcmV0'
+XIAOAI_KEY_ID = "key_id"
+XIAOAI_SECRET = "c2VjcmV0"
 
 # 小米推送
 # https://dev.mi.com/console/doc/detail?pId=1788
 
-MI_PUSH_PACKAGE_NAME = 'package_name'
-MI_PUSH_APP_ID = 'app_id'
-MI_PUSH_APP_KEY = 'app_key'
-MI_PUSH_APP_SECRET = 'app_secret'
+MI_PUSH_PACKAGE_NAME = "package_name"
+MI_PUSH_APP_ID = "app_id"
+MI_PUSH_APP_KEY = "app_key"
+MI_PUSH_APP_SECRET = "app_secret"
 
 # Files
 # https://docs.djangoproject.com/zh-hans/3.1/topics/files/
 
-MEDIA_ROOT = 'media'
+MEDIA_ROOT = "media"
 
 # AutoField
 # https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
 
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+# Sentry
+def traces_sampler(sampling_context):
+    op = sampling_context["transaction_context"]["op"]
+    # 如果是 Celery 任务(op = "celery.task")，不存在 wsgi_environ
+    if op == "http.server":
+        path: str = sampling_context["wsgi_environ"]["PATH_INFO"]
+        # Sentry 一个月只支持接受 10000 次 Transactions
+        # 传感器每 10 秒就会上报一次数据，所以降低频率
+        if path.startswith("/iot"):
+            return 0.0001
+
+    return 1
+
+
+sentry_sdk.init(
+    integrations=[DjangoIntegration(), RedisIntegration()],
+    traces_sampler=traces_sampler,
+    send_default_pii=True,
+    # 会在 Actions 自动编译的过程中修改
+    release="version",
+)

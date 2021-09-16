@@ -21,8 +21,8 @@ from django.views.decorators.csrf import csrf_exempt
 from graphene_file_upload.django import FileUploadGraphQLView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('graphql', csrf_exempt(FileUploadGraphQLView.as_view(graphiql=True))),
-    path('xiaoai', include('home.xiaoai.urls')),
-    path('iot', include('home.iot.urls')),
+    path("admin/", admin.site.urls),
+    path("graphql", csrf_exempt(FileUploadGraphQLView.as_view(graphiql=True))),
+    path("xiaoai", include("home.xiaoai.urls")),
+    path("iot", include("home.iot.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -4,25 +4,37 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphql_jwt.decorators import login_required
 
 from .models import Item, Picture, Storage
-from .mutations import (AddConsumableMutation, AddItemMutation,
-                        AddPictureMutation, AddStorageMutation,
-                        DeleteConsumableMutation, DeleteItemMutation,
-                        DeletePictureMutation, DeleteStorageMutation,
-                        RestoreItemMutation, UpdateItemMutation,
-                        UpdatePictureMutation, UpdateStorageMutation)
-from .types import (ItemFilter, ItemType, PictureFilter, PictureType,
-                    StorageFilter, StorageType)
+from .mutations import (
+    AddConsumableMutation,
+    AddItemMutation,
+    AddPictureMutation,
+    AddStorageMutation,
+    DeleteConsumableMutation,
+    DeleteItemMutation,
+    DeletePictureMutation,
+    DeleteStorageMutation,
+    RestoreItemMutation,
+    UpdateItemMutation,
+    UpdatePictureMutation,
+    UpdateStorageMutation,
+)
+from .types import (
+    ItemFilter,
+    ItemType,
+    PictureFilter,
+    PictureType,
+    StorageFilter,
+    StorageType,
+)
 
 
 class Query(graphene.ObjectType):
     item = relay.Node.Field(ItemType)
     items = DjangoFilterConnectionField(ItemType, filterset_class=ItemFilter)
     storage = relay.Node.Field(StorageType)
-    storages = DjangoFilterConnectionField(StorageType,
-                                           filterset_class=StorageFilter)
+    storages = DjangoFilterConnectionField(StorageType, filterset_class=StorageFilter)
     picture = relay.Node.Field(PictureType)
-    pictures = DjangoFilterConnectionField(PictureType,
-                                           filterset_class=PictureFilter)
+    pictures = DjangoFilterConnectionField(PictureType, filterset_class=PictureFilter)
 
     @login_required
     def resolve_items(self, info, **args):
