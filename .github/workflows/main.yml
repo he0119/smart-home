@@ -38,11 +38,11 @@ jobs:
         with:
           python-version: 3.9
       - name: Install poetry
-        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
       - name: Set build version
         id: setVersion
         run: |
-          VERSION=$($HOME/.poetry/bin/poetry version -s)
+          VERSION=$(poetry version -s)
           COMMIT_ID=$(git rev-parse --short HEAD)
           if [[ "${{github.event_name}}" == "release" && "${{github.event.action}}" == "published" ]]; then
             echo "::set-output name=environment::prod"
@@ -53,8 +53,8 @@ jobs:
           fi
       - name: Install prerequisites
         run: |
-          $HOME/.poetry/bin/poetry config virtualenvs.create false
-          $HOME/.poetry/bin/poetry install --no-dev
+          poetry config virtualenvs.create false
+          poetry install --no-dev
           pip install unittest-xml-reporting
           pip install coverage
       - name: Run tests
