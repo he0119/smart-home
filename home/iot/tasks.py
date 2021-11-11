@@ -1,10 +1,14 @@
+from datetime import timedelta
 from typing import List, Tuple
 
 from celery import shared_task
+from django.db.models import Max, Min
+from django.utils import timezone
 
 from home.push.tasks import get_enable_reg_ids, push_to_users
 
 from .api import DeviceAPI, WeatherAPI
+from .models import AutowateringData, AutowateringDataDaily, Device
 
 
 @shared_task
@@ -65,3 +69,67 @@ def autowatering(
             True,
         )
     return push_message
+
+
+@shared_task
+def clean_autowatering_database():
+    """清理自动浇水的数据库
+
+    删除一个月前的所有数据
+    只保留最高和最低的两条数据
+    """
+    for device in Device.objects.all():
+        min_time = device.data.aggregate(Min("time"))["time__min"]
+        if not min_time:
+            continue
+        # 只处理一个月前的数据
+        max_time = timezone.now() - timedelta(days=30)
+
+        # 相差天数
+        days = (max_time - min_time).days
+        min_date = timezone.datetime(
+            year=min_time.year,
+            month=min_time.month,
+            day=min_time.day,
+            tzinfo=timezone.get_current_timezone(),
+        )
+
+        data = []
+        for _ in range(days):
+            # 每天的时间
+            max_date = min_date + timedelta(days=1)
+            all_day_data = device.data.filter(time__gte=min_date, time__lte=max_date)
+            min_date = max_date
+            # 如果这一天没有数据则跳过
+            if all_day_data.count() == 0:
+                continue
+            # 获取最低温度和最高温度
+            min_temperature = all_day_data.aggregate(Min("temperature"))[
+                "temperature__min"
+            ]
+            max_temperature = all_day_data.aggregate(Max("temperature"))[
+                "temperature__max"
+            ]
+            min_humidity = all_day_data.aggregate(Min("humidity"))["humidity__min"]
+            max_humidity = all_day_data.aggregate(Max("humidity"))["humidity__max"]
+            min_wifi_signal = all_day_data.aggregate(Min("wifi_signal"))[
+                "wifi_signal__min"
+            ]
+            max_wifi_signal = all_day_data.aggregate(Max("wifi_signal"))[
+                "wifi_signal__max"
+            ]
+            data.append(
+                AutowateringDataDaily(
+                    time=min_date - timedelta(days=1),
+                    min_temperature=min_temperature,
+                    max_temperature=max_temperature,
+                    min_humidity=min_humidity,
+                    max_humidity=max_humidity,
+                    min_wifi_signal=min_wifi_signal,
+                    max_wifi_signal=max_wifi_signal,
+                    device=device,
+                )
+            )
+    # 创建并删除数据
+    AutowateringDataDaily.objects.bulk_create(data)
+    AutowateringData.objects.filter(time__lt=max_time).delete()
