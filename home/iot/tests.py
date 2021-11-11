@@ -1,18 +1,25 @@
 import json
 import os
+from datetime import date
 from unittest import mock
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 from graphql_jwt.testcases import JSONWebTokenTestCase
 from graphql_relay import to_global_id
 from requests import sessions
 
 from .api import DeviceAPI, WeatherAPI
-from .models import AutowateringData, Device
-from .tasks import autowatering, set_multiple_status, set_status
+from .models import AutowateringData, AutowateringDataDaily, Device
+from .tasks import (
+    autowatering,
+    clean_autowatering_database,
+    set_multiple_status,
+    set_status,
+)
 
 
 class ModelTests(TestCase):
@@ -733,3 +740,21 @@ class TaskTests(TestCase):
             mock_get.call_args_list,
         )
         self.assertEqual(mock_post.call_args_list, [])
+
+
+class CleanDatabaseTests(TestCase):
+    fixtures = ["users", "iot"]
+
+    def test_clean_autowatering_database(self):
+        self.assertEqual(AutowateringData.objects.count(), 3)
+        clean_autowatering_database()
+        self.assertEqual(AutowateringData.objects.count(), 0)
+        self.assertEqual(AutowateringDataDaily.objects.count(), 1)
+        daily_data = AutowateringDataDaily.objects.first()
+        self.assertEqual(daily_data.time, date(2020, 8, 2))
+        self.assertEqual(daily_data.min_temperature, 1.0)
+        self.assertEqual(daily_data.max_temperature, 3.0)
+        self.assertEqual(daily_data.min_humidity, 0)
+        self.assertEqual(daily_data.max_humidity, 0)
+        self.assertEqual(daily_data.min_wifi_signal, -60)
+        self.assertEqual(daily_data.max_wifi_signal, -59)
