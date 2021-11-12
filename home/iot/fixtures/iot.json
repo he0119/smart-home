@@ -85,5 +85,19 @@
       "valve3_delay": 60,
       "pump_delay": 60
     }
+  },
+  {
+    "model": "iot.autowateringdatadaily",
+    "pk": 1,
+    "fields": {
+      "device": 1,
+      "time": "2020-01-01",
+      "min_temperature": 0.0,
+      "max_temperature": 3.0,
+      "min_humidity": 50.0,
+      "max_humidity": 60.0,
+      "min_wifi_signal": -48,
+      "max_wifi_signal": -32
+    }
   }
 ]

@@ -50,6 +50,29 @@ class AutowateringData(models.Model):
         return f"{self.device.name} {self.time.isoformat()}"
 
 
+class AutowateringDataDaily(models.Model):
+    """自动浇水设备每日数据"""
+
+    class Meta:
+        verbose_name = "自动浇水设备每日数据"
+        verbose_name_plural = "自动浇水设备每日数据"
+        indexes = [models.Index(fields=["-time"])]
+
+    device = models.ForeignKey(
+        Device, on_delete=models.CASCADE, related_name="data_daily", verbose_name="设备"
+    )
+    time = models.DateField(verbose_name="时间")
+    min_temperature = models.FloatField(verbose_name="最低温度")
+    max_temperature = models.FloatField(verbose_name="最高温度")
+    min_humidity = models.FloatField(verbose_name="最低湿度")
+    max_humidity = models.FloatField(verbose_name="最高湿度")
+    min_wifi_signal = models.IntegerField(verbose_name="最低无线信号强度")
+    max_wifi_signal = models.IntegerField(verbose_name="最高无线信号强度")
+
+    def __str__(self):
+        return f"{self.device.name} {self.time.isoformat()}"
+
+
 class MQTTAcl(models.Model):
     class Meta:
         verbose_name = "ACL 规则"
