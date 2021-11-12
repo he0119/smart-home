@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Added
+
+- 添加清理自动浇水数据库的任务
+
 ## [0.7.4] - 2021-09-16
 
 ### Added
