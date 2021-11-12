@@ -1,8 +1,7 @@
 import graphene
 from graphql_jwt.decorators import login_required
 
-from home.users.mutations import UpdateAvatarMutation
-
+from .mutations import DeleteConfigMutation, UpdateAvatarMutation, UpdateConfigMutation
 from .types import UserType
 
 
@@ -16,3 +15,5 @@ class Query(graphene.ObjectType):
 
 class Mutation(graphene.ObjectType):
     update_avatar = UpdateAvatarMutation.Field()
+    update_config = UpdateConfigMutation.Field()
+    delete_config = DeleteConfigMutation.Field()
