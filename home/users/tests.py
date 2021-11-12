@@ -22,6 +22,7 @@ class UserTests(JSONWebTokenTestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.get(username="test")
+        self.user_without_configs = get_user_model().objects.get(username="test2")
 
     def test_get_user(self):
         self.client.authenticate(self.user)
@@ -48,6 +49,42 @@ class UserTests(JSONWebTokenTestCase):
         """
         content = self.client.execute(query)
         self.assertIsNotNone(content.errors)
+
+    def test_get_configs(self):
+        self.client.authenticate(self.user)
+        query = """
+            query viewer {
+                viewer {
+                    configs {
+                        key
+                        value
+                    }
+                }
+            }
+        """
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        configs = content.data["viewer"]["configs"]
+        self.assertEqual(configs[0], {"key": "key", "value": "value"})
+
+    def test_get_configs_not_exist(self):
+        self.client.authenticate(self.user_without_configs)
+        query = """
+            query viewer {
+                viewer {
+                    configs {
+                        key
+                        value
+                    }
+                }
+            }
+        """
+        content = self.client.execute(query)
+        self.assertIsNone(content.errors)
+
+        configs = content.data["viewer"]["configs"]
+        self.assertListEqual(configs, [])
 
 
 class UserAvatarTests(JSONWebTokenTestCase):
