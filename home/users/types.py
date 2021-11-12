@@ -15,4 +15,5 @@ class UserType(DjangoObjectType):
 
     @login_required
     def resolve_avatar(self, info, **args):
-        return self.avatar.avatar.url
+        if hasattr(self, "avatar"):
+            return self.avatar.avatar.url
