@@ -14,6 +14,7 @@ class UpdateAvatarMutation(graphene.ClientIDMutation):
     avatar = graphene.String()
 
     @classmethod
+    @login_required
     def mutate_and_get_payload(cls, root, info, **input):
         file = input.get("file")
 
