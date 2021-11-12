@@ -12,7 +12,7 @@ class UpdateAvatarMutation(graphene.ClientIDMutation):
     class Input:
         file = Upload(required=True, description="头像")
 
-    avatar = graphene.String()
+    avatar_url = graphene.String()
 
     @classmethod
     @login_required
@@ -32,7 +32,7 @@ class UpdateAvatarMutation(graphene.ClientIDMutation):
 
         avatar.save()
 
-        return UpdateAvatarMutation(avatar=avatar.avatar.url)
+        return UpdateAvatarMutation(avatar_url=avatar.avatar.url)
 
 
 class UpdateConfigMutation(graphene.ClientIDMutation):

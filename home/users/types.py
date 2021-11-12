@@ -15,7 +15,7 @@ class ConfigType(DjangoObjectType):
 
 
 class UserType(DjangoObjectType):
-    avatar = graphene.String()
+    avatar_url = graphene.String()
     configs = graphene.List(ConfigType)
 
     class Meta:
@@ -24,7 +24,7 @@ class UserType(DjangoObjectType):
         interfaces = (relay.Node,)
 
     @login_required
-    def resolve_avatar(self, info, **args):
+    def resolve_avatar_url(self, info, **args):
         if hasattr(self, "avatar"):
             return self.avatar.avatar.url
 

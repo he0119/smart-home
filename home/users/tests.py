@@ -35,14 +35,14 @@ class UserTests(JSONWebTokenTestCase):
             query viewer {
                 viewer {
                     username
-                    avatar
+                    avatarUrl
                 }
             }
         """
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
         self.assertEqual(content.data["viewer"]["username"], "test")
-        self.assertEqual(content.data["viewer"]["avatar"], "/avatar_pictures/1.jpg")
+        self.assertEqual(content.data["viewer"]["avatarUrl"], "/avatar_pictures/1.jpg")
 
     def test_unauthenticate_user(self):
         query = """
@@ -205,14 +205,14 @@ class UserAvatarTests(JSONWebTokenTestCase):
             query viewer {
                 viewer {
                     username
-                    avatar
+                    avatarUrl
                 }
             }
         """
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
         self.assertEqual(content.data["viewer"]["username"], "test2")
-        self.assertEqual(content.data["viewer"]["avatar"], None)
+        self.assertEqual(content.data["viewer"]["avatarUrl"], None)
 
     def test_update_avatar(self):
         self.client.authenticate(self.user_without_avatar)
@@ -224,7 +224,7 @@ class UserAvatarTests(JSONWebTokenTestCase):
         mutation = """
             mutation updateAvatar($input: UpdateAvatarMutationInput!) {
                 updateAvatar(input: $input) {
-                    avatar
+                    avatarUrl
                 }
             }
         """
@@ -237,7 +237,7 @@ class UserAvatarTests(JSONWebTokenTestCase):
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
 
-        avatar = content.data["updateAvatar"]["avatar"]
+        avatar = content.data["updateAvatar"]["avatarUrl"]
         self.assertTrue(avatar.startswith("/avatar_pictures/2"))
 
     def test_update_avatar_already_exist(self):
@@ -250,7 +250,7 @@ class UserAvatarTests(JSONWebTokenTestCase):
         mutation = """
             mutation updateAvatar($input: UpdateAvatarMutationInput!) {
                 updateAvatar(input: $input) {
-                    avatar
+                    avatarUrl
                 }
             }
         """
@@ -263,7 +263,7 @@ class UserAvatarTests(JSONWebTokenTestCase):
         content = self.client.execute(mutation, variables)
         self.assertIsNone(content.errors)
 
-        avatar = content.data["updateAvatar"]["avatar"]
+        avatar = content.data["updateAvatar"]["avatarUrl"]
         self.assertTrue(avatar.startswith("/avatar_pictures/1"))
 
 
