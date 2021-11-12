@@ -35,3 +35,27 @@ class Avatar(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Config(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="用户",
+        related_name="configs",
+        on_delete=models.CASCADE,
+    )
+    key = models.CharField(
+        "键",
+        max_length=200,
+    )
+    value = models.TextField(
+        "值",
+    )
+
+    class Meta:
+        verbose_name = "配置"
+        verbose_name_plural = "配置"
+        unique_together = ["user", "key"]
+
+    def __str__(self):
+        return self.key

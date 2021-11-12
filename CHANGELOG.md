@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 添加清理自动浇水数据库的任务
 - 在服务器上保存头像
+- 支持保存用户配置
 
 ## [0.7.4] - 2021-09-16
 
