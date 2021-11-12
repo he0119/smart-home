@@ -35,6 +35,11 @@ class ModelTests(TestCase):
 
         self.assertEqual(str(data), f"test 2020-08-02T13:40:35+00:00")
 
+    def test_autowateringdata_daily_str(self):
+        data = AutowateringDataDaily.objects.get(pk=1)
+
+        self.assertEqual(str(data), f"test 2021-09-20")
+
 
 class DeviceTests(JSONWebTokenTestCase):
     fixtures = ["users", "iot"]
@@ -747,10 +752,11 @@ class CleanDatabaseTests(TestCase):
 
     def test_clean_autowatering_database(self):
         self.assertEqual(AutowateringData.objects.count(), 3)
+        self.assertEqual(AutowateringDataDaily.objects.count(), 1)
         clean_autowatering_database()
         self.assertEqual(AutowateringData.objects.count(), 0)
-        self.assertEqual(AutowateringDataDaily.objects.count(), 1)
-        daily_data = AutowateringDataDaily.objects.first()
+        self.assertEqual(AutowateringDataDaily.objects.count(), 2)
+        daily_data = AutowateringDataDaily.objects.last()
         self.assertEqual(daily_data.time, date(2020, 8, 2))
         self.assertEqual(daily_data.min_temperature, 1.0)
         self.assertEqual(daily_data.max_temperature, 3.0)
