@@ -58,4 +58,4 @@ class Config(models.Model):
         unique_together = ["user", "key"]
 
     def __str__(self):
-        return self.user.username
+        return self.key

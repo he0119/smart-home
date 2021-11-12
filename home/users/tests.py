@@ -5,7 +5,7 @@ from graphql_jwt.testcases import JSONWebTokenTestCase
 
 from home.users.tasks import clear_expired_tokens
 
-from .models import Avatar
+from .models import Avatar, Config
 
 
 class ModelTests(TestCase):
@@ -15,6 +15,11 @@ class ModelTests(TestCase):
         avatar = Avatar.objects.get(pk=1)
 
         self.assertEqual(str(avatar), "test")
+
+    def test_config_str(self):
+        config = Config.objects.get(pk=1)
+
+        self.assertEqual(str(config), "key")
 
 
 class UserTests(JSONWebTokenTestCase):
@@ -85,6 +90,105 @@ class UserTests(JSONWebTokenTestCase):
 
         configs = content.data["viewer"]["configs"]
         self.assertListEqual(configs, [])
+
+    def test_update_config(self):
+        self.client.authenticate(self.user)
+        query = """
+            mutation updateConfig($input: UpdateConfigMutationInput!) {
+                updateConfig(input: $input) {
+                    config {
+                        key
+                        value
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "key": "key",
+                "value": "new_value",
+            }
+        }
+
+        content = self.client.execute(query, variables)
+        self.assertIsNone(content.errors)
+
+        config = content.data["updateConfig"]["config"]
+        self.assertEqual(config["key"], "key")
+        self.assertEqual(config["value"], "new_value")
+
+    def test_update_config_not_exist(self):
+        self.client.authenticate(self.user)
+        self.assertEqual(Config.objects.count(), 1)
+
+        query = """
+            mutation updateConfig($input: UpdateConfigMutationInput!) {
+                updateConfig(input: $input) {
+                    config {
+                        key
+                        value
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "key": "new_key",
+                "value": "new_value",
+            }
+        }
+
+        content = self.client.execute(query, variables)
+        self.assertIsNone(content.errors)
+
+        config = content.data["updateConfig"]["config"]
+        self.assertEqual(config["key"], "new_key")
+        self.assertEqual(config["value"], "new_value")
+        self.assertEqual(Config.objects.count(), 2)
+
+    def test_delete_config(self):
+        self.client.authenticate(self.user)
+        self.assertEqual(Config.objects.count(), 1)
+
+        query = """
+            mutation deleteConfig($input: DeleteConfigMutationInput!) {
+                deleteConfig(input: $input) {
+                    clientMutationId
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "key": "key",
+            }
+        }
+
+        content = self.client.execute(query, variables)
+        self.assertIsNone(content.errors)
+
+        self.assertEqual(Config.objects.count(), 0)
+
+    def test_delete_config_not_exist(self):
+        self.client.authenticate(self.user)
+        self.assertEqual(Config.objects.count(), 1)
+
+        query = """
+            mutation deleteConfig($input: DeleteConfigMutationInput!) {
+                deleteConfig(input: $input) {
+                    clientMutationId
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "key": "not_exist",
+            }
+        }
+
+        content = self.client.execute(query, variables)
+        self.assertIsNone(content.errors)
+
+        self.assertEqual(Config.objects.count(), 1)
 
 
 class UserAvatarTests(JSONWebTokenTestCase):
