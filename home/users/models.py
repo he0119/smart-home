@@ -55,6 +55,7 @@ class Config(models.Model):
     class Meta:
         verbose_name = "配置"
         verbose_name_plural = "配置"
+        unique_together = ["user", "key"]
 
     def __str__(self):
         return self.user.username
