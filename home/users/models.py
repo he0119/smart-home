@@ -35,3 +35,26 @@ class Avatar(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Config(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        verbose_name="用户",
+        related_name="config",
+        on_delete=models.CASCADE,
+    )
+    config = models.JSONField(
+        "配置",
+    )
+    updated_at = models.DateTimeField(
+        "更新时间",
+        auto_now=True,
+    )
+
+    class Meta:
+        verbose_name = "配置"
+        verbose_name_plural = "配置"
+
+    def __str__(self):
+        return self.user.username
