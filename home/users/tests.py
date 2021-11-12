@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.testcases import TestCase
 from graphql_jwt.testcases import JSONWebTokenTestCase
 
@@ -71,6 +72,58 @@ class UserAvatarTests(JSONWebTokenTestCase):
         self.assertIsNone(content.errors)
         self.assertEqual(content.data["viewer"]["username"], "test2")
         self.assertEqual(content.data["viewer"]["avatar"], None)
+
+    def test_update_avatar(self):
+        self.client.authenticate(self.user_without_avatar)
+
+        test_file = SimpleUploadedFile(
+            name="test.txt", content="file_text".encode("utf-8")
+        )
+
+        mutation = """
+            mutation updateAvatar($input: UpdateAvatarMutationInput!) {
+                updateAvatar(input: $input) {
+                    avatar
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "file": test_file,
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        avatar = content.data["updateAvatar"]["avatar"]
+        self.assertTrue(avatar.startswith("/avatar_pictures/2"))
+
+    def test_update_avatar_already_exist(self):
+        self.client.authenticate(self.user)
+
+        test_file = SimpleUploadedFile(
+            name="test.txt", content="file_text".encode("utf-8")
+        )
+
+        mutation = """
+            mutation updateAvatar($input: UpdateAvatarMutationInput!) {
+                updateAvatar(input: $input) {
+                    avatar
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "file": test_file,
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+        self.assertIsNone(content.errors)
+
+        avatar = content.data["updateAvatar"]["avatar"]
+        self.assertTrue(avatar.startswith("/avatar_pictures/1"))
 
 
 class TokenTests(TestCase):
