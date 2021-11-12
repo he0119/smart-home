@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import date
+from datetime import date, timedelta
 from unittest import mock
 
 from django.conf import settings
@@ -38,7 +38,7 @@ class ModelTests(TestCase):
     def test_autowateringdata_daily_str(self):
         data = AutowateringDataDaily.objects.get(pk=1)
 
-        self.assertEqual(str(data), f"test 2021-09-20")
+        self.assertEqual(str(data), f"test 2020-01-01")
 
 
 class DeviceTests(JSONWebTokenTestCase):
@@ -751,6 +751,7 @@ class CleanDatabaseTests(TestCase):
     fixtures = ["users", "iot"]
 
     def test_clean_autowatering_database(self):
+        """测试清理自动浇水数据库"""
         self.assertEqual(AutowateringData.objects.count(), 3)
         self.assertEqual(AutowateringDataDaily.objects.count(), 1)
         clean_autowatering_database()
@@ -764,3 +765,89 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(daily_data.max_humidity, 0)
         self.assertEqual(daily_data.min_wifi_signal, -60)
         self.assertEqual(daily_data.max_wifi_signal, -59)
+
+    def test_clean_autowatering_database_keep_30day(self):
+        """测试清理自动浇水数据库是否是清理的 30 天的数据"""
+        # 先删除所有
+        AutowateringData.objects.all().delete()
+        # 重新添加数据
+        device = Device.objects.get(id=1)
+        now = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        AutowateringData.objects.bulk_create(
+            [
+                AutowateringData(
+                    device=device,
+                    time=now - timedelta(days=29) + timedelta(seconds=1),
+                    temperature=0.0,
+                    humidity=0,
+                    wifi_signal=0,
+                    valve1=False,
+                    valve2=False,
+                    valve3=False,
+                    pump=False,
+                    valve1_delay=30,
+                    valve2_delay=30,
+                    valve3_delay=30,
+                    pump_delay=30,
+                ),
+                AutowateringData(
+                    device=device,
+                    time=now - timedelta(days=30) + timedelta(seconds=1),
+                    temperature=1.0,
+                    humidity=0,
+                    wifi_signal=-10,
+                    valve1=False,
+                    valve2=False,
+                    valve3=False,
+                    pump=False,
+                    valve1_delay=30,
+                    valve2_delay=30,
+                    valve3_delay=30,
+                    pump_delay=30,
+                ),
+                AutowateringData(
+                    device=device,
+                    time=now - timedelta(days=30) + timedelta(seconds=2),
+                    temperature=2.0,
+                    humidity=10,
+                    wifi_signal=-20,
+                    valve1=False,
+                    valve2=False,
+                    valve3=False,
+                    pump=False,
+                    valve1_delay=30,
+                    valve2_delay=30,
+                    valve3_delay=30,
+                    pump_delay=30,
+                ),
+                AutowateringData(
+                    device=device,
+                    time=now - timedelta(days=30) + timedelta(seconds=3),
+                    temperature=3.0,
+                    humidity=20,
+                    wifi_signal=-30,
+                    valve1=False,
+                    valve2=False,
+                    valve3=False,
+                    pump=False,
+                    valve1_delay=30,
+                    valve2_delay=30,
+                    valve3_delay=30,
+                    pump_delay=30,
+                ),
+            ]
+        )
+        # 处理数据
+        self.assertEqual(AutowateringData.objects.count(), 4)
+        self.assertEqual(AutowateringDataDaily.objects.count(), 1)
+        clean_autowatering_database()
+        self.assertEqual(AutowateringData.objects.count(), 1)
+        self.assertEqual(AutowateringDataDaily.objects.count(), 2)
+        daily_data = AutowateringDataDaily.objects.last()
+        self.assertEqual(daily_data.time, now.date() - timedelta(days=30))
+        self.assertEqual(daily_data.min_temperature, 1.0)
+        self.assertEqual(daily_data.max_temperature, 3.0)
+        self.assertEqual(daily_data.min_humidity, 0)
+        self.assertEqual(daily_data.max_humidity, 20.0)
+        self.assertEqual(daily_data.min_wifi_signal, -30)
+        self.assertEqual(daily_data.max_wifi_signal, -10)

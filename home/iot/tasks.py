@@ -1,5 +1,5 @@
-from datetime import timedelta
-from typing import List, Tuple
+from datetime import date, datetime, timedelta
+from typing import List, Optional, Tuple
 
 from celery import shared_task
 from django.db.models import Max, Min
@@ -78,31 +78,36 @@ def clean_autowatering_database():
     删除一个月前的所有数据
     只保留最高和最低的两条数据
     """
+    data = []
+
     for device in Device.objects.all():
-        min_time = device.data.aggregate(Min("time"))["time__min"]
+        min_time: Optional[datetime] = device.data.aggregate(Min("time"))["time__min"]
         if not min_time:
             continue
+
         # 只处理一个月前的数据
-        max_time = timezone.now() - timedelta(days=30)
+        min_time = min_time.replace(hour=0, minute=0, second=0, microsecond=0)
+        # 今天零点作为最大值的范围就是前一天的最后了，所以 30 天前的数据，只需要减 29 天
+        max_time = timezone.now().replace(
+            hour=0, minute=0, second=0, microsecond=0
+        ) - timedelta(days=29)
 
         # 相差天数
         days = (max_time - min_time).days
-        min_date = timezone.datetime(
-            year=min_time.year,
-            month=min_time.month,
-            day=min_time.day,
-            tzinfo=timezone.get_current_timezone(),
-        )
 
-        data = []
-        for _ in range(days):
+        for i in range(days):
             # 每天的时间
-            max_date = min_date + timedelta(days=1)
-            all_day_data = device.data.filter(time__gte=min_date, time__lte=max_date)
-            min_date = max_date
+            min_datetime = min_time + timedelta(days=i)
+            max_datetime = min_time + timedelta(days=i + 1)
+            all_day_data = device.data.filter(
+                time__gte=min_datetime,
+                time__lte=max_datetime,
+            )
+
             # 如果这一天没有数据则跳过
             if all_day_data.count() == 0:
                 continue
+
             # 获取最低温度和最高温度
             min_temperature = all_day_data.aggregate(Min("temperature"))[
                 "temperature__min"
@@ -120,16 +125,17 @@ def clean_autowatering_database():
             ]
             data.append(
                 AutowateringDataDaily(
-                    time=min_date - timedelta(days=1),
+                    device=device,
+                    time=min_datetime.date(),
                     min_temperature=min_temperature,
                     max_temperature=max_temperature,
                     min_humidity=min_humidity,
                     max_humidity=max_humidity,
                     min_wifi_signal=min_wifi_signal,
                     max_wifi_signal=max_wifi_signal,
-                    device=device,
                 )
             )
+
     # 创建并删除数据
     AutowateringDataDaily.objects.bulk_create(data)
     AutowateringData.objects.filter(time__lt=max_time).delete()
