@@ -8,7 +8,7 @@ class AvatarAdmin(admin.ModelAdmin):
 
 
 class ConfigAdmin(admin.ModelAdmin):
-    list_display = ("user", "config", "updated_at")
+    list_display = ("user", "key", "value")
 
 
 admin.site.register(Avatar, AvatarAdmin)

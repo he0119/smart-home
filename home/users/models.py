@@ -38,18 +38,18 @@ class Avatar(models.Model):
 
 
 class Config(models.Model):
-    user = models.OneToOneField(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         verbose_name="用户",
-        related_name="config",
+        related_name="configs",
         on_delete=models.CASCADE,
     )
-    config = models.JSONField(
-        "配置",
+    key = models.CharField(
+        "键",
+        max_length=200,
     )
-    updated_at = models.DateTimeField(
-        "更新时间",
-        auto_now=True,
+    value = models.TextField(
+        "值",
     )
 
     class Meta:
