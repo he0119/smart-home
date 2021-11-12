@@ -750,6 +750,16 @@ class TaskTests(TestCase):
 class CleanDatabaseTests(TestCase):
     fixtures = ["users", "iot"]
 
+    def test_empty_database(self):
+        """测试数据库为空的情况"""
+        # 删除所有数据
+        AutowateringData.objects.all().delete()
+        self.assertEqual(AutowateringData.objects.count(), 0)
+        self.assertEqual(AutowateringDataDaily.objects.count(), 1)
+        clean_autowatering_database()
+        self.assertEqual(AutowateringData.objects.count(), 0)
+        self.assertEqual(AutowateringDataDaily.objects.count(), 1)
+
     def test_clean_autowatering_database(self):
         """测试清理自动浇水数据库"""
         self.assertEqual(AutowateringData.objects.count(), 3)

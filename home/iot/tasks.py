@@ -80,6 +80,11 @@ def clean_autowatering_database():
     """
     data = []
 
+    # 今天零点作为最大值的范围就是前一天的最后了，所以 30 天前的数据，只需要减 29 天
+    max_time = timezone.now().replace(
+        hour=0, minute=0, second=0, microsecond=0
+    ) - timedelta(days=29)
+
     for device in Device.objects.all():
         min_time: Optional[datetime] = device.data.aggregate(Min("time"))["time__min"]
         if not min_time:
@@ -87,10 +92,6 @@ def clean_autowatering_database():
 
         # 只处理一个月前的数据
         min_time = min_time.replace(hour=0, minute=0, second=0, microsecond=0)
-        # 今天零点作为最大值的范围就是前一天的最后了，所以 30 天前的数据，只需要减 29 天
-        max_time = timezone.now().replace(
-            hour=0, minute=0, second=0, microsecond=0
-        ) - timedelta(days=29)
 
         # 相差天数
         days = (max_time - min_time).days
