@@ -38,11 +38,11 @@ jobs:
         with:
           python-version: 3.9
       - name: Install poetry
-        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
       - name: Set build version
         id: setVersion
         run: |
-          VERSION=$($HOME/.poetry/bin/poetry version -s)
+          VERSION=$(poetry version -s)
           COMMIT_ID=$(git rev-parse --short HEAD)
           if [[ "${{github.event_name}}" == "release" && "${{github.event.action}}" == "published" ]]; then
             echo "::set-output name=environment::prod"
@@ -53,8 +53,8 @@ jobs:
           fi
       - name: Install prerequisites
         run: |
-          $HOME/.poetry/bin/poetry config virtualenvs.create false
-          $HOME/.poetry/bin/poetry install --no-dev
+          poetry config virtualenvs.create false
+          poetry install --no-dev
           pip install unittest-xml-reporting
           pip install coverage
       - name: Run tests
@@ -95,15 +95,6 @@ jobs:
           sed -ri "s#release=\"version\"#release=\"$VERSION\"#g" home/settings/settings.py
         env:
           VERSION: ${{ needs.test.outputs.version }}
-      - name: Create Sentry release
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-        with:
-          environment: ${{ needs.test.outputs.environment }}
-          version: ${{ needs.test.outputs.version }}
       - name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
@@ -180,3 +171,21 @@ jobs:
             sudo docker-compose down
             sudo docker-compose up -d
             sudo docker exec smart-home python manage.py migrate
+
+  sentry_release:
+    name: Sentry Release
+    runs-on: ubuntu-latest
+    needs: [test, docker]
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: ${{ needs.test.outputs.environment }}
+          version: ${{ needs.test.outputs.version }}

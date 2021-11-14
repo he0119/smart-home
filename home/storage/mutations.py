@@ -326,6 +326,7 @@ class AddPictureMutation(graphene.ClientIDMutation):
     picture = graphene.Field(PictureType)
 
     @classmethod
+    @login_required
     def mutate_and_get_payload(cls, root, info, **input):
         _, item_id = from_global_id(input.get("item_id"))
         description = input.get("description")

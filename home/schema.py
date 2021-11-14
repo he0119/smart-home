@@ -25,6 +25,7 @@ class Mutation(
     home.board.schema.Mutation,
     home.iot.schema.Mutation,
     home.push.schema.Mutation,
+    home.users.schema.Mutation,
     graphene.ObjectType,
 ):
     token_auth = graphql_jwt.relay.ObtainJSONWebToken.Field()
