@@ -33,6 +33,8 @@ django-cors-headers = "^3.4.0"
 eventlet = "^0.32.0"
 isort = "^5.9.3"
 black = "^21.9b0"
+unittest-xml-reporting = "^3.0.4"
+coverage = "^6.2"
 
 [[tool.poetry.source]]
 default = true
