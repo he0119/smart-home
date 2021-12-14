@@ -503,7 +503,7 @@ reference = "aliyun"
 
 [[package]]
 name = "eventlet"
-version = "0.32.0"
+version = "0.33.0"
 description = "Highly concurrent networking library"
 category = "dev"
 optional = false
@@ -1116,7 +1116,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "3d3fed2a0dd1f4dbef6a0cfa44d4740db2b885bd616b1c1b4d51b73bd6c11dda"
+content-hash = "7936b5f0849eebf436a77e43692ee0f78eca392c53f1328b237f1a4ac792b439"
 
 [metadata.files]
 amqp = [
@@ -1224,8 +1224,8 @@ dnspython = [
     {file = "dnspython-2.1.0.zip", hash = "sha256:e4a87f0b573201a0f3727fa18a516b055fd1107e0e5477cded4a2de497df1dd4"},
 ]
 eventlet = [
-    {file = "eventlet-0.32.0-py2.py3-none-any.whl", hash = "sha256:a3a67b02f336e97a1894b277bc33b695831525758781eb024f4da00e75ce5e25"},
-    {file = "eventlet-0.32.0.tar.gz", hash = "sha256:2f0bb8ed0dc0ab21d683975d5d8ab3c054d588ce61def9faf7a465ee363e839b"},
+    {file = "eventlet-0.33.0-py2.py3-none-any.whl", hash = "sha256:d10a8fcc9e33381905d9873303fde96ebe3541c03fb795055d2c7347dce0639c"},
+    {file = "eventlet-0.33.0.tar.gz", hash = "sha256:80144f489c1bb273a51b6f96ff9785a382d2866b9bab1f5bd748385019f4141f"},
 ]
 graphene = [
     {file = "graphene-3.0-py2.py3-none-any.whl", hash = "sha256:57ce5ee7c9dc194224a1df96e4f7cb48d31eae96c791091d059f8f3d4d131390"},
