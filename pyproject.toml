@@ -32,7 +32,7 @@ sentry-sdk = "^1.5.1"
 django-cors-headers = "^3.4.0"
 eventlet = "^0.32.0"
 isort = "^5.9.3"
-black = "^21.9b0"
+black = "^21.12b0"
 
 [[tool.poetry.source]]
 default = true
