@@ -12,7 +12,7 @@ ENV PATH="${PATH}:/root/.local/bin"
 
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-FROM python:3.9-slim
+FROM python:3.9-slim-bullseye
 
 WORKDIR /app
 
