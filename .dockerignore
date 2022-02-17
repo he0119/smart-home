@@ -1,4 +1,5 @@
 # 文件夹
+.git
 .github
 .vscode
 docker
@@ -11,3 +12,4 @@ docker
 codecov.yml
 docker-compose.yml
 Dockerfile
+.pre-commit-config.yaml
