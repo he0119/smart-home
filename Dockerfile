@@ -17,7 +17,6 @@ FROM python:3.9-slim
 WORKDIR /usr/src/app
 
 # 设置时区
-RUN apk add --no-cache tzdata
 ENV TZ=Asia/Shanghai
 
 # 安装依赖
