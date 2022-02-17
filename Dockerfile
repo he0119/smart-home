@@ -10,7 +10,7 @@ RUN python install-poetry.py --yes
 
 ENV PATH="${PATH}:/root/.local/bin"
 
-RUN poetry export -f requirements.txt --output requirements.txt
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 FROM python:3.9-slim
 
