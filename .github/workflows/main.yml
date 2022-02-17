@@ -4,10 +4,13 @@ on:
   push:
     branches:
       - 'master'
-      - 'dev'
   pull_request:
   release:
     types: [published]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -34,11 +37,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: he0119/setup-python@main
         with:
           python-version: 3.9
-      - name: Install poetry
-        uses: Gr1N/setup-poetry@v7
       - name: Set build version
         id: setVersion
         run: |
@@ -51,11 +52,6 @@ jobs:
             echo "::set-output name=environment::dev"
             echo "::set-output name=version::$VERSION-git.$COMMIT_ID"
           fi
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
       - name: Install prerequisites
         run: poetry install
       - name: Run tests
@@ -64,25 +60,8 @@ jobs:
           poetry run coverage xml
         env:
           TESTING_SERVER: true
-      - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: Unit Test Results
-          path: |
-            **/TEST-*.xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
-
-  event_file:
-    name: "Event File"
-    runs-on: ubuntu-latest
-    steps:
-    - name: Upload
-      uses: actions/upload-artifact@v2
-      with:
-        name: Event File
-        path: ${{ github.event_path }}
 
   docker:
     name: Docker
@@ -126,7 +105,7 @@ jobs:
     environment:
       name: dev
       url: https://test.hehome.xyz
-    if: ${{ github.ref == 'refs/heads/dev' }}
+    if: github.event_name != 'pull_request'
     steps:
       - name: Deploy to server
         uses: appleboy/ssh-action@master
