@@ -21,7 +21,8 @@ ENV TZ=Asia/Shanghai
 
 RUN apt-get update \
   && apt-get -y upgrade \
-  && apt-get install -y --no-install-recommends uwsgi-plugin-python3 \
+  && apt-get install -y --no-install-recommends build-essential \
+  && pip install --no-cache-dir --upgrade uwsgi\
   && apt-get purge -y --auto-remove \
   && rm -rf /var/lib/apt/lists/*
 
