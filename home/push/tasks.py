@@ -36,7 +36,7 @@ def build_message(
 
     # 每条内容相同的消息单独显示，不覆盖
     # 限制最多可以有 10001 条消息共存
-    notify_id = abs(hash(title + description)) % (10 ** 4)
+    notify_id = abs(hash(title + description)) % (10**4)
 
     message = (
         PushMessage()

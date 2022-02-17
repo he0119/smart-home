@@ -1,9 +1,10 @@
 # coding=utf-8
-from threading import Lock
-from .APIConstants import Constants
 import random
 import time
 from functools import reduce
+from threading import Lock
+
+from .APIConstants import Constants
 
 lock = Lock()
 

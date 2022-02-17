@@ -1,6 +1,7 @@
 """ https://stackoverflow.com/a/54923798 """
-from markdown import Markdown
 from io import StringIO
+
+from markdown import Markdown
 
 
 def unmark_element(element, stream=None):

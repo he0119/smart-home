@@ -2,8 +2,9 @@ import collections
 import json
 import logging
 import time
-import urllib.request, urllib.parse, urllib.error
-import urllib.request, urllib.error, urllib.parse
+import urllib.error
+import urllib.parse
+import urllib.request
 
 from .APIError import APIError
 from .APIHostSwitch import *
