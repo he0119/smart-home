@@ -14,7 +14,7 @@ RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 FROM python:3.9-slim
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # 设置时区
 ENV TZ=Asia/Shanghai
