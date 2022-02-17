@@ -34,7 +34,7 @@ eventlet = "^0.33.0"
 isort = "^5.9.3"
 black = "^21.9b0"
 unittest-xml-reporting = "^3.0.4"
-coverage = "^6.2"
+coverage = "^6.3"
 
 [[tool.poetry.source]]
 default = true
