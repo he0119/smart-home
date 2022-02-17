@@ -119,7 +119,7 @@ jobs:
           envs: TAG_NAME
           script: |
             cd websites
-            sed -i "s#he0119/smart-home:.*#he0119/smart-home:dev#g" docker-compose.yml
+            sed -i "s#he0119/smart-home:.*#he0119/smart-home:master#g" docker-compose.yml
             sudo docker-compose pull
             sudo docker-compose down
             sudo docker-compose up -d
