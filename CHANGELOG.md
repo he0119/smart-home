@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.8.1] - 2022-02-17
+
+### Changed
+
+- 更新依赖
+- 调整 Dockerfile
+
 ## [0.8.0] - 2021-11-14
 
 ### Added
@@ -195,7 +202,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[unreleased]: https://github.com/he0119/smart-home/compare/v0.8.0...HEAD
+[unreleased]: https://github.com/he0119/smart-home/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/he0119/smart-home/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/he0119/smart-home/compare/v0.7.4...v0.8.0
 [0.7.4]: https://github.com/he0119/smart-home/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/he0119/smart-home/compare/v0.7.2...v0.7.3
