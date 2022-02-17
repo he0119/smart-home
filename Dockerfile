@@ -19,6 +19,12 @@ WORKDIR /app
 # 设置时区
 ENV TZ=Asia/Shanghai
 
+RUN apt-get update \
+  && apt-get -y upgrade \
+  && apt-get install -y --no-install-recommends uwsgi-plugin-python3 \
+  && apt-get purge -y --auto-remove \
+  && rm -rf /var/lib/apt/lists/*
+
 # 安装依赖
 COPY --from=requirements-stage /tmp/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r requirements.txt

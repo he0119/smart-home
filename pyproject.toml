@@ -28,7 +28,6 @@ python = "^3.9"
 redis = "^4.1.0"
 requests = "^2.27.1"
 sentry-sdk = "^1.5.1"
-uwsgi = {version = "^2.0.20", markers = "sys_platform == 'linux'" }
 
 [tool.poetry.dev-dependencies]
 django-cors-headers = "^3.4.0"
