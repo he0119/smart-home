@@ -4,7 +4,7 @@ WORKDIR /tmp
 
 COPY ./pyproject.toml ./poetry.lock* /tmp/
 
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -o install-poetry.py
+RUN curl -sSL https://install.python-poetry.org -o install-poetry.py
 
 RUN python install-poetry.py --yes
 
