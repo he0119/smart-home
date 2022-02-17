@@ -1,30 +1,34 @@
-FROM python:3.9-alpine
+FROM python:3.9 as requirements-stage
 
-WORKDIR /usr/src/app
+WORKDIR /tmp
+
+COPY ./pyproject.toml ./poetry.lock* /tmp/
+
+RUN curl -sSL https://install.python-poetry.org -o install-poetry.py
+
+RUN python install-poetry.py --yes
+
+ENV PATH="${PATH}:/root/.local/bin"
+
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+FROM python:3.9-slim
+
+WORKDIR /app
 
 # 设置时区
-RUN apk add --no-cache tzdata
 ENV TZ=Asia/Shanghai
 
+RUN apt-get update \
+  && apt-get -y upgrade \
+  && apt-get install -y --no-install-recommends uwsgi-plugin-python3 \
+  && apt-get purge -y --auto-remove \
+  && rm -rf /var/lib/apt/lists/*
+
 # 安装依赖
-COPY poetry.lock pyproject.toml ./
-RUN set -ex; \
-  apk add --no-cache postgresql-libs pcre jpeg-dev zlib-dev; \
-	apk add --no-cache --virtual .build-deps \
-		gcc \
-		libc-dev \
-		linux-headers \
-    postgresql-dev \
-    pcre-dev \
-    curl \
-    git \
-	; \
-	curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python; \
-  $HOME/.poetry/bin/poetry config virtualenvs.create false; \
-  $HOME/.poetry/bin/poetry install --no-dev; \
-  rm -rf $HOME/.poetry; \
-  pip install uwsgi; \
-	apk del .build-deps;
+COPY --from=requirements-stage /tmp/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN rm requirements.txt
 
 # 复制网站
 COPY . .

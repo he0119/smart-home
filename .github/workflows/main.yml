@@ -21,7 +21,7 @@ jobs:
       version: ${{ steps.setVersion.outputs.version }}
     services:
       postgres:
-        image: postgres:13.2
+        image: postgres:14
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
