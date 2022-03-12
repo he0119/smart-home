@@ -131,7 +131,3 @@ dmypy.json
 # static
 static
 media
-
-# vscode
-.vscode/*
-!.vscode/launch.json
