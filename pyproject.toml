@@ -25,7 +25,7 @@ markdown = "^3.3.3"
 pillow = "^9.0.1"
 psycopg2-binary = "^2.8.5"
 python = "^3.9"
-redis = "^4.1.0"
+redis = "^4.2.1"
 requests = "^2.27.1"
 sentry-sdk = "^1.5.8"
 
