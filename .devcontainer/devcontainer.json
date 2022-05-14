@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.224.2/containers/python-3-postgres
 // Update the VARIANT arg in docker-compose.yml to pick a Python version
 {
-	"name": "Python 3 & PostgreSQL",
+	"name": "Smart Home",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspace",
@@ -10,24 +10,27 @@
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
 		"python.defaultInterpreterPath": "/usr/local/bin/python",
-		"python.linting.enabled": true,
-		"python.linting.pylintEnabled": true,
-		"python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
 		"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-		"python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
-		"python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
-		"python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
-		"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
-		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
-		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
-		"python.testing.pytestPath": "/usr/local/py-utils/bin/pytest",
+		"python.testing.pytestPath": "/usr/local/py-utils/bin/pytest"
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-python.python",
-		"ms-python.vscode-pylance"
+		"ms-python.vscode-pylance",
+		"ms-python.black-formatter",
+		"ms-python.isort",
+		"mhutchie.git-graph",
+		"GitHub.copilot",
+		"GitHub.vscode-pull-request-github",
+		"eamodio.gitlens",
+		"VisualStudioExptTeam.vscodeintellicode",
+		"EditorConfig.EditorConfig",
+		"usernamehw.errorlens",
+		"tamasfe.even-better-toml",
+		"mikestead.dotenv",
+		"DavidAnson.vscode-markdownlint",
+		"ms-ossdata.vscode-postgresql"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
