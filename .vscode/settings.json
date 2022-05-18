@@ -1,0 +1,22 @@
+{
+  // "python.analysis.typeCheckingMode": "basic",
+  // GitHub Issues
+  "githubIssues.queries": [
+    {
+      "label": "My Issues",
+      "query": "default"
+    },
+    {
+      "label": "Created Issues",
+      "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc"
+    },
+    {
+      "label": "v0.9.0",
+      "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc milestone:\"v0.9.0\""
+    },
+    {
+      "label": "plan",
+      "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc milestone:\"plan\""
+    }
+  ],
+}
