@@ -77,7 +77,7 @@ jobs:
           VERSION: ${{ needs.test.outputs.version }}
       - name: Docker meta
         id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v1
+        uses: crazy-max/ghaction-docker-meta@v4
         with:
           images: he0119/smart-home
       - name: Set up QEMU
