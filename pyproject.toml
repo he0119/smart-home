@@ -10,7 +10,7 @@ version = "0.8.2"
 
 [tool.poetry.dependencies]
 boto3 = "^1.21.32"
-celery = "^5.2.2"
+celery = "^5.2.7"
 django = "^3.2.13"
 django-celery-beat = "^2.2.1"
 django-cleanup = "^6.0.0"
