@@ -61,7 +61,7 @@ jobs:
         env:
           TESTING_SERVER: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
 
   docker:
     name: Docker
