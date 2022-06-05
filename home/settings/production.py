@@ -1,5 +1,6 @@
 """ Production settings
 """
+import json
 import os
 
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -8,7 +9,7 @@ ALLOWED_HOSTS = ["*"]
 
 # CSRF
 # https://docs.djangoproject.com/en/4.0/ref/settings/#csrf-trusted-origins
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(";")
+CSRF_TRUSTED_ORIGINS = json.loads(os.getenv("CSRF_TRUSTED_ORIGINS", "[]"))
 
 DATABASES = {
     "default": {
