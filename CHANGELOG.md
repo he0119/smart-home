@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Fixed
+
+- 修复 CSRF 报错问题
+
 ## [0.8.3] - 2022-06-05
 
 ### Changed
