@@ -6,6 +6,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
+# CSRF
+# https://docs.djangoproject.com/en/4.0/ref/settings/#csrf-trusted-origins
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(";")
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
