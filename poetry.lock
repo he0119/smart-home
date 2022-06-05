@@ -271,16 +271,16 @@ python-versions = "*"
 
 [[package]]
 name = "django"
-version = "3.2.13"
-description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
+version = "4.0.5"
+description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 
 [package.dependencies]
-asgiref = ">=3.3.2,<4"
-pytz = "*"
+asgiref = ">=3.4.1,<4"
 sqlparse = ">=0.2.2"
+tzdata = {version = "*", markers = "sys_platform == \"win32\""}
 
 [package.extras]
 argon2 = ["argon2-cffi (>=19.1.0)"]
@@ -288,17 +288,18 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-celery-beat"
-version = "2.2.1"
+version = "2.3.0"
 description = "Database-backed Periodic Tasks."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-celery = ">=5.0,<6.0"
-Django = ">=2.2,<4.0"
-django-timezone-field = ">=4.1.0,<5.0"
+celery = ">=5.2.3,<6.0"
+Django = ">=2.2,<4.1"
+django-timezone-field = ">=5.0"
 python-crontab = ">=2.3.4"
+tzdata = "*"
 
 [[package]]
 name = "django-cleanup"
@@ -393,18 +394,14 @@ sftp = ["paramiko"]
 
 [[package]]
 name = "django-timezone-field"
-version = "4.2.3"
-description = "A Django app providing database and form fields for pytz timezone objects."
+version = "5.0"
+description = "A Django app providing DB, form, and REST framework fields for zoneinfo and pytz timezone objects."
 category = "main"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
-django = ">=2.2"
 pytz = "*"
-
-[package.extras]
-rest_framework = ["djangorestframework (>=3.0.0)"]
 
 [[package]]
 name = "dnspython"
@@ -939,6 +936,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "tzdata"
+version = "2022.1"
+description = "Provider of IANA time zone data"
+category = "main"
+optional = false
+python-versions = ">=2"
+
+[[package]]
 name = "unidecode"
 version = "1.3.4"
 description = "ASCII transliterations of Unicode text"
@@ -1027,7 +1032,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "9d5ac840effbbfb4374c785c0b17e50188ee24df8cd918d28ab71c71d489fd1e"
+content-hash = "29119d6ea3a2cac456dd798c6b06686ddbcb960d810336e03d85fb727ef21d40"
 
 [metadata.files]
 amqp = [
@@ -1171,12 +1176,12 @@ distlib = [
     {file = "distlib-0.3.4.zip", hash = "sha256:e4b58818180336dc9c529bfb9a0b58728ffc09ad92027a3f30b7cd91e3458579"},
 ]
 django = [
-    {file = "Django-3.2.13-py3-none-any.whl", hash = "sha256:b896ca61edc079eb6bbaa15cf6071eb69d6aac08cce5211583cfb41515644fdf"},
-    {file = "Django-3.2.13.tar.gz", hash = "sha256:6d93497a0a9bf6ba0e0b1a29cccdc40efbfc76297255b1309b3a884a688ec4b6"},
+    {file = "Django-4.0.5-py3-none-any.whl", hash = "sha256:502ae42b6ab1b612c933fb50d5ff850facf858a4c212f76946ecd8ea5b3bf2d9"},
+    {file = "Django-4.0.5.tar.gz", hash = "sha256:f7431a5de7277966f3785557c3928433347d998c1e6459324501378a291e5aab"},
 ]
 django-celery-beat = [
-    {file = "django-celery-beat-2.2.1.tar.gz", hash = "sha256:97ae5eb309541551bdb07bf60cc57cadacf42a74287560ced2d2c06298620234"},
-    {file = "django_celery_beat-2.2.1-py2.py3-none-any.whl", hash = "sha256:ab43049634fd18dc037927d7c2c7d5f67f95283a20ebbda55f42f8606412e66c"},
+    {file = "django-celery-beat-2.3.0.tar.gz", hash = "sha256:ba24f86ed956ba0ee2b43237a49303ebf5aa7e0fb0ccb7e0542b7e31a463dcba"},
+    {file = "django_celery_beat-2.3.0-py3-none-any.whl", hash = "sha256:ff694e1d30f84de3d2b78822c90005c6c7c1462768e845ae162af71a6a46f1eb"},
 ]
 django-cleanup = [
     {file = "django-cleanup-6.0.0.tar.gz", hash = "sha256:922e06ef8839c92bd3ab37a84db6058b8764f3fe44dbb4487bbca941d288280a"},
@@ -1207,8 +1212,8 @@ django-storages = [
     {file = "django_storages-1.12.3-py3-none-any.whl", hash = "sha256:204a99f218b747c46edbfeeb1310d357f83f90fa6a6024d8d0a3f422570cee84"},
 ]
 django-timezone-field = [
-    {file = "django-timezone-field-4.2.3.tar.gz", hash = "sha256:5dd5bd9249382bef8847d3e7e4c32b7be182a4b538f354130d1252ed228892f8"},
-    {file = "django_timezone_field-4.2.3-py3-none-any.whl", hash = "sha256:7552d2b0f145684b7de3fb5046101c7efd600cc6ba951b15c630fa1e1b83558e"},
+    {file = "django-timezone-field-5.0.tar.gz", hash = "sha256:15746ed367a5a32eda76cfa2886eeec1de8cda79f519b7c5e12f87ed7cdbd663"},
+    {file = "django_timezone_field-5.0-py3-none-any.whl", hash = "sha256:199f211082eeac7e83563929b8ce41399c1c0f00dfc2f36bc00bea381027eaaa"},
 ]
 dnspython = [
     {file = "dnspython-2.2.1-py3-none-any.whl", hash = "sha256:a851e51367fb93e9e1361732c1d60dab63eff98712e503ea7d92e6eccb109b4f"},
@@ -1610,6 +1615,10 @@ tomli = [
 typing-extensions = [
     {file = "typing_extensions-4.2.0-py3-none-any.whl", hash = "sha256:6657594ee297170d19f67d55c05852a874e7eb634f4f753dbd667855e07c1708"},
     {file = "typing_extensions-4.2.0.tar.gz", hash = "sha256:f1c24655a0da0d1b67f07e17a5e6b2a105894e6824b92096378bb3668ef02376"},
+]
+tzdata = [
+    {file = "tzdata-2022.1-py2.py3-none-any.whl", hash = "sha256:238e70234214138ed7b4e8a0fab0e5e13872edab3be586ab8198c407620e2ab9"},
+    {file = "tzdata-2022.1.tar.gz", hash = "sha256:8b536a8ec63dc0751342b3984193a3118f8fca2afe25752bb9b7fffd398552d3"},
 ]
 unidecode = [
     {file = "Unidecode-1.3.4-py3-none-any.whl", hash = "sha256:afa04efcdd818a93237574791be9b2817d7077c25a068b00f8cff7baa4e59257"},
