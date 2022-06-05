@@ -70,3 +70,5 @@ version-resolver:
   default: patch
 template: |
   $CHANGES
+exclude-labels:
+  - 'skip-changelog'
