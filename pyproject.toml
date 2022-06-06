@@ -9,7 +9,7 @@ repository = "https://github.com/he0119/smart-home"
 version = "0.8.4"
 
 [tool.poetry.dependencies]
-boto3 = "^1.21.32"
+boto3 = "^1.24.3"
 celery = "^5.2.2"
 django = "^4.0.5"
 django-celery-beat = "^2.2.1"
