@@ -27,7 +27,7 @@ psycopg2-binary = "^2.8.5"
 python = "^3.9"
 redis = "^4.2.1"
 requests = "^2.27.1"
-sentry-sdk = "^1.5.8"
+sentry-sdk = "^1.9.5"
 
 [tool.poetry.dev-dependencies]
 django-cors-headers = "^3.4.0"
