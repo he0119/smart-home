@@ -1,37 +1,64 @@
-import graphene
-import graphql_jwt
-from graphene import relay
+# import graphene
+# import graphql_jwt
+# from graphene import relay
 
-import home.board.schema
-import home.iot.schema
-import home.push.schema
-import home.storage.schema
-import home.users.schema
-
-
-class Query(
-    home.storage.schema.Query,
-    home.board.schema.Query,
-    home.iot.schema.Query,
-    home.push.schema.Query,
-    home.users.schema.Query,
-    graphene.ObjectType,
-):
-    node = relay.Node.Field()
+# import home.board.schema
+# import home.iot.schema
+# import home.push.schema
+# import home.storage.schema
+# import home.users.schema
 
 
-class Mutation(
-    home.storage.schema.Mutation,
-    home.board.schema.Mutation,
-    home.iot.schema.Mutation,
-    home.push.schema.Mutation,
-    home.users.schema.Mutation,
-    graphene.ObjectType,
-):
-    token_auth = graphql_jwt.relay.ObtainJSONWebToken.Field()
-    verify_token = graphql_jwt.relay.Verify.Field()
-    refresh_token = graphql_jwt.relay.Refresh.Field()
-    revoke_token = graphql_jwt.relay.Revoke.Field()
+# class Query(
+#     home.storage.schema.Query,
+#     home.board.schema.Query,
+#     home.iot.schema.Query,
+#     home.push.schema.Query,
+#     home.users.schema.Query,
+#     graphene.ObjectType,
+# ):
+#     node = relay.Node.Field()
 
 
-schema = graphene.Schema(query=Query, mutation=Mutation)
+# class Mutation(
+#     home.storage.schema.Mutation,
+#     home.board.schema.Mutation,
+#     home.iot.schema.Mutation,
+#     home.push.schema.Mutation,
+#     home.users.schema.Mutation,
+#     graphene.ObjectType,
+# ):
+#     token_auth = graphql_jwt.relay.ObtainJSONWebToken.Field()
+#     verify_token = graphql_jwt.relay.Verify.Field()
+#     refresh_token = graphql_jwt.relay.Refresh.Field()
+#     revoke_token = graphql_jwt.relay.Revoke.Field()
+
+
+# schema = graphene.Schema(query=Query, mutation=Mutation)
+
+import typing
+
+import strawberry
+
+
+@strawberry.type
+class Book:
+    title: str
+    author: str
+
+
+def get_books():
+    return [
+        Book(
+            title="The Great Gatsby",
+            author="F. Scott Fitzgerald",
+        ),
+    ]
+
+
+@strawberry.type
+class Query:
+    books: typing.List[Book] = strawberry.field(resolver=get_books)
+
+
+schema = strawberry.Schema(query=Query)
