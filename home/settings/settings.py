@@ -103,6 +103,7 @@ INSTALLED_APPS = [
     "django_cleanup",
     # GraphQL
     "strawberry.django",
+    "strawberry_django_plus",
     # 我的应用
     "home.users",
     "home.storage",
