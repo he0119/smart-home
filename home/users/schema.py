@@ -20,12 +20,15 @@
 
 from strawberry.types import Info
 from strawberry_django_plus import gql
+from strawberry_django_plus.permissions import IsAuthenticated
 
 from .types import User
 
 
 @gql.type
 class Query:
-    @gql.field
+    @gql.django.field(
+        directives=[IsAuthenticated()],
+    )
     def viewer(self, info: Info) -> User:
         return info.context.request.user

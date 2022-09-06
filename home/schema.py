@@ -5,6 +5,20 @@
 # schema = graphene.Schema(query=Query, mutation=Mutation)
 import strawberry
 
+# class Mutation(
+#     home.storage.schema.Mutation,
+#     home.board.schema.Mutation,
+#     home.iot.schema.Mutation,
+#     home.push.schema.Mutation,
+#     home.users.schema.Mutation,
+#     graphene.ObjectType,
+# ):
+#     token_auth = graphql_jwt.relay.ObtainJSONWebToken.Field()
+#     verify_token = graphql_jwt.relay.Verify.Field()
+#     refresh_token = graphql_jwt.relay.Refresh.Field()
+#     revoke_token = graphql_jwt.relay.Revoke.Field()
+from strawberry_django_plus.directives import SchemaDirectiveExtension
+
 # import home.board.schema
 # import home.iot.schema
 # import home.push.schema
@@ -22,22 +36,13 @@ import home.users.schema
 #     node = relay.Node.Field()
 
 
-# class Mutation(
-#     home.storage.schema.Mutation,
-#     home.board.schema.Mutation,
-#     home.iot.schema.Mutation,
-#     home.push.schema.Mutation,
-#     home.users.schema.Mutation,
-#     graphene.ObjectType,
-# ):
-#     token_auth = graphql_jwt.relay.ObtainJSONWebToken.Field()
-#     verify_token = graphql_jwt.relay.Verify.Field()
-#     refresh_token = graphql_jwt.relay.Refresh.Field()
-#     revoke_token = graphql_jwt.relay.Revoke.Field()
-
-
 class Query(home.users.schema.Query):
     ...
 
 
-schema = strawberry.Schema(query=Query)
+schema = strawberry.Schema(
+    query=Query,
+    extensions=[
+        SchemaDirectiveExtension,
+    ],
+)
