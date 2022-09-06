@@ -2,12 +2,14 @@
 # import graphql_jwt
 # from graphene import relay
 
+# schema = graphene.Schema(query=Query, mutation=Mutation)
+import strawberry
+
 # import home.board.schema
 # import home.iot.schema
 # import home.push.schema
 # import home.storage.schema
-# import home.users.schema
-
+import home.users.schema
 
 # class Query(
 #     home.storage.schema.Query,
@@ -34,31 +36,8 @@
 #     revoke_token = graphql_jwt.relay.Revoke.Field()
 
 
-# schema = graphene.Schema(query=Query, mutation=Mutation)
-
-import typing
-
-import strawberry
-
-
-@strawberry.type
-class Book:
-    title: str
-    author: str
-
-
-def get_books():
-    return [
-        Book(
-            title="The Great Gatsby",
-            author="F. Scott Fitzgerald",
-        ),
-    ]
-
-
-@strawberry.type
-class Query:
-    books: typing.List[Book] = strawberry.field(resolver=get_books)
+class Query(home.users.schema.Query):
+    ...
 
 
 schema = strawberry.Schema(query=Query)
