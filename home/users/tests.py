@@ -1,9 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.testcases import TestCase
-from graphql_jwt.testcases import JSONWebTokenTestCase
 
 from home.users.tasks import clear_expired_tokens
+from home.utils import GraphQLTestCase
 
 from .models import Avatar, Config
 
@@ -22,7 +22,7 @@ class ModelTests(TestCase):
         self.assertEqual(str(config), "key")
 
 
-class UserTests(JSONWebTokenTestCase):
+class UserTests(GraphQLTestCase):
     fixtures = ["users"]
 
     def setUp(self):
@@ -191,7 +191,7 @@ class UserTests(JSONWebTokenTestCase):
         self.assertEqual(Config.objects.count(), 1)
 
 
-class UserAvatarTests(JSONWebTokenTestCase):
+class UserAvatarTests(GraphQLTestCase):
     fixtures = ["users"]
 
     def setUp(self):

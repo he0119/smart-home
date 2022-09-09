@@ -30,6 +30,22 @@
       "env": {
         "DEVELOPMENT_SERVER": "true"
       }
+    },
+    {
+      "name": "Python: Django Test Method",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/manage.py",
+      "args": [
+        "test",
+        "-k",
+        "${selectedText}"
+      ],
+      "django": true,
+      "env": {
+        "DEVELOPMENT_SERVER": "true"
+      },
+      "justMyCode": false
     }
   ]
 }
