@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.testcases import TestCase
 
-from home.users.tasks import clear_expired_tokens
 from home.utils import GraphQLTestCase
 
 from .models import Avatar, Config
@@ -94,9 +93,9 @@ class UserTests(GraphQLTestCase):
     def test_update_config(self):
         self.client.authenticate(self.user)
         query = """
-            mutation updateConfig($input: UpdateConfigMutationInput!) {
+            mutation updateConfig($input: UpdateConfigInput!) {
                 updateConfig(input: $input) {
-                    config {
+                    ... on Config {
                         key
                         value
                     }
@@ -113,7 +112,7 @@ class UserTests(GraphQLTestCase):
         content = self.client.execute(query, variables)
         self.assertIsNone(content.errors)
 
-        config = content.data["updateConfig"]["config"]
+        config = content.data["updateConfig"]
         self.assertEqual(config["key"], "key")
         self.assertEqual(config["value"], "new_value")
 
@@ -122,9 +121,9 @@ class UserTests(GraphQLTestCase):
         self.assertEqual(Config.objects.count(), 1)
 
         query = """
-            mutation updateConfig($input: UpdateConfigMutationInput!) {
+            mutation updateConfig($input: UpdateConfigInput!) {
                 updateConfig(input: $input) {
-                    config {
+                    ... on Config {
                         key
                         value
                     }
@@ -141,7 +140,7 @@ class UserTests(GraphQLTestCase):
         content = self.client.execute(query, variables)
         self.assertIsNone(content.errors)
 
-        config = content.data["updateConfig"]["config"]
+        config = content.data["updateConfig"]
         self.assertEqual(config["key"], "new_key")
         self.assertEqual(config["value"], "new_value")
         self.assertEqual(Config.objects.count(), 2)
@@ -151,9 +150,19 @@ class UserTests(GraphQLTestCase):
         self.assertEqual(Config.objects.count(), 1)
 
         query = """
-            mutation deleteConfig($input: DeleteConfigMutationInput!) {
+            mutation deleteConfig($input: DeleteConfigInput!) {
                 deleteConfig(input: $input) {
-                    clientMutationId
+                    ... on Config {
+                        key
+                        value
+                    }
+                    ... on OperationInfo {
+                        messages {
+                            field
+                            kind
+                            message
+                        }
+                    }
                 }
             }
         """
@@ -173,9 +182,19 @@ class UserTests(GraphQLTestCase):
         self.assertEqual(Config.objects.count(), 1)
 
         query = """
-            mutation deleteConfig($input: DeleteConfigMutationInput!) {
+            mutation deleteConfig($input: DeleteConfigInput!) {
                 deleteConfig(input: $input) {
-                    clientMutationId
+                    ... on Config {
+                        key
+                        value
+                    }
+                    ... on OperationInfo {
+                        messages {
+                            field
+                            kind
+                            message
+                        }
+                    }
                 }
             }
         """
@@ -222,22 +241,26 @@ class UserAvatarTests(GraphQLTestCase):
         )
 
         mutation = """
-            mutation updateAvatar($input: UpdateAvatarMutationInput!) {
+            mutation updateAvatar($input: UpdateAvatarInput!) {
                 updateAvatar(input: $input) {
-                    avatarUrl
+                    ... on Avatar {
+                        avatar {
+                            url
+                        }
+                    }
                 }
             }
         """
         variables = {
             "input": {
-                "file": test_file,
+                "file": None,
             }
         }
 
-        content = self.client.execute(mutation, variables)
+        content = self.client.execute(mutation, variables, files={"input": test_file})
         self.assertIsNone(content.errors)
 
-        avatar = content.data["updateAvatar"]["avatarUrl"]
+        avatar = content.data["updateAvatar"]["avatar"]["url"]
         self.assertTrue(avatar.startswith("/avatar_pictures/2"))
 
     def test_update_avatar_already_exist(self):
@@ -248,27 +271,24 @@ class UserAvatarTests(GraphQLTestCase):
         )
 
         mutation = """
-            mutation updateAvatar($input: UpdateAvatarMutationInput!) {
+            mutation updateAvatar($input: UpdateAvatarInput!) {
                 updateAvatar(input: $input) {
-                    avatarUrl
+                    ... on Avatar {
+                        avatar {
+                            url
+                        }
+                    }
                 }
             }
         """
         variables = {
             "input": {
-                "file": test_file,
+                "file": None,
             }
         }
 
-        content = self.client.execute(mutation, variables)
+        content = self.client.execute(mutation, variables, files={"input": test_file})
         self.assertIsNone(content.errors)
 
-        avatar = content.data["updateAvatar"]["avatarUrl"]
+        avatar = content.data["updateAvatar"]["avatar"]["url"]
         self.assertTrue(avatar.startswith("/avatar_pictures/1"))
-
-
-class TokenTests(TestCase):
-    fixtures = ["users"]
-
-    def test_clear_expired_tokens(self):
-        clear_expired_tokens()

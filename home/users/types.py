@@ -15,6 +15,24 @@ class Config(relay.Node):
     value: auto
 
 
+@gql.type
+class Image:
+    @gql.field
+    def name(self) -> str:
+        return self.name  # type: ignore
+
+    @gql.field
+    def url(self) -> str:
+        return self.url  # type: ignore
+
+
+@gql.django.type(models.Avatar)
+class Avatar(relay.Node):
+    user: "User"
+    avatar: Image
+    created_at: auto
+
+
 @gql.django.type(get_user_model())
 class User(relay.Node):
     id: auto

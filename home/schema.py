@@ -40,8 +40,13 @@ class Query(home.users.schema.Query):
     ...
 
 
+class Mutation(home.users.schema.Mutation):
+    ...
+
+
 schema = strawberry.Schema(
     query=Query,
+    mutation=Mutation,
     extensions=[
         SchemaDirectiveExtension,
     ],
