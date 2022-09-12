@@ -476,7 +476,7 @@ class ItemTests(GraphQLTestCase):
     def test_get_items(self):
         query = """
             query items {
-                items {
+                items(filters: {}) {
                     edges {
                         node {
                             id
@@ -488,7 +488,7 @@ class ItemTests(GraphQLTestCase):
         """
         content = self.client.execute(query)
 
-        self.assertEqual(len(content.data["items"]["edges"]), 5)
+        self.assertEqual(len(content.data["items"]["edges"]), 4)
 
     def test_get_deleted_items(self):
         """测试获取已删除的物品"""
@@ -1021,7 +1021,7 @@ class ConsumableTests(GraphQLTestCase):
         content = self.client.execute(query)
 
         names = [item["node"]["name"] for item in content.data["items"]["edges"]]
-        self.assertCountEqual(names, ["电池", "口罩", "雨伞", "垃圾"])
+        self.assertCountEqual(names, ["电池", "口罩", "雨伞"])
 
     def test_add_consumable(self):
         """添加耗材"""
