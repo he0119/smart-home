@@ -51,7 +51,7 @@ class UserTests(GraphQLTestCase):
                 }
             }
         """
-        content = self.client.execute(query)
+        content = self.client.execute(query, asserts_errors=False)
         self.assertIsNotNone(content.errors)
 
     def test_get_configs(self):
