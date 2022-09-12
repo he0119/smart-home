@@ -37,8 +37,5 @@ schema = strawberry.Schema(
     query=Query,
     mutation=Mutation,
     subscription=Subscription,
-    extensions=[
-        SchemaDirectiveExtension,
-        CompatibilityExtension,
-    ],
+    extensions=[SchemaDirectiveExtension],
 )
