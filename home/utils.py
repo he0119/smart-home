@@ -1,8 +1,12 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.test import TestCase
 from graphql import GraphQLFormattedError
+from strawberry.extensions import Extension
+from strawberry.types import Info
 from strawberry_django_plus.test.client import TestClient
 
 
@@ -43,3 +47,17 @@ class GraphQLTestCase(TestCase):
         super().__init__(*args, **kwargs)
         # 为了正确的类型提示
         self.client: MyTestClient
+
+
+class CompatibilityExtension(Extension):
+    """尝试兼容 strawberry_django_plus"""
+
+    def resolve(self, _next, root, info: Info, *args, **kwargs):
+        if not hasattr(info.context.request, "user"):
+            info.context.request.user = info.context.request.scope["user"]
+        return _next(root, info, *args, **kwargs)
+
+
+def channel_group_send(group: str, message: dict) -> None:
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(group, message)  # type: ignore

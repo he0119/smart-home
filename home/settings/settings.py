@@ -102,6 +102,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_cleanup",
     # GraphQL
+    "channels",
     "strawberry.django",
     "strawberry_django_plus",
     # 我的应用
@@ -142,6 +143,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "home.wsgi.application"
+
+# Channels
+# https://channels.readthedocs.io/en/stable/tutorial/part_1.html
+ASGI_APPLICATION = "home.asgi.application"
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -255,11 +261,16 @@ def traces_sampler(sampling_context):
     op = sampling_context["transaction_context"]["op"]
     # 如果是 Celery 任务(op = "celery.task")，不存在 wsgi_environ
     if op == "http.server":
-        path: str = sampling_context["wsgi_environ"]["PATH_INFO"]
-        # Sentry 一个月只支持接受 10000 次 Transactions
-        # 传感器每 10 秒就会上报一次数据，所以降低频率
-        if path.startswith("/iot"):
-            return 0.0001
+        if "wsgi_environ" in sampling_context:
+            path: str = sampling_context["wsgi_environ"]["PATH_INFO"]
+            # Sentry 一个月只支持接受 10000 次 Transactions
+            # 传感器每 10 秒就会上报一次数据，所以降低频率
+            if path.startswith("/iot"):
+                return 0.0001
+        elif "asgi_scope" in sampling_context:
+            path: str = sampling_context["asgi_scope"]["path"]
+            if path.startswith("/iot"):
+                return 0.0001
 
     return 1
 

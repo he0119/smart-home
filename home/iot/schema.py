@@ -1,7 +1,8 @@
 import hashlib
 from distutils.util import strtobool
-from typing import Optional
+from typing import AsyncGenerator, Optional
 
+from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
 from strawberry.types import Info
 from strawberry_django_plus import gql
@@ -119,3 +120,22 @@ class Mutation:
         set_status.delay(device.name, key, value)
 
         return device  # type: ignore
+
+
+@gql.type
+class Subscription:
+    @gql.subscription(directives=[IsAuthenticated()])
+    async def autowatering_data(
+        self, info: Info
+    ) -> AsyncGenerator[types.AutowateringData, None]:
+        ws = info.context.ws
+
+        async for message in ws.channel_listen("data", groups=["iot"]):
+            yield message["data"]
+
+    @gql.subscription(directives=[IsAuthenticated()])
+    async def device(self, info: Info) -> AsyncGenerator[types.Device, None]:
+        ws = info.context.ws
+
+        async for message in ws.channel_listen("device", groups=["iot"]):
+            yield message["data"]
