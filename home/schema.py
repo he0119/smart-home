@@ -1,47 +1,14 @@
-# import graphene
-# import graphql_jwt
-# from graphene import relay
-
-# schema = graphene.Schema(query=Query, mutation=Mutation)
 import strawberry
-
-# class Mutation(
-#     home.storage.schema.Mutation,
-#     home.board.schema.Mutation,
-#     home.iot.schema.Mutation,
-#     home.push.schema.Mutation,
-#     home.users.schema.Mutation,
-#     graphene.ObjectType,
-# ):
-#     token_auth = graphql_jwt.relay.ObtainJSONWebToken.Field()
-#     verify_token = graphql_jwt.relay.Verify.Field()
-#     refresh_token = graphql_jwt.relay.Refresh.Field()
-#     revoke_token = graphql_jwt.relay.Revoke.Field()
+from strawberry.tools import merge_types
 from strawberry_django_plus.directives import SchemaDirectiveExtension
 
-# import home.board.schema
-# import home.iot.schema
-# import home.push.schema
-# import home.storage.schema
+import home.storage.schema
 import home.users.schema
 
-# class Query(
-#     home.storage.schema.Query,
-#     home.board.schema.Query,
-#     home.iot.schema.Query,
-#     home.push.schema.Query,
-#     home.users.schema.Query,
-#     graphene.ObjectType,
-# ):
-#     node = relay.Node.Field()
-
-
-class Query(home.users.schema.Query):
-    ...
-
-
-class Mutation(home.users.schema.Mutation):
-    ...
+Query = merge_types("Query", (home.users.schema.Query, home.storage.schema.Query))
+Mutation = merge_types(
+    "Mutation", (home.users.schema.Mutation, home.storage.schema.Mutation)
+)
 
 
 schema = strawberry.Schema(

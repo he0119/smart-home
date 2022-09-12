@@ -8,7 +8,7 @@ from strawberry_django_plus.test.client import TestClient
 
 @dataclass
 class Response:
-    errors: Optional[List[GraphQLFormattedError]]
+    errors: List[GraphQLFormattedError]
     data: Dict[str, Any]
     extensions: Optional[Dict[str, Any]]
 
@@ -26,7 +26,7 @@ class MyTestClient(TestClient):
         query: str,
         variables: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, Any]] = None,
-        asserts_errors: Optional[bool] = False,
+        asserts_errors: Optional[bool] = True,
         files: Optional[Dict[str, Any]] = None,
     ) -> Response:
         """执行查询

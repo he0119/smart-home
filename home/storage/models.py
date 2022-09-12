@@ -19,6 +19,10 @@ class Storage(MPTTModel):
     )
     description = models.CharField("备注", max_length=200, blank=True)
 
+    @property
+    def ancestors(self):
+        return self.get_ancestors()
+
     class Meta:
         verbose_name = "位置"
         verbose_name_plural = "位置"

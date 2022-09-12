@@ -9,9 +9,7 @@ from . import models, types
 
 @gql.type
 class Query:
-    @gql.django.field(
-        directives=[IsAuthenticated()],
-    )
+    @gql.django.field(directives=[IsAuthenticated()])
     def viewer(self, info: Info) -> types.User:
         return info.context.request.user
 
