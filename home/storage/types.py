@@ -1,4 +1,4 @@
-from strawberry import UNSET, auto
+from strawberry import auto
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
 
