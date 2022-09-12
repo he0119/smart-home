@@ -1,87 +1,66 @@
 from django.db.models import Max
 from django.db.models.functions import Greatest
-from django_filters import FilterSet, OrderingFilter
-from graphene import relay
-from graphene_django.filter import DjangoFilterConnectionField
-from graphene_django.types import DjangoObjectType
-from graphql_jwt.decorators import login_required
+from strawberry import auto
+from strawberry_django_plus import gql
+from strawberry_django_plus.gql import relay
 
-from .models import Comment, Topic
+from home.users.types import User
 
-
-class CommentFilter(FilterSet):
-    class Meta:
-        model = Comment
-        fields = {
-            "topic": ["exact"],
-            "level": ["exact"],
-        }
-
-    order_by = OrderingFilter(fields=(("created_at", "created_at"),))
+from . import models
 
 
-class CustomTopicOrderingFilter(OrderingFilter):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.extra["choices"] += [
-            ("active_at", "Active At"),
-            ("-active_at", "Active At (descending)"),
-        ]
-
-    def filter(self, qs, value):
-        if value and any(v in ["active_at", "-active_at"] for v in value):
-            # 新增一个最近活动的时间
-            # 取话题修改时间与最新评论的创建时间的最大值
-            qs = qs.annotate(
-                active_at=Greatest(Max("comments__created_at"), "edited_at")
-            )
-
-        return super().filter(qs, value)
+@gql.django.ordering.order(models.Comment)
+class CommentOrder:
+    created_at: auto
 
 
-class TopicFilter(FilterSet):
-    class Meta:
-        model = Topic
-        fields = {
-            "title": ["exact", "icontains", "istartswith"],
-        }
+@gql.django.filters.filter(model=models.Comment, lookups=True)
+class CommentFilter:
+    topic: auto
+    level: auto
 
-    order_by = CustomTopicOrderingFilter(
-        fields=(
-            ("created_at", "created_at"),
-            ("edited_at", "edited_at"),
-            ("closed_at", "closed_at"),
-            ("is_open", "is_open"),
-            ("is_pin", "is_pin"),
+
+@gql.django.ordering.order(models.Topic)
+class TopicOrder:
+    created_at: auto
+    edited_at: auto
+    is_open: auto
+    is_pin: auto
+    active_at: auto
+
+
+@gql.django.filters.filter(model=models.Topic, lookups=True)
+class TopicFilter:
+    title: auto
+
+
+@gql.django.type(models.Topic, filters=TopicFilter, order=TopicOrder)
+class Topic(relay.Node):
+    title: auto
+    description: auto
+    is_open: auto
+    closed_at: auto
+    user: User
+    created_at: auto
+    edited_at: auto
+    is_pin: auto
+    comments: relay.Connection["Comment"]
+
+    # NOTE: Strawberry 的 bug，看起来少传了一个 self 参数，不过对我没影响
+    # https://github.com/strawberry-graphql/strawberry-graphql-django/issues/173
+    @staticmethod
+    def get_queryset(queryset, info):
+        return queryset.annotate(
+            active_at=Greatest(Max("comments__created_at"), "edited_at")
         )
-    )
 
 
-class CommentType(DjangoObjectType):
-    class Meta:
-        model = Comment
-        fields = "__all__"
-        interfaces = (relay.Node,)
-
-    children = DjangoFilterConnectionField(
-        lambda: CommentType, filterset_class=CommentFilter
-    )
-
-    @classmethod
-    @login_required
-    def get_node(cls, info, id):
-        return Comment.objects.get(pk=id)
-
-
-class TopicType(DjangoObjectType):
-    class Meta:
-        model = Topic
-        fields = "__all__"
-        interfaces = (relay.Node,)
-
-    comments = DjangoFilterConnectionField(CommentType, filterset_class=CommentFilter)
-
-    @classmethod
-    @login_required
-    def get_node(cls, info, id):
-        return Topic.objects.get(pk=id)
+@gql.django.type(models.Comment, filters=CommentFilter, order=CommentOrder)
+class Comment(relay.Node):
+    topic: Topic
+    user: User
+    body: auto
+    created_at: auto
+    edited_at: auto
+    parent: "Comment"
+    reply_to: User
