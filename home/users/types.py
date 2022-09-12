@@ -8,6 +8,11 @@ from strawberry_django_plus.gql import relay
 from . import models
 
 
+@gql.django.filters.filter(model=get_user_model(), lookups=True)
+class UserFilter:
+    username: auto
+
+
 @gql.django.type(models.Config)
 class Config(relay.Node):
     user: "User"

@@ -2,15 +2,16 @@ from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from graphql_jwt.testcases import JSONWebTokenTestCase
-from graphql_relay.node.node import to_global_id
+from strawberry_django_plus.gql import relay
 
 from home.push.tasks import (
     build_message,
     get_enable_reg_ids,
     get_enable_reg_ids_except_user,
 )
+from home.utils import GraphQLTestCase
 
+from . import types
 from .models import MiPush
 from .tasks import push_to_users, sender
 
@@ -24,7 +25,7 @@ class ModelTests(TestCase):
         self.assertEqual(str(mipush), "test")
 
 
-class PushTests(JSONWebTokenTestCase):
+class PushTests(GraphQLTestCase):
     fixtures = ["users", "push"]
 
     def setUp(self):
@@ -50,7 +51,6 @@ class PushTests(JSONWebTokenTestCase):
         # 第一个设备
         variables = {"deviceId": "deviceidofuser1"}
         content = self.client.execute(query, variables)
-        self.assertIsNone(content.errors)
 
         mipush = content.data["miPush"]
         self.assertEqual(mipush["user"]["username"], "test")
@@ -61,7 +61,6 @@ class PushTests(JSONWebTokenTestCase):
         # 第二个设备
         variables = {"deviceId": "deviceid2ofuser1"}
         content = self.client.execute(query, variables)
-        self.assertIsNone(content.errors)
 
         mipush = content.data["miPush"]
         self.assertEqual(mipush["user"]["username"], "test")
@@ -89,7 +88,6 @@ class PushTests(JSONWebTokenTestCase):
             }
         """
         content = self.client.execute(query)
-        self.assertIsNone(content.errors)
 
         # 第一个设备
         mipush = content.data["miPushs"]["edges"][0]["node"]
@@ -116,7 +114,6 @@ class PushTests(JSONWebTokenTestCase):
             }
         """
         content = self.client.execute(query)
-        self.assertIsNone(content.errors)
 
         mipush_key = content.data["miPushKey"]
         self.assertEqual(mipush_key["appId"], "app_id")
@@ -124,26 +121,23 @@ class PushTests(JSONWebTokenTestCase):
 
     def test_get_mipush_via_node(self):
         query = """
-            query miPush($id: ID!) {
-                node(id: $id) {
-                    ... on MiPushType {
-                        user {
-                            username
-                        }
-                        enable
-                        regId
-                        deviceId
-                        model
+            query miPush($id: GlobalID!) {
+                mipush(id: $id) {
+                    user {
+                        username
                     }
+                    enable
+                    regId
+                    deviceId
+                    model
                 }
             }
         """
-        variables = {"id": to_global_id("MiPushType", "1")}
+        variables = {"id": relay.to_base64(types.MiPush, "1")}
 
         content = self.client.execute(query, variables)
-        self.assertIsNone(content.errors)
 
-        mipush = content.data["node"]
+        mipush = content.data["mipush"]
         self.assertEqual(mipush["user"]["username"], "test")
         self.assertEqual(mipush["enable"], True)
         self.assertEqual(mipush["regId"], "regidofuser1")
@@ -151,9 +145,9 @@ class PushTests(JSONWebTokenTestCase):
 
     def test_update_mipush(self):
         mutation = """
-            mutation updateMiPush($input: UpdateMiPushMutationInput!) {
+            mutation updateMiPush($input: UpdateMiPushInput!) {
                 updateMiPush(input: $input) {
-                    miPush {
+                    ... on MiPush {
                         user {
                             username
                         }
@@ -173,9 +167,8 @@ class PushTests(JSONWebTokenTestCase):
         }
 
         content = self.client.execute(mutation, variables)
-        self.assertIsNone(content.errors)
 
-        mipush = content.data["updateMiPush"]["miPush"]
+        mipush = content.data["updateMiPush"]
         self.assertEqual(mipush["user"]["username"], "test")
         self.assertEqual(mipush["regId"], "testRegId")
 
@@ -190,7 +183,7 @@ class PushTests(JSONWebTokenTestCase):
         self.assertEqual(reg_ids, [])
 
 
-class DifferentUserPushTests(JSONWebTokenTestCase):
+class DifferentUserPushTests(GraphQLTestCase):
     fixtures = ["users", "push"]
 
     def setUp(self):
@@ -200,9 +193,9 @@ class DifferentUserPushTests(JSONWebTokenTestCase):
     def test_update_mipush(self):
         """测试同一个设备更换用户名"""
         mutation = """
-            mutation updateMiPush($input: UpdateMiPushMutationInput!) {
+            mutation updateMiPush($input: UpdateMiPushInput!) {
                 updateMiPush(input: $input) {
-                    miPush {
+                    ... on MiPush {
                         user {
                             username
                         }
@@ -222,14 +215,13 @@ class DifferentUserPushTests(JSONWebTokenTestCase):
         }
 
         content = self.client.execute(mutation, variables)
-        self.assertIsNone(content.errors)
 
-        mipush = content.data["updateMiPush"]["miPush"]
+        mipush = content.data["updateMiPush"]
         self.assertEqual(mipush["user"]["username"], "test2")
         self.assertEqual(mipush["regId"], "testRegId")
 
 
-class EmptyPushTests(JSONWebTokenTestCase):
+class EmptyPushTests(GraphQLTestCase):
     """测试数据库是空的情况"""
 
     fixtures = ["users"]
@@ -243,25 +235,23 @@ class EmptyPushTests(JSONWebTokenTestCase):
         query = """
             query miPush($deviceId: String!) {
                 miPush(deviceId: $deviceId) {
-                    user {
-                        username
-                    }
-                    enable
-                    regId
+                    id
                 }
             }
         """
         variables = {"deviceId": "deviceidofuser1"}
 
         content = self.client.execute(query, variables)
-        self.assertEqual(content.errors[0].message, "推送未绑定")
+
+        data = content.data["miPush"]
+        self.assertEqual(data, None)
 
     def test_update_mipush_without_create(self):
         """在没有创建的情况更新，应该会自动创建"""
         mutation = """
-            mutation updateMiPush($input: UpdateMiPushMutationInput!) {
+            mutation updateMiPush($input: UpdateMiPushInput!) {
                 updateMiPush(input: $input) {
-                    miPush {
+                    ... on MiPush {
                         user {
                             username
                         }
@@ -281,9 +271,8 @@ class EmptyPushTests(JSONWebTokenTestCase):
         }
 
         content = self.client.execute(mutation, variables)
-        self.assertIsNone(content.errors)
 
-        mipush = content.data["updateMiPush"]["miPush"]
+        mipush = content.data["updateMiPush"]
         self.assertEqual(mipush["user"]["username"], "test")
         self.assertEqual(mipush["regId"], "testRegId")
 
