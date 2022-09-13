@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Changed
+
+- 切换框架至 Strawberry
+
 ## [0.8.4] - 2022-06-05
 
 ### Fixed

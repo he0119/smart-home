@@ -26,11 +26,9 @@ class ItemFilter:
     storage: auto
     description: auto
     expired_at: auto
+    # FIXME: 现在这样只能在提供了 filter 参数的情况下，才会生效（就算参数为空字典也行）。
     is_deleted: auto = False
-    """ 默认排除已删除的物品
-
-    FIXME: 现在这样只能在提供了 filter 参数的情况下，才会生效（就算参数为空字典也行）。
-    """
+    """ 默认排除已删除的物品 """
     consumables: bool
 
     def filter_consumables(self, queryset):
