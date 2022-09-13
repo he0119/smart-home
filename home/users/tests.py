@@ -28,6 +28,104 @@ class UserTests(GraphQLTestCase):
         self.user = get_user_model().objects.get(username="test")
         self.user_without_configs = get_user_model().objects.get(username="test2")
 
+    def test_login(self):
+        """测试登录"""
+        query = """
+            mutation login($input: LoginInput!) {
+                login(input: $input) {
+                    ... on User {
+                        username
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "username": "test",
+                "password": "12345678",
+            }
+        }
+
+        content = self.client.execute(query, variables)
+
+        user = content.data["login"]
+        self.assertEqual(user["username"], "test")
+
+        query = """
+            query viewer {
+                viewer {
+                    username
+                    avatarUrl
+                }
+            }
+        """
+        content = self.client.execute(query)
+        self.assertEqual(content.data["viewer"]["username"], "test")
+
+    def test_login_wrong_password(self):
+        """测试密码错误"""
+        query = """
+            mutation login($input: LoginInput!) {
+                login(input: $input) {
+                    ... on OperationInfo {
+                        __typename
+                        messages {
+                            message
+                        }
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "username": "test",
+                "password": "wrong",
+            }
+        }
+        content = self.client.execute(query, variables)
+
+        data = content.data["login"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "用户名或密码错误")
+
+        query = """
+            query viewer {
+                viewer {
+                    username
+                    avatarUrl
+                }
+            }
+        """
+        content = self.client.execute(query, asserts_errors=False)
+        self.assertIsNotNone(content.errors)
+
+    def test_logout(self):
+        """测试登出"""
+        self.client.authenticate(self.user)
+
+        query = """
+            mutation logout {
+                logout {
+                    ... on User {
+                        username
+                    }
+                }
+            }
+        """
+        content = self.client.execute(query)
+        user = content.data["logout"]
+        self.assertEqual(user["username"], "test")
+
+        query = """
+            query viewer {
+                viewer {
+                    username
+                }
+            }
+        """
+        content = self.client.execute(query, asserts_errors=False)
+        self.assertIsNotNone(content.errors)
+
     def test_get_user(self):
         self.client.authenticate(self.user)
         query = """

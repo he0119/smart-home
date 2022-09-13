@@ -1,3 +1,4 @@
+from django.contrib import auth
 from django.core.exceptions import ValidationError
 from strawberry.file_uploads import Upload
 from strawberry.types import Info
@@ -17,6 +18,23 @@ class Query:
 
 @gql.type
 class Mutation:
+    @gql.django.input_mutation
+    def login(self, info: Info, username: str, password: str) -> types.User:
+        request = info.context.request
+        user = auth.authenticate(request, username=username, password=password)
+        if user is not None:
+            auth.login(request, user)
+            return user  # type: ignore
+        auth.logout(request)
+        raise ValidationError("用户名或密码错误")
+
+    @gql.django.mutation(permission_classes=[IsAuthenticated])
+    def logout(self, info: Info) -> types.User:
+        request = info.context.request
+        user = request.user
+        auth.logout(request)
+        return user
+
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_config(self, info: Info, key: str, value: str) -> types.Config:
         user = info.context.request.user
