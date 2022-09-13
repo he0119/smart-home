@@ -1,33 +1,53 @@
-import graphene
+from typing import Optional
+
 from django.contrib.auth import get_user_model
-from graphene import relay
-from graphene_django.types import DjangoObjectType
-from graphql_jwt.decorators import login_required
+from strawberry import auto
+from strawberry_django_plus import gql
+from strawberry_django_plus.gql import relay
 
-from home.users.models import Config
-
-
-class ConfigType(DjangoObjectType):
-    class Meta:
-        model = Config
-        fields = "__all__"
-        interfaces = (relay.Node,)
+from . import models
 
 
-class UserType(DjangoObjectType):
-    avatar_url = graphene.String()
-    configs = graphene.List(ConfigType)
+@gql.django.filters.filter(model=get_user_model(), lookups=True)
+class UserFilter:
+    username: auto
 
-    class Meta:
-        model = get_user_model()
-        fields = "__all__"
-        interfaces = (relay.Node,)
 
-    @login_required
-    def resolve_avatar_url(self, info, **args):
+@gql.django.type(models.Config)
+class Config(relay.Node):
+    user: "User"
+    key: auto
+    value: auto
+
+
+@gql.type
+class Image:
+    @gql.field
+    def name(self) -> str:
+        return self.name  # type: ignore
+
+    @gql.field
+    def url(self) -> str:
+        return self.url  # type: ignore
+
+
+@gql.django.type(models.Avatar)
+class Avatar(relay.Node):
+    user: "User"
+    avatar: Image
+    created_at: auto
+
+
+@gql.django.type(get_user_model())
+class User(relay.Node):
+    id: auto
+    username: auto
+    password: auto
+    email: auto
+
+    @gql.field
+    def avatar_url(self) -> Optional[str]:
         if hasattr(self, "avatar"):
-            return self.avatar.avatar.url
+            return self.avatar.avatar.url  # type: ignore
 
-    @login_required
-    def resolve_configs(self, info, **args):
-        return self.configs.all()
+    configs: list[Config]

@@ -10,32 +10,17 @@ RUN python install-poetry.py --yes
 
 ENV PATH="${PATH}:/root/.local/bin"
 
+COPY ./pyproject.toml ./poetry.lock* /tmp/
+
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-FROM python:3.9-slim-bullseye
-
-WORKDIR /app
+FROM tiangolo/uvicorn-gunicorn:python3.9
 
 # 设置时区
 ENV TZ=Asia/Shanghai
 
-RUN apt-get update \
-  && apt-get -y upgrade \
-  && apt-get install -y --no-install-recommends build-essential \
-  && pip install --no-cache-dir --upgrade uwsgi\
-  && apt-get purge -y --auto-remove \
-  && rm -rf /var/lib/apt/lists/*
-
-# 安装依赖
 COPY --from=requirements-stage /tmp/requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
-RUN rm requirements.txt
 
-# 复制网站
-COPY . .
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
-# UWSGI
-ENV UWSGI_WSGI_FILE=home/wsgi.py
-ENV UWSGI_SOCKET=[::]:8000 UWSGI_MASTER=1 UWSGI_PROCESSES=2 UWSGI_ENABLE_THREADS=1 UWSGI_LIMIT_POST=52428800
-
-CMD [ "uwsgi", "--show-config" ]
+COPY . /app

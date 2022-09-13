@@ -1,70 +1,68 @@
-from django_filters import FilterSet, OrderingFilter
-from graphene import relay
-from graphene_django.filter import DjangoFilterConnectionField
-from graphene_django.types import DjangoObjectType
-from graphql_jwt.decorators import login_required
+from strawberry import auto
+from strawberry_django_plus import gql
+from strawberry_django_plus.gql import relay
 
-from .models import AutowateringData, Device
+from . import models
 
 
-class AutowateringDataFilter(FilterSet):
-    class Meta:
-        model = AutowateringData
-        fields = {
-            "device": ["exact"],
-            "time": ["exact", "lt", "gt"],
-        }
-
-    order_by = OrderingFilter(fields=(("time", "time"),))
+@gql.django.ordering.order(models.AutowateringData)
+class AutowateringDataOrder:
+    time: auto
 
 
-class DeviceFilter(FilterSet):
-    class Meta:
-        model = Device
-        fields = {
-            "name": ["exact", "icontains", "istartswith"],
-            "device_type": ["exact", "icontains", "istartswith"],
-            "location": ["exact", "icontains", "istartswith"],
-        }
-
-    order_by = OrderingFilter(
-        fields=(
-            ("created_at", "created_at"),
-            ("edited_at", "edited_at"),
-            ("is_online", "is_online"),
-            ("online_at", "online_at"),
-            ("offline_at", "offline_at"),
-        )
-    )
+@gql.django.filters.filter(model=models.AutowateringData, lookups=True)
+class AutowateringDataFilter:
+    device: auto
+    time: auto
 
 
-class AutowateringDataType(DjangoObjectType):
-    class Meta:
-        model = AutowateringData
-        fields = "__all__"
-        interfaces = (relay.Node,)
-
-    @classmethod
-    @login_required
-    def get_node(cls, info, id):
-        return AutowateringData.objects.get(pk=id)
+@gql.django.ordering.order(models.Device)
+class DeviceOrder:
+    created_at: auto
+    edited_at: auto
+    is_online: auto
+    online_at: auto
+    offline_at: auto
 
 
-class DeviceType(DjangoObjectType):
-    class Meta:
-        model = Device
-        fields = "__all__"
-        interfaces = (relay.Node,)
+@gql.django.filters.filter(model=models.Device, lookups=True)
+class DeviceFilter:
+    name: auto
+    device_type: auto
+    location: auto
 
-    autowatering_data = DjangoFilterConnectionField(
-        AutowateringDataType, filterset_class=AutowateringDataFilter
-    )
 
-    @login_required
-    def resolve_autowatering_data(self, info, **args):
-        return self.data
+@gql.django.type(
+    models.AutowateringData, filters=AutowateringDataFilter, order=AutowateringDataOrder
+)
+class AutowateringData(relay.Node):
+    device: "Device"
+    time: auto
+    temperature: auto
+    humidity: auto
+    wifi_signal: auto
+    valve1: auto
+    valve2: auto
+    valve3: auto
+    pump: auto
+    valve1_delay: auto
+    valve2_delay: auto
+    valve3_delay: auto
+    pump_delay: auto
 
-    @classmethod
-    @login_required
-    def get_node(cls, info, id):
-        return Device.objects.get(pk=id)
+
+@gql.django.type(models.Device, filters=DeviceFilter, order=DeviceOrder)
+class Device(relay.Node):
+    name: auto
+    device_type: auto
+    location: auto
+    created_at: auto
+    edited_at: auto
+    is_online: auto
+    online_at: auto
+    offline_at: auto
+    password: auto
+
+    @gql.django.connection
+    def autowatering_data(self, info) -> relay.Connection[AutowateringData]:
+        return models.AutowateringData.objects.all()  # type: ignore

@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import date, timedelta
+from typing import cast
 from unittest import mock
 
 from django.conf import settings
@@ -8,10 +9,12 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from graphql_jwt.testcases import JSONWebTokenTestCase
-from graphql_relay import to_global_id
 from requests import sessions
+from strawberry_django_plus.gql import relay
 
+from home.utils import GraphQLTestCase
+
+from . import types
 from .api import DeviceAPI, WeatherAPI
 from .models import AutowateringData, AutowateringDataDaily, Device
 from .tasks import (
@@ -41,7 +44,7 @@ class ModelTests(TestCase):
         self.assertEqual(str(data), f"test 2020-01-01")
 
 
-class DeviceTests(JSONWebTokenTestCase):
+class DeviceTests(GraphQLTestCase):
     fixtures = ["users", "iot"]
 
     def setUp(self):
@@ -49,34 +52,34 @@ class DeviceTests(JSONWebTokenTestCase):
         self.client.authenticate(self.user)
 
     def test_get_device(self):
-        """通过 Node 来获得指定设备信息"""
+        """获得指定设备信息"""
         test_device = Device.objects.get(name="test")
-        global_id = to_global_id("DeviceType", test_device.id)
 
-        query = f"""
-            query node {{
-                node(id: "{global_id}") {{
-                    ... on DeviceType {{
-                        id
-                        name
-                        deviceType
-                        location
-                        autowateringData {{
-                            edges {{
-                                node {{
-                                    id
-                                    temperature
-                                }}
-                            }}
-                        }}
-                    }}
-                }}
-            }}
+        query = """
+            query device($id: GlobalID!) {
+                device(id: $id) {
+                    id
+                    name
+                    deviceType
+                    location
+                    autowateringData {
+                        edges {
+                            node {
+                            id
+                            temperature
+                            }
+                        }
+                    }
+                }
+            }
         """
-        content = self.client.execute(query)
-        self.assertIsNone(content.errors)
+        variables = {
+            "id": relay.to_base64(types.Device, test_device.id),
+        }
 
-        device = content.data["node"]
+        content = self.client.execute(query, variables)
+
+        device = content.data["device"]
         self.assertEqual(device["name"], test_device.name)
         self.assertEqual(device["deviceType"], test_device.device_type)
         self.assertEqual(device["location"], test_device.location)
@@ -100,7 +103,6 @@ class DeviceTests(JSONWebTokenTestCase):
             }
         """
         content = self.client.execute(query)
-        self.assertIsNone(content.errors)
 
         names = [item["node"]["name"] for item in content.data["devices"]["edges"]]
         self.assertEqual(set(names), {"test", "test2"})
@@ -129,7 +131,6 @@ class DeviceTests(JSONWebTokenTestCase):
             }
         """
         content = self.client.execute(query)
-        self.assertIsNone(content.errors)
 
         names = [item["node"]["name"] for item in content.data["devices"]["edges"]]
         self.assertEqual(set(names), {"test"})
@@ -137,9 +138,9 @@ class DeviceTests(JSONWebTokenTestCase):
     def test_add_device(self):
         """测试添加设备"""
         mutation = """
-            mutation addDevice($input: AddDeviceMutationInput!) {
+            mutation addDevice($input: AddDeviceInput!) {
                 addDevice(input: $input) {
-                    device {
+                    ... on Device {
                         __typename
                         id
                         name
@@ -160,10 +161,9 @@ class DeviceTests(JSONWebTokenTestCase):
         }
 
         content = self.client.execute(mutation, variables)
-        self.assertIsNone(content.errors)
 
-        device = content.data["addDevice"]["device"]
-        self.assertEqual(device["__typename"], "DeviceType")
+        device = content.data["addDevice"]
+        self.assertEqual(device["__typename"], "Device")
         self.assertEqual(device["name"], "test2")
         self.assertEqual(device["deviceType"], "sometype")
         self.assertEqual(device["location"], "somelocation")
@@ -175,7 +175,7 @@ class DeviceTests(JSONWebTokenTestCase):
     def test_delete_device(self):
         """测试删除设备"""
         mutation = """
-            mutation deleteDevice($input: DeleteDeviceMutationInput!) {
+            mutation deleteDevice($input: DeleteDeviceInput!) {
                 deleteDevice(input: $input) {
                     __typename
                 }
@@ -183,13 +183,14 @@ class DeviceTests(JSONWebTokenTestCase):
         """
 
         test_device = Device.objects.get(name="test")
-        variables = {"input": {"deviceId": to_global_id("DeviceType", test_device.id)}}
+        variables = {
+            "input": {"deviceId": relay.to_base64(types.Device, test_device.id)}
+        }
 
         # 确认自动浇水有数据
         self.assertNotEqual(list(AutowateringData.objects.all()), [])
 
         content = self.client.execute(mutation, variables)
-        self.assertIsNone(content.errors)
 
         with self.assertRaises(Device.DoesNotExist):
             Device.objects.get(name="test")
@@ -199,25 +200,31 @@ class DeviceTests(JSONWebTokenTestCase):
     def test_delete_device_not_exist(self):
         """测试删除不存在的设备"""
         mutation = """
-            mutation deleteDevice($input: DeleteDeviceMutationInput!) {
+            mutation deleteDevice($input: DeleteDeviceInput!) {
                 deleteDevice(input: $input) {
-                    __typename
+                    ... on OperationInfo {
+                        __typename
+                        messages {
+                            message
+                        }
+                    }
                 }
             }
         """
-        variables = {"input": {"deviceId": to_global_id("DeviceType", "0")}}
+        variables = {"input": {"deviceId": relay.to_base64(types.Device, "0")}}
 
         content = self.client.execute(mutation, variables)
-        self.assertIsNotNone(content.errors)
 
-        self.assertEqual(content.errors[0].message, "设备不存在")
+        data = content.data["deleteDevice"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "设备不存在")
 
     def test_update_device(self):
         """测试更新设备"""
         mutation = """
-            mutation updateDevice($input: UpdateDeviceMutationInput!) {
+            mutation updateDevice($input: UpdateDeviceInput!) {
                 updateDevice(input: $input) {
-                    device {
+                    ... on Device {
                         __typename
                         id
                         name
@@ -230,7 +237,7 @@ class DeviceTests(JSONWebTokenTestCase):
         """
         variables = {
             "input": {
-                "id": to_global_id("DeviceType", "1"),
+                "id": relay.to_base64(types.Device, "1"),
                 "name": "newtest",
                 "deviceType": "newdevicetype",
                 "location": "newlocation",
@@ -242,11 +249,10 @@ class DeviceTests(JSONWebTokenTestCase):
         self.assertEqual(old_Device.name, "test")
 
         content = self.client.execute(mutation, variables)
-        self.assertIsNone(content.errors)
-        device = content.data["updateDevice"]["device"]
 
-        self.assertEqual(device["__typename"], "DeviceType")
-        self.assertEqual(device["id"], to_global_id("DeviceType", "1"))
+        device = content.data["updateDevice"]
+        self.assertEqual(device["__typename"], "Device")
+        self.assertEqual(device["id"], relay.to_base64(types.Device, "1"))
         self.assertEqual(device["name"], "newtest")
         self.assertEqual(device["deviceType"], "newdevicetype")
         self.assertEqual(device["location"], "newlocation")
@@ -258,21 +264,20 @@ class DeviceTests(JSONWebTokenTestCase):
     def test_update_device_not_exist(self):
         """测试更新不存在的设备"""
         mutation = """
-            mutation updateDevice($input: UpdateDeviceMutationInput!) {
+            mutation updateDevice($input: UpdateDeviceInput!) {
                 updateDevice(input: $input) {
-                    device {
+                    ... on OperationInfo {
                         __typename
-                        id
-                        name
-                        deviceType
-                        location
+                        messages {
+                            message
+                        }
                     }
                 }
             }
         """
         variables = {
             "input": {
-                "id": to_global_id("DeviceType", "0"),
+                "id": relay.to_base64(types.Device, "0"),
                 "name": "newtest",
                 "deviceType": "newdevicetype",
                 "location": "newlocation",
@@ -280,16 +285,17 @@ class DeviceTests(JSONWebTokenTestCase):
         }
 
         content = self.client.execute(mutation, variables)
-        self.assertIsNotNone(content.errors)
 
-        self.assertEqual(content.errors[0].message, "设备不存在")
+        data = content.data["updateDevice"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "设备不存在")
 
     def test_set_device(self):
         """测试设置设备状态"""
         mutation = """
-            mutation setDevice($input: SetDeviceMutationInput!) {
+            mutation setDevice($input: SetDeviceInput!) {
                 setDevice(input: $input) {
-                    device {
+                    ... on Device {
                         __typename
                         id
                     }
@@ -298,7 +304,7 @@ class DeviceTests(JSONWebTokenTestCase):
         """
         variables = {
             "input": {
-                "id": to_global_id("DeviceType", "1"),
+                "id": relay.to_base64(types.Device, "1"),
                 "key": "valve1",
                 "value": "1",
                 "valueType": "bool",
@@ -309,27 +315,28 @@ class DeviceTests(JSONWebTokenTestCase):
             variables["input"]["valueType"] = value_type
 
             content = self.client.execute(mutation, variables)
-            self.assertIsNone(content.errors)
 
-            device = content.data["setDevice"]["device"]
-            self.assertEqual(device["__typename"], "DeviceType")
-            self.assertEqual(device["id"], to_global_id("DeviceType", "1"))
+            device = content.data["setDevice"]
+            self.assertEqual(device["__typename"], "Device")
+            self.assertEqual(device["id"], relay.to_base64(types.Device, "1"))
 
     def test_set_device_not_exist(self):
         """测试设置不存在设备的状态"""
         mutation = """
-            mutation setDevice($input: SetDeviceMutationInput!) {
+            mutation setDevice($input: SetDeviceInput!) {
                 setDevice(input: $input) {
-                    device {
+                    ... on OperationInfo {
                         __typename
-                        id
+                        messages {
+                            message
+                        }
                     }
                 }
             }
         """
         variables = {
             "input": {
-                "id": to_global_id("DeviceType", "0"),
+                "id": relay.to_base64(types.Device, "0"),
                 "key": "valve1",
                 "value": "1",
                 "valueType": "bool",
@@ -337,32 +344,10 @@ class DeviceTests(JSONWebTokenTestCase):
         }
 
         content = self.client.execute(mutation, variables)
-        self.assertIsNotNone(content.errors)
 
-        self.assertEqual(content.errors[0].message, "设备不存在")
-
-    def test_get_autowatering_data(self):
-        """通过 Node 来获得指定自动浇水数据"""
-        test_autowatering_data = AutowateringData.objects.get(pk=1)
-        global_id = to_global_id("AutowateringDataType", test_autowatering_data.id)
-
-        query = f"""
-            query node {{
-                node(id: "{global_id}") {{
-                    ... on AutowateringDataType {{
-                        id
-                        temperature
-                    }}
-                }}
-            }}
-        """
-        content = self.client.execute(query)
-        self.assertIsNone(content.errors)
-
-        autowatering_data = content.data["node"]
-        self.assertEqual(
-            autowatering_data["temperature"], test_autowatering_data.temperature
-        )
+        data = content.data["setDevice"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "设备不存在")
 
     def test_get_all_autowatering_data(self):
         """获取自动浇水数据"""
@@ -377,10 +362,9 @@ class DeviceTests(JSONWebTokenTestCase):
                 }
             }
         """
-        variables = {"deviceId": to_global_id("DeviceType", "1")}
+        variables = {"deviceId": relay.to_base64(types.Device, "1")}
 
         content = self.client.execute(query, variables)
-        self.assertIsNone(content.errors)
 
         data = [
             item["node"]["temperature"]
@@ -402,7 +386,6 @@ class DeviceTests(JSONWebTokenTestCase):
             }
         """
         content = self.client.execute(query)
-        self.assertIsNone(content.errors)
 
         data = [
             item["node"]["temperature"]
@@ -539,6 +522,7 @@ class WebHookTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         autowatering_data = AutowateringData.objects.last()
+        autowatering_data = cast(AutowateringData, autowatering_data)
         self.assertEqual(autowatering_data.temperature, 4.0)
         self.assertEqual(autowatering_data.wifi_signal, -43)
 
@@ -563,7 +547,8 @@ class WebHookTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         autowatering_data = AutowateringData.objects.last()
-        self.assertEqual(autowatering_data.id, 3)
+        autowatering_data = cast(AutowateringData, autowatering_data)
+        self.assertEqual(autowatering_data.pk, 3)
         self.assertEqual(response.json(), {"iot": "working"})
 
 
@@ -768,6 +753,7 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(AutowateringData.objects.count(), 0)
         self.assertEqual(AutowateringDataDaily.objects.count(), 2)
         daily_data = AutowateringDataDaily.objects.last()
+        daily_data = cast(AutowateringDataDaily, daily_data)
         self.assertEqual(daily_data.time, date(2020, 8, 2))
         self.assertEqual(daily_data.min_temperature, 1.0)
         self.assertEqual(daily_data.max_temperature, 3.0)
@@ -854,6 +840,7 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(AutowateringData.objects.count(), 1)
         self.assertEqual(AutowateringDataDaily.objects.count(), 2)
         daily_data = AutowateringDataDaily.objects.last()
+        daily_data = cast(AutowateringDataDaily, daily_data)
         self.assertEqual(daily_data.time, now.date() - timedelta(days=30))
         self.assertEqual(daily_data.min_temperature, 1.0)
         self.assertEqual(daily_data.max_temperature, 3.0)

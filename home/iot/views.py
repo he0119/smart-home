@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
+from home.utils import channel_group_send
+
 from .models import AutowateringData, Device
 
 logger = logging.getLogger("iot")
@@ -59,6 +61,7 @@ def process_message_publish(event):
                     pump_delay=payload["data"]["pump_delay"],
                 )
                 autowatering_data.save()
+                channel_group_send("iot", {"type": "data", "data": autowatering_data})
                 logger.debug(f"{device.name} {autowatering_data.time} 保存成功")
         except Device.DoesNotExist:
             logger.error(f"设备({device_name}) 不存在")
@@ -72,6 +75,7 @@ def process_client_disconnected(event):
         device.is_online = False
         device.offline_at = timezone.now()
         device.save()
+        channel_group_send("iot", {"type": "device", "data": device})
         logger.info(f"{device.name} 离线")
     except Device.DoesNotExist:
         logger.error(f"设备({device_name}) 不存在")
@@ -85,6 +89,7 @@ def process_client_connected(event):
         device.is_online = True
         device.online_at = timezone.now()
         device.save()
+        channel_group_send("iot", {"type": "device", "data": device})
         logger.info(f"{device.name} 在线")
     except Device.DoesNotExist:
         logger.error(f"设备({device_name}) 不存在")

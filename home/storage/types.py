@@ -1,139 +1,106 @@
-import graphene
-from django_filters import FilterSet, OrderingFilter
-from django_filters.filters import BooleanFilter
-from graphene import relay
-from graphene_django.fields import DjangoConnectionField
-from graphene_django.filter import DjangoFilterConnectionField
-from graphene_django.types import DjangoObjectType
-from graphql_jwt.decorators import login_required
+from strawberry import auto
+from strawberry_django_plus import gql
+from strawberry_django_plus.gql import relay
 
-from .models import Item, Picture, Storage
+from home.users.types import User
+
+from . import models
 
 
-class ItemFilter(FilterSet):
-    consumables = BooleanFilter(field_name="consumables", method="filter_consumables")
+@gql.django.ordering.order(models.Item)
+class ItemOrder:
+    created_at: auto
+    edited_at: auto
+    expired_at: auto
+    deleted_at: auto
 
-    def __init__(self, data=None, *args, **kwargs):
-        if data is not None:
-            # 默认不显示已删除的物品
-            if data.get("is_deleted") is None:
-                data["is_deleted"] = False
 
-        super().__init__(data, *args, **kwargs)
+@gql.django.ordering.order(models.Picture)
+class PictureOrder:
+    created_at: auto
 
-    def filter_consumables(self, queryset, name, value):
-        if value:
+
+@gql.django.filters.filter(model=models.Item, lookups=True)
+class ItemFilter:
+    name: auto
+    storage: auto
+    description: auto
+    expired_at: auto
+    # FIXME: 现在这样只能在提供了 filter 参数的情况下，才会生效（就算参数为空字典也行）。
+    is_deleted: auto = False
+    """ 默认排除已删除的物品 """
+    consumables: bool
+
+    def filter_consumables(self, queryset):
+        if self.consumables is None:
+            return queryset
+        if self.consumables:
             return queryset.exclude(consumables=None)
-        else:
-            return queryset.filter(consumables=None)
-
-    class Meta:
-        model = Item
-        fields = {
-            "name": ["exact", "icontains"],
-            "storage": ["exact", "isnull"],
-            "description": ["exact", "icontains"],
-            "expired_at": ["lt", "gt"],
-            "is_deleted": ["exact"],
-            "consumables": ["exact"],
-        }
-
-    order_by = OrderingFilter(
-        fields=(
-            ("created_at", "created_at"),
-            ("edited_at", "edited_at"),
-            ("expired_at", "expired_at"),
-            ("deleted_at", "deleted_at"),
-        )
-    )
+        return queryset.filter(consumables=None)
 
 
-class StorageFilter(FilterSet):
-    class Meta:
-        model = Storage
-        fields = {
-            "name": ["exact", "icontains"],
-            "description": ["exact", "icontains"],
-            "level": ["exact"],
-        }
+@gql.django.filters.filter(model=models.Storage, lookups=True)
+class StorageFilter:
+    name: auto
+    description: auto
+    level: auto
 
 
-class PictureFilter(FilterSet):
-    class Meta:
-        model = Picture
-        fields = {
-            "item__id": ["exact"],
-            "item__name": ["exact", "icontains"],
-            "description": ["exact", "icontains"],
-        }
-
-    order_by = OrderingFilter(fields=(("created_at", "created_at"),))
+@gql.django.filters.filter(models.Picture, lookups=True)
+class PictureFilter:
+    id: auto
+    item: ItemFilter
+    description: auto
 
 
-class PictureType(DjangoObjectType):
-    class Meta:
-        model = Picture
-        fields = "__all__"
-        interfaces = (relay.Node,)
-
-    name = graphene.String(required=True)
-    url = graphene.String(required=True)
-
-    @login_required
-    def resolve_name(self, info, **args):
-        return self.picture.name.split("/")[-1]
-
-    @login_required
-    def resolve_url(self, info, **args):
-        return self.picture.url
-
-    @classmethod
-    @login_required
-    def get_node(cls, info, id):
-        return Picture.objects.get(pk=id)
+@gql.django.type(models.Item, filters=ItemFilter, order=ItemOrder)
+class Item(relay.Node):
+    name: auto
+    number: auto
+    description: auto
+    price: auto
+    expired_at: auto
+    storage: "Storage"
+    created_at: auto
+    created_by: User
+    edited_at: auto
+    edited_by: User
+    is_deleted: auto
+    deleted_at: auto
+    consumables: relay.Connection["Item"]
+    pictures: relay.Connection["Picture"]
 
 
-class ItemType(DjangoObjectType):
-    class Meta:
-        model = Item
-        fields = "__all__"
-        interfaces = (relay.Node,)
+@gql.django.type(models.Storage, filters=StorageFilter)
+class Storage(relay.Node):
+    name: auto
+    description: auto
+    parent: "Storage"
+    items: relay.Connection[Item]
+    ancestors: relay.Connection["Storage"]
 
-    consumables = DjangoFilterConnectionField(
-        lambda: ItemType, filterset_class=ItemFilter
-    )
-    pictures = DjangoConnectionField(PictureType)
-
-    @login_required
-    def resolve_pictures(self, info, **args):
-        return self.pictures
-
-    @classmethod
-    @login_required
-    def get_node(cls, info, id):
-        return Item.objects.get(pk=id)
+    # NOTE: 如果是像下面这样写就会报错
+    # AttributeError: 'str' object has no attribute 'CONNECTION_CLASS'
+    # @gql.django.connection
+    # def ancestors(self, info) -> list["Storage"]:
+    #     return self.get_ancestors()
 
 
-class StorageType(DjangoObjectType):
-    class Meta:
-        model = Storage
-        fields = "__all__"
-        interfaces = (relay.Node,)
+@gql.django.type(models.Picture, filters=PictureFilter, order=PictureOrder)
+class Picture(relay.Node):
+    description: auto
+    item: Item
+    created_at: auto
+    created_by: User
+    box_x: auto
+    box_y: auto
+    box_h: auto
+    box_w: auto
 
-    items = DjangoFilterConnectionField(ItemType, filterset_class=ItemFilter)
-    ancestors = DjangoFilterConnectionField(
-        lambda: StorageType, filterset_class=StorageFilter
-    )
+    @gql.field
+    def name(self, info) -> str:
+        return self.picture.name.split("/")[-1]  # type: ignore
 
-    @login_required
-    def resolve_items(self, info, **args):
-        return self.items
-
-    @login_required
-    def resolve_ancestors(self, info, **args):
-        return self.get_ancestors()
-
-    @classmethod
-    @login_required
-    def get_node(cls, info, id):
-        return Storage.objects.get(pk=id)
+    @gql.field
+    def url(self, info) -> str:
+        return self.picture.url  # type: ignore

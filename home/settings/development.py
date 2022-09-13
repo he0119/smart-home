@@ -2,12 +2,21 @@
 """
 import os
 
-from .settings import INSTALLED_APPS, MIDDLEWARE
+from .settings import INSTALLED_APPS, MIDDLEWARE, SECRET_KEY
 
 ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS.append("corsheaders")
 MIDDLEWARE = ["corsheaders.middleware.CorsMiddleware"] + MIDDLEWARE
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Debug Toolbar
+# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
+# https://blb-ventures.github.io/strawberry-django-plus/debug-toolbar/
+INSTALLED_APPS.append("debug_toolbar")
+MIDDLEWARE = [
+    "strawberry_django_plus.middlewares.debug_toolbar.DebugToolbarMiddleware"
+] + MIDDLEWARE
+INTERNAL_IPS = ["127.0.0.1"]
 
 # 开发服务器配置，从环境变量里读取
 DATABASES = {
@@ -19,6 +28,16 @@ DATABASES = {
         "HOST": os.getenv("POSTGRES_HOST"),
         "PORT": os.getenv("POSTGRES_PORT"),
     }
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.getenv("CHANNEL_REDIS_URL")],
+            "symmetric_encryption_keys": [SECRET_KEY],
+        },
+    },
 }
 
 if os.getenv("AWS_S3_ENDPOINT_URL"):

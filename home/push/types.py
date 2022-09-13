@@ -1,33 +1,28 @@
-import graphene
-from django_filters import FilterSet
-from graphene import ObjectType, relay
-from graphene_django.types import DjangoObjectType
-from graphql_jwt.decorators import login_required
+from strawberry import auto
+from strawberry_django_plus import gql
+from strawberry_django_plus.gql import relay
 
-from .models import MiPush
+from home.users.types import User, UserFilter
 
-
-class MiPushFilter(FilterSet):
-    class Meta:
-        model = MiPush
-        fields = {
-            "user__username": ["exact"],
-            "model": ["exact", "icontains"],
-        }
+from . import models
 
 
-class MiPushType(DjangoObjectType):
-    class Meta:
-        model = MiPush
-        fields = "__all__"
-        interfaces = (relay.Node,)
-
-    @classmethod
-    @login_required
-    def get_node(cls, info, id):
-        return MiPush.objects.get(pk=id)
+@gql.django.filters.filter(model=models.MiPush, lookups=True)
+class MiPushFilter:
+    user: UserFilter
+    model: auto
 
 
-class MiPushKeyType(ObjectType):
-    app_id = graphene.String()
-    app_key = graphene.String()
+@gql.django.type(models.MiPush, filters=MiPushFilter)
+class MiPush(relay.Node):
+    user: User
+    enable: auto
+    reg_id: auto
+    device_id: auto
+    model: auto
+
+
+@gql.type
+class MiPushKey:
+    app_id: str
+    app_key: str

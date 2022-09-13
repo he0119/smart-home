@@ -11,9 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from datetime import timedelta
 
-import pkg_resources
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
@@ -103,9 +101,9 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_cleanup",
     # GraphQL
-    "graphene_django",
-    "django_filters",
-    "graphql_jwt.refresh_token",
+    "channels",
+    "strawberry.django",
+    "strawberry_django_plus",
     # 我的应用
     "home.users",
     "home.storage",
@@ -144,6 +142,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "home.wsgi.application"
+
+# Channels
+# https://channels.readthedocs.io/en/stable/topics/channel_layers.html
+
+ASGI_APPLICATION = "home.asgi.application"
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -197,38 +201,14 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Login
-# https://docs.djangoproject.com/zh-hans/3.0/topics/auth/default/
+# https://docs.djangoproject.com/zh-hans/4.0/topics/auth/default/
 
 LOGIN_URL = "/admin/"
-AUTHENTICATION_BACKENDS = [
-    "graphql_jwt.backends.JSONWebTokenBackend",
-    "django.contrib.auth.backends.ModelBackend",
-]
 
 # MPTT
 # https://django-mptt.readthedocs.io/en/latest/forms.html
 
 MPTT_DEFAULT_LEVEL_INDICATOR = "--"
-
-# Graphene(GraphQL)
-# https://docs.graphene-python.org/projects/django/en/latest/installation/
-
-GRAPHENE = {
-    "SCHEMA": "home.schema.schema",
-    "MIDDLEWARE": [
-        "graphql_jwt.middleware.JSONWebTokenMiddleware",
-    ],
-}
-
-# Django-GraphQL-JWT
-# https://django-graphql-jwt.domake.io/en/latest/refresh_token.html
-
-GRAPHQL_JWT = {
-    "JWT_VERIFY_EXPIRATION": True,
-    "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
-    "JWT_EXPIRATION_DELTA": timedelta(minutes=5),
-    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(days=30),
-}
 
 # Celery
 # https://docs.celeryproject.org/en/stable/getting-started/brokers/redis.html
@@ -281,11 +261,16 @@ def traces_sampler(sampling_context):
     op = sampling_context["transaction_context"]["op"]
     # 如果是 Celery 任务(op = "celery.task")，不存在 wsgi_environ
     if op == "http.server":
-        path: str = sampling_context["wsgi_environ"]["PATH_INFO"]
-        # Sentry 一个月只支持接受 10000 次 Transactions
-        # 传感器每 10 秒就会上报一次数据，所以降低频率
-        if path.startswith("/iot"):
-            return 0.0001
+        if "wsgi_environ" in sampling_context:
+            path: str = sampling_context["wsgi_environ"]["PATH_INFO"]
+            # Sentry 一个月只支持接受 10000 次 Transactions
+            # 传感器每 10 秒就会上报一次数据，所以降低频率
+            if path.startswith("/iot"):
+                return 0.0001
+        elif "asgi_scope" in sampling_context:
+            path: str = sampling_context["asgi_scope"]["path"]
+            if path.startswith("/iot"):
+                return 0.0001
 
     return 1
 
