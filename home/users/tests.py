@@ -245,6 +245,7 @@ class UserAvatarTests(GraphQLTestCase):
                 updateAvatar(input: $input) {
                     ... on Avatar {
                         avatar {
+                            name
                             url
                         }
                     }

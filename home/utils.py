@@ -49,13 +49,13 @@ class GraphQLTestCase(TestCase):
         self.client: MyTestClient
 
 
-class CompatibilityExtension(Extension):
-    """尝试兼容 strawberry_django_plus"""
+# class CompatibilityExtension(Extension):
+#     """尝试兼容 strawberry_django_plus"""
 
-    def resolve(self, _next, root, info: Info, *args, **kwargs):
-        if not hasattr(info.context.request, "user"):
-            info.context.request.user = info.context.request.scope["user"]
-        return _next(root, info, *args, **kwargs)
+#     def resolve(self, _next, root, info: Info, *args, **kwargs):
+#         if not hasattr(info.context.request, "user"):
+#             info.context.request.user = info.context.request.scope["user"]
+#         return _next(root, info, *args, **kwargs)
 
 
 def channel_group_send(group: str, message: dict) -> None:

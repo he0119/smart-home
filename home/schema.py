@@ -8,8 +8,6 @@ import home.push.schema
 import home.storage.schema
 import home.users.schema
 
-from .utils import CompatibilityExtension
-
 Query = merge_types(
     "Query",
     (

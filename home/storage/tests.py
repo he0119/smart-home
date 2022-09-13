@@ -1023,6 +1023,31 @@ class ConsumableTests(GraphQLTestCase):
         names = [item["node"]["name"] for item in content.data["items"]["edges"]]
         self.assertCountEqual(names, ["电池", "口罩", "雨伞"])
 
+    def test_get_consumable_is_null(self):
+        """consumables 参数为 null 时，默认获取所有物品"""
+        query = """
+            query consumable {
+                items(filters: {consumables: null}) {
+                    edges {
+                        node {
+                            name
+                            consumables {
+                                edges {
+                                    node {
+                                       name
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        """
+        content = self.client.execute(query)
+
+        names = [item["node"]["name"] for item in content.data["items"]["edges"]]
+        self.assertCountEqual(names, ["电池", "口罩", "雨伞", "手表"])
+
     def test_add_consumable(self):
         """添加耗材"""
         mutation = """
