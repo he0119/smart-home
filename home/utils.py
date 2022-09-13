@@ -5,8 +5,6 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.test import TestCase
 from graphql import GraphQLFormattedError
-from strawberry.extensions import Extension
-from strawberry.types import Info
 from strawberry_django_plus.test.client import TestClient
 
 
@@ -49,6 +47,8 @@ class GraphQLTestCase(TestCase):
         self.client: MyTestClient
 
 
+# from strawberry.extensions import Extension
+# from strawberry.types import Info
 # class CompatibilityExtension(Extension):
 #     """尝试兼容 strawberry_django_plus"""
 

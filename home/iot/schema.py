@@ -2,12 +2,13 @@ import hashlib
 from distutils.util import strtobool
 from typing import AsyncGenerator, Optional
 
-from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
 from strawberry.types import Info
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
 from strawberry_django_plus.permissions import IsAuthenticated
+
+from home.utils import channel_group_send
 
 from . import models, types
 from .models import Device
@@ -79,6 +80,7 @@ class Mutation:
             device.password = sha256(password)
 
         device.save()
+        channel_group_send("iot", {"type": "device", "data": device})
 
         return device  # type: ignore
 
@@ -124,6 +126,7 @@ class Mutation:
 
 @gql.type
 class Subscription:
+    # TODO: 添加订阅的测试
     @gql.subscription(directives=[IsAuthenticated()])
     async def autowatering_data(
         self, info: Info
