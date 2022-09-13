@@ -1,3 +1,5 @@
+from typing import Optional
+
 from strawberry import auto
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
@@ -67,17 +69,26 @@ class Item(relay.Node):
     edited_by: User
     is_deleted: auto
     deleted_at: auto
-    consumables: relay.Connection["Item"]
-    pictures: relay.Connection["Picture"]
+    consumables: relay.Connection["Item"] = gql.django.connection(
+        filters=ItemFilter, order=ItemOrder
+    )
+    pictures: relay.Connection["Picture"] = gql.django.connection(
+        filters=PictureFilter, order=PictureOrder
+    )
 
 
 @gql.django.type(models.Storage, filters=StorageFilter)
 class Storage(relay.Node):
     name: auto
     description: auto
-    parent: "Storage"
-    items: relay.Connection[Item]
-    ancestors: relay.Connection["Storage"]
+    parent: Optional["Storage"]
+    children: relay.Connection["Storage"] = gql.django.connection(filters=StorageFilter)
+    items: relay.Connection[Item] = gql.django.connection(
+        filters=ItemFilter, order=ItemOrder
+    )
+    ancestors: relay.Connection["Storage"] = gql.django.connection(
+        filters=StorageFilter
+    )
 
     # NOTE: 如果是像下面这样写就会报错
     # AttributeError: 'str' object has no attribute 'CONNECTION_CLASS'

@@ -38,7 +38,7 @@ class TopicTests(GraphQLTestCase):
             query topic($id: GlobalID!) {
                 topic(id: $id) {
                     title
-                    comments(first: 1) {
+                    comments(first: 1, filters: {}, order: {}) {
                         edges {
                             node {
                                 body
@@ -489,6 +489,12 @@ class CommentTests(GraphQLTestCase):
             query comment($id: GlobalID!) {
                 comment(id: $id) {
                     body
+                    parent {
+                        body
+                    }
+                    replyTo {
+                        username
+                    }
                 }
             }
         """

@@ -69,7 +69,7 @@ class StorageTests(GraphQLTestCase):
         self.client.authenticate(self.user)
 
     def test_get_storage(self):
-        toolbox = Storage.objects.get(name="工具箱")
+        storage = Storage.objects.get(name="阳台储物柜")
 
         query = """
             query storage($id: GlobalID!) {
@@ -87,12 +87,59 @@ class StorageTests(GraphQLTestCase):
                 }
             }
         """
-        variables = {"id": relay.to_base64(types.Storage, toolbox.id)}
+        variables = {"id": relay.to_base64(types.Storage, storage.id)}
 
         content = self.client.execute(query, variables)
 
         name = content.data["storage"]["name"]
-        self.assertEqual(name, toolbox.name)
+        self.assertEqual(name, storage.name)
+        item = content.data["storage"]["items"]["edges"][1]["node"]
+        self.assertEqual(item["name"], "垃圾")
+
+    def test_get_storage_connection_filter(self):
+        """测试位置下的 Connection 能否使用 filter"""
+        storage = Storage.objects.get(name="阳台储物柜")
+
+        query = """
+            query storage($id: GlobalID!) {
+                storage(id: $id) {
+                    id
+                    name
+                    items(filters: {}, order: {}) {
+                        edges {
+                            node {
+                                id
+                                name
+                            }
+                        }
+                    }
+                    children(filters: {}) {
+                        edges {
+                            node {
+                                id
+                                name
+                            }
+                        }
+                    }
+                    ancestors(filters: {}) {
+                        edges {
+                            node {
+                                id
+                                name
+                            }
+                        }
+                    }
+                }
+            }
+        """
+        variables = {"id": relay.to_base64(types.Storage, storage.id)}
+
+        content = self.client.execute(query, variables)
+
+        name = content.data["storage"]["name"]
+        self.assertEqual(name, storage.name)
+        item = content.data["storage"]["items"]["edges"][1]["node"]
+        self.assertEqual(item["name"], "手表")
 
     def test_get_storages(self):
         query = """
@@ -113,6 +160,7 @@ class StorageTests(GraphQLTestCase):
         self.assertEqual(set(names), set(["阳台", "阳台储物柜", "工具箱", "工具箱2"]))
 
     def test_get_root_storage(self):
+        """测试获取根节点"""
         query = """
             query storages {
                 storages(filters: {level: {exact: 0}}) {
@@ -120,6 +168,9 @@ class StorageTests(GraphQLTestCase):
                         node {
                             id
                             name
+                            parent {
+                                id
+                            }
                         }
                     }
                 }
@@ -461,6 +512,13 @@ class ItemTests(GraphQLTestCase):
                 item(id: $id) {
                     id
                     name
+                    pictures {
+                        edges {
+                            node {
+                                description
+                            }
+                        }
+                    }
                 }
             }
         """
@@ -472,6 +530,44 @@ class ItemTests(GraphQLTestCase):
 
         name = content.data["item"]["name"]
         self.assertEqual(name, umbrella.name)
+        item = content.data["item"]["pictures"]["edges"][0]["node"]
+        self.assertEqual(item["description"], "测试一")
+
+    def test_item_connection_filter(self):
+        umbrella = Item.objects.get(name="雨伞")
+
+        query = """
+            query item($id: GlobalID!) {
+                item(id: $id) {
+                    id
+                    name
+                    pictures(filters: {description: {exact: "测试二"}}, order: {}) {
+                        edges {
+                            node {
+                                description
+                            }
+                        }
+                    }
+                    consumables(filters: {}, order: {}) {
+                        edges {
+                            node {
+                                description
+                            }
+                        }
+                    }
+                }
+            }
+        """
+        variables = {
+            "id": relay.to_base64(types.Item, umbrella.id),
+        }
+
+        content = self.client.execute(query, variables)
+
+        name = content.data["item"]["name"]
+        self.assertEqual(name, umbrella.name)
+        item = content.data["item"]["pictures"]["edges"][0]["node"]
+        self.assertEqual(item["description"], "测试二")
 
     def test_get_items(self):
         query = """

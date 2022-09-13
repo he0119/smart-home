@@ -62,7 +62,7 @@ class DeviceTests(GraphQLTestCase):
                     name
                     deviceType
                     location
-                    autowateringData {
+                    autowateringData(filters: {}, order: {}) {
                         edges {
                             node {
                             id

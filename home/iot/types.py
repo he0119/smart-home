@@ -63,6 +63,6 @@ class Device(relay.Node):
     offline_at: auto
     password: auto
 
-    @gql.django.connection
+    @gql.django.connection(filters=AutowateringDataFilter, order=AutowateringDataOrder)
     def autowatering_data(self, info) -> relay.Connection[AutowateringData]:
         return models.AutowateringData.objects.all()  # type: ignore

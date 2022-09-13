@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.db.models import Max
 from django.db.models.functions import Greatest
 from strawberry import auto
@@ -44,7 +46,9 @@ class Topic(relay.Node):
     created_at: auto
     edited_at: auto
     is_pin: auto
-    comments: relay.Connection["Comment"]
+    comments: relay.Connection["Comment"] = gql.django.connection(
+        filters=CommentFilter, order=CommentOrder
+    )
 
     # FIXME: Strawberry 的 bug，看起来少传了一个 self 参数，暂时对我没影响
     # https://github.com/strawberry-graphql/strawberry-graphql-django/issues/173
@@ -62,5 +66,5 @@ class Comment(relay.Node):
     body: auto
     created_at: auto
     edited_at: auto
-    parent: "Comment"
-    reply_to: User
+    parent: Optional["Comment"]
+    reply_to: Optional[User]
