@@ -2,6 +2,7 @@ import hashlib
 from distutils.util import strtobool
 from typing import Any, AsyncGenerator, Optional
 
+from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
 from strawberry.types import Info
 from strawberry_django_plus import gql
@@ -10,7 +11,7 @@ from strawberry_django_plus.gql import relay
 from home.utils import IsAuthenticated, channel_group_send
 
 from . import models, types
-from .models import Device
+from .models import AutowateringData, Device
 from .tasks import set_status
 
 
@@ -79,7 +80,7 @@ class Mutation:
             device.password = sha256(password)
 
         device.save()
-        channel_group_send("iot", {"type": "device", "data": device})
+        channel_group_send("iot", {"type": "device", "pk": device.pk})
 
         return device  # type: ignore
 
@@ -133,11 +134,13 @@ class Subscription:
         ws = info.context.ws
 
         async for message in ws.channel_listen("data", groups=["iot"]):
-            yield message["data"]
+            data = await sync_to_async(AutowateringData.objects.get)(pk=message["pk"])
+            yield data
 
     @gql.subscription(permission_classes=[IsAuthenticated])
     async def device(self, info: Info) -> AsyncGenerator[types.Device, None]:
         ws = info.context.ws
 
         async for message in ws.channel_listen("device", groups=["iot"]):
-            yield message["data"]
+            device = await sync_to_async(Device.objects.get)(pk=message["pk"])
+            yield device
