@@ -7,30 +7,31 @@ from strawberry.file_uploads import Upload
 from strawberry.types import Info
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
-from strawberry_django_plus.permissions import IsAuthenticated
+
+from home.utils import IsAuthenticated
 
 from . import models, types
 
 
 @gql.type
 class Query:
-    item: types.Item = gql.django.node(directives=[IsAuthenticated()])
+    item: types.Item = gql.django.node(permission_classes=[IsAuthenticated])
     items: relay.Connection[types.Item] = gql.django.connection(
-        directives=[IsAuthenticated()]
+        permission_classes=[IsAuthenticated]
     )
-    storage: types.Storage = gql.django.node(directives=[IsAuthenticated()])
+    storage: types.Storage = gql.django.node(permission_classes=[IsAuthenticated])
     storages: relay.Connection[types.Storage] = gql.django.connection(
-        directives=[IsAuthenticated()]
+        permission_classes=[IsAuthenticated]
     )
-    picture: types.Picture = gql.django.node(directives=[IsAuthenticated()])
+    picture: types.Picture = gql.django.node(permission_classes=[IsAuthenticated])
     pictures: relay.Connection[types.Picture] = gql.django.connection(
-        directives=[IsAuthenticated()]
+        permission_classes=[IsAuthenticated]
     )
 
 
 @gql.type
 class Mutation:
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def add_storage(
         self,
         info: Info,
@@ -54,7 +55,7 @@ class Mutation:
             storage.save()
             return storage  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_storage(
         self,
         info: Info,
@@ -89,7 +90,7 @@ class Mutation:
         storage.save()
         return storage  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_storage(self, info: Info, storage_id: relay.GlobalID) -> types.Storage:
         storage: models.Storage = storage_id.resolve_node(info)  # type: ignore
         if not storage:
@@ -98,7 +99,7 @@ class Mutation:
         storage.delete()
         return storage  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def add_item(
         self,
         info: Info,
@@ -131,7 +132,7 @@ class Mutation:
             item.save()
             return item  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_item(
         self,
         info: Info,
@@ -172,7 +173,7 @@ class Mutation:
             item.save()
         return item  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_item(self, info: Info, item_id: relay.GlobalID) -> types.Item:
         item: models.Item = item_id.resolve_node(info)  # type: ignore
         if not item:
@@ -181,7 +182,7 @@ class Mutation:
         item.delete()
         return item  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def restore_item(self, info: Info, item_id: relay.GlobalID) -> types.Item:
         item: models.Item = item_id.resolve_node(info)  # type: ignore
         if not item:
@@ -189,7 +190,7 @@ class Mutation:
         item.restore()
         return item  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def add_consumable(
         self,
         info: Info,
@@ -214,7 +215,7 @@ class Mutation:
         item.save()
         return item  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_consumable(
         self,
         info: Info,
@@ -236,7 +237,7 @@ class Mutation:
         item.save()
         return item  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def add_picture(
         self,
         info: Info,
@@ -265,7 +266,7 @@ class Mutation:
         picture.save()
         return picture  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_picture(
         self,
         info: Info,
@@ -291,7 +292,7 @@ class Mutation:
         picture.save()
         return picture  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_picture(self, info: Info, picture_id: relay.GlobalID) -> types.Picture:
         picture: models.Picture = picture_id.resolve_node(info)  # type: ignore
         if not picture:

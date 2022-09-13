@@ -1,14 +1,13 @@
 import hashlib
 from distutils.util import strtobool
-from typing import AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Optional
 
 from django.core.exceptions import ValidationError
 from strawberry.types import Info
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
-from strawberry_django_plus.permissions import IsAuthenticated
 
-from home.utils import channel_group_send
+from home.utils import IsAuthenticated, channel_group_send
 
 from . import models, types
 from .models import Device
@@ -17,12 +16,12 @@ from .tasks import set_status
 
 @gql.type
 class Query:
-    device: types.Device = gql.django.node(directives=[IsAuthenticated()])
+    device: types.Device = gql.django.node(permission_classes=[IsAuthenticated])
     devices: relay.Connection[types.Device] = gql.django.connection(
-        directives=[IsAuthenticated()]
+        permission_classes=[IsAuthenticated]
     )
     autowatering_data: relay.Connection[types.AutowateringData] = gql.django.connection(
-        directives=[IsAuthenticated()]
+        permission_classes=[IsAuthenticated]
     )
 
 
@@ -34,7 +33,7 @@ def sha256(s: str) -> str:
 
 @gql.type
 class Mutation:
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def add_device(
         self,
         info: Info,
@@ -54,7 +53,7 @@ class Mutation:
 
         return device  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_device(
         self,
         info: Info,
@@ -84,7 +83,7 @@ class Mutation:
 
         return device  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_device(self, info: Info, device_id: relay.GlobalID) -> types.Device:
         device: models.Device = device_id.resolve_node(info)  # type: ignore
 
@@ -95,7 +94,7 @@ class Mutation:
 
         return device  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def set_device(
         self,
         info: Info,
@@ -127,7 +126,7 @@ class Mutation:
 @gql.type
 class Subscription:
     # TODO: 添加订阅的测试
-    @gql.subscription(directives=[IsAuthenticated()])
+    @gql.subscription(permission_classes=[IsAuthenticated])
     async def autowatering_data(
         self, info: Info
     ) -> AsyncGenerator[types.AutowateringData, None]:
@@ -136,7 +135,7 @@ class Subscription:
         async for message in ws.channel_listen("data", groups=["iot"]):
             yield message["data"]
 
-    @gql.subscription(directives=[IsAuthenticated()])
+    @gql.subscription(permission_classes=[IsAuthenticated])
     async def device(self, info: Info) -> AsyncGenerator[types.Device, None]:
         ws = info.context.ws
 

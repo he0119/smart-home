@@ -5,7 +5,27 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.test import TestCase
 from graphql import GraphQLFormattedError
+from strawberry.permission import BasePermission
+from strawberry.types import Info
 from strawberry_django_plus.test.client import TestClient
+
+
+class IsAuthenticated(BasePermission):
+    """验证是否登录
+
+    支持 websocket 和 http
+    https://strawberry.rocks/docs/guides/permissions
+    """
+
+    message = "User is not authenticated"
+
+    # This method can also be async!
+    def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
+        if not hasattr(info.context.request, "user"):
+            user = info.context.request.scope["user"]
+        else:
+            user = info.context.request.user
+        return user.is_authenticated and user.is_active
 
 
 @dataclass
@@ -45,17 +65,6 @@ class GraphQLTestCase(TestCase):
         super().__init__(*args, **kwargs)
         # 为了正确的类型提示
         self.client: MyTestClient
-
-
-# from strawberry.extensions import Extension
-# from strawberry.types import Info
-# class CompatibilityExtension(Extension):
-#     """尝试兼容 strawberry_django_plus"""
-
-#     def resolve(self, _next, root, info: Info, *args, **kwargs):
-#         if not hasattr(info.context.request, "user"):
-#             info.context.request.user = info.context.request.scope["user"]
-#         return _next(root, info, *args, **kwargs)
 
 
 def channel_group_send(group: str, message: dict) -> None:

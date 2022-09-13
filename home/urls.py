@@ -17,7 +17,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from strawberry.django.views import AsyncGraphQLView
+from strawberry.django.views import GraphQLView
 
 from home.schema import schema
 
@@ -27,7 +27,7 @@ urlpatterns = [
     path("iot/", include("home.iot.urls")),
     path(
         "graphql/",
-        AsyncGraphQLView.as_view(
+        GraphQLView.as_view(
             schema=schema,
             subscriptions_enabled=True,
         ),

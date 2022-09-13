@@ -1,23 +1,23 @@
 from typing import Optional
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from strawberry.types import Info
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
-from strawberry_django_plus.permissions import IsAuthenticated
+
+from home.utils import IsAuthenticated
 
 from . import models, types
 
 
 @gql.type
 class Query:
-    mipush: types.MiPush = gql.django.node(directives=[IsAuthenticated()])
+    mipush: types.MiPush = gql.django.node(permission_classes=[IsAuthenticated])
     mi_pushs: relay.Connection[types.MiPush] = gql.django.connection(
-        directives=[IsAuthenticated()]
+        permission_classes=[IsAuthenticated]
     )
 
-    @gql.django.field(directives=[IsAuthenticated()])
+    @gql.django.field(permission_classes=[IsAuthenticated])
     def mi_push(self, info: Info, device_id: str) -> Optional[types.MiPush]:
         try:
             mi_push = models.MiPush.objects.filter(user=info.context.request.user).get(
@@ -27,7 +27,7 @@ class Query:
         except models.MiPush.DoesNotExist:
             return
 
-    @gql.django.field(directives=[IsAuthenticated()])
+    @gql.django.field(permission_classes=[IsAuthenticated])
     def mi_push_key(self) -> types.MiPushKey:
         return types.MiPushKey(
             app_id=settings.MI_PUSH_APP_ID, app_key=settings.MI_PUSH_APP_KEY
@@ -36,7 +36,7 @@ class Query:
 
 @gql.type
 class Mutation:
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_mi_push(
         self,
         info: Info,

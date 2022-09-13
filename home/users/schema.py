@@ -2,21 +2,22 @@ from django.core.exceptions import ValidationError
 from strawberry.file_uploads import Upload
 from strawberry.types import Info
 from strawberry_django_plus import gql
-from strawberry_django_plus.permissions import IsAuthenticated
+
+from home.utils import IsAuthenticated
 
 from . import models, types
 
 
 @gql.type
 class Query:
-    @gql.django.field(directives=[IsAuthenticated()])
+    @gql.django.field(permission_classes=[IsAuthenticated])
     def viewer(self, info: Info) -> types.User:
         return info.context.request.user
 
 
 @gql.type
 class Mutation:
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_config(self, info: Info, key: str, value: str) -> types.Config:
         user = info.context.request.user
 
@@ -34,7 +35,7 @@ class Mutation:
 
         return config  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_config(self, info: Info, key: str) -> types.Config:
         user = info.context.request.user
 
@@ -45,7 +46,7 @@ class Mutation:
         else:
             raise ValidationError("key not found")
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_avatar(self, info: Info, file: Upload) -> types.Avatar:
         user = info.context.request.user
 

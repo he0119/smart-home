@@ -5,9 +5,9 @@ from django.utils import timezone
 from strawberry.types import Info
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
-from strawberry_django_plus.permissions import IsAuthenticated
 
 from home.push.tasks import get_enable_reg_ids_except_user, push_to_users
+from home.utils import IsAuthenticated
 
 from . import models, types
 from .utils import unmark
@@ -15,19 +15,19 @@ from .utils import unmark
 
 @gql.type
 class Query:
-    topic: types.Topic = gql.django.node(directives=[IsAuthenticated()])
+    topic: types.Topic = gql.django.node(permission_classes=[IsAuthenticated])
     topics: relay.Connection[types.Topic] = gql.django.connection(
-        directives=[IsAuthenticated()]
+        permission_classes=[IsAuthenticated]
     )
-    comment: types.Comment = gql.django.node(directives=[IsAuthenticated()])
+    comment: types.Comment = gql.django.node(permission_classes=[IsAuthenticated])
     comments: relay.Connection[types.Comment] = gql.django.connection(
-        directives=[IsAuthenticated()]
+        permission_classes=[IsAuthenticated]
     )
 
 
 @gql.type
 class Mutation:
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def add_topic(
         self,
         info: Info,
@@ -56,7 +56,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_topic(
         self,
         info: Info,
@@ -83,7 +83,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
         if not topic:
@@ -95,7 +95,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def close_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
 
@@ -108,7 +108,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def reopen_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
 
@@ -120,7 +120,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def pin_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
 
@@ -132,7 +132,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def unpin_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
 
@@ -144,7 +144,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def add_comment(
         self,
         info: Info,
@@ -183,7 +183,7 @@ class Mutation:
             )  # type: ignore
         return comment  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_comment(
         self,
         info: Info,
@@ -202,7 +202,7 @@ class Mutation:
 
         return comment  # type: ignore
 
-    @gql.django.input_mutation(directives=[IsAuthenticated()])
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_comment(self, info: Info, comment_id: relay.GlobalID) -> types.Comment:
         comment: models.Comment = comment_id.resolve_node(info)  # type: ignore
         if not comment:
