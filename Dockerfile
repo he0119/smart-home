@@ -16,6 +16,9 @@ RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 FROM tiangolo/uvicorn-gunicorn:python3.9
 
+# 设置时区
+ENV TZ=Asia/Shanghai
+
 COPY --from=requirements-stage /tmp/requirements.txt /app/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
