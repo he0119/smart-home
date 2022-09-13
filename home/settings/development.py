@@ -2,7 +2,7 @@
 """
 import os
 
-from .settings import INSTALLED_APPS, MIDDLEWARE
+from .settings import INSTALLED_APPS, MIDDLEWARE, SECRET_KEY
 
 ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS.append("corsheaders")
@@ -28,6 +28,16 @@ DATABASES = {
         "HOST": os.getenv("POSTGRES_HOST"),
         "PORT": os.getenv("POSTGRES_PORT"),
     }
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.getenv("CHANNEL_REDIS_URL")],
+            "symmetric_encryption_keys": [SECRET_KEY],
+        },
+    },
 }
 
 if os.getenv("AWS_S3_ENDPOINT_URL"):

@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from datetime import timedelta
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -145,7 +144,8 @@ TEMPLATES = [
 WSGI_APPLICATION = "home.wsgi.application"
 
 # Channels
-# https://channels.readthedocs.io/en/stable/tutorial/part_1.html
+# https://channels.readthedocs.io/en/stable/topics/channel_layers.html
+
 ASGI_APPLICATION = "home.asgi.application"
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 

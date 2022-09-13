@@ -46,8 +46,8 @@ DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 ADMINS = [
     admin
     for admin in zip(
-        os.getenv("ADMINS_NAME").split(";"),
-        os.getenv("ADMINS_EMAIL").split(";"),
+        os.getenv("ADMINS_NAME", "").split(";"),
+        os.getenv("ADMINS_EMAIL", "").split(";"),
     )
 ]
 
@@ -96,3 +96,16 @@ if os.getenv("AWS_S3_ENDPOINT_URL"):
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
     AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+
+# Channels
+# https://channels.readthedocs.io/en/stable/topics/channel_layers.html
+# https://pypi.org/project/channels-redis/
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.getenv("CHANNEL_REDIS_URL")],
+            "symmetric_encryption_keys": [SECRET_KEY],
+        },
+    },
+}
