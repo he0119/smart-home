@@ -2,7 +2,13 @@ FROM python:3.9 as requirements-stage
 
 WORKDIR /tmp
 
-RUN pip install poetry
+COPY ./pyproject.toml ./poetry.lock* /tmp/
+
+RUN curl -sSL https://install.python-poetry.org -o install-poetry.py
+
+RUN python install-poetry.py --yes
+
+ENV PATH="${PATH}:/root/.local/bin"
 
 COPY ./pyproject.toml ./poetry.lock* /tmp/
 
