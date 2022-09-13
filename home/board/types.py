@@ -18,7 +18,7 @@ class CommentOrder:
 
 @gql.django.filters.filter(model=models.Comment, lookups=True)
 class CommentFilter:
-    topic: auto
+    topic: "TopicFilter"
     level: auto
 
 
@@ -33,6 +33,7 @@ class TopicOrder:
 
 @gql.django.filters.filter(model=models.Topic, lookups=True)
 class TopicFilter:
+    id: relay.GlobalID
     title: auto
 
 

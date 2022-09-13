@@ -12,7 +12,7 @@ class AutowateringDataOrder:
 
 @gql.django.filters.filter(model=models.AutowateringData, lookups=True)
 class AutowateringDataFilter:
-    device: auto
+    device: "DeviceFilter"
     time: auto
 
 
@@ -27,6 +27,7 @@ class DeviceOrder:
 
 @gql.django.filters.filter(model=models.Device, lookups=True)
 class DeviceFilter:
+    id: relay.GlobalID
     name: auto
     device_type: auto
     location: auto

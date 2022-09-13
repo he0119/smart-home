@@ -521,6 +521,25 @@ class CommentTests(GraphQLTestCase):
         comments = [item["node"]["body"] for item in content.data["comments"]["edges"]]
         self.assertEqual(set(comments), {"测试评论一", "测试评论二", "评论测试评论一"})
 
+    def test_get_comments_by_topic_id(self):
+        """测试通过 topicId 来获取评论"""
+        query = """
+            query comments($topicId: GlobalID!) {
+                comments(filters: {topic: {id: $topicId}}) {
+                    edges {
+                        node {
+                            body
+                        }
+                    }
+                }
+            }
+        """
+        variables = {"topicId": relay.to_base64(types.Topic, 2)}
+
+        content = self.client.execute(query, variables)
+        comments = [item["node"]["body"] for item in content.data["comments"]["edges"]]
+        self.assertEqual(comments, [])
+
     def test_get_first_comments(self):
         query = """
             query comments {
