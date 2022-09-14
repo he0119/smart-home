@@ -36,4 +36,4 @@ RUN rm requirements.txt
 # 复制网站
 COPY . .
 
-CMD ["gunicorn", "home.asgi:application", "-k", "uvicorn.workers.UvicornWorker""]
+CMD ["gunicorn", "home.asgi:application", "-k", "uvicorn.workers.UvicornWorker"]
