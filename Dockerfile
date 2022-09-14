@@ -22,11 +22,12 @@ WORKDIR /app
 ENV TZ=Asia/Shanghai
 
 # 安装依赖
+# https://www.uvicorn.org/#quickstart
 COPY --from=requirements-stage /tmp/requirements.txt /app/requirements.txt
 RUN apt-get update \
   && apt-get -y upgrade \
   && apt-get install -y --no-install-recommends build-essential \
-  && pip install --no-cache-dir --upgrade uvicorn gunicorn \
+  && pip install --no-cache-dir --upgrade "uvicorn[standard]" gunicorn \
   && pip install --no-cache-dir --upgrade -r requirements.txt \
   && apt-get purge -y --auto-remove \
   && rm -rf /var/lib/apt/lists/*
