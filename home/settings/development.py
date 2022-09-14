@@ -9,7 +9,7 @@ INSTALLED_APPS.append("corsheaders")
 MIDDLEWARE = ["corsheaders.middleware.CorsMiddleware"] + MIDDLEWARE
 CORS_ORIGIN_ALLOW_ALL = True
 
-# Debug Toolbar
+# _Debug Toolbar
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
 # https://blb-ventures.github.io/strawberry-django-plus/debug-toolbar/
 INSTALLED_APPS.append("debug_toolbar")

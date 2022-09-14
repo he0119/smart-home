@@ -9,7 +9,7 @@ repository = "https://github.com/he0119/smart-home"
 version = "0.8.4"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 django = "^4.0.6"
 strawberry-graphql = {extras = ["channels"], version = "^0.130.0"}
 strawberry-django-plus = {extras = ["debug-toolbar"], version = "^1.25"}
