@@ -36,8 +36,4 @@ RUN rm requirements.txt
 # 复制网站
 COPY . .
 
-# UWSGI
-# https://docs.gunicorn.org/en/latest/settings.html
-ENV GUNICORN_CMD_ARGS="--bind=0.0.0.0 --workers=2"
-
 CMD ["gunicorn", "home.asgi:application", "-k", "uvicorn.workers.UvicornWorker"]
