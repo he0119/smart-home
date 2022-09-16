@@ -43,7 +43,7 @@ def process_message_publish(event):
     if "status" in topic:
         payload = json.loads(event["payload"])
         try:
-            device = Device.objects.get(name=device_name)
+            device: Device = Device.objects.get(name=device_name)
             if device.device_type == "autowatering":
                 autowatering_data = AutowateringData(
                     device=device,
@@ -61,7 +61,10 @@ def process_message_publish(event):
                     pump_delay=payload["data"]["pump_delay"],
                 )
                 autowatering_data.save()
-                channel_group_send("iot", {"type": "data", "pk": autowatering_data.pk})
+                channel_group_send(
+                    f"autowatering_data.{device.pk}",
+                    {"type": "update", "pk": autowatering_data.pk},
+                )
                 logger.debug(f"{device.name} {autowatering_data.time} 保存成功")
         except Device.DoesNotExist:
             logger.error(f"设备({device_name}) 不存在")
@@ -71,11 +74,11 @@ def process_client_disconnected(event):
     """处理设备下线事件"""
     device_name = event["username"]
     try:
-        device = Device.objects.get(name=device_name)
+        device: Device = Device.objects.get(name=device_name)
         device.is_online = False
         device.offline_at = timezone.now()
         device.save()
-        channel_group_send("iot", {"type": "device", "pk": device.pk})
+        channel_group_send(f"device.{device.pk}", {"type": "update", "pk": device.pk})
         logger.info(f"{device.name} 离线")
     except Device.DoesNotExist:
         logger.error(f"设备({device_name}) 不存在")
@@ -85,11 +88,11 @@ def process_client_connected(event):
     """处理设备上线事件"""
     device_name = event["username"]
     try:
-        device = Device.objects.get(name=device_name)
+        device: Device = Device.objects.get(name=device_name)
         device.is_online = True
         device.online_at = timezone.now()
         device.save()
-        channel_group_send("iot", {"type": "device", "pk": device.pk})
+        channel_group_send(f"device.{device.pk}", {"type": "update", "pk": device.pk})
         logger.info(f"{device.name} 在线")
     except Device.DoesNotExist:
         logger.error(f"设备({device_name}) 不存在")

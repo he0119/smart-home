@@ -1,6 +1,6 @@
 import hashlib
 from distutils.util import strtobool
-from typing import Any, AsyncGenerator, Optional
+from typing import AsyncGenerator, Optional
 
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
@@ -80,7 +80,7 @@ class Mutation:
             device.password = sha256(password)
 
         device.save()
-        channel_group_send("iot", {"type": "device", "pk": device.pk})
+        channel_group_send(f"device.{device.pk}", {"type": "update", "pk": device.pk})
 
         return device  # type: ignore
 
@@ -129,18 +129,44 @@ class Subscription:
     # TODO: 添加订阅的测试
     @gql.subscription(permission_classes=[IsAuthenticated])
     async def autowatering_data(
-        self, info: Info
+        self,
+        info: Info,
+        device_id: relay.GlobalID,
     ) -> AsyncGenerator[types.AutowateringData, None]:
         ws = info.context.ws
 
-        async for message in ws.channel_listen("data", groups=["iot"]):
+        # 发送最新的数据
+        # 让客户端可以马上显示数据
+        device: models.Device = await device_id.resolve_node(info)  # type: ignore
+        if not device:
+            raise ValidationError("设备不存在")
+
+        last = await sync_to_async(device.data.last)()  # type: ignore
+        if last:
+            yield last
+
+        async for message in ws.channel_listen(
+            "update", groups=[f"autowatering_data.{device.pk}"]
+        ):
             data = await sync_to_async(AutowateringData.objects.get)(pk=message["pk"])
             yield data
 
     @gql.subscription(permission_classes=[IsAuthenticated])
-    async def device(self, info: Info) -> AsyncGenerator[types.Device, None]:
+    async def device(
+        self,
+        info: Info,
+        id: relay.GlobalID,
+    ) -> AsyncGenerator[types.Device, None]:
         ws = info.context.ws
 
-        async for message in ws.channel_listen("device", groups=["iot"]):
+        device: models.Device = await id.resolve_node(info)  # type: ignore
+        if not device:
+            raise ValidationError("设备不存在")
+
+        yield device  # type: ignore
+
+        async for message in ws.channel_listen(
+            "update", groups=[f"device.{device.pk}"]
+        ):
             device = await sync_to_async(Device.objects.get)(pk=message["pk"])
-            yield device
+            yield device  # type: ignore
