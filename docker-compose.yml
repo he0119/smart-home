@@ -11,9 +11,12 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - db
-      - emqx
-      - redis
+      postgres:
+        condition: service_healthy
+      emqx:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   celery:
     image: he0119/smart-home:latest
     command: celery -A home worker --beat -l info
@@ -25,20 +28,35 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - redis
-  db:
+      postgres:
+        condition: service_healthy
+      emqx:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  postgres:
     build: ./docker/postgres
-    image: he0119/postgres:12.3
+    image: he0119/postgres:14
     container_name: postgres
     restart: always
     volumes:
       - ./docker/postgres/pgdata:/var/lib/postgresql/data
     env_file:
       - ./.env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   redis:
-    image: redis:6.0.5-alpine
+    image: redis:6
     container_name: redis
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   emqx:
     image: emqx/emqx:v4.1.2-alpine-amd64
     container_name: emqx
@@ -48,6 +66,14 @@ services:
     env_file:
       - ./docker/emqx/configuration.env
       - ./.env
+    healthcheck:
+      test: "netstat -an | grep 1883 > /dev/null; if [ 0 != $$? ]; then exit 1; fi;"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      postgres:
+        condition: service_healthy
 networks:
   default:
     external:

@@ -3,9 +3,12 @@ from typing import Any, Dict, List, Optional
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from channels.testing import WebsocketCommunicator
 from django.test import TestCase
 from graphql import GraphQLFormattedError
+from strawberry.channels import GraphQLWSConsumer
 from strawberry.permission import BasePermission
+from strawberry.subscriptions import GRAPHQL_WS_PROTOCOL
 from strawberry.types import Info
 from strawberry_django_plus.test.client import TestClient
 
@@ -70,3 +73,26 @@ class GraphQLTestCase(TestCase):
 def channel_group_send(group: str, message: dict) -> None:
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(group, message)  # type: ignore
+
+
+def get_ws_client(user) -> WebsocketCommunicator:
+    """获取 WebSocket 客户端"""
+    from home.schema import schema
+
+    class DebuggableGraphQLWSConsumer(GraphQLWSConsumer):
+        async def get_context(self, *args, **kwargs) -> object:
+            context = await super().get_context(*args, **kwargs)
+            context.tasks = self._handler.tasks  # type: ignore
+            context.connectionInitTimeoutTask = None  # type: ignore
+            context.ws.scope["user"] = user
+            return context
+
+    return WebsocketCommunicator(
+        DebuggableGraphQLWSConsumer.as_asgi(
+            schema=schema, subscription_protocols=(GRAPHQL_WS_PROTOCOL,)
+        ),
+        "",
+        subprotocols=[
+            GRAPHQL_WS_PROTOCOL,
+        ],
+    )

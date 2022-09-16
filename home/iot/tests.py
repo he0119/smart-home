@@ -4,15 +4,23 @@ from datetime import date, timedelta
 from typing import cast
 from unittest import mock
 
+from channels.layers import get_channel_layer
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from requests import sessions
+from strawberry.subscriptions import GRAPHQL_WS_PROTOCOL
+from strawberry.subscriptions.protocols.graphql_ws import (
+    GQL_CONNECTION_ACK,
+    GQL_CONNECTION_INIT,
+    GQL_DATA,
+    GQL_START,
+)
 from strawberry_django_plus.gql import relay
 
-from home.utils import GraphQLTestCase
+from home.utils import GraphQLTestCase, get_ws_client
 
 from . import types
 from .api import DeviceAPI, WeatherAPI
@@ -848,3 +856,160 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(daily_data.max_humidity, 20.0)
         self.assertEqual(daily_data.min_wifi_signal, -30)
         self.assertEqual(daily_data.max_wifi_signal, -10)
+
+
+class SubscriptionTests(TestCase):
+    fixtures = ["users", "iot"]
+
+    def setUp(self) -> None:
+        self.user = get_user_model().objects.get(username="test")
+
+    async def test_device(self):
+        query = """
+        subscription device($id: GlobalID!) {
+            device(id: $id) {
+                __typename
+                id
+                name
+                location
+              }
+            }
+        """
+        variables = {"id": relay.to_base64(types.Device, 1)}
+        ws = get_ws_client(self.user)
+        res = await ws.connect()
+        assert res == (True, GRAPHQL_WS_PROTOCOL)
+        await ws.send_json_to({"type": GQL_CONNECTION_INIT})
+        await ws.send_json_to(
+            {
+                "type": GQL_START,
+                "id": "demo_consumer",
+                "payload": {"query": f"{query}", "variables": variables},
+            }
+        )
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_CONNECTION_ACK
+
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_DATA
+        assert response["id"] == "demo_consumer"
+        data = response["payload"]["data"]["device"]
+        assert data["id"] == relay.to_base64(types.Device, 1)
+        assert data["name"] == "test"
+        assert data["location"] == "location"
+
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send("device.1", {"type": "update"})  # type: ignore
+
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_DATA
+        assert response["id"] == "demo_consumer"
+        data = response["payload"]["data"]["device"]
+        assert data["id"] == relay.to_base64(types.Device, 1)
+        assert data["name"] == "test"
+        assert data["location"] == "location"
+
+    async def test_device_not_exist(self):
+        """测试订阅不存在的设备"""
+        query = """
+        subscription device($id: GlobalID!) {
+            device(id: $id) {
+                __typename
+                id
+                name
+                location
+              }
+            }
+        """
+        variables = {"id": relay.to_base64(types.Device, 0)}
+        ws = get_ws_client(self.user)
+        res = await ws.connect()
+        assert res == (True, GRAPHQL_WS_PROTOCOL)
+        await ws.send_json_to({"type": GQL_CONNECTION_INIT})
+        await ws.send_json_to(
+            {
+                "type": GQL_START,
+                "id": "demo_consumer",
+                "payload": {"query": f"{query}", "variables": variables},
+            }
+        )
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_CONNECTION_ACK
+
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_DATA
+        assert response["id"] == "demo_consumer"
+        assert response["payload"]["errors"][0]["message"] == "['设备不存在']"
+
+    async def test_autowatering_data(self):
+        query = """
+        subscription autowatering_data($deviceId: GlobalID!) {
+            autowateringData(deviceId: $deviceId) {
+                __typename
+                id
+                time
+              }
+            }
+        """
+        variables = {"deviceId": relay.to_base64(types.Device, 1)}
+        ws = get_ws_client(self.user)
+        res = await ws.connect()
+        assert res == (True, GRAPHQL_WS_PROTOCOL)
+        await ws.send_json_to({"type": GQL_CONNECTION_INIT})
+        await ws.send_json_to(
+            {
+                "type": GQL_START,
+                "id": "demo_consumer",
+                "payload": {"query": f"{query}", "variables": variables},
+            }
+        )
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_CONNECTION_ACK
+
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_DATA
+        assert response["id"] == "demo_consumer"
+        data = response["payload"]["data"]["autowateringData"]
+        assert data["id"] == relay.to_base64(types.AutowateringData, 3)
+        assert data["time"] == "2020-08-02T13:40:55+00:00"
+
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send("autowatering_data.1", {"type": "update", "pk": 2})  # type: ignore
+
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_DATA
+        assert response["id"] == "demo_consumer"
+        data = response["payload"]["data"]["autowateringData"]
+        assert data["id"] == relay.to_base64(types.AutowateringData, 2)
+        assert data["time"] == "2020-08-02T13:40:45+00:00"
+
+    async def test_autowatering_data_device_not_exist(self):
+        """测试订阅不存在的设备"""
+        query = """
+        subscription autowatering_data($deviceId: GlobalID!) {
+            autowateringData(deviceId: $deviceId) {
+                __typename
+                id
+                time
+              }
+            }
+        """
+        variables = {"deviceId": relay.to_base64(types.Device, 0)}
+        ws = get_ws_client(self.user)
+        res = await ws.connect()
+        assert res == (True, GRAPHQL_WS_PROTOCOL)
+        await ws.send_json_to({"type": GQL_CONNECTION_INIT})
+        await ws.send_json_to(
+            {
+                "type": GQL_START,
+                "id": "demo_consumer",
+                "payload": {"query": f"{query}", "variables": variables},
+            }
+        )
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_CONNECTION_ACK
+
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_DATA
+        assert response["id"] == "demo_consumer"
+        assert response["payload"]["errors"][0]["message"] == "['设备不存在']"
