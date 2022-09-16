@@ -78,7 +78,7 @@ def process_client_disconnected(event):
         device.is_online = False
         device.offline_at = timezone.now()
         device.save()
-        channel_group_send(f"device.{device.pk}", {"type": "update", "pk": device.pk})
+        channel_group_send(f"device.{device.pk}", {"type": "update"})
         logger.info(f"{device.name} 离线")
     except Device.DoesNotExist:
         logger.error(f"设备({device_name}) 不存在")
@@ -92,7 +92,7 @@ def process_client_connected(event):
         device.is_online = True
         device.online_at = timezone.now()
         device.save()
-        channel_group_send(f"device.{device.pk}", {"type": "update", "pk": device.pk})
+        channel_group_send(f"device.{device.pk}", {"type": "update"})
         logger.info(f"{device.name} 在线")
     except Device.DoesNotExist:
         logger.error(f"设备({device_name}) 不存在")

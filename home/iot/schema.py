@@ -80,7 +80,7 @@ class Mutation:
             device.password = sha256(password)
 
         device.save()
-        channel_group_send(f"device.{device.pk}", {"type": "update", "pk": device.pk})
+        channel_group_send(f"device.{device.pk}", {"type": "update"})
 
         return device  # type: ignore
 
@@ -168,5 +168,5 @@ class Subscription:
         async for message in ws.channel_listen(
             "update", groups=[f"device.{device.pk}"]
         ):
-            device = await sync_to_async(Device.objects.get)(pk=message["pk"])
+            device = await sync_to_async(Device.objects.get)(pk=device.pk)
             yield device  # type: ignore
