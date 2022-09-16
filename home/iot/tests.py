@@ -10,9 +10,16 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from requests import sessions
+from strawberry.subscriptions import GRAPHQL_WS_PROTOCOL
+from strawberry.subscriptions.protocols.graphql_ws import (
+    GQL_CONNECTION_ACK,
+    GQL_CONNECTION_INIT,
+    GQL_DATA,
+    GQL_START,
+)
 from strawberry_django_plus.gql import relay
 
-from home.utils import GraphQLTestCase
+from home.utils import GraphQLTestCase, get_ws_client
 
 from . import types
 from .api import DeviceAPI, WeatherAPI
@@ -848,3 +855,76 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(daily_data.max_humidity, 20.0)
         self.assertEqual(daily_data.min_wifi_signal, -30)
         self.assertEqual(daily_data.max_wifi_signal, -10)
+
+
+class SubscriptionTests(TestCase):
+    fixtures = ["users", "iot"]
+
+    def setUp(self) -> None:
+        self.user = get_user_model().objects.get(username="test")
+
+    async def test_device_subscription(self):
+        query = """
+        subscription device($id: GlobalID!) {
+            device(id: $id) {
+                __typename
+                id
+                name
+                location
+              }
+            }
+        """
+        variables = {"id": relay.to_base64(types.Device, 1)}
+        ws = get_ws_client(self.user)
+        res = await ws.connect()
+        assert res == (True, GRAPHQL_WS_PROTOCOL)
+        await ws.send_json_to({"type": GQL_CONNECTION_INIT})
+        await ws.send_json_to(
+            {
+                "type": GQL_START,
+                "id": "demo_consumer",
+                "payload": {"query": f"{query}", "variables": variables},
+            }
+        )
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_CONNECTION_ACK
+
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_DATA
+        assert response["id"] == "demo_consumer"
+        data = response["payload"]["data"]["device"]
+        assert data["id"] == relay.to_base64(types.Device, 1)
+        assert data["name"] == "test"
+        assert data["location"] == "location"
+
+    async def test_autowatering_data_subscription(self):
+        query = """
+        subscription autowatering_data($deviceId: GlobalID!) {
+            autowateringData(deviceId: $deviceId) {
+                __typename
+                id
+                time
+              }
+            }
+        """
+        variables = {"deviceId": relay.to_base64(types.Device, 1)}
+        ws = get_ws_client(self.user)
+        res = await ws.connect()
+        assert res == (True, GRAPHQL_WS_PROTOCOL)
+        await ws.send_json_to({"type": GQL_CONNECTION_INIT})
+        await ws.send_json_to(
+            {
+                "type": GQL_START,
+                "id": "demo_consumer",
+                "payload": {"query": f"{query}", "variables": variables},
+            }
+        )
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_CONNECTION_ACK
+
+        response = await ws.receive_json_from()
+        assert response["type"] == GQL_DATA
+        assert response["id"] == "demo_consumer"
+        data = response["payload"]["data"]["autowateringData"]
+        assert data["id"] == relay.to_base64(types.AutowateringData, 3)
+        assert data["time"] == "2020-08-02T13:40:55+00:00"
