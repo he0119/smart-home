@@ -34,7 +34,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-  db:
+  postgres:
     build: ./docker/postgres
     image: he0119/postgres:14
     container_name: postgres
@@ -71,6 +71,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    depends_on:
+      postgres:
+        condition: service_healthy
 networks:
   default:
     external:
