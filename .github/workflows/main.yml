@@ -57,7 +57,7 @@ jobs:
         run: poetry install
       - name: Run tests
         run: |
-          poetry run coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
+          poetry run coverage run manage.py test --no-input
           poetry run coverage xml
         env:
           TESTING_SERVER: true
