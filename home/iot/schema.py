@@ -126,7 +126,6 @@ class Mutation:
 
 @gql.type
 class Subscription:
-    # TODO: 添加订阅的测试
     @gql.subscription(permission_classes=[IsAuthenticated])
     async def autowatering_data(
         self,
