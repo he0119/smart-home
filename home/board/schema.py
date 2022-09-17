@@ -156,7 +156,7 @@ class Mutation:
             raise ValidationError("话题不存在")
 
         if topic.is_closed:
-            raise ValidationError("无法向关闭的话题添加评论")
+            raise ValidationError("无法向已关闭话题添加评论")
 
         comment = models.Comment(
             topic=topic,
@@ -196,6 +196,9 @@ class Mutation:
         if comment.user != info.context.request.user:
             raise ValidationError("只能修改自己创建的评论")
 
+        if comment.topic.is_closed:
+            raise ValidationError("无法修改已关闭话题下的评论")
+
         comment.body = body
         comment.save()
 
@@ -209,6 +212,10 @@ class Mutation:
 
         if comment.user != info.context.request.user:
             raise ValidationError("只能删除自己创建的评论")
+
+        if comment.topic.is_closed:
+            raise ValidationError("无法删除已关闭话题下的评论")
+
         comment.delete()
 
         return comment  # type: ignore

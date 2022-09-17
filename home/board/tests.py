@@ -519,7 +519,7 @@ class CommentTests(GraphQLTestCase):
 
         content = self.client.execute(query)
         comments = [item["node"]["body"] for item in content.data["comments"]["edges"]]
-        self.assertEqual(set(comments), {"测试评论一", "测试评论二", "评论测试评论一"})
+        self.assertEqual(set(comments), {"测试评论一", "测试评论二", "评论测试评论一", "测试评论关闭的话题"})
 
     def test_get_comments_by_topic_id(self):
         """测试通过 topicId 来获取评论"""
@@ -538,7 +538,7 @@ class CommentTests(GraphQLTestCase):
 
         content = self.client.execute(query, variables)
         comments = [item["node"]["body"] for item in content.data["comments"]["edges"]]
-        self.assertEqual(comments, [])
+        self.assertEqual(comments, ["测试评论关闭的话题"])
 
     def test_get_first_comments(self):
         query = """
@@ -761,7 +761,59 @@ class CommentTests(GraphQLTestCase):
 
         data = content.data["addComment"]
         self.assertEqual(data["__typename"], "OperationInfo")
-        self.assertEqual(data["messages"][0]["message"], "无法向关闭的话题添加评论")
+        self.assertEqual(data["messages"][0]["message"], "无法向已关闭话题添加评论")
+
+    def test_delete_comment_in_closed_topic(self):
+        mutation = """
+            mutation deleteComment($input: DeleteCommentInput!) {
+                deleteComment(input: $input) {
+                    ... on OperationInfo {
+                        __typename
+                        messages {
+                            message
+                        }
+                    }
+                }
+            }
+        """
+
+        variables = {
+            "input": {
+                "commentId": relay.to_base64(types.Comment, "4"),
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+
+        data = content.data["deleteComment"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "无法删除已关闭话题下的评论")
+
+    def test_update_comment_in_closed_topic(self):
+        mutation = """
+            mutation updateComment($input: UpdateCommentInput!) {
+                updateComment(input: $input) {
+                    ... on OperationInfo {
+                        __typename
+                        messages {
+                            message
+                        }
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "id": relay.to_base64(types.Comment, "4"),
+                "body": "hello",
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+
+        data = content.data["updateComment"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "无法修改已关闭话题下的评论")
 
     def test_delete_comment_not_exist(self):
         mutation = """

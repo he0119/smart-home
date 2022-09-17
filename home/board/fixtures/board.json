@@ -5,10 +5,11 @@
     "fields": {
       "title": "你好世界",
       "description": "这是一个测试话题",
+      "closed_at": null,
       "is_closed": false,
       "user": 1,
-      "created_at": "2020-12-01T00:00:00.000Z",
-      "edited_at": "2020-12-31T00:00:00.000Z",
+      "created_at": "2020-12-01T00:00:00.00Z",
+      "edited_at": "2020-12-31T00:00:00.00Z",
       "is_pinned": false
     }
   },
@@ -19,9 +20,10 @@
       "title": "关闭的话题",
       "description": "这是一个关闭的话题",
       "is_closed": true,
+      "closed_at": null,
       "user": 1,
-      "created_at": "2020-12-02T00:00:00.000Z",
-      "edited_at": "2020-12-30T00:00:00.000Z",
+      "created_at": "2020-12-02T00:00:00Z",
+      "edited_at": "2020-12-30T00:00:00Z",
       "is_pinned": false
     }
   },
@@ -32,9 +34,10 @@
       "title": "置顶的话题",
       "description": "这是一个置顶的话题",
       "is_closed": true,
+      "closed_at": null,
       "user": 1,
-      "created_at": "2020-12-03T00:00:00.000Z",
-      "edited_at": "2020-12-29T00:00:00.000Z",
+      "created_at": "2020-12-03T00:00:00Z",
+      "edited_at": "2020-12-29T00:00:00Z",
       "is_pinned": true
     }
   },
@@ -45,8 +48,8 @@
       "topic": 1,
       "user": 1,
       "body": "测试评论一",
-      "created_at": "2020-07-11T02:20:23.803Z",
-      "edited_at": "2020-07-11T02:20:23.803Z",
+      "created_at": "2020-07-11T00:00:00.00Z",
+      "edited_at": "2020-07-11T00:00:00.00Z",
       "parent": null,
       "reply_to": null,
       "lft": 1,
@@ -62,8 +65,8 @@
       "topic": 1,
       "user": 2,
       "body": "测试评论二",
-      "created_at": "2020-12-12T02:36:14.858Z",
-      "edited_at": "2020-12-12T02:36:14.858Z",
+      "created_at": "2020-07-11T01:00:00.00Z",
+      "edited_at": "2020-07-11T01:00:00.00Z",
       "parent": null,
       "reply_to": null,
       "lft": 1,
@@ -79,14 +82,31 @@
       "topic": 1,
       "user": 2,
       "body": "评论测试评论一",
-      "created_at": "2020-12-12T03:00:23.593Z",
-      "edited_at": "2020-12-12T03:00:23.593Z",
+      "created_at": "2020-07-11T02:00:00.00Z",
+      "edited_at": "2020-07-11T02:00:00.00Z",
       "parent": 1,
       "reply_to": 1,
       "lft": 2,
       "rght": 3,
       "tree_id": 1,
       "level": 1
+    }
+  },
+  {
+    "model": "board.comment",
+    "pk": 4,
+    "fields": {
+      "topic": 2,
+      "user": 1,
+      "body": "测试评论关闭的话题",
+      "created_at": "2020-07-11T03:00:00.00Z",
+      "edited_at": "2020-07-11T03:00:00.00Z",
+      "parent": null,
+      "reply_to": null,
+      "lft": 1,
+      "rght": 2,
+      "tree_id": 3,
+      "level": 0
     }
   }
 ]
