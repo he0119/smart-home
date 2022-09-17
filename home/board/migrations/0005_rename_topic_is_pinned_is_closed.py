@@ -18,7 +18,7 @@ def set_is_closed(apps, schema_editor):
 
 
 def reverse_set_is_closed(apps, schema_editor):
-    """再去一次反"""
+    """再取一次反"""
     Topic = apps.get_model("board", "Topic")
     objs = []
     for topic in Topic.objects.all():
