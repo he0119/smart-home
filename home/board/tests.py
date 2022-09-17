@@ -101,7 +101,7 @@ class TopicTests(GraphQLTestCase):
         """获取置顶的一个话题"""
         query = """
             query topics {
-                topics(first: 1, order: {isPin: DESC}) {
+                topics(first: 1, order: {isPinned: DESC}) {
                     edges {
                         node {
                             title
@@ -123,7 +123,7 @@ class TopicTests(GraphQLTestCase):
                         __typename
                         title
                         description
-                        isOpen
+                        isClosed
                     }
                 }
             }
@@ -141,7 +141,7 @@ class TopicTests(GraphQLTestCase):
         self.assertEqual(topic["__typename"], "Topic")
         self.assertEqual(topic["title"], "test")
         self.assertEqual(topic["description"], "some")
-        self.assertEqual(topic["isOpen"], True)
+        self.assertEqual(topic["isClosed"], False)
 
     def test_delete_topic(self):
         mutation = """
@@ -205,7 +205,7 @@ class TopicTests(GraphQLTestCase):
                     ... on Topic {
                         __typename
                         id
-                        isOpen
+                        isClosed
                     }
                 }
             }
@@ -225,7 +225,7 @@ class TopicTests(GraphQLTestCase):
         topic = content.data["closeTopic"]
         self.assertEqual(topic["__typename"], "Topic")
         self.assertEqual(topic["id"], relay.to_base64(types.Topic, "1"))
-        self.assertEqual(topic["isOpen"], False)
+        self.assertEqual(topic["isClosed"], True)
 
     def test_reopen_topic(self):
         mutation = """
@@ -235,7 +235,7 @@ class TopicTests(GraphQLTestCase):
                         __typename
                         id
                         title
-                        isOpen
+                        isClosed
                     }
                 }
             }
@@ -257,7 +257,7 @@ class TopicTests(GraphQLTestCase):
         self.assertEqual(topic["__typename"], "Topic")
         self.assertEqual(topic["id"], relay.to_base64(types.Topic, "2"))
         self.assertEqual(topic["title"], "关闭的话题")
-        self.assertEqual(topic["isOpen"], True)
+        self.assertEqual(topic["isClosed"], False)
 
     def test_delete_topic_not_exist(self):
         mutation = """
@@ -370,7 +370,7 @@ class TopicTests(GraphQLTestCase):
                     ... on Topic {
                         __typename
                         id
-                        isPin
+                        isPinned
                     }
                 }
             }
@@ -390,7 +390,7 @@ class TopicTests(GraphQLTestCase):
 
         self.assertEqual(topic["__typename"], "Topic")
         self.assertEqual(topic["id"], relay.to_base64(types.Topic, old_topic.id))
-        self.assertEqual(topic["isPin"], True)
+        self.assertEqual(topic["isPinned"], True)
 
     def test_unpin_topic(self):
         mutation = """
@@ -400,7 +400,7 @@ class TopicTests(GraphQLTestCase):
                         __typename
                         id
                         title
-                        isPin
+                        isPinned
                     }
                 }
             }
@@ -420,7 +420,7 @@ class TopicTests(GraphQLTestCase):
 
         self.assertEqual(topic["__typename"], "Topic")
         self.assertEqual(topic["id"], relay.to_base64(types.Topic, old_topic.id))
-        self.assertEqual(topic["isPin"], False)
+        self.assertEqual(topic["isPinned"], False)
 
     def test_pin_topic_not_exist(self):
         mutation = """
@@ -563,7 +563,7 @@ class CommentTests(GraphQLTestCase):
     # def test_get_last_comments(self):
     #     query = """
     #         query topics {
-    #             topics(order: {isPin: DESC, isOpen: DESC, activeAt: DESC}) {
+    #             topics(order: {isPinned: DESC, isClosed: DESC, activeAt: DESC}) {
     #                 pageInfo {
     #                     hasNextPage
     #                     endCursor
@@ -573,8 +573,8 @@ class CommentTests(GraphQLTestCase):
     #                         id
     #                         title
     #                         description
-    #                         isOpen
-    #                         isPin
+    #                         isClosed
+    #                         isPinned
     #                         createdAt
     #                         editedAt
     #                         user {
