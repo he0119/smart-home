@@ -144,6 +144,7 @@ class TopicTests(GraphQLTestCase):
         self.assertEqual(topic["isClosed"], False)
 
     def test_delete_topic(self):
+        """删除话题"""
         mutation = """
             mutation deleteTopic($input: DeleteTopicInput!) {
                 deleteTopic(input: $input) {
@@ -166,7 +167,36 @@ class TopicTests(GraphQLTestCase):
         with self.assertRaises(Topic.DoesNotExist):
             Topic.objects.get(title="你好世界")
 
+    def test_delete_closed_topic(self):
+        """删除已关闭的话题"""
+        mutation = """
+            mutation deleteTopic($input: DeleteTopicInput!) {
+                deleteTopic(input: $input) {
+                    ... on OperationInfo {
+                        __typename
+                        messages {
+                            message
+                        }
+                    }
+                }
+            }
+        """
+
+        helloworld = Topic.objects.get(pk=2)
+        variables = {
+            "input": {
+                "topicId": relay.to_base64(types.Topic, helloworld.id),
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+
+        data = content.data["deleteTopic"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "不能删除已关闭的话题")
+
     def test_update_topic(self):
+        """更新话题"""
         mutation = """
             mutation updateTopic($input: UpdateTopicInput!) {
                 updateTopic(input: $input) {
@@ -197,6 +227,34 @@ class TopicTests(GraphQLTestCase):
         self.assertEqual(topic["id"], relay.to_base64(types.Topic, "1"))
         self.assertEqual(topic["title"], "test")
         self.assertEqual(topic["description"], "some")
+
+    def test_update_closed_topic(self):
+        """更新已关闭的话题"""
+        mutation = """
+            mutation updateTopic($input: UpdateTopicInput!) {
+                updateTopic(input: $input) {
+                    ... on OperationInfo {
+                        __typename
+                        messages {
+                            message
+                        }
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "id": relay.to_base64(types.Topic, "2"),
+                "title": "test",
+                "description": "some",
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+
+        data = content.data["updateTopic"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "不能修改已关闭的话题")
 
     def test_close_topic(self):
         mutation = """
@@ -761,7 +819,7 @@ class CommentTests(GraphQLTestCase):
 
         data = content.data["addComment"]
         self.assertEqual(data["__typename"], "OperationInfo")
-        self.assertEqual(data["messages"][0]["message"], "无法向已关闭话题添加评论")
+        self.assertEqual(data["messages"][0]["message"], "不能向已关闭话题添加评论")
 
     def test_delete_comment_in_closed_topic(self):
         mutation = """
@@ -787,7 +845,7 @@ class CommentTests(GraphQLTestCase):
 
         data = content.data["deleteComment"]
         self.assertEqual(data["__typename"], "OperationInfo")
-        self.assertEqual(data["messages"][0]["message"], "无法删除已关闭话题下的评论")
+        self.assertEqual(data["messages"][0]["message"], "不能删除已关闭话题下的评论")
 
     def test_update_comment_in_closed_topic(self):
         mutation = """
@@ -813,7 +871,7 @@ class CommentTests(GraphQLTestCase):
 
         data = content.data["updateComment"]
         self.assertEqual(data["__typename"], "OperationInfo")
-        self.assertEqual(data["messages"][0]["message"], "无法修改已关闭话题下的评论")
+        self.assertEqual(data["messages"][0]["message"], "不能修改已关闭话题下的评论")
 
     def test_delete_comment_not_exist(self):
         mutation = """

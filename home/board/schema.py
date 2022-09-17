@@ -71,6 +71,9 @@ class Mutation:
         if topic.user != info.context.request.user:
             raise ValidationError("只能修改自己创建的话题")
 
+        if topic.is_closed:
+            raise ValidationError("不能修改已关闭的话题")
+
         # 仅在传入数据时修改
         if title is not None:
             topic.title = title
@@ -90,6 +93,10 @@ class Mutation:
 
         if topic.user != info.context.request.user:
             raise ValidationError("只能删除自己创建的话题")
+
+        if topic.is_closed:
+            raise ValidationError("不能删除已关闭的话题")
+
         topic.delete()
 
         return topic  # type: ignore
@@ -156,7 +163,7 @@ class Mutation:
             raise ValidationError("话题不存在")
 
         if topic.is_closed:
-            raise ValidationError("无法向已关闭话题添加评论")
+            raise ValidationError("不能向已关闭话题添加评论")
 
         comment = models.Comment(
             topic=topic,
@@ -197,7 +204,7 @@ class Mutation:
             raise ValidationError("只能修改自己创建的评论")
 
         if comment.topic.is_closed:
-            raise ValidationError("无法修改已关闭话题下的评论")
+            raise ValidationError("不能修改已关闭话题下的评论")
 
         comment.body = body
         comment.save()
@@ -214,7 +221,7 @@ class Mutation:
             raise ValidationError("只能删除自己创建的评论")
 
         if comment.topic.is_closed:
-            raise ValidationError("无法删除已关闭话题下的评论")
+            raise ValidationError("不能删除已关闭话题下的评论")
 
         comment.delete()
 
