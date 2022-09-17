@@ -122,6 +122,7 @@ class Mutation:
             raise ValidationError("话题不存在")
 
         topic.is_closed = False
+        topic.closed_at = None
         topic.save()
 
         return topic  # type: ignore

@@ -294,6 +294,7 @@ class TopicTests(GraphQLTestCase):
                         id
                         title
                         isClosed
+                        closedAt
                     }
                 }
             }
@@ -308,6 +309,7 @@ class TopicTests(GraphQLTestCase):
         old_topic: Topic = Topic.objects.get(pk=2)
         self.assertEqual(old_topic.title, "关闭的话题")
         self.assertEqual(old_topic.is_closed, True)
+        self.assertIsNotNone(old_topic.closed_at)
 
         content = self.client.execute(mutation, variables)
 
@@ -316,6 +318,7 @@ class TopicTests(GraphQLTestCase):
         self.assertEqual(topic["id"], relay.to_base64(types.Topic, "2"))
         self.assertEqual(topic["title"], "关闭的话题")
         self.assertEqual(topic["isClosed"], False)
+        self.assertIsNone(topic["closedAt"])
 
     def test_delete_topic_not_exist(self):
         mutation = """
