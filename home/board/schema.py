@@ -38,7 +38,6 @@ class Mutation:
             title=title,
             description=description,
             user=info.context.request.user,
-            is_open=True,
         )
 
         topic.edited_at = timezone.now()
@@ -102,7 +101,7 @@ class Mutation:
         if not topic:
             raise ValidationError("话题不存在")
 
-        topic.is_open = False
+        topic.is_closed = True
         topic.closed_at = timezone.now()
         topic.save()
 
@@ -115,7 +114,7 @@ class Mutation:
         if not topic:
             raise ValidationError("话题不存在")
 
-        topic.is_open = True
+        topic.is_closed = False
         topic.save()
 
         return topic  # type: ignore
@@ -127,7 +126,7 @@ class Mutation:
         if not topic:
             raise ValidationError("话题不存在")
 
-        topic.is_pin = True
+        topic.is_pinned = True
         topic.save()
 
         return topic  # type: ignore
@@ -139,7 +138,7 @@ class Mutation:
         if not topic:
             raise ValidationError("话题不存在")
 
-        topic.is_pin = False
+        topic.is_pinned = False
         topic.save()
 
         return topic  # type: ignore
@@ -156,7 +155,7 @@ class Mutation:
         if not topic:
             raise ValidationError("话题不存在")
 
-        if not topic.is_open:
+        if topic.is_closed:
             raise ValidationError("无法向关闭的话题添加评论")
 
         comment = models.Comment(

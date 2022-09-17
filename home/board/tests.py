@@ -216,9 +216,9 @@ class TopicTests(GraphQLTestCase):
             }
         }
 
-        old_topic = Topic.objects.get(pk=1)
+        old_topic: Topic = Topic.objects.get(pk=1)
         self.assertEqual(old_topic.title, "你好世界")
-        self.assertEqual(old_topic.is_open, True)
+        self.assertEqual(old_topic.is_closed, False)
 
         content = self.client.execute(mutation, variables)
 
@@ -247,9 +247,9 @@ class TopicTests(GraphQLTestCase):
             }
         }
 
-        old_topic = Topic.objects.get(pk=2)
+        old_topic: Topic = Topic.objects.get(pk=2)
         self.assertEqual(old_topic.title, "关闭的话题")
-        self.assertEqual(old_topic.is_open, False)
+        self.assertEqual(old_topic.is_closed, True)
 
         content = self.client.execute(mutation, variables)
 
@@ -376,7 +376,7 @@ class TopicTests(GraphQLTestCase):
             }
         """
         old_topic = Topic.objects.get(pk=1)
-        self.assertEqual(old_topic.is_pin, False)
+        self.assertEqual(old_topic.is_pinned, False)
 
         variables = {
             "input": {
@@ -413,7 +413,7 @@ class TopicTests(GraphQLTestCase):
             }
         }
 
-        self.assertEqual(old_topic.is_pin, True)
+        self.assertEqual(old_topic.is_pinned, True)
 
         content = self.client.execute(mutation, variables)
         topic = content.data["unpinTopic"]
