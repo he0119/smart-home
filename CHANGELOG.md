@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 ### Changed
 
 - 切换框架至 Strawberry
+- 调整话题的字段名称
+- 已关闭的话题下禁止除置顶以外的所有操作
 
 ## [0.8.4] - 2022-06-05
 

@@ -26,8 +26,8 @@ class CommentFilter:
 class TopicOrder:
     created_at: auto
     edited_at: auto
-    is_open: auto
-    is_pin: auto
+    is_closed: auto
+    is_pinned: auto
     active_at: auto
 
 
@@ -41,12 +41,12 @@ class TopicFilter:
 class Topic(relay.Node):
     title: auto
     description: auto
-    is_open: auto
+    is_closed: auto
     closed_at: auto
     user: User
     created_at: auto
     edited_at: auto
-    is_pin: auto
+    is_pinned: auto
     comments: relay.Connection["Comment"] = gql.django.connection(
         filters=CommentFilter, order=CommentOrder
     )
