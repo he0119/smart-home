@@ -2,7 +2,7 @@ from django.contrib import auth
 from django.core.exceptions import ValidationError
 from strawberry.file_uploads import Upload
 from strawberry.types import Info
-from strawberry_django_plus import gql
+from strawberry_django_plus import gql, relay
 
 from home.utils import IsAuthenticated
 
@@ -80,3 +80,15 @@ class Mutation:
         avatar.save()
 
         return avatar  # type: ignore
+
+    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    def delete_session(self, info: Info, id: relay.GlobalID) -> types.Session:
+        session: models.Session = id.resolve_node(info)  # type: ignore
+        if not session:
+            raise ValidationError("会话不存在")
+
+        if session.user != info.context.request.user:
+            raise ValidationError("只能删除自己的会话")
+
+        session.delete()
+        return session  # type: ignore

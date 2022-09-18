@@ -36,6 +36,30 @@
     }
   },
   {
+    "model": "users.session",
+    "pk": "b3hywvvlnly7unshlqu6yhrsyps3phjq",
+    "fields": {
+      "session_data": ".eJxVjMsOwiAQRf-FtSEdHhVcuvcbyMAMUjWQlHZl_HfbpAvd3nPOfYuA61LC2nkOE4mLAHH63SKmJ9cd0APrvcnU6jJPUe6KPGiXt0b8uh7u30HBXraagUlFlcGOEYc0JFI6WnTIA_o8avRw9oAAoJwjtoyUjd9MY5JxTovPF_91OEg:1oZube:zWmonsl_zfGPkhjJC6TYE9wgFr8eCQXhhGVbRkIoKR0",
+      "expire_date": "2022-10-02T13:45:10.954Z",
+      "user": 1,
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.42",
+      "last_activity": "2022-09-18T13:45:10.954Z",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "model": "users.session",
+    "pk": "voj866ttugmcns05agvl2bxetqel47ln",
+    "fields": {
+      "session_data": ".eJxVjDsOgzAQRO_iOrLWHzBOmZ4zWLtrOyaJQMJQRbl7jESRlDPvzbxFwH0rYa9pDVMUV6HF5bcj5GeaDxAfON8Xycu8rRPJQ5EnrXJcYnrdTvfvoGAtbe2RMjlH4FIedAfIilmRaxl6i12OTN4MPmtrDEBi0zcPsh1AYeqi-HwB-us4JQ:1oZtdz:K_qemRYaU6tZYkRPjCfsSHZsEclzhzzHrC6Ga0AWnE0",
+      "expire_date": "2022-10-02T12:43:31.593Z",
+      "user": 2,
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.42",
+      "last_activity": "2022-09-18T12:43:31.593Z",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
     "model": "users.avatar",
     "pk": 1,
     "fields": {
