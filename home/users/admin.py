@@ -1,3 +1,4 @@
+import logging
 import re
 
 from django.contrib import admin
@@ -5,6 +6,9 @@ from django.contrib.gis.geoip2 import HAS_GEOIP2
 from django.utils import timezone
 
 from .models import Avatar, Config, Session
+
+logger = logging.getLogger("board")
+
 
 BROWSERS = (
     (re.compile("Edg"), "Edge"),
@@ -108,7 +112,7 @@ def geoip():
             try:
                 _geoip = GeoIP2()
             except Exception as e:
-                print(e)
+                logger.warning(e)
     return _geoip
 
 

@@ -288,6 +288,13 @@ sentry_sdk.init(
     release="version",
 )
 
-#
+# 自定义会话
+# https://docs.djangoproject.com/en/4.0/ref/contrib/gis/geoip2/
+
 SESSION_ENGINE = "home.users.models"
 SESSION_SAVE_EVERY_REQUEST = True
+
+# GeoIP2
+# https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en
+
+GEOIP_PATH = os.path.join(BASE_DIR, "geoip")
