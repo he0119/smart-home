@@ -409,6 +409,8 @@ class SessionTests(GraphQLTestCase):
                 viewer {
                     session {
                         id
+                        isValid
+                        isCurrent
                     }
                 }
             }
@@ -417,6 +419,10 @@ class SessionTests(GraphQLTestCase):
 
         data = content.data["viewer"]["session"]
         self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]["isValid"], False)
+        self.assertEqual(data[0]["isCurrent"], False)
+        self.assertEqual(data[1]["isValid"], True)
+        self.assertEqual(data[1]["isCurrent"], True)
 
     def test_delete_session(self):
         mutation = """
@@ -466,3 +472,31 @@ class SessionTests(GraphQLTestCase):
         data = content.data["deleteSession"]
         self.assertEqual(data["__typename"], "OperationInfo")
         self.assertEqual(data["messages"][0]["message"], "会话不存在")
+
+    def test_delete_session_other_user(self):
+        """测试删除其他用户的会话"""
+        mutation = """
+            mutation deleteSession($input: DeleteSessionInput!) {
+                deleteSession(input: $input) {
+                    ... on OperationInfo {
+                        __typename
+                        messages {
+                            message
+                        }
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "id": relay.to_base64(
+                    types.Session, "voj866ttugmcns05agvl2bxetqel47ln"
+                ),
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+
+        data = content.data["deleteSession"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "只能删除自己的会话")
