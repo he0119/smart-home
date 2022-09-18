@@ -46,6 +46,23 @@ class MyTestClient(TestClient):
         """登录"""
         self.client.force_login(user)
 
+    def request(
+        self,
+        body: Dict[str, object],
+        headers: Optional[Dict[str, object]] = None,
+        files: Optional[Dict[str, object]] = None,
+    ):
+        kwargs: Dict[str, object] = {"data": body}
+        # 默认的测试客户端居然没用上 headers
+        if headers:
+            kwargs.update(headers)
+        if files:
+            kwargs["format"] = "multipart"
+        else:
+            kwargs["content_type"] = "application/json"
+
+        return self.client.post(self.path, **kwargs)
+
     def execute(
         self,
         query: str,

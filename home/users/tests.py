@@ -411,22 +411,39 @@ class SessionTests(GraphQLTestCase):
                         id
                         isValid
                         isCurrent
+                        ip
                     }
                 }
             }
         """
-        content = self.client.execute(query)
+        content = self.client.execute(
+            query, headers={"HTTP_X_FORWARDED_FOR": "1.1.1.1"}
+        )
 
         data = content.data["viewer"]["session"]
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]["isValid"], False)
         self.assertEqual(data[0]["isCurrent"], False)
+        self.assertEqual(data[0]["ip"], "127.0.0.1")
         self.assertEqual(data[1]["isValid"], True)
         self.assertEqual(data[1]["isCurrent"], True)
+        self.assertEqual(data[1]["ip"], None)
 
         session = Session.objects.get(pk="b3hywvvlnly7unshlqu6yhrsyps3phjq")
         session_data = session.get_decoded()  # type: ignore
         self.assertEqual("1", session_data.get("_auth_user_id"))
+
+        # 再次请求，这次应该能够获取到正确的 IP 地址
+        # 因为在上一次请求中，已经将 IP 地址写入到了 session 中
+        content = self.client.execute(
+            query, headers={"HTTP_X_FORWARDED_FOR": "1.1.1.1"}
+        )
+
+        data = content.data["viewer"]["session"]
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[1]["isValid"], True)
+        self.assertEqual(data[1]["isCurrent"], True)
+        self.assertEqual(data[1]["ip"], "1.1.1.1")
 
     def test_delete_session(self):
         mutation = """

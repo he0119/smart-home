@@ -18,6 +18,12 @@ class SessionMiddleware(BaseSessionMiddleware):
 
     def process_request(self, request):
         session_key = request.COOKIES.get(settings.SESSION_COOKIE_NAME)
+        # 获取代理下的客户端 IP 地址
+        # https://django-user-sessions.readthedocs.io/en/stable/installation.html#ip-when-behind-a-proxy
+        if "HTTP_X_FORWARDED_FOR" in request.META:
+            request.META["REMOTE_ADDR"] = (
+                request.META["HTTP_X_FORWARDED_FOR"].split(",")[0].strip()
+            )
         request.session = self.SessionStore(
             ip=request.META.get("REMOTE_ADDR", ""),  # type: ignore
             user_agent=request.META.get("HTTP_USER_AGENT", ""),  # type: ignore
