@@ -41,7 +41,7 @@ class Session(AbstractBaseSession):
     )
     user_agent = models.CharField("用户代理", null=True, blank=True, max_length=200)
     last_activity = models.DateTimeField("最近活跃时间", auto_now=True)
-    ip = models.GenericIPAddressField(null=True, blank=True, verbose_name="IP")
+    ip = models.GenericIPAddressField("IP", null=True, blank=True)
 
     @classmethod
     def get_session_store_class(cls):
@@ -64,9 +64,9 @@ def get_file_path(instance, filename):
 class Avatar(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        verbose_name="用户",
         related_name="avatar",
         on_delete=models.CASCADE,
+        verbose_name="用户",
     )
     avatar = models.ImageField(
         "头像",

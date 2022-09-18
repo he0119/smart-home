@@ -3,39 +3,38 @@ import re
 from django.contrib import admin
 from django.contrib.gis.geoip2 import HAS_GEOIP2
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
 
 from .models import Avatar, Config, Session
 
 BROWSERS = (
-    (re.compile("Edg"), _("Edge")),
-    (re.compile("OPR"), _("Opera")),
-    (re.compile("Chrome"), _("Chrome")),
-    (re.compile("Safari"), _("Safari")),
-    (re.compile("Firefox"), _("Firefox")),
-    (re.compile("IE"), _("Internet Explorer")),
+    (re.compile("Edg"), "Edge"),
+    (re.compile("OPR"), "Opera"),
+    (re.compile("Chrome"), "Chrome"),
+    (re.compile("Safari"), "Safari"),
+    (re.compile("Firefox"), "Firefox"),
+    (re.compile("IE"), "Internet Explorer"),
 )
 DEVICES = (
-    (re.compile("Windows Mobile"), _("Windows Mobile")),
-    (re.compile("Android"), _("Android")),
-    (re.compile("Linux"), _("Linux")),
-    (re.compile("iPhone"), _("iPhone")),
-    (re.compile("iPad"), _("iPad")),
-    (re.compile("Mac OS X 10[._]9"), _("OS X Mavericks")),
-    (re.compile("Mac OS X 10[._]10"), _("OS X Yosemite")),
-    (re.compile("Mac OS X 10[._]11"), _("OS X El Capitan")),
-    (re.compile("Mac OS X 10[._]12"), _("macOS Sierra")),
-    (re.compile("Mac OS X 10[._]13"), _("macOS High Sierra")),
-    (re.compile("Mac OS X 10[._]14"), _("macOS Mojave")),
-    (re.compile("Mac OS X 10[._]15"), _("macOS Catalina")),
-    (re.compile("Mac OS X"), _("macOS")),
-    (re.compile("NT 5.1"), _("Windows XP")),
-    (re.compile("NT 6.0"), _("Windows Vista")),
-    (re.compile("NT 6.1"), _("Windows 7")),
-    (re.compile("NT 6.2"), _("Windows 8")),
-    (re.compile("NT 6.3"), _("Windows 8.1")),
-    (re.compile("NT 10.0"), _("Windows 10")),
-    (re.compile("Windows"), _("Windows")),
+    (re.compile("Windows Mobile"), "Windows Mobile"),
+    (re.compile("Android"), "Android"),
+    (re.compile("Linux"), "Linux"),
+    (re.compile("iPhone"), "iPhone"),
+    (re.compile("iPad"), "iPad"),
+    (re.compile("Mac OS X 10[._]9"), "OS X Mavericks"),
+    (re.compile("Mac OS X 10[._]10"), "OS X Yosemite"),
+    (re.compile("Mac OS X 10[._]11"), "OS X El Capitan"),
+    (re.compile("Mac OS X 10[._]12"), "macOS Sierra"),
+    (re.compile("Mac OS X 10[._]13"), "macOS High Sierra"),
+    (re.compile("Mac OS X 10[._]14"), "macOS Mojave"),
+    (re.compile("Mac OS X 10[._]15"), "macOS Catalina"),
+    (re.compile("Mac OS X"), "macOS"),
+    (re.compile("NT 5.1"), "Windows XP"),
+    (re.compile("NT 6.0"), "Windows Vista"),
+    (re.compile("NT 6.1"), "Windows 7"),
+    (re.compile("NT 6.2"), "Windows 8"),
+    (re.compile("NT 6.3"), "Windows 8.1"),
+    (re.compile("NT 10.0"), "Windows 10"),
+    (re.compile("Windows"), "Windows"),
 )
 
 
@@ -64,7 +63,7 @@ def parse_device(value):
             break
 
     if browser and device:
-        return _("%(browser)s on %(device)s") % {"browser": browser, "device": device}
+        return "%(browser)s on %(device)s" % {"browser": browser, "device": device}
 
     if browser:
         return browser
