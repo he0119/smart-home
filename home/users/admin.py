@@ -9,6 +9,21 @@ from .models import Avatar, Config, Session
 
 logger = logging.getLogger("board")
 
+_geoip = None
+
+
+def geoip():
+    global _geoip
+    if _geoip is None:
+        if HAS_GEOIP2:
+            from django.contrib.gis.geoip2 import GeoIP2
+
+            try:
+                _geoip = GeoIP2()
+            except Exception as e:
+                logger.warning(e)
+    return _geoip
+
 
 BROWSERS = (
     (re.compile("SmartHome"), "Smart Home"),
@@ -101,25 +116,36 @@ def parse_location(value):
     return None
 
 
-_geoip = None
+class ExpiredFilter(admin.SimpleListFilter):
+    title = "有效的"
+    parameter_name = "active"
+
+    def lookups(self, request, model_admin):
+        return (("1", "有效"), ("0", "失效"))
+
+    def queryset(self, request, queryset):
+        if self.value() == "1":
+            return queryset.filter(expire_date__gt=timezone.now())
+        elif self.value() == "0":
+            return queryset.filter(expire_date__lte=timezone.now())
 
 
-def geoip():
-    global _geoip
-    if _geoip is None:
-        if HAS_GEOIP2:
-            from django.contrib.gis.geoip2 import GeoIP2
+class OwnerFilter(admin.SimpleListFilter):
+    title = "从属"
+    parameter_name = "owner"
 
-            try:
-                _geoip = GeoIP2()
-            except Exception as e:
-                logger.warning(e)
-    return _geoip
+    def lookups(self, request, model_admin):
+        return (("my", "我"),)
+
+    def queryset(self, request, queryset):
+        if self.value() == "my":
+            return queryset.filter(user=request.user)
 
 
 class SessionAdmin(admin.ModelAdmin):
     list_display = ("ip", "user", "is_valid", "location", "device")
     exclude = ("session_key",)
+    list_filter = (ExpiredFilter, OwnerFilter)
 
     @admin.display(boolean=True, description="有效的")
     def is_valid(self, obj):
