@@ -1,10 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.testcases import TestCase
+from strawberry_django_plus import relay
 
 from home.utils import GraphQLTestCase
 
-from .models import Avatar, Config
+from . import types
+from .models import Avatar, Config, Session
 
 
 class ModelTests(TestCase):
@@ -391,3 +393,114 @@ class UserAvatarTests(GraphQLTestCase):
 
         avatar = content.data["updateAvatar"]["avatar"]["url"]
         self.assertTrue(avatar.startswith("/avatar_pictures/1"))
+
+
+class SessionTests(GraphQLTestCase):
+    fixtures = ["users"]
+
+    def setUp(self):
+        self.user = get_user_model().objects.get(username="test")
+        self.client.authenticate(self.user)
+
+    def test_get_session(self):
+        """测试获取用户的会话"""
+        query = """
+            query viewer {
+                viewer {
+                    session {
+                        id
+                        isValid
+                        isCurrent
+                    }
+                }
+            }
+        """
+        content = self.client.execute(query)
+
+        data = content.data["viewer"]["session"]
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]["isValid"], False)
+        self.assertEqual(data[0]["isCurrent"], False)
+        self.assertEqual(data[1]["isValid"], True)
+        self.assertEqual(data[1]["isCurrent"], True)
+
+        session = Session.objects.get(pk="b3hywvvlnly7unshlqu6yhrsyps3phjq")
+        session_data = session.get_decoded()  # type: ignore
+        self.assertEqual("1", session_data.get("_auth_user_id"))
+
+    def test_delete_session(self):
+        mutation = """
+            mutation deleteSession($input: DeleteSessionInput!) {
+                deleteSession(input: $input) {
+                    ... on Session {
+                        id
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "id": relay.to_base64(
+                    types.Session, "b3hywvvlnly7unshlqu6yhrsyps3phjq"
+                ),
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+
+        with self.assertRaises(Session.DoesNotExist):
+            Session.objects.get(pk="b3hywvvlnly7unshlqu6yhrsyps3phjq")
+
+    def test_delete_session_not_exist(self):
+        """测试删除不存在的会话"""
+        mutation = """
+            mutation deleteSession($input: DeleteSessionInput!) {
+                deleteSession(input: $input) {
+                    ... on OperationInfo {
+                        __typename
+                        messages {
+                            message
+                        }
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "id": relay.to_base64(types.Session, "123"),
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+
+        data = content.data["deleteSession"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "会话不存在")
+
+    def test_delete_session_other_user(self):
+        """测试删除其他用户的会话"""
+        mutation = """
+            mutation deleteSession($input: DeleteSessionInput!) {
+                deleteSession(input: $input) {
+                    ... on OperationInfo {
+                        __typename
+                        messages {
+                            message
+                        }
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "id": relay.to_base64(
+                    types.Session, "voj866ttugmcns05agvl2bxetqel47ln"
+                ),
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+
+        data = content.data["deleteSession"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "只能删除自己的会话")

@@ -1,7 +1,55 @@
 import os
 
 from django.conf import settings
+from django.contrib.sessions.backends.db import SessionStore as DBStore
+from django.contrib.sessions.base_session import AbstractBaseSession
 from django.db import models
+
+
+class SessionStore(DBStore):
+    def __init__(self, session_key=None, user_agent=None, ip=None):
+        super().__init__(session_key)
+        # Truncate user_agent string to max_length of the CharField
+        self.user_agent = user_agent[:200] if user_agent else user_agent
+        self.ip = ip
+
+    @classmethod
+    def get_model_class(cls):
+        return Session
+
+    def create_model_instance(self, data):
+        try:
+            user_id = int(data.get("_auth_user_id"))  # type: ignore
+        except (ValueError, TypeError):
+            user_id = None
+        return self.model(
+            session_key=self._get_or_create_session_key(),  # type: ignore
+            session_data=self.encode(data),
+            expire_date=self.get_expiry_date(),
+            user_agent=self.user_agent,
+            user_id=user_id,
+            ip=self.ip,
+        )
+
+
+class Session(AbstractBaseSession):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.CASCADE,
+        verbose_name="用户",
+    )
+    user_agent = models.CharField("用户代理", null=True, blank=True, max_length=200)
+    last_activity = models.DateTimeField("最近活跃时间", auto_now=True)
+    ip = models.GenericIPAddressField("IP", null=True, blank=True)
+
+    @classmethod
+    def get_session_store_class(cls):
+        return SessionStore
+
+    class Meta:
+        verbose_name = "会话"
+        verbose_name_plural = "会话"
 
 
 def get_file_path(instance, filename):
@@ -16,9 +64,9 @@ def get_file_path(instance, filename):
 class Avatar(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        verbose_name="用户",
         related_name="avatar",
         on_delete=models.CASCADE,
+        verbose_name="用户",
     )
     avatar = models.ImageField(
         "头像",
