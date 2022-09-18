@@ -424,6 +424,10 @@ class SessionTests(GraphQLTestCase):
         self.assertEqual(data[1]["isValid"], True)
         self.assertEqual(data[1]["isCurrent"], True)
 
+        session = Session.objects.get(pk="b3hywvvlnly7unshlqu6yhrsyps3phjq")
+        session_data = session.get_decoded()  # type: ignore
+        self.assertEqual("1", session_data.get("_auth_user_id"))
+
     def test_delete_session(self):
         mutation = """
             mutation deleteSession($input: DeleteSessionInput!) {
