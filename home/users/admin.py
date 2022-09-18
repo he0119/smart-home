@@ -11,6 +11,7 @@ logger = logging.getLogger("board")
 
 
 BROWSERS = (
+    (re.compile("SmartHome"), "Smart Home"),
     (re.compile("Edg"), "Edge"),
     (re.compile("OPR"), "Opera"),
     (re.compile("Chrome"), "Chrome"),
@@ -124,9 +125,11 @@ class SessionAdmin(admin.ModelAdmin):
     def is_valid(self, obj):
         return obj.expire_date > timezone.now()
 
+    @admin.display(description="位置")
     def location(self, obj):
         return parse_location(obj.ip)
 
+    @admin.display(description="设备")
     def device(self, obj):
         return parse_device(obj.user_agent) if obj.user_agent else ""
 
