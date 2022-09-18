@@ -115,7 +115,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
+    "home.users.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -147,7 +147,12 @@ WSGI_APPLICATION = "home.wsgi.application"
 # https://channels.readthedocs.io/en/stable/topics/channel_layers.html
 
 ASGI_APPLICATION = "home.asgi.application"
-CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {"hosts": ["redis://localhost:6379"]},
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -282,3 +287,7 @@ sentry_sdk.init(
     # 会在 Actions 自动编译的过程中修改
     release="version",
 )
+
+#
+SESSION_ENGINE = "home.users.models"
+SESSION_SAVE_EVERY_REQUEST = True
