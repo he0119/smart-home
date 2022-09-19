@@ -144,11 +144,21 @@ class BasicAuthMiddleware:
 
 class IotConsumer(WebsocketConsumer):
     def connect(self):
-        if self.scope["device"]:
+        if device := self.scope["device"]:
             self.accept()
+            device.is_online = True
+            device.online_at = timezone.now()
+            device.save()
+            channel_group_send(f"device.{device.pk}", {"type": "update"})
+            logger.info(f"{device.name} 在线")
 
     def disconnect(self, close_code):
-        pass
+        if device := self.scope["device"]:
+            device.is_online = False
+            device.offline_at = timezone.now()
+            device.save()
+            channel_group_send(f"device.{device.pk}", {"type": "update"})
+            logger.info(f"{device.name} 离线")
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
