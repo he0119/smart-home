@@ -96,3 +96,62 @@ def process_client_connected(event):
         logger.info(f"{device.name} 在线")
     except Device.DoesNotExist:
         logger.error(f"设备({device_name}) 不存在")
+
+
+import base64
+
+from channels.db import database_sync_to_async
+from channels.generic.websocket import WebsocketConsumer
+
+
+@database_sync_to_async
+def get_device(username: str, password: str):
+    """获取设备"""
+    try:
+        device: Device = Device.objects.get(id=username)
+        if device.password == password:
+            return device
+    except Device.DoesNotExist:
+        return
+
+
+class BasicAuthMiddleware:
+    """Basic Authorization
+
+    给物联网设备认证用
+    """
+
+    def __init__(self, app):
+        # Store the ASGI application we were passed
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        for header in scope["headers"]:
+            if header[0] == b"authorization":
+                split = header[1].decode().strip().split(" ")
+                if len(split) == 2 or split[0].strip().lower() == "basic":
+                    username, password = (
+                        base64.b64decode(split[1]).decode().split(":", 1)
+                    )
+                    scope["device"] = await get_device(username, password)
+                else:
+                    scope["device"] = None
+
+                break
+
+        return await self.app(scope, receive, send)
+
+
+class IotConsumer(WebsocketConsumer):
+    def connect(self):
+        if self.scope["device"]:
+            self.accept()
+
+    def disconnect(self, close_code):
+        pass
+
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json["message"]
+
+        self.send(text_data=json.dumps({"message": message}))
