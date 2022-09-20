@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import requests
 
@@ -11,7 +11,7 @@ class DeviceAPI:
     def __init__(self, device_id: str) -> None:
         self.device_id = device_id
 
-    def set_status(self, key, value):
+    def set_status(self, key: str, value: Any):
         """设置设备参数"""
         payload = {key: value}
         channel_group_send(

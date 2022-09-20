@@ -12,8 +12,8 @@ from strawberry_django_plus.gql import relay
 from home.utils import IsAuthenticated, channel_group_send
 
 from . import models, types
+from .api import DeviceAPI
 from .models import AutowateringData, Device
-from .tasks import set_status
 
 
 @gql.type
@@ -126,7 +126,8 @@ class Mutation:
         elif value_type == ValueType.INTEGER:
             value = int(value)  # type: ignore
 
-        set_status.delay(device.pk, key, value)
+        device_api = DeviceAPI(device.pk)
+        device_api.set_status(key, value)
 
         return device  # type: ignore
 

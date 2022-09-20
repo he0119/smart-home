@@ -14,7 +14,6 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import path
 from django.utils import timezone
-from requests import sessions
 from strawberry.subscriptions import GRAPHQL_WS_PROTOCOL
 from strawberry.subscriptions.protocols.graphql_ws import (
     GQL_CONNECTION_ACK,
@@ -29,12 +28,7 @@ from home.utils import GraphQLTestCase, get_ws_client
 from . import types
 from .api import DeviceAPI, WeatherAPI
 from .models import AutowateringData, AutowateringDataDaily, Device
-from .tasks import (
-    autowatering,
-    clean_autowatering_database,
-    set_multiple_status,
-    set_status,
-)
+from .tasks import autowatering, clean_autowatering_database
 from .views import BasicAuthMiddleware, IotConsumer
 
 
@@ -513,33 +507,6 @@ def mocked_requests_get(*args, **kwargs):
         return MockResponse("error")
 
 
-def mocked_session_post(*args, **kwargs):
-    """天气信息的测试数据"""
-
-    class MockResponse:
-        def __init__(self, json_data, status_code):
-            self.json_data = json_data
-            self.status_code = status_code
-
-        def json(self):
-            return self.json_data
-
-    if (
-        args[0]
-        == f"http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish"
-    ):
-        json = kwargs["json"]
-        return MockResponse(
-            json_data={
-                "topic": json["topic"],
-                "clientid": json["clientid"],
-                "payload": json["payload"],
-                "qos": json["qos"],
-            },
-            status_code=200,
-        )
-
-
 class ApiTests(TestCase):
     """测试 API"""
 
@@ -556,125 +523,68 @@ class ApiTests(TestCase):
             mock_get.call_args_list,
         )
 
-    # @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-    # def test_set_status(self, mock_post):
-    #     device = DeviceAPI("1")
-    #     r = device.set_status("valve1", True)
+    @mock.patch("home.iot.api.channel_group_send")
+    def test_set_status(self, mock_send):
+        device = DeviceAPI("1")
+        r = device.set_status("valve1", True)
 
-    #     self.assertEqual(
-    #         r,
-    #         {
-    #             "topic": "device/1/set",
-    #             "clientid": "server",
-    #             "payload": '{"valve1": true}',
-    #             "qos": 1,
-    #         },
-    #     )
+        mock_send.assert_called_once_with(
+            "iot", {"type": "set_device", "pk": "1", "data": {"valve1": True}}
+        )
 
-    # @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-    # def test_set_multiple_status(self, mock_post):
-    #     device = DeviceAPI("1")
-    #     r = device.set_multiple_status([("valve1", True), ("valve2", False)])
+    @mock.patch("home.iot.api.channel_group_send")
+    def test_set_multiple_status(self, mock_send):
+        device = DeviceAPI("1")
+        r = device.set_multiple_status([("valve1", True), ("valve2", False)])
 
-    #     self.assertEqual(
-    #         r,
-    #         {
-    #             "topic": "device/1/set",
-    #             "clientid": "server",
-    #             "payload": '{"valve1": true, "valve2": false}',
-    #             "qos": 1,
-    #         },
-    #     )
+        mock_send.assert_called_once_with(
+            "iot",
+            {
+                "type": "set_device",
+                "pk": "1",
+                "data": {"valve1": True, "valve2": False},
+            },
+        )
 
 
-# class TaskTests(TestCase):
-#     fixtures = ["users", "push"]
+class TaskTests(TestCase):
+    fixtures = ["users", "push"]
 
-#     @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-#     def test_set_status(self, mock_post):
-#         set_status("1", "valve1", True)
+    @mock.patch("home.iot.api.channel_group_send")
+    @mock.patch("requests.get", side_effect=mocked_requests_get)
+    def test_autowatering(self, mock_get, mock_send):
+        """测试自动浇水"""
+        autowatering("101270102006", 10, "1", ["valve1"])
 
-#         self.assertIn(
-#             mock.call(
-#                 f"http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish",
-#                 json={
-#                     "topic": "device/1/set",
-#                     "clientid": "server",
-#                     "payload": '{"valve1": true}',
-#                     "qos": 1,
-#                 },
-#             ),
-#             mock_post.call_args_list,
-#         )
+        mock_get.assert_called_once_with(
+            "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
+        )
+        mock_send.assert_called_once_with(
+            "iot", {"type": "set_device", "pk": "1", "data": {"valve1": True}}
+        )
 
-#     @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-#     def test_set_multiple_status(self, mock_post):
-#         set_multiple_status("1", [("valve1", True), ("valve2", False)])
+    @mock.patch("home.iot.api.channel_group_send")
+    @mock.patch("requests.get", side_effect=mocked_requests_get)
+    def test_autowatering_do_not_need_water(self, mock_get, mock_send):
+        """测试不需要浇水的情况"""
+        autowatering("101270102006", 0, "1", ["valve1"])
 
-#         self.assertIn(
-#             mock.call(
-#                 f"http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish",
-#                 json={
-#                     "topic": "device/1/set",
-#                     "clientid": "server",
-#                     "payload": '{"valve1": true, "valve2": false}',
-#                     "qos": 1,
-#                 },
-#             ),
-#             mock_post.call_args_list,
-#         )
+        mock_get.assert_called_once_with(
+            "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
+        )
+        mock_send.assert_not_called()
 
-#     @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-#     @mock.patch("requests.get", side_effect=mocked_requests_get)
-#     def test_autowatering(self, mock_get, mock_post):
-#         """测试自动浇水"""
-#         autowatering("101270102006", 10, "1", ["valve1"])
+    @mock.patch("home.iot.api.channel_group_send")
+    @mock.patch("requests.get", side_effect=mocked_requests_get)
+    def test_autowatering_with_error(self, mock_get, mock_send):
+        """测试自动重试"""
+        with self.assertRaises(Exception):
+            autowatering("1", 0, "1", ["valve1"])
 
-#         self.assertIn(
-#             mock.call(
-#                 "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
-#             ),
-#             mock_get.call_args_list,
-#         )
-#         self.assertIn(
-#             mock.call(
-#                 f"http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish",
-#                 json={
-#                     "topic": "device/1/set",
-#                     "clientid": "server",
-#                     "payload": '{"valve1": true}',
-#                     "qos": 1,
-#                 },
-#             ),
-#             mock_post.call_args_list,
-#         )
-
-#     @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-#     @mock.patch("requests.get", side_effect=mocked_requests_get)
-#     def test_autowatering_do_not_need_water(self, mock_get, mock_post):
-#         """测试不需要浇水的情况"""
-#         autowatering("101270102006", 0, "1", ["valve1"])
-
-#         self.assertIn(
-#             mock.call(
-#                 "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
-#             ),
-#             mock_get.call_args_list,
-#         )
-#         self.assertEqual(mock_post.call_args_list, [])
-
-#     @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-#     @mock.patch("requests.get", side_effect=mocked_requests_get)
-#     def test_autowatering_with_error(self, mock_get, mock_post):
-#         """测试自动重试"""
-#         with self.assertRaises(TypeError):
-#             autowatering("1", 0, "1", ["valve1"])
-
-#         self.assertIn(
-#             mock.call("http://forecast.weather.com.cn/town/weather1dn/1.shtml"),
-#             mock_get.call_args_list,
-#         )
-#         self.assertEqual(mock_post.call_args_list, [])
+        mock_get.assert_called_once_with(
+            "http://forecast.weather.com.cn/town/weather1dn/1.shtml"
+        )
+        mock_send.assert_not_called()
 
 
 class CleanDatabaseTests(TestCase):

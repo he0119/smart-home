@@ -1,5 +1,5 @@
-from datetime import date, datetime, timedelta
-from typing import List, Optional, Tuple
+from datetime import datetime, timedelta
+from typing import List, Optional
 
 from celery import shared_task
 from django.db.models import Max, Min
@@ -9,25 +9,6 @@ from home.push.tasks import get_enable_reg_ids, push_to_users
 
 from .api import DeviceAPI, WeatherAPI
 from .models import AutowateringData, AutowateringDataDaily, Device
-
-
-@shared_task
-def set_status(device_id: str, key: str, value) -> None:
-    """设置设备参数"""
-    if key is not None and value is not None:
-        device_api = DeviceAPI(device_id)
-        device_api.set_status(key, value)
-
-
-@shared_task
-def set_multiple_status(device_id: str, status: List[Tuple]) -> None:
-    """设置设备参数
-
-    status 为参数名和值的元组列表 [('valve1', True), ('valve2', True)]
-    """
-    if status is not None:
-        device_api = DeviceAPI(device_id)
-        device_api.set_multiple_status(status)
 
 
 @shared_task(bind=True)
