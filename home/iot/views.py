@@ -5,8 +5,8 @@ from datetime import datetime
 from typing import cast
 
 import pytz
-from channels.db import database_sync_to_async
-from channels.generic.websocket import WebsocketConsumer
+from asgiref.sync import sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
 from django.utils import timezone
 
 from home.utils import channel_group_send
@@ -16,11 +16,10 @@ from .models import AutowateringData, Device
 logger = logging.getLogger("iot")
 
 
-@database_sync_to_async
-def get_device(username: str, password: str):
+async def get_device(username: str, password: str):
     """获取设备"""
     try:
-        device: Device = Device.objects.get(id=username)
+        device: Device = await sync_to_async(Device.objects.get)(id=username)
         if device.password == password:
             return device
     except Device.DoesNotExist:
@@ -41,7 +40,7 @@ class BasicAuthMiddleware:
         for header in scope["headers"]:
             if header[0] == b"authorization":
                 split = header[1].decode().strip().split(" ")
-                if len(split) == 2 or split[0].strip().lower() == "basic":
+                if len(split) == 2 and split[0].strip().lower() == "basic":
                     username, password = (
                         base64.b64decode(split[1]).decode().split(":", 1)
                     )
@@ -54,29 +53,29 @@ class BasicAuthMiddleware:
         return await self.app(scope, receive, send)
 
 
-class IotConsumer(WebsocketConsumer):
+class IotConsumer(AsyncWebsocketConsumer):
     groups = ["iot"]
 
-    def connect(self):
+    async def connect(self):
         if device := self.scope["device"]:
-            self.accept()
+            await self.accept()
             device = cast(Device, device)
             device.is_online = True
             device.online_at = timezone.now()
-            device.save()
-            channel_group_send(f"device.{device.pk}", {"type": "update"})
+            await sync_to_async(device.save)()
+            await self.channel_layer.group_send(f"device.{device.pk}", {"type": "update"})  # type: ignore
             logger.info(f"{device.name} 在线")
 
-    def disconnect(self, close_code):
+    async def disconnect(self, close_code):
         if device := self.scope["device"]:
             device = cast(Device, device)
             device.is_online = False
             device.offline_at = timezone.now()
-            device.save()
-            channel_group_send(f"device.{device.pk}", {"type": "update"})
+            await sync_to_async(device.save)()
+            await self.channel_layer.group_send(f"device.{device.pk}", {"type": "update"})  # type: ignore
             logger.info(f"{device.name} 离线")
 
-    def receive(self, text_data):
+    async def receive(self, text_data):
         event = json.loads(text_data)
         device: Device = self.scope["device"]
         if device.device_type == "autowatering":
@@ -95,15 +94,15 @@ class IotConsumer(WebsocketConsumer):
                 valve3_delay=event["data"]["valve3_delay"],
                 pump_delay=event["data"]["pump_delay"],
             )
-            autowatering_data.save()
-            channel_group_send(
+            await sync_to_async(autowatering_data.save)()
+            await self.channel_layer.group_send(  # type: ignore
                 f"autowatering_data.{device.pk}",
                 {"type": "update", "pk": autowatering_data.pk},
             )
             logger.debug(f"{device.name} {autowatering_data.time} 保存成功")
 
-    def set_device(self, event):
+    async def set_device(self, event):
         device_id = event["pk"]
         device: Device = self.scope["device"]
         if device.device_type == "autowatering" and device_id == device.pk:
-            self.send(text_data=json.dumps(event["data"]))
+            await self.send(text_data=json.dumps(event["data"]))
