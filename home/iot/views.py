@@ -2,6 +2,7 @@ import base64
 import json
 import logging
 from datetime import datetime
+from typing import cast
 
 import pytz
 from channels.db import database_sync_to_async
@@ -54,9 +55,12 @@ class BasicAuthMiddleware:
 
 
 class IotConsumer(WebsocketConsumer):
+    groups = ["iot"]
+
     def connect(self):
         if device := self.scope["device"]:
             self.accept()
+            device = cast(Device, device)
             device.is_online = True
             device.online_at = timezone.now()
             device.save()
@@ -65,6 +69,7 @@ class IotConsumer(WebsocketConsumer):
 
     def disconnect(self, close_code):
         if device := self.scope["device"]:
+            device = cast(Device, device)
             device.is_online = False
             device.offline_at = timezone.now()
             device.save()
@@ -96,3 +101,9 @@ class IotConsumer(WebsocketConsumer):
                 {"type": "update", "pk": autowatering_data.pk},
             )
             logger.debug(f"{device.name} {autowatering_data.time} 保存成功")
+
+    def set_device(self, event):
+        device_id = event["pk"]
+        device: Device = self.scope["device"]
+        if device.device_type == "autowatering" and device_id == device.pk:
+            self.send(text_data=json.dumps(event["data"]))
