@@ -25,7 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/xiaoai/", include("home.xiaoai.urls")),
     path(
-        "api/graphql/",
+        "graphql/",
         GraphQLView.as_view(
             schema=schema,
             subscriptions_enabled=True,
