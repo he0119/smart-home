@@ -17,7 +17,7 @@ logger = logging.getLogger("iot")
 async def get_device(username: str, password: str):
     """获取设备"""
     try:
-        device: Device = await sync_to_async(Device.objects.get)(id=username)
+        device: Device = await sync_to_async(Device.objects.get)(pk=username)
         if device.password == password:
             return device
     except Device.DoesNotExist:
@@ -37,13 +37,13 @@ class BasicAuthMiddleware:
     async def __call__(self, scope, receive, send):
         for header in scope["headers"]:
             if header[0] == b"authorization":
-                split = header[1].decode().strip().split(" ")
-                if len(split) == 2 and split[0].strip().lower() == "basic":
+                try:
+                    split = header[1].decode().strip().split(" ")
                     username, password = (
                         base64.b64decode(split[1]).decode().split(":", 1)
                     )
                     scope["device"] = await get_device(username, password)
-                else:
+                except:
                     scope["device"] = None
 
                 break

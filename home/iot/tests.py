@@ -458,7 +458,15 @@ class WebSocketsTests(TestCase):
 
     async def test_client_connected_wrong_password(self):
         """测试客户端连接，但设备密码错误"""
-        communicator = get_iot_client(Device(pk=1, password=""))
+        communicator = get_iot_client(Device(pk=1, password="123456"))
+
+        # 在线
+        with self.assertRaises(asyncio.exceptions.TimeoutError):
+            connected, subprotocol = await communicator.connect()
+
+    async def test_client_connected_wrong_headers(self):
+        """测试客户端连接，但 headers 错误"""
+        communicator = get_iot_client()
 
         # 在线
         with self.assertRaises(asyncio.exceptions.TimeoutError):
