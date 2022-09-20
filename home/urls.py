@@ -23,9 +23,9 @@ from home.schema import schema
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("xiaoai/", include("home.xiaoai.urls")),
+    path("api/xiaoai/", include("home.xiaoai.urls")),
     path(
-        "graphql/",
+        "api/graphql/",
         GraphQLView.as_view(
             schema=schema,
             subscriptions_enabled=True,
