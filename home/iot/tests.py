@@ -456,6 +456,14 @@ class WebSocketsTests(TestCase):
         with self.assertRaises(asyncio.exceptions.TimeoutError):
             connected, subprotocol = await communicator.connect()
 
+    async def test_client_connected_wrong_password(self):
+        """测试客户端连接，但设备密码错误"""
+        communicator = get_iot_client(Device(pk=1, password=""))
+
+        # 在线
+        with self.assertRaises(asyncio.exceptions.TimeoutError):
+            connected, subprotocol = await communicator.connect()
+
     async def test_message_publish(self):
         """测试上报数据"""
         communicator = get_iot_client(self.device)
@@ -489,6 +497,23 @@ class WebSocketsTests(TestCase):
         autowatering_data = cast(AutowateringData, autowatering_data)
         self.assertEqual(autowatering_data.temperature, 4.0)
         self.assertEqual(autowatering_data.wifi_signal, -43)
+
+    async def test_set_device(self):
+        """测试设置设备状态"""
+        communicator = get_iot_client(self.device)
+
+        # 在线
+        connected, subprotocol = await communicator.connect()
+        assert connected
+
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send(  # type: ignore
+            "iot", {"type": "set_device", "pk": 1, "data": {"valve1": True}}
+        )
+
+        response = await communicator.receive_json_from()
+
+        self.assertEqual(response, {"valve1": True})
 
 
 def mocked_requests_get(*args, **kwargs):

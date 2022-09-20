@@ -9,8 +9,6 @@ from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.utils import timezone
 
-from home.utils import channel_group_send
-
 from .models import AutowateringData, Device
 
 logger = logging.getLogger("iot")
