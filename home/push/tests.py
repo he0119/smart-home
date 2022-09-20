@@ -352,7 +352,7 @@ class TaskTests(TestCase):
     fixtures = ["users", "push"]
 
     @mock.patch.object(sender, "send", side_effect=mocked_sender_send)
-    def test_set_status(self, mock_send):
+    def test_push_to_users(self, mock_send):
         push_to_users(["1"], "title", "description", "/iot")
 
         self.assertTrue(mock_send.call_args_list)

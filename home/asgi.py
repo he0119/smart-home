@@ -19,15 +19,17 @@ django_asgi_app = get_asgi_application()
 # Import your Strawberry schema after creating the django ASGI application
 # This ensures django.setup() has been called before any ORM models are imported
 # for the schema.
+from home.iot.views import BasicAuthMiddleware, IotConsumer
 from home.schema import schema
 
 websocket_urlpatterns = [
-    path(r"graphql/", GraphQLWSConsumer.as_asgi(schema=schema)),  # type: ignore
+    path(r"graphql/", AuthMiddlewareStack(GraphQLWSConsumer.as_asgi(schema=schema))),  # type: ignore
+    path(r"iot/", BasicAuthMiddleware(IotConsumer.as_asgi())),  # type: ignore
 ]
 
 application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
-        "websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
+        "websocket": URLRouter(websocket_urlpatterns),
     }
 )

@@ -57,13 +57,6 @@ ADMINS = [
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
-# EMQX HTTP
-# https://docs.emqx.io/broker/latest/cn/advanced/http-api.html
-
-EMQX_HTTP_HOST = os.getenv("EMQX_HTTP_HOST")
-EMQX_HTTP_PORT = os.getenv("EMQX_HTTP_PORT")
-EMQX_HTTP_APPID = os.getenv("EMQX_HTTP_APPID")
-EMQX_HTTP_APPSECRET = os.getenv("EMQX_HTTP_APPSECRET")
 
 # 小米小爱
 # https://developers.xiaoai.mi.com/documents/Home?type=/api/doc/render_markdown/SkillAccess/SkillDocument/CustomSkills/Signature

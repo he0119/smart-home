@@ -13,8 +13,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      emqx:
-        condition: service_healthy
       redis:
         condition: service_healthy
   celery:
@@ -29,8 +27,6 @@ services:
       - ./.env
     depends_on:
       postgres:
-        condition: service_healthy
-      emqx:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -57,23 +53,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  emqx:
-    image: emqx/emqx:v4.1.2-alpine-amd64
-    container_name: emqx
-    restart: always
-    ports:
-      - "1883:1883"
-    env_file:
-      - ./docker/emqx/configuration.env
-      - ./.env
-    healthcheck:
-      test: "netstat -an | grep 1883 > /dev/null; if [ 0 != $$? ]; then exit 1; fi;"
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    depends_on:
-      postgres:
-        condition: service_healthy
 networks:
   default:
     external:

@@ -229,14 +229,6 @@ CELERY_RESULT_SERIALIZER = "json"
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-# EMQX HTTP
-# https://docs.emqx.io/broker/latest/cn/advanced/http-api.html
-
-EMQX_HTTP_HOST = "localhost"
-EMQX_HTTP_PORT = "8081"
-EMQX_HTTP_APPID = "admin"
-EMQX_HTTP_APPSECRET = "public"
-
 # 小米小爱
 # https://developers.xiaoai.mi.com/documents/Home?type=/api/doc/render_markdown/SkillAccess/SkillDocument/CustomSkills/Signature
 

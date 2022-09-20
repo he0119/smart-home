@@ -1,5 +1,6 @@
 import hashlib
 from distutils.util import strtobool
+from enum import Enum
 from typing import AsyncGenerator, Optional
 
 from asgiref.sync import sync_to_async
@@ -11,8 +12,8 @@ from strawberry_django_plus.gql import relay
 from home.utils import IsAuthenticated, channel_group_send
 
 from . import models, types
+from .api import DeviceAPI
 from .models import AutowateringData, Device
-from .tasks import set_status
 
 
 @gql.type
@@ -30,6 +31,14 @@ def sha256(s: str) -> str:
     m = hashlib.sha256()
     m.update(s.encode("utf8"))
     return m.hexdigest()
+
+
+@gql.enum
+class ValueType(Enum):
+    BOOLEAN = "boolean"
+    FLOAT = "float"
+    INTEGER = "integer"
+    STRING = "string"
 
 
 @gql.type
@@ -102,7 +111,7 @@ class Mutation:
         id: relay.GlobalID,
         key: str,
         value: str,
-        value_type: str,
+        value_type: ValueType,
     ) -> types.Device:
         device: models.Device = id.resolve_node(info)  # type: ignore
 
@@ -110,16 +119,15 @@ class Mutation:
             raise ValidationError("设备不存在")
 
         # 转换 value 的类型
-        if value_type == "bool":
+        if value_type == ValueType.BOOLEAN:
             value = strtobool(value)  # type: ignore
-        elif value_type == "float":
+        elif value_type == ValueType.FLOAT:
             value = float(value)  # type: ignore
-        elif value_type == "int":
+        elif value_type == ValueType.INTEGER:
             value = int(value)  # type: ignore
-        elif value_type == "str":
-            pass
 
-        set_status.delay(device.name, key, value)
+        device_api = DeviceAPI(device.pk)
+        device_api.set_status(key, value)
 
         return device  # type: ignore
 

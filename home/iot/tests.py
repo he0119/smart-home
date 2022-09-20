@@ -1,16 +1,19 @@
-import json
+import asyncio
+import base64
 import os
 from datetime import date, timedelta
-from typing import cast
+from typing import Optional, cast
 from unittest import mock
 
+from asgiref.sync import sync_to_async
 from channels.layers import get_channel_layer
+from channels.routing import URLRouter
+from channels.testing import WebsocketCommunicator
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from django.urls import reverse
+from django.urls import path
 from django.utils import timezone
-from requests import sessions
 from strawberry.subscriptions import GRAPHQL_WS_PROTOCOL
 from strawberry.subscriptions.protocols.graphql_ws import (
     GQL_CONNECTION_ACK,
@@ -25,12 +28,8 @@ from home.utils import GraphQLTestCase, get_ws_client
 from . import types
 from .api import DeviceAPI, WeatherAPI
 from .models import AutowateringData, AutowateringDataDaily, Device
-from .tasks import (
-    autowatering,
-    clean_autowatering_database,
-    set_multiple_status,
-    set_status,
-)
+from .tasks import autowatering, clean_autowatering_database
+from .views import BasicAuthMiddleware, IotConsumer
 
 
 class ModelTests(TestCase):
@@ -315,11 +314,11 @@ class DeviceTests(GraphQLTestCase):
                 "id": relay.to_base64(types.Device, "1"),
                 "key": "valve1",
                 "value": "1",
-                "valueType": "bool",
+                "valueType": "BOOLEAN",
             }
         }
 
-        for value_type in ["bool", "float", "int", "str"]:
+        for value_type in ["BOOLEAN", "FLOAT", "INTEGER", "STRING"]:
             variables["input"]["valueType"] = value_type
 
             content = self.client.execute(mutation, variables)
@@ -347,7 +346,7 @@ class DeviceTests(GraphQLTestCase):
                 "id": relay.to_base64(types.Device, "0"),
                 "key": "valve1",
                 "value": "1",
-                "valueType": "bool",
+                "valueType": "BOOLEAN",
             }
         }
 
@@ -402,162 +401,127 @@ class DeviceTests(GraphQLTestCase):
         self.assertEqual(set(data), {1.0})
 
 
-class WebHookTests(TestCase):
+def get_iot_client(device: Optional[Device] = None) -> WebsocketCommunicator:
+    """获取物联网 WebSocket 客户端"""
+    application = URLRouter(
+        [
+            path("iot/", BasicAuthMiddleware(IotConsumer.as_asgi())),  # type: ignore
+        ]
+    )
+    authorization = b""
+    if device:
+        authorization = base64.b64encode(f"{device.pk}:{device.password}".encode())
+    communicator = WebsocketCommunicator(
+        application,
+        "/iot/",
+        headers=[
+            (
+                b"authorization",
+                b"Basic " + authorization,
+            )
+        ],
+    )
+
+    return communicator
+
+
+class WebSocketsTests(TestCase):
     fixtures = ["users", "iot"]
 
-    def test_webhook_get(self):
-        """测试上报地址是否正常运行"""
-        response = self.client.get(reverse("iot:iot"))
+    def setUp(self) -> None:
+        self.device = Device.objects.get(pk=1)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"iot": "working"})
-
-    def test_unknown_event(self):
-        """测试未知的事件"""
-        webhook_data = {
-            "username": "admin",
-            "proto_ver": 4,
-            "keepalive": 15,
-            "ipaddress": "221.10.55.132",
-            "connected_at": 1607658682703,
-            "clientid": "1",
-            "action": "unknown",
-        }
-        response = self.client.post(
-            reverse("iot:iot"),
-            data=json.dumps(webhook_data),
-            content_type="application/json",
-        )
-
-        self.assertEqual(response.status_code, 200)
-
-    def test_client_connected(self):
+    async def test_client_connected_disconnected(self):
         """测试客户端连接"""
-        webhook_data = {
-            "username": "test",
-            "proto_ver": 4,
-            "keepalive": 15,
-            "ipaddress": "221.10.55.132",
-            "connected_at": 1607658682703,
-            "clientid": "test",
-            "action": "client_connected",
-        }
-        response = self.client.post(
-            reverse("iot:iot"),
-            data=json.dumps(webhook_data),
-            content_type="application/json",
-        )
+        communicator = get_iot_client(self.device)
 
-        self.assertEqual(response.status_code, 200)
+        # 在线
+        connected, subprotocol = await communicator.connect()
+        assert connected
 
-        device = Device.objects.get(name="test")
+        device = await sync_to_async(Device.objects.get)(pk=1)
         self.assertEqual(device.is_online, True)
 
-    def test_client_connected_not_exist(self):
-        """测试客户端连接，但设备不存在"""
-        webhook_data = {
-            "username": "test0",
-            "proto_ver": 4,
-            "keepalive": 15,
-            "ipaddress": "221.10.55.132",
-            "connected_at": 1607658682703,
-            "clientid": "test0",
-            "action": "client_connected",
-        }
-        response = self.client.post(
-            reverse("iot:iot"),
-            data=json.dumps(webhook_data),
-            content_type="application/json",
-        )
+        # 离线
+        await communicator.disconnect()
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"iot": "working"})
-
-    def test_client_disconnected(self):
-        """测试客户端断开连接"""
-        webhook_data = {
-            "username": "test",
-            "reason": "keepalive_timeout",
-            "clientid": "test",
-            "action": "client_disconnected",
-        }
-        response = self.client.post(
-            reverse("iot:iot"),
-            data=json.dumps(webhook_data),
-            content_type="application/json",
-        )
-
-        self.assertEqual(response.status_code, 200)
-
-        device = Device.objects.get(name="test")
+        device = await sync_to_async(Device.objects.get)(pk=1)
         self.assertEqual(device.is_online, False)
 
-    def test_client_disconnected_not_exist(self):
-        """测试客户端断开连接，但设备不存在"""
-        webhook_data = {
-            "username": "test0",
-            "reason": "keepalive_timeout",
-            "clientid": "test0",
-            "action": "client_disconnected",
-        }
-        response = self.client.post(
-            reverse("iot:iot"),
-            data=json.dumps(webhook_data),
-            content_type="application/json",
-        )
+    async def test_client_connected_not_exist(self):
+        """测试客户端连接，但设备不存在"""
+        communicator = get_iot_client(Device(pk=0, password=""))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"iot": "working"})
+        # 在线
+        with self.assertRaises(asyncio.exceptions.TimeoutError):
+            connected, subprotocol = await communicator.connect()
 
-    def test_message_publish(self):
+    async def test_client_connected_wrong_password(self):
+        """测试客户端连接，但设备密码错误"""
+        communicator = get_iot_client(Device(pk=1, password="123456"))
+
+        # 在线
+        with self.assertRaises(asyncio.exceptions.TimeoutError):
+            connected, subprotocol = await communicator.connect()
+
+    async def test_client_connected_wrong_headers(self):
+        """测试客户端连接，但 headers 错误"""
+        communicator = get_iot_client()
+
+        # 在线
+        with self.assertRaises(asyncio.exceptions.TimeoutError):
+            connected, subprotocol = await communicator.connect()
+
+    async def test_message_publish(self):
         """测试上报数据"""
-        webhook_data = {
-            "ts": 1607658685693,
-            "topic": "device/test/status",
-            "retain": False,
-            "qos": 0,
-            "payload": '{"timestamp":1607658685,"data":{"temperature":4.0,"humidity":0,"valve1":false,"valve2":false,"valve3":false,"pump":false,"valve1_delay":60,"valve2_delay":60,"valve3_delay":60,"pump_delay":60,"wifi_signal":-43}}',
-            "from_username": "test",
-            "from_client_id": "test",
-            "action": "message_publish",
-        }
-        response = self.client.post(
-            reverse("iot:iot"),
-            data=json.dumps(webhook_data),
-            content_type="application/json",
+        communicator = get_iot_client(self.device)
+
+        # 在线
+        connected, subprotocol = await communicator.connect()
+        assert connected
+
+        await communicator.send_json_to(
+            {
+                "timestamp": 1607658685,
+                "data": {
+                    "temperature": 4.0,
+                    "humidity": 0,
+                    "valve1": False,
+                    "valve2": False,
+                    "valve3": False,
+                    "pump": False,
+                    "valve1_delay": 60,
+                    "valve2_delay": 60,
+                    "valve3_delay": 60,
+                    "pump_delay": 60,
+                    "wifi_signal": -43,
+                },
+            }
         )
+        with self.assertRaises(asyncio.exceptions.TimeoutError):
+            response = await communicator.receive_from(1)
 
-        self.assertEqual(response.status_code, 200)
-
-        autowatering_data = AutowateringData.objects.last()
+        autowatering_data = await sync_to_async(AutowateringData.objects.last)()
         autowatering_data = cast(AutowateringData, autowatering_data)
         self.assertEqual(autowatering_data.temperature, 4.0)
         self.assertEqual(autowatering_data.wifi_signal, -43)
 
-    def test_message_publish_not_exist(self):
-        """测试上报数据，但设备不存在"""
-        webhook_data = {
-            "ts": 1607658685693,
-            "topic": "device/test0/status",
-            "retain": False,
-            "qos": 0,
-            "payload": '{"timestamp":1607658685,"data":{"temperature":4.0,"humidity":0,"valve1":false,"valve2":false,"valve3":false,"pump":false,"valve1_delay":60,"valve2_delay":60,"valve3_delay":60,"pump_delay":60,"wifi_signal":-43}}',
-            "from_username": "test0",
-            "from_client_id": "test0",
-            "action": "message_publish",
-        }
-        response = self.client.post(
-            reverse("iot:iot"),
-            data=json.dumps(webhook_data),
-            content_type="application/json",
+    async def test_set_device(self):
+        """测试设置设备状态"""
+        communicator = get_iot_client(self.device)
+
+        # 在线
+        connected, subprotocol = await communicator.connect()
+        assert connected
+
+        channel_layer = get_channel_layer()
+        await channel_layer.group_send(  # type: ignore
+            "iot", {"type": "set_device", "pk": 1, "data": {"valve1": True}}
         )
 
-        self.assertEqual(response.status_code, 200)
+        response = await communicator.receive_json_from()
 
-        autowatering_data = AutowateringData.objects.last()
-        autowatering_data = cast(AutowateringData, autowatering_data)
-        self.assertEqual(autowatering_data.pk, 3)
-        self.assertEqual(response.json(), {"iot": "working"})
+        self.assertEqual(response, {"valve1": True})
 
 
 def mocked_requests_get(*args, **kwargs):
@@ -576,33 +540,6 @@ def mocked_requests_get(*args, **kwargs):
         return MockResponse("error")
 
 
-def mocked_session_post(*args, **kwargs):
-    """天气信息的测试数据"""
-
-    class MockResponse:
-        def __init__(self, json_data, status_code):
-            self.json_data = json_data
-            self.status_code = status_code
-
-        def json(self):
-            return self.json_data
-
-    if (
-        args[0]
-        == f"http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish"
-    ):
-        json = kwargs["json"]
-        return MockResponse(
-            json_data={
-                "topic": json["topic"],
-                "clientid": json["clientid"],
-                "payload": json["payload"],
-                "qos": json["qos"],
-            },
-            status_code=200,
-        )
-
-
 class ApiTests(TestCase):
     """测试 API"""
 
@@ -619,33 +556,26 @@ class ApiTests(TestCase):
             mock_get.call_args_list,
         )
 
-    @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-    def test_set_status(self, mock_post):
+    @mock.patch("home.iot.api.channel_group_send")
+    def test_set_status(self, mock_send):
         device = DeviceAPI("1")
         r = device.set_status("valve1", True)
 
-        self.assertEqual(
-            r,
-            {
-                "topic": "device/1/set",
-                "clientid": "server",
-                "payload": '{"valve1": true}',
-                "qos": 1,
-            },
+        mock_send.assert_called_once_with(
+            "iot", {"type": "set_device", "pk": "1", "data": {"valve1": True}}
         )
 
-    @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-    def test_set_multiple_status(self, mock_post):
+    @mock.patch("home.iot.api.channel_group_send")
+    def test_set_multiple_status(self, mock_send):
         device = DeviceAPI("1")
         r = device.set_multiple_status([("valve1", True), ("valve2", False)])
 
-        self.assertEqual(
-            r,
+        mock_send.assert_called_once_with(
+            "iot",
             {
-                "topic": "device/1/set",
-                "clientid": "server",
-                "payload": '{"valve1": true, "valve2": false}',
-                "qos": 1,
+                "type": "set_device",
+                "pk": "1",
+                "data": {"valve1": True, "valve2": False},
             },
         )
 
@@ -653,91 +583,41 @@ class ApiTests(TestCase):
 class TaskTests(TestCase):
     fixtures = ["users", "push"]
 
-    @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-    def test_set_status(self, mock_post):
-        set_status("1", "valve1", True)
-
-        self.assertIn(
-            mock.call(
-                f"http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish",
-                json={
-                    "topic": "device/1/set",
-                    "clientid": "server",
-                    "payload": '{"valve1": true}',
-                    "qos": 1,
-                },
-            ),
-            mock_post.call_args_list,
-        )
-
-    @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
-    def test_set_multiple_status(self, mock_post):
-        set_multiple_status("1", [("valve1", True), ("valve2", False)])
-
-        self.assertIn(
-            mock.call(
-                f"http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish",
-                json={
-                    "topic": "device/1/set",
-                    "clientid": "server",
-                    "payload": '{"valve1": true, "valve2": false}',
-                    "qos": 1,
-                },
-            ),
-            mock_post.call_args_list,
-        )
-
-    @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
+    @mock.patch("home.iot.api.channel_group_send")
     @mock.patch("requests.get", side_effect=mocked_requests_get)
-    def test_autowatering(self, mock_get, mock_post):
+    def test_autowatering(self, mock_get, mock_send):
         """测试自动浇水"""
         autowatering("101270102006", 10, "1", ["valve1"])
 
-        self.assertIn(
-            mock.call(
-                "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
-            ),
-            mock_get.call_args_list,
+        mock_get.assert_called_once_with(
+            "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
         )
-        self.assertIn(
-            mock.call(
-                f"http://{settings.EMQX_HTTP_HOST}:{settings.EMQX_HTTP_PORT}/api/v4/mqtt/publish",
-                json={
-                    "topic": "device/1/set",
-                    "clientid": "server",
-                    "payload": '{"valve1": true}',
-                    "qos": 1,
-                },
-            ),
-            mock_post.call_args_list,
+        mock_send.assert_called_once_with(
+            "iot", {"type": "set_device", "pk": "1", "data": {"valve1": True}}
         )
 
-    @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
+    @mock.patch("home.iot.api.channel_group_send")
     @mock.patch("requests.get", side_effect=mocked_requests_get)
-    def test_autowatering_do_not_need_water(self, mock_get, mock_post):
+    def test_autowatering_do_not_need_water(self, mock_get, mock_send):
         """测试不需要浇水的情况"""
         autowatering("101270102006", 0, "1", ["valve1"])
 
-        self.assertIn(
-            mock.call(
-                "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
-            ),
-            mock_get.call_args_list,
+        mock_get.assert_called_once_with(
+            "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
         )
-        self.assertEqual(mock_post.call_args_list, [])
+        mock_send.assert_not_called()
 
-    @mock.patch.object(sessions.Session, "post", side_effect=mocked_session_post)
+    @mock.patch("home.iot.api.channel_group_send")
     @mock.patch("requests.get", side_effect=mocked_requests_get)
-    def test_autowatering_with_error(self, mock_get, mock_post):
+    def test_autowatering_with_error(self, mock_get, mock_send):
         """测试自动重试"""
-        with self.assertRaises(TypeError):
+        with self.assertRaises(Exception):
             autowatering("1", 0, "1", ["valve1"])
 
-        self.assertIn(
-            mock.call("http://forecast.weather.com.cn/town/weather1dn/1.shtml"),
-            mock_get.call_args_list,
+        mock_get.assert_called_once_with(
+            "http://forecast.weather.com.cn/town/weather1dn/1.shtml"
         )
-        self.assertEqual(mock_post.call_args_list, [])
+        mock_send.assert_not_called()
 
 
 class CleanDatabaseTests(TestCase):
