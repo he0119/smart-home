@@ -60,7 +60,7 @@ class IotConsumer(AsyncWebsocketConsumer):
             device = cast(Device, device)
             device.is_online = True
             device.online_at = timezone.now()
-            await sync_to_async(device.save)()
+            await sync_to_async(device.save)(update_fields=["is_online", "offline_at"])
             await self.channel_layer.group_send(f"device.{device.pk}", {"type": "update"})  # type: ignore
             logger.info(f"{device.name} 在线")
 
@@ -69,7 +69,7 @@ class IotConsumer(AsyncWebsocketConsumer):
             device = cast(Device, device)
             device.is_online = False
             device.offline_at = timezone.now()
-            await sync_to_async(device.save)()
+            await sync_to_async(device.save)(update_fields=["is_online", "offline_at"])
             await self.channel_layer.group_send(f"device.{device.pk}", {"type": "update"})  # type: ignore
             logger.info(f"{device.name} 离线")
 
