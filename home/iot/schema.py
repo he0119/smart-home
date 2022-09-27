@@ -5,6 +5,7 @@ from typing import AsyncGenerator, Optional
 
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
+from django.utils.crypto import get_random_string
 from strawberry.types import Info
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
@@ -27,12 +28,6 @@ class Query:
     )
 
 
-def sha256(s: str) -> str:
-    m = hashlib.sha256()
-    m.update(s.encode("utf8"))
-    return m.hexdigest()
-
-
 @gql.enum
 class ValueType(Enum):
     BOOLEAN = "boolean"
@@ -50,14 +45,13 @@ class Mutation:
         name: str,
         device_type: str,
         location: str,
-        password: str,
     ) -> types.Device:
         device = Device(
             name=name,
             device_type=device_type,
             location=location,
             is_online=False,
-            password=sha256(password),
+            password=get_random_string(16),
         )
         device.save()
 
@@ -71,7 +65,6 @@ class Mutation:
         name: Optional[str],
         device_type: Optional[str],
         location: Optional[str],
-        password: Optional[str],
     ) -> types.Device:
         device: models.Device = id.resolve_node(info)  # type: ignore
 
@@ -85,8 +78,6 @@ class Mutation:
             device.device_type = device_type
         if location is not None:
             device.location = location
-        if password is not None:
-            device.password = sha256(password)
 
         device.save()
         channel_group_send(f"device.{device.pk}", {"type": "update"})
