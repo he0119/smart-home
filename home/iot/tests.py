@@ -81,7 +81,7 @@ class DeviceTests(GraphQLTestCase):
             }
         """
         variables = {
-            "id": relay.to_base64(types.Device, test_device.id),
+            "id": relay.to_base64(types.Device, test_device.pk),
         }
 
         content = self.client.execute(query, variables)
@@ -163,7 +163,6 @@ class DeviceTests(GraphQLTestCase):
                 "name": "test2",
                 "deviceType": "sometype",
                 "location": "somelocation",
-                "password": "public",
             }
         }
 
@@ -174,10 +173,7 @@ class DeviceTests(GraphQLTestCase):
         self.assertEqual(device["name"], "test2")
         self.assertEqual(device["deviceType"], "sometype")
         self.assertEqual(device["location"], "somelocation")
-        self.assertEqual(
-            device["password"],
-            "efa1f375d76194fa51a3556a97e641e61685f914d446979da50a551a4333ffd7",
-        )
+        self.assertEqual(len(device["password"]), 16)
 
     def test_delete_device(self):
         """测试删除设备"""
@@ -191,7 +187,7 @@ class DeviceTests(GraphQLTestCase):
 
         test_device = Device.objects.get(name="test")
         variables = {
-            "input": {"deviceId": relay.to_base64(types.Device, test_device.id)}
+            "input": {"deviceId": relay.to_base64(types.Device, test_device.pk)}
         }
 
         # 确认自动浇水有数据
@@ -248,7 +244,6 @@ class DeviceTests(GraphQLTestCase):
                 "name": "newtest",
                 "deviceType": "newdevicetype",
                 "location": "newlocation",
-                "password": "mqtt",
             }
         }
 
@@ -263,10 +258,6 @@ class DeviceTests(GraphQLTestCase):
         self.assertEqual(device["name"], "newtest")
         self.assertEqual(device["deviceType"], "newdevicetype")
         self.assertEqual(device["location"], "newlocation")
-        self.assertEqual(
-            device["password"],
-            "046adb88a188465c6ba56443392821e60e97d3806445ba0e9daea6fb7a94271e",
-        )
 
     def test_update_device_not_exist(self):
         """测试更新不存在的设备"""
