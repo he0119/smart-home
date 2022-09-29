@@ -4,12 +4,12 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from mptt.models import MPTTModel, TreeForeignKey
+from tree_queries.models import TreeNode
 
 
-class Storage(MPTTModel):
+class Storage(TreeNode):
     name = models.CharField("名字", max_length=200, unique=True)
-    parent = TreeForeignKey(
+    parent = models.ForeignKey(
         "self",
         verbose_name="属于",
         related_name="children",
@@ -21,7 +21,7 @@ class Storage(MPTTModel):
 
     @property
     def ancestors(self):
-        return self.get_ancestors()
+        return self.__class__._default_manager.ancestors(self)  # type: ignore
 
     class Meta:
         verbose_name = "位置"

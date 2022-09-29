@@ -87,7 +87,7 @@ class StorageTests(GraphQLTestCase):
                 }
             }
         """
-        variables = {"id": relay.to_base64(types.Storage, storage.id)}
+        variables = {"id": relay.to_base64(types.Storage, storage.pk)}
 
         content = self.client.execute(query, variables)
 
@@ -132,7 +132,7 @@ class StorageTests(GraphQLTestCase):
                 }
             }
         """
-        variables = {"id": relay.to_base64(types.Storage, storage.id)}
+        variables = {"id": relay.to_base64(types.Storage, storage.pk)}
 
         content = self.client.execute(query, variables)
 
@@ -163,7 +163,7 @@ class StorageTests(GraphQLTestCase):
         """测试获取根节点"""
         query = """
             query storages {
-                storages(filters: {level: {exact: 0}}) {
+                storages(filters: {level: 0}) {
                     edges {
                         node {
                             id
@@ -197,7 +197,7 @@ class StorageTests(GraphQLTestCase):
             }
         """
         storage = Storage.objects.get(name="工具箱")
-        variables = {"id": relay.to_base64(types.Storage, storage.id)}
+        variables = {"id": relay.to_base64(types.Storage, storage.pk)}
 
         content = self.client.execute(query, variables)
 
@@ -282,7 +282,7 @@ class StorageTests(GraphQLTestCase):
         toolbox = Storage.objects.get(name="工具箱")
         variables = {
             "input": {
-                "storageId": relay.to_base64(types.Storage, toolbox.id),
+                "storageId": relay.to_base64(types.Storage, toolbox.pk),
             }
         }
 
@@ -523,7 +523,7 @@ class ItemTests(GraphQLTestCase):
             }
         """
         variables = {
-            "id": relay.to_base64(types.Item, umbrella.id),
+            "id": relay.to_base64(types.Item, umbrella.pk),
         }
 
         content = self.client.execute(query, variables)
@@ -559,7 +559,7 @@ class ItemTests(GraphQLTestCase):
             }
         """
         variables = {
-            "id": relay.to_base64(types.Item, umbrella.id),
+            "id": relay.to_base64(types.Item, umbrella.pk),
         }
 
         content = self.client.execute(query, variables)
@@ -730,7 +730,7 @@ class ItemTests(GraphQLTestCase):
 
         umbrella = Item.objects.get(name="雨伞")
         variables = {
-            "input": {"itemId": relay.to_base64(types.Item, umbrella.id)},
+            "input": {"itemId": relay.to_base64(types.Item, umbrella.pk)},
         }
 
         content = self.client.execute(mutation, variables)
@@ -749,7 +749,7 @@ class ItemTests(GraphQLTestCase):
 
         umbrella = Item.objects.get(name="雨伞")
         variables = {
-            "input": {"itemId": relay.to_base64(types.Item, umbrella.id)},
+            "input": {"itemId": relay.to_base64(types.Item, umbrella.pk)},
         }
 
         content = self.client.execute(mutation, variables)
@@ -1433,7 +1433,7 @@ class PictureTests(GraphQLTestCase):
             }
         """
         variables = {
-            "id": relay.to_base64(types.Item, umbrella.id),
+            "id": relay.to_base64(types.Item, umbrella.pk),
         }
 
         content = self.client.execute(query, variables)
@@ -1537,7 +1537,7 @@ class PictureTests(GraphQLTestCase):
 
         picture = Picture.objects.get(pk=1)
         variables = {
-            "input": {"pictureId": relay.to_base64(types.Picture, picture.id)},
+            "input": {"pictureId": relay.to_base64(types.Picture, picture.pk)},
         }
 
         content = self.client.execute(mutation, variables)

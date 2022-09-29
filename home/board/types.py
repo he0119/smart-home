@@ -19,7 +19,15 @@ class CommentOrder:
 @gql.django.filters.filter(model=models.Comment, lookups=True)
 class CommentFilter:
     topic: "TopicFilter"
-    level: auto
+    level: int
+
+    def filter_level(self, queryset):
+        if self.level is None:
+            return queryset
+        return queryset.with_tree_fields().extra(
+            where=["__tree.tree_depth = %s"],
+            params=[self.level],
+        )
 
 
 @gql.django.ordering.order(models.Topic)

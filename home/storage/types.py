@@ -45,7 +45,15 @@ class ItemFilter:
 class StorageFilter:
     name: auto
     description: auto
-    level: auto
+    level: int
+
+    def filter_level(self, queryset):
+        if self.level is None:
+            return queryset
+        return queryset.with_tree_fields().extra(
+            where=["__tree.tree_depth = %s"],
+            params=[self.level],
+        )
 
 
 @gql.django.filters.filter(models.Picture, lookups=True)

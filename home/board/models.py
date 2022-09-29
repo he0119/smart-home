@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-from mptt.models import MPTTModel, TreeForeignKey
+from tree_queries.models import TreeNode
 
 
 class Topic(models.Model):
@@ -28,7 +28,7 @@ class Topic(models.Model):
         return self.title
 
 
-class Comment(MPTTModel):
+class Comment(TreeNode):
     """评论"""
 
     class Meta:
@@ -47,7 +47,7 @@ class Comment(MPTTModel):
     body = models.TextField("内容")
     created_at = models.DateTimeField("发布时间", auto_now_add=True)
     edited_at = models.DateTimeField("修改时间", auto_now=True)
-    parent = TreeForeignKey(
+    parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
         null=True,

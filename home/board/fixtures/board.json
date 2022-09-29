@@ -51,11 +51,7 @@
       "created_at": "2020-07-11T00:00:00.00Z",
       "edited_at": "2020-07-11T00:00:00.00Z",
       "parent": null,
-      "reply_to": null,
-      "lft": 1,
-      "rght": 4,
-      "tree_id": 1,
-      "level": 0
+      "reply_to": null
     }
   },
   {
@@ -68,11 +64,7 @@
       "created_at": "2020-07-11T01:00:00.00Z",
       "edited_at": "2020-07-11T01:00:00.00Z",
       "parent": null,
-      "reply_to": null,
-      "lft": 1,
-      "rght": 2,
-      "tree_id": 2,
-      "level": 0
+      "reply_to": null
     }
   },
   {
@@ -85,11 +77,7 @@
       "created_at": "2020-07-11T02:00:00.00Z",
       "edited_at": "2020-07-11T02:00:00.00Z",
       "parent": 1,
-      "reply_to": 1,
-      "lft": 2,
-      "rght": 3,
-      "tree_id": 1,
-      "level": 1
+      "reply_to": 1
     }
   },
   {
@@ -102,11 +90,7 @@
       "created_at": "2020-07-11T03:00:00.00Z",
       "edited_at": "2020-07-11T03:00:00.00Z",
       "parent": null,
-      "reply_to": null,
-      "lft": 1,
-      "rght": 2,
-      "tree_id": 3,
-      "level": 0
+      "reply_to": null
     }
   }
 ]
