@@ -71,17 +71,3 @@ class AutowateringDataDaily(models.Model):
 
     def __str__(self):
         return f"{self.device.name} {self.time.isoformat()}"
-
-
-class MQTTAcl(models.Model):
-    class Meta:
-        verbose_name = "ACL 规则"
-        verbose_name_plural = "ACL 规则"
-        db_table = "mqtt_acl"
-
-    allow = models.IntegerField(verbose_name="允许")
-    ipaddr = models.CharField(max_length=60, blank=True, verbose_name="IP 地址")
-    username = models.CharField(max_length=100, blank=True, verbose_name="用户名")
-    clientid = models.CharField(max_length=100, blank=True, verbose_name="客户端 ID")
-    access = models.IntegerField(verbose_name="操作")
-    topic = models.CharField(max_length=100, verbose_name="主题")
