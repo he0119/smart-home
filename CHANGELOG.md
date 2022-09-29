@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Added
+
+- 使用自定义会话
+
 ### Changed
 
 - 切换框架至 Strawberry
 - 调整话题的字段名称
 - 已关闭的话题下禁止除置顶以外的所有操作
+- 使用 WebSockets 协议与设备交流
 - 自动生成设备令牌
 
 ## [0.8.4] - 2022-06-05
