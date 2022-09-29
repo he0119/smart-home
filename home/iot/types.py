@@ -62,7 +62,7 @@ class Device(relay.Node):
     is_online: auto
     online_at: auto
     offline_at: auto
-    password: auto
+    token: auto
 
     @gql.django.connection(filters=AutowateringDataFilter, order=AutowateringDataOrder)
     def autowatering_data(self, info) -> relay.Connection[AutowateringData]:

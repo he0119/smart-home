@@ -1,6 +1,6 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 
-from .models import AutowateringData, AutowateringDataDaily, Device, MQTTAcl
+from .models import AutowateringData, AutowateringDataDaily, Device
 
 
 class DeviceAdmin(admin.ModelAdmin):
@@ -14,6 +14,18 @@ class DeviceAdmin(admin.ModelAdmin):
         "online_at",
         "offline_at",
     )
+
+    actions = ["regenerate_token"]
+
+    @admin.action(
+        permissions=["change"],
+        description="重新生成所选设备的令牌",
+    )
+    def regenerate_token(self, request, queryset):
+        for device in queryset:
+            device.generate_token()
+            device.save(update_fields=["token"])
+        self.message_user(request, "令牌已重新生成", messages.SUCCESS)
 
 
 class AutowateringDataAdmin(admin.ModelAdmin):
@@ -44,11 +56,6 @@ class AutowateringDataDailyAdmin(admin.ModelAdmin):
     )
 
 
-class MQTTAclAdmin(admin.ModelAdmin):
-    list_display = ("allow", "ipaddr", "username", "clientid", "access", "topic")
-
-
 admin.site.register(Device, DeviceAdmin)
 admin.site.register(AutowateringData, AutowateringDataAdmin)
 admin.site.register(AutowateringDataDaily, AutowateringDataDailyAdmin)
-admin.site.register(MQTTAcl, MQTTAclAdmin)
