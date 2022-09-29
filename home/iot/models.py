@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.crypto import get_random_string
 
 
 class Device(models.Model):
@@ -17,6 +18,10 @@ class Device(models.Model):
     online_at = models.DateTimeField("在线时间", null=True, blank=True)
     offline_at = models.DateTimeField("离线时间", null=True, blank=True)
     token = models.CharField("令牌", max_length=100)
+
+    def generate_token(self):
+        """生成令牌"""
+        self.token = get_random_string(30)
 
     def __str__(self):
         return self.name

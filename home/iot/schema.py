@@ -50,8 +50,8 @@ class Mutation:
             device_type=device_type,
             location=location,
             is_online=False,
-            token=get_random_string(30),
         )
+        device.generate_token()
         device.save()
 
         return device  # type: ignore
