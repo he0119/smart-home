@@ -51,7 +51,7 @@ class Mutation:
             device_type=device_type,
             location=location,
             is_online=False,
-            password=get_random_string(16),
+            token=get_random_string(16),
         )
         device.save()
 

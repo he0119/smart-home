@@ -14,11 +14,11 @@ from .models import AutowateringData, Device
 logger = logging.getLogger("iot")
 
 
-async def get_device(username: str, password: str):
+async def get_device(device_id: str, token: str) -> Device | None:
     """获取设备"""
     try:
-        device: Device = await sync_to_async(Device.objects.get)(pk=username)
-        if device.password == password:
+        device: Device = await sync_to_async(Device.objects.get)(pk=device_id)
+        if device.token == token:
             return device
     except Device.DoesNotExist:
         return
@@ -28,6 +28,7 @@ class BasicAuthMiddleware:
     """Basic Authorization
 
     给物联网设备认证用
+    https://channels.readthedocs.io/en/stable/topics/authentication.html#custom-authentication
     """
 
     def __init__(self, app):
@@ -39,10 +40,8 @@ class BasicAuthMiddleware:
             if header[0] == b"authorization":
                 try:
                     split = header[1].decode().strip().split(" ")
-                    username, password = (
-                        base64.b64decode(split[1]).decode().split(":", 1)
-                    )
-                    scope["device"] = await get_device(username, password)
+                    device_id, token = base64.b64decode(split[1]).decode().split(":", 1)
+                    scope["device"] = await get_device(device_id, token)
                 except:
                     scope["device"] = None
 

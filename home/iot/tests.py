@@ -153,7 +153,7 @@ class DeviceTests(GraphQLTestCase):
                         name
                         deviceType
                         location
-                        password
+                        token
                     }
                 }
             }
@@ -173,7 +173,7 @@ class DeviceTests(GraphQLTestCase):
         self.assertEqual(device["name"], "test2")
         self.assertEqual(device["deviceType"], "sometype")
         self.assertEqual(device["location"], "somelocation")
-        self.assertEqual(len(device["password"]), 16)
+        self.assertEqual(len(device["token"]), 16)
 
     def test_delete_device(self):
         """测试删除设备"""
@@ -233,7 +233,7 @@ class DeviceTests(GraphQLTestCase):
                         name
                         deviceType
                         location
-                        password
+                        token
                     }
                 }
             }
@@ -258,6 +258,7 @@ class DeviceTests(GraphQLTestCase):
         self.assertEqual(device["name"], "newtest")
         self.assertEqual(device["deviceType"], "newdevicetype")
         self.assertEqual(device["location"], "newlocation")
+        self.assertEqual(device["token"], "abcdefghijklmnop")
 
     def test_update_device_not_exist(self):
         """测试更新不存在的设备"""
@@ -401,7 +402,7 @@ def get_iot_client(device: Optional[Device] = None) -> WebsocketCommunicator:
     )
     authorization = b""
     if device:
-        authorization = base64.b64encode(f"{device.pk}:{device.password}".encode())
+        authorization = base64.b64encode(f"{device.pk}:{device.token}".encode())
     communicator = WebsocketCommunicator(
         application,
         "/iot/",
@@ -441,17 +442,15 @@ class WebSocketsTests(TestCase):
 
     async def test_client_connected_not_exist(self):
         """测试客户端连接，但设备不存在"""
-        communicator = get_iot_client(Device(pk=0, password=""))
+        communicator = get_iot_client(Device(pk=0, token=""))
 
-        # 在线
         with self.assertRaises(asyncio.exceptions.TimeoutError):
             connected, subprotocol = await communicator.connect()
 
-    async def test_client_connected_wrong_password(self):
+    async def test_client_connected_wrong_token(self):
         """测试客户端连接，但设备密码错误"""
-        communicator = get_iot_client(Device(pk=1, password="123456"))
+        communicator = get_iot_client(Device(pk=1, token="123456"))
 
-        # 在线
         with self.assertRaises(asyncio.exceptions.TimeoutError):
             connected, subprotocol = await communicator.connect()
 

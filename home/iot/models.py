@@ -16,7 +16,7 @@ class Device(models.Model):
     is_online = models.BooleanField(verbose_name="在线状态")
     online_at = models.DateTimeField(null=True, blank=True, verbose_name="在线时间")
     offline_at = models.DateTimeField(null=True, blank=True, verbose_name="离线时间")
-    password = models.CharField(max_length=100, verbose_name="密码")
+    token = models.CharField(max_length=100, verbose_name="密码")
 
     def __str__(self):
         return self.name
