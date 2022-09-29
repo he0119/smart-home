@@ -173,7 +173,7 @@ class DeviceTests(GraphQLTestCase):
         self.assertEqual(device["name"], "test2")
         self.assertEqual(device["deviceType"], "sometype")
         self.assertEqual(device["location"], "somelocation")
-        self.assertEqual(len(device["token"]), 16)
+        self.assertEqual(len(device["token"]), 30)
 
     def test_delete_device(self):
         """测试删除设备"""
@@ -258,7 +258,7 @@ class DeviceTests(GraphQLTestCase):
         self.assertEqual(device["name"], "newtest")
         self.assertEqual(device["deviceType"], "newdevicetype")
         self.assertEqual(device["location"], "newlocation")
-        self.assertEqual(device["token"], "abcdefghijklmnop")
+        self.assertEqual(device["token"], "XS2iq6df48tULQVa7f6MbbHkq8wQpf")
 
     def test_update_device_not_exist(self):
         """测试更新不存在的设备"""

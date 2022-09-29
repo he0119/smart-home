@@ -1,4 +1,3 @@
-import hashlib
 from distutils.util import strtobool
 from enum import Enum
 from typing import AsyncGenerator, Optional
@@ -51,7 +50,7 @@ class Mutation:
             device_type=device_type,
             location=location,
             is_online=False,
-            token=get_random_string(16),
+            token=get_random_string(30),
         )
         device.save()
 
