@@ -88,9 +88,7 @@ class IotConsumer(AsyncJsonWebsocketConsumer):
             logger.info(f"{device.name} 离线")
 
     async def receive_json(self, content: CommandContent):
-        device: Device | None = self.scope["device"]
-        if not device or device.device_type != "autowatering":
-            return
+        device: Device = self.scope["device"]
 
         method = content["method"]
         if method == "properties_changed":
