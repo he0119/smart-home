@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.9.0] - 2022-10-02
+
 ### Added
 
 - 使用自定义会话
@@ -233,7 +235,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[unreleased]: https://github.com/he0119/smart-home/compare/v0.8.4...HEAD
+[unreleased]: https://github.com/he0119/smart-home/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/he0119/smart-home/compare/v0.8.4...v0.9.0
 [0.8.4]: https://github.com/he0119/smart-home/compare/v0.8.3...v0.8.4
 [0.8.3]: https://github.com/he0119/smart-home/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/he0119/smart-home/compare/v0.8.1...v0.8.2

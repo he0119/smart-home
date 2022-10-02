@@ -6,7 +6,7 @@ license = "MIT"
 name = "smart-home"
 readme = "README.md"
 repository = "https://github.com/he0119/smart-home"
-version = "0.8.4"
+version = "0.9.0"
 
 [tool.poetry.dependencies]
 python = "^3.10"
