@@ -36,6 +36,8 @@ class BasicAuthMiddleware:
         self.app = app
 
     async def __call__(self, scope, receive, send):
+        scope["device"] = None
+
         for header in scope["headers"]:
             if header[0] == b"authorization":
                 try:
@@ -43,7 +45,7 @@ class BasicAuthMiddleware:
                     device_id, token = base64.b64decode(split[1]).decode().split(":", 1)
                     scope["device"] = await get_device(device_id, token)
                 except:
-                    scope["device"] = None
+                    pass
 
                 break
 
