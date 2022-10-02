@@ -8,6 +8,7 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS.append("corsheaders")
 MIDDLEWARE = ["corsheaders.middleware.CorsMiddleware"] + MIDDLEWARE
 CORS_ORIGIN_ALLOW_ALL = True
+CSRF_TRUSTED_ORIGINS = ["https://*"]
 
 # _Debug Toolbar
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
