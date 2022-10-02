@@ -444,23 +444,22 @@ class WebSocketsTests(TestCase):
         """测试客户端连接，但设备不存在"""
         communicator = get_iot_client(Device(pk=0, token=""))
 
-        with self.assertRaises(asyncio.exceptions.TimeoutError):
-            connected, subprotocol = await communicator.connect()
+        connected, subprotocol = await communicator.connect()
+        assert not connected
 
     async def test_client_connected_wrong_token(self):
         """测试客户端连接，但设备密码错误"""
         communicator = get_iot_client(Device(pk=1, token="123456"))
 
-        with self.assertRaises(asyncio.exceptions.TimeoutError):
-            connected, subprotocol = await communicator.connect()
+        connected, subprotocol = await communicator.connect()
+        assert not connected
 
     async def test_client_connected_wrong_headers(self):
         """测试客户端连接，但 headers 错误"""
         communicator = get_iot_client()
 
-        # 在线
-        with self.assertRaises(asyncio.exceptions.TimeoutError):
-            connected, subprotocol = await communicator.connect()
+        connected, subprotocol = await communicator.connect()
+        assert not connected
 
     async def test_message_publish(self):
         """测试上报数据"""
@@ -472,8 +471,9 @@ class WebSocketsTests(TestCase):
 
         await communicator.send_json_to(
             {
-                "timestamp": 1607658685,
-                "data": {
+                "id": 1607658685,
+                "method": "properties_changed",
+                "params": {
                     "temperature": 4.0,
                     "humidity": 0,
                     "valve1": False,
@@ -511,7 +511,8 @@ class WebSocketsTests(TestCase):
 
         response = await communicator.receive_json_from()
 
-        self.assertEqual(response, {"valve1": True})
+        self.assertEqual(response["method"], "set_properties")
+        self.assertEqual(response["params"], {"valve1": True})
 
 
 def mocked_requests_get(*args, **kwargs):
