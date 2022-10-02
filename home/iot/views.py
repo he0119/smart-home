@@ -58,6 +58,14 @@ class CommandContent(TypedDict):
 class IotConsumer(AsyncJsonWebsocketConsumer):
     groups = ["iot"]
 
+    # FIXME: 有时候会出现之前的连接，在重连之后才断开的情况
+    # 从而导致设备状态不正确
+    # WebSocket HANDSHAKING /api/iot/ [127.0.0.1:46468]
+    # WebSocket CONNECT /api/iot/ [127.0.0.1:46468]
+    # 2022-10-02 11:46:11 CST - iot - INFO - test 在线
+    # WebSocket DISCONNECT /api/iot/ [127.0.0.1:57946]
+    # 2022-10-02 11:46:47 CST - iot - INFO - test 离线
+    # 注意两个的端口不一致，说明是两次连接
     async def connect(self):
         if device := self.scope["device"]:
             await self.accept()
