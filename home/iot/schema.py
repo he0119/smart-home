@@ -1,6 +1,6 @@
 from distutils.util import strtobool
 from enum import Enum
-from typing import AsyncGenerator, Optional
+from typing import AsyncGenerator, Awaitable, Optional
 
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
@@ -134,7 +134,9 @@ class Subscription:
         # 发送最新的数据
         # 让客户端可以马上显示数据
         try:
-            device = device_id.resolve_node(info, ensure_type=models.Device)
+            device = await device_id.resolve_node(
+                info, ensure_type=Awaitable[models.Device]
+            )
         except:
             raise ValidationError("设备不存在")
 

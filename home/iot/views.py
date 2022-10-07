@@ -7,6 +7,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
 
 from .models import AutowateringData, Device
+from .types import SetDeviceEvent
 
 logger = logging.getLogger("iot")
 
@@ -119,10 +120,10 @@ class IotConsumer(AsyncJsonWebsocketConsumer):
             )
             logger.debug(f"{device.name} {autowatering_data.time} 保存成功")
 
-    async def set_device(self, event):
-        device_id = event["pk"]
+    async def set_device(self, event: SetDeviceEvent):
+        device_id = event["id"]
         device: Device = self.scope["device"]
-        if device.device_type == "autowatering" and device_id == device.id:
+        if device.device_type == "autowatering" and device_id == str(device.id):
             await self.send_json(
                 {
                     "id": str(timezone.now().timestamp()),

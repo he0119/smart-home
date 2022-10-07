@@ -506,7 +506,7 @@ class WebSocketsTests(TestCase):
 
         channel_layer = get_channel_layer()
         await channel_layer.group_send(  # type: ignore
-            "iot", {"type": "set_device", "pk": 1, "data": {"valve1": True}}
+            "iot", {"type": "set_device", "id": "1", "data": {"valve1": True}}
         )
 
         response = await communicator.receive_json_from()
@@ -553,7 +553,7 @@ class ApiTests(TestCase):
         r = device.set_status("valve1", True)
 
         mock_send.assert_called_once_with(
-            "iot", {"type": "set_device", "pk": "1", "data": {"valve1": True}}
+            "iot", {"type": "set_device", "id": "1", "data": {"valve1": True}}
         )
 
     @mock.patch("home.iot.api.channel_group_send")
@@ -565,7 +565,7 @@ class ApiTests(TestCase):
             "iot",
             {
                 "type": "set_device",
-                "pk": "1",
+                "id": "1",
                 "data": {"valve1": True, "valve2": False},
             },
         )
@@ -584,7 +584,7 @@ class TaskTests(TestCase):
             "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
         )
         mock_send.assert_called_once_with(
-            "iot", {"type": "set_device", "pk": "1", "data": {"valve1": True}}
+            "iot", {"type": "set_device", "id": "1", "data": {"valve1": True}}
         )
 
     @mock.patch("home.iot.api.channel_group_send")
