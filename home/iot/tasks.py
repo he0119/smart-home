@@ -67,7 +67,7 @@ def clean_autowatering_database():
     ) - timedelta(days=29)
 
     for device in Device.objects.all():
-        min_time: Optional[datetime] = device.data.aggregate(Min("time"))["time__min"]
+        min_time: Optional[datetime] = device.data.aggregate(Min("time"))["time__min"]  # type: ignore
         if not min_time:
             continue
 
@@ -81,7 +81,7 @@ def clean_autowatering_database():
             # 每天的时间
             min_datetime = min_time + timedelta(days=i)
             max_datetime = min_time + timedelta(days=i + 1)
-            all_day_data = device.data.filter(
+            all_day_data = device.data.filter(  # type: ignore
                 time__gte=min_datetime,
                 time__lte=max_datetime,
             )

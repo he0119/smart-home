@@ -28,7 +28,7 @@ def xiaoai(request):
     return JsonResponse({"xiaoai": "working"})
 
 
-def process_request(data: dict) -> str:
+def process_request(data: dict) -> dict:
     """处理小爱同学发来的请求
 
     暂时只支持查询物品的位置
@@ -67,7 +67,8 @@ def find_item(name: str) -> str:
     if item_count > 0:
         message = ""
         for item in items:
-            message += f"，{item.name}在{item.storage.name}"
+            if item.storage is not None:
+                message += f"，{item.name}在{item.storage.name}"
         return f"共找到{item_count}个物品{message}。"
 
     return f"找不到名字是{name}的物品。"

@@ -23,8 +23,8 @@ from home.iot.views import BasicAuthMiddleware, IotConsumer
 from home.schema import schema
 
 websocket_urlpatterns = [
-    path("graphql/", AuthMiddlewareStack(GraphQLWSConsumer.as_asgi(schema=schema))),  # type: ignore
-    path("api/iot/", BasicAuthMiddleware(IotConsumer.as_asgi())),  # type: ignore
+    path("graphql/", AuthMiddlewareStack(GraphQLWSConsumer.as_asgi(schema=schema))),
+    path("api/iot/", BasicAuthMiddleware(IotConsumer.as_asgi())),
 ]
 
 application = ProtocolTypeRouter(

@@ -9,6 +9,7 @@ ALLOWED_HOSTS = ["*"]
 
 # CSRF
 # https://docs.djangoproject.com/en/4.0/ref/settings/#csrf-trusted-origins
+
 CSRF_TRUSTED_ORIGINS = json.loads(os.getenv("CSRF_TRUSTED_ORIGINS", "[]"))
 
 DATABASES = {
@@ -57,7 +58,6 @@ ADMINS = [
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
-
 # 小米小爱
 # https://developers.xiaoai.mi.com/documents/Home?type=/api/doc/render_markdown/SkillAccess/SkillDocument/CustomSkills/Signature
 
@@ -93,6 +93,7 @@ if os.getenv("AWS_S3_ENDPOINT_URL"):
 # Channels
 # https://channels.readthedocs.io/en/stable/topics/channel_layers.html
 # https://pypi.org/project/channels-redis/
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",

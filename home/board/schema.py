@@ -49,7 +49,7 @@ class Mutation:
                 reg_ids,
                 f"{topic.user.username} 发布新话题",
                 f"{topic.title}\n{unmark(topic.description)}",
-                f"/topic/{relay.to_base64(types.Topic, topic.pk)}",
+                f"/topic/{relay.to_base64(types.Topic, topic.id)}",
                 True,
             )  # type: ignore
 
@@ -63,9 +63,9 @@ class Mutation:
         title: Optional[str],
         description: Optional[str],
     ) -> types.Topic:
-
-        topic: models.Topic = id.resolve_node(info)  # type: ignore
-        if not topic:
+        try:
+            topic = id.resolve_node(info, ensure_type=models.Topic)
+        except:
             raise ValidationError("话题不存在")
 
         if topic.user != info.context.request.user:
@@ -87,8 +87,9 @@ class Mutation:
 
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
-        topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
-        if not topic:
+        try:
+            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+        except:
             raise ValidationError("话题不存在")
 
         if topic.user != info.context.request.user:
@@ -103,9 +104,9 @@ class Mutation:
 
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def close_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
-        topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
-
-        if not topic:
+        try:
+            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+        except:
             raise ValidationError("话题不存在")
 
         topic.is_closed = True
@@ -116,9 +117,9 @@ class Mutation:
 
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def reopen_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
-        topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
-
-        if not topic:
+        try:
+            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+        except:
             raise ValidationError("话题不存在")
 
         topic.is_closed = False
@@ -129,9 +130,9 @@ class Mutation:
 
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def pin_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
-        topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
-
-        if not topic:
+        try:
+            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+        except:
             raise ValidationError("话题不存在")
 
         topic.is_pinned = True
@@ -141,9 +142,9 @@ class Mutation:
 
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def unpin_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
-        topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
-
-        if not topic:
+        try:
+            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+        except:
             raise ValidationError("话题不存在")
 
         topic.is_pinned = False
@@ -159,8 +160,9 @@ class Mutation:
         body: str,
         parent_id: Optional[relay.GlobalID],
     ) -> types.Comment:
-        topic: models.Topic = topic_id.resolve_node(info)  # type: ignore
-        if not topic:
+        try:
+            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+        except:
             raise ValidationError("话题不存在")
 
         if topic.is_closed:
@@ -172,9 +174,14 @@ class Mutation:
             body=body,
         )
         if parent_id:
-            parent_comment: models.Comment = parent_id.resolve_node(info)  # type: ignore
+            try:
+                parent_comment = parent_id.resolve_node(
+                    info, ensure_type=models.Comment
+                )
+            except:
+                raise ValidationError("话题不存在")
             # 若回复层级超过二级，则转换为二级
-            comment.parent_id = parent_comment.get_root().pk  # type: ignore
+            comment.parent_id = parent_comment.get_root().id  # type: ignore
             # 被回复人
             comment.reply_to = parent_comment.user
         comment.save()
@@ -185,7 +192,7 @@ class Mutation:
                 reg_ids,
                 f"{comment.topic.title} 下有新回复",
                 f"{comment.user.username}：{unmark(comment.body)}",
-                f"/topic/{relay.to_base64(types.Topic, topic.pk)}",
+                f"/topic/{relay.to_base64(types.Topic, topic.id)}",
                 True,
             )  # type: ignore
         return comment  # type: ignore
@@ -195,10 +202,11 @@ class Mutation:
         self,
         info: Info,
         id: relay.GlobalID,
-        body: Optional[str],
+        body: str,
     ) -> types.Comment:
-        comment: models.Comment = id.resolve_node(info)  # type: ignore
-        if not comment:
+        try:
+            comment = id.resolve_node(info, ensure_type=models.Comment)
+        except:
             raise ValidationError("评论不存在")
 
         if comment.user != info.context.request.user:
@@ -208,14 +216,16 @@ class Mutation:
             raise ValidationError("不能修改已关闭话题下的评论")
 
         comment.body = body
+
         comment.save()
 
         return comment  # type: ignore
 
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_comment(self, info: Info, comment_id: relay.GlobalID) -> types.Comment:
-        comment: models.Comment = comment_id.resolve_node(info)  # type: ignore
-        if not comment:
+        try:
+            comment = comment_id.resolve_node(info, ensure_type=models.Comment)
+        except:
             raise ValidationError("评论不存在")
 
         if comment.user != info.context.request.user:

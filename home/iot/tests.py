@@ -81,7 +81,7 @@ class DeviceTests(GraphQLTestCase):
             }
         """
         variables = {
-            "id": relay.to_base64(types.Device, test_device.pk),
+            "id": relay.to_base64(types.Device, test_device.id),
         }
 
         content = self.client.execute(query, variables)
@@ -187,7 +187,7 @@ class DeviceTests(GraphQLTestCase):
 
         test_device = Device.objects.get(name="test")
         variables = {
-            "input": {"deviceId": relay.to_base64(types.Device, test_device.pk)}
+            "input": {"deviceId": relay.to_base64(types.Device, test_device.id)}
         }
 
         # 确认自动浇水有数据
@@ -397,12 +397,12 @@ def get_iot_client(device: Optional[Device] = None) -> WebsocketCommunicator:
     """获取物联网 WebSocket 客户端"""
     application = URLRouter(
         [
-            path("iot/", BasicAuthMiddleware(IotConsumer.as_asgi())),  # type: ignore
+            path("iot/", BasicAuthMiddleware(IotConsumer.as_asgi())),
         ]
     )
     authorization = b""
     if device:
-        authorization = base64.b64encode(f"{device.pk}:{device.token}".encode())
+        authorization = base64.b64encode(f"{device.id}:{device.token}".encode())
     communicator = WebsocketCommunicator(
         application,
         "/iot/",

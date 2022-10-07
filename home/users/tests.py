@@ -430,7 +430,7 @@ class SessionTests(GraphQLTestCase):
         self.assertEqual(data[1]["ip"], None)
 
         session = Session.objects.get(pk="b3hywvvlnly7unshlqu6yhrsyps3phjq")
-        session_data = session.get_decoded()  # type: ignore
+        session_data = session.get_decoded()
         self.assertEqual("1", session_data.get("_auth_user_id"))
 
         # 再次请求，这次应该能够获取到正确的 IP 地址

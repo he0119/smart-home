@@ -10,6 +10,7 @@ class Topic(models.Model):
         verbose_name = "话题"
         verbose_name_plural = "话题"
 
+    id = models.AutoField("ID", primary_key=True, auto_created=True)
     title = models.CharField("标题", max_length=200)
     description = models.TextField("说明")
     is_closed = models.BooleanField("已关闭", default=False)
@@ -35,6 +36,7 @@ class Comment(MPTTModel):
         verbose_name = "评论"
         verbose_name_plural = "评论"
 
+    id = models.AutoField("ID", primary_key=True, auto_created=True)
     topic = models.ForeignKey(
         Topic, on_delete=models.CASCADE, related_name="comments", verbose_name="话题"
     )
