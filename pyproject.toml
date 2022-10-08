@@ -14,7 +14,7 @@ django = "^4.0.6"
 strawberry-graphql = {extras = ["channels"], version = ">=0.130.0"}
 strawberry-graphql-django = "^0.5.2"
 strawberry-django-plus = {extras = ["debug-toolbar"], version = "^1.25"}
-channels-redis = "^3.4.1"
+channels-redis = "^4.0.0"
 celery = "^5.2.2"
 django-celery-beat = "^2.2.1"
 django-cleanup = "^6.0.0"
@@ -33,7 +33,7 @@ geoip2 = "^4.6.0"
 django-cors-headers = "^3.4.0"
 eventlet = "^0.33.0"
 isort = "^5.9.3"
-black = "^22.3.0"
+black = "^22.10.0"
 coverage = "^6.5"
 pre-commit = "^2.17.0"
 
