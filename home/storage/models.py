@@ -8,6 +8,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Storage(MPTTModel):
+    id = models.AutoField("ID", primary_key=True, auto_created=True)
     name = models.CharField("名字", max_length=200, unique=True)
     parent = TreeForeignKey(
         "self",
@@ -35,6 +36,7 @@ class Storage(MPTTModel):
 
 
 class Item(models.Model):
+    id = models.AutoField("ID", primary_key=True, auto_created=True)
     name = models.CharField("名字", max_length=200, unique=True)
     number = models.IntegerField("数量")
     description = models.CharField("备注", max_length=200, blank=True)
@@ -111,6 +113,7 @@ def get_file_path(instance, filename):
 
 
 class Picture(models.Model):
+    id = models.AutoField("ID", primary_key=True, auto_created=True)
     description = models.CharField(
         "备注",
         max_length=200,

@@ -7,6 +7,7 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.utils import timezone
 
 from .models import AutowateringData, Device
+from .types import SetDeviceEvent
 
 logger = logging.getLogger("iot")
 
@@ -73,7 +74,9 @@ class IotConsumer(AsyncJsonWebsocketConsumer):
             device.is_online = True
             device.online_at = timezone.now()
             await sync_to_async(device.save)(update_fields=["is_online", "offline_at"])
-            await self.channel_layer.group_send(f"device.{device.pk}", {"type": "update"})  # type: ignore
+            await self.channel_layer.group_send(  # type: ignore
+                f"device.{device.id}", {"type": "update"}
+            )
             logger.info(f"{device.name} 在线")
         else:
             await self.close(3000)
@@ -84,7 +87,9 @@ class IotConsumer(AsyncJsonWebsocketConsumer):
             device.is_online = False
             device.offline_at = timezone.now()
             await sync_to_async(device.save)(update_fields=["is_online", "offline_at"])
-            await self.channel_layer.group_send(f"device.{device.pk}", {"type": "update"})  # type: ignore
+            await self.channel_layer.group_send(  # type: ignore
+                f"device.{device.id}", {"type": "update"}
+            )
             logger.info(f"{device.name} 离线")
 
     async def receive_json(self, content: CommandContent):
@@ -110,15 +115,15 @@ class IotConsumer(AsyncJsonWebsocketConsumer):
             )
             await sync_to_async(autowatering_data.save)()
             await self.channel_layer.group_send(  # type: ignore
-                f"autowatering_data.{device.pk}",
-                {"type": "update", "pk": autowatering_data.pk},
+                f"autowatering_data.{device.id}",
+                {"type": "update", "pk": autowatering_data.id},
             )
             logger.debug(f"{device.name} {autowatering_data.time} 保存成功")
 
-    async def set_device(self, event):
-        device_id = event["pk"]
+    async def set_device(self, event: SetDeviceEvent):
+        device_id = event["id"]
         device: Device = self.scope["device"]
-        if device.device_type == "autowatering" and device_id == device.pk:
+        if device.device_type == "autowatering" and device_id == str(device.id):
             await self.send_json(
                 {
                     "id": str(timezone.now().timestamp()),

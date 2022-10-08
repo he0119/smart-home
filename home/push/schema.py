@@ -23,7 +23,7 @@ class Query:
             mi_push = models.MiPush.objects.filter(user=info.context.request.user).get(
                 device_id=device_id
             )
-            return mi_push
+            return mi_push  # type: ignore
         except models.MiPush.DoesNotExist:
             return
 

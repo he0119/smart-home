@@ -11,13 +11,13 @@ sender = APISender(settings.MI_PUSH_APP_SECRET)
 def get_enable_reg_ids() -> list[str]:
     """获取所有启用的设备标识码"""
     users = get_user_model().objects.exclude(mipush__enable=False)
-    return [mipush.reg_id for user in users for mipush in user.mipush.all()]
+    return [mipush.reg_id for user in users for mipush in user.mipush.all()]  # type: ignore
 
 
 def get_enable_reg_ids_except_user(user) -> list[str]:
     """获取除指定用户的所有启用的设备标识码"""
     users = get_user_model().objects.exclude(pk=user.id).exclude(mipush__enable=False)
-    return [mipush.reg_id for user in users for mipush in user.mipush.all()]
+    return [mipush.reg_id for user in users for mipush in user.mipush.all()]  # type: ignore
 
 
 def build_message(

@@ -46,6 +46,20 @@
         "DEVELOPMENT_SERVER": "true"
       },
       "justMyCode": false
+    },
+    {
+      "name": "Python: Celery",
+      "type": "python",
+      "request": "launch",
+      "module": "celery",
+      "args": [
+        "-A",
+        "home","worker","--beat","-l","info",
+      ],
+      "env": {
+        "DEVELOPMENT_SERVER": "true"
+      },
+      "justMyCode": false
     }
   ]
 }
