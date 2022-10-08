@@ -179,7 +179,7 @@ class Mutation:
                     info, ensure_type=models.Comment
                 )
             except:
-                raise ValidationError("话题不存在")
+                raise ValidationError("回复的评论不存在")
             # 若回复层级超过二级，则转换为二级
             comment.parent_id = parent_comment.get_root().id  # type: ignore
             # 被回复人

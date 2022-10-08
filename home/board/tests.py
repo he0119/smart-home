@@ -722,6 +722,34 @@ class CommentTests(GraphQLTestCase):
         self.assertEqual(comment["parent"]["id"], relay.to_base64(types.Comment, "1"))
         self.assertEqual(comment["replyTo"]["username"], "test2")
 
+    def test_add_comment_with_parent_id_not_exist(self):
+        """测试回复的评论不存在"""
+        mutation = """
+            mutation addComment($input: AddCommentInput!) {
+                addComment(input: $input) {
+                    ... on OperationInfo {
+                        __typename
+                        messages {
+                            message
+                        }
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "topicId": relay.to_base64(types.Topic, "1"),
+                "body": "测试评论给测试评论二",
+                "parentId": relay.to_base64(types.Comment, "0"),
+            }
+        }
+
+        content = self.client.execute(mutation, variables)
+
+        data = content.data["addComment"]
+        self.assertEqual(data["__typename"], "OperationInfo")
+        self.assertEqual(data["messages"][0]["message"], "回复的评论不存在")
+
     def test_delete_comment(self):
         mutation = """
             mutation deleteComment($input: DeleteCommentInput!) {
