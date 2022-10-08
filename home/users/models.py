@@ -24,11 +24,11 @@ class SessionStore(DBStore):
             user_id = None
         return self.model(
             session_key=self._get_or_create_session_key(),  # type: ignore
-            session_data=self.encode(data),
-            expire_date=self.get_expiry_date(),
-            user_agent=self.user_agent,
-            user_id=user_id,
-            ip=self.ip,
+            session_data=self.encode(data),  # type: ignore
+            expire_date=self.get_expiry_date(),  # type: ignore
+            user_agent=self.user_agent,  # type: ignore
+            user_id=user_id,  # type: ignore
+            ip=self.ip,  # type: ignore
         )
 
 
@@ -62,6 +62,7 @@ def get_file_path(instance, filename):
 
 
 class Avatar(models.Model):
+    id = models.AutoField("ID", primary_key=True, auto_created=True)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         related_name="avatar",

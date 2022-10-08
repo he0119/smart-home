@@ -1,8 +1,18 @@
+from typing import Any, Literal, TypedDict
+
 from strawberry import auto
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
 
 from . import models
+
+
+class SetDeviceEvent(TypedDict):
+    """设置设备事件"""
+
+    type: Literal["set_device"]
+    id: str
+    data: dict[str, Any]
 
 
 @gql.django.ordering.order(models.AutowateringData)

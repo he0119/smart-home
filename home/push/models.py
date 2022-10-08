@@ -7,6 +7,7 @@ class MiPush(models.Model):
         verbose_name = "小米推送"
         verbose_name_plural = "小米推送"
 
+    id = models.AutoField("ID", primary_key=True, auto_created=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

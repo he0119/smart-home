@@ -9,6 +9,7 @@ class Device(models.Model):
         verbose_name = "设备"
         verbose_name_plural = "设备"
 
+    id = models.AutoField("ID", primary_key=True, auto_created=True)
     name = models.CharField("名字", max_length=100)
     device_type = models.CharField("类型", max_length=100)
     location = models.CharField("位置", max_length=100)
@@ -35,6 +36,7 @@ class AutowateringData(models.Model):
         verbose_name_plural = "自动浇水设备数据"
         indexes = [models.Index(fields=["-time"])]
 
+    id = models.AutoField("ID", primary_key=True, auto_created=True)
     device = models.ForeignKey(
         Device, on_delete=models.CASCADE, related_name="data", verbose_name="设备"
     )
@@ -63,6 +65,7 @@ class AutowateringDataDaily(models.Model):
         verbose_name_plural = "自动浇水设备每日数据"
         indexes = [models.Index(fields=["-time"])]
 
+    id = models.AutoField("ID", primary_key=True, auto_created=True)
     device = models.ForeignKey(
         Device, on_delete=models.CASCADE, related_name="data_daily", verbose_name="设备"
     )

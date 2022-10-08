@@ -254,6 +254,9 @@ MEDIA_ROOT = "media"
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Sentry
+# https://docs.sentry.io/platforms/python/guides/django/
+
+
 def traces_sampler(sampling_context):
     op = sampling_context["transaction_context"]["op"]
     # 如果是 Celery 任务(op = "celery.task")，不存在 wsgi_environ

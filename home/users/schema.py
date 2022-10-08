@@ -83,8 +83,10 @@ class Mutation:
 
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_session(self, info: Info, id: relay.GlobalID) -> types.Session:
-        session: models.Session = id.resolve_node(info)  # type: ignore
-        if not session:
+        try:
+
+            session = id.resolve_node(info, ensure_type=models.Session)
+        except:
             raise ValidationError("会话不存在")
 
         if session.user != info.context.request.user:

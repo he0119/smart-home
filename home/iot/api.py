@@ -16,7 +16,7 @@ class DeviceAPI:
         payload = {key: value}
         channel_group_send(
             "iot",
-            {"type": "set_device", "pk": self.device_id, "data": payload},
+            {"type": "set_device", "id": self.device_id, "data": payload},
         )
 
     def set_multiple_status(self, status: List[Tuple]):
@@ -24,7 +24,7 @@ class DeviceAPI:
         payload = {key: value for key, value in status}
         channel_group_send(
             "iot",
-            {"type": "set_device", "pk": self.device_id, "data": payload},
+            {"type": "set_device", "id": self.device_id, "data": payload},
         )
 
 

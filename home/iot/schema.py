@@ -1,10 +1,9 @@
 from distutils.util import strtobool
 from enum import Enum
-from typing import AsyncGenerator, Optional
+from typing import AsyncGenerator, Awaitable, Optional
 
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
-from django.utils.crypto import get_random_string
 from strawberry.types import Info
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
@@ -65,9 +64,9 @@ class Mutation:
         device_type: Optional[str],
         location: Optional[str],
     ) -> types.Device:
-        device: models.Device = id.resolve_node(info)  # type: ignore
-
-        if not device:
+        try:
+            device = id.resolve_node(info, ensure_type=models.Device)
+        except:
             raise ValidationError("设备不存在")
 
         # 仅在传入数据时修改
@@ -79,15 +78,15 @@ class Mutation:
             device.location = location
 
         device.save()
-        channel_group_send(f"device.{device.pk}", {"type": "update"})
+        channel_group_send(f"device.{device.id}", {"type": "update"})
 
         return device  # type: ignore
 
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_device(self, info: Info, device_id: relay.GlobalID) -> types.Device:
-        device: models.Device = device_id.resolve_node(info)  # type: ignore
-
-        if not device:
+        try:
+            device = device_id.resolve_node(info, ensure_type=models.Device)
+        except:
             raise ValidationError("设备不存在")
 
         device.delete()
@@ -103,9 +102,9 @@ class Mutation:
         value: str,
         value_type: ValueType,
     ) -> types.Device:
-        device: models.Device = id.resolve_node(info)  # type: ignore
-
-        if not device:
+        try:
+            device = id.resolve_node(info, ensure_type=models.Device)
+        except:
             raise ValidationError("设备不存在")
 
         # 转换 value 的类型
@@ -116,7 +115,7 @@ class Mutation:
         elif value_type == ValueType.INTEGER:
             value = int(value)  # type: ignore
 
-        device_api = DeviceAPI(device.pk)
+        device_api = DeviceAPI(str(device.id))
         device_api.set_status(key, value)
 
         return device  # type: ignore
@@ -134,8 +133,11 @@ class Subscription:
 
         # 发送最新的数据
         # 让客户端可以马上显示数据
-        device: models.Device = await device_id.resolve_node(info)  # type: ignore
-        if not device:
+        try:
+            device = await device_id.resolve_node(
+                info, ensure_type=Awaitable[models.Device]
+            )
+        except:
             raise ValidationError("设备不存在")
 
         last = await sync_to_async(device.data.last)()  # type: ignore
@@ -143,7 +145,7 @@ class Subscription:
             yield last
 
         async for message in ws.channel_listen(
-            "update", groups=[f"autowatering_data.{device.pk}"]
+            "update", groups=[f"autowatering_data.{device.id}"]
         ):
             data = await sync_to_async(AutowateringData.objects.get)(pk=message["pk"])
             yield data
@@ -163,7 +165,7 @@ class Subscription:
         yield device  # type: ignore
 
         async for message in ws.channel_listen(
-            "update", groups=[f"device.{device.pk}"]
+            "update", groups=[f"device.{device.id}"]
         ):
-            device = await sync_to_async(Device.objects.get)(pk=device.pk)
+            device = await sync_to_async(Device.objects.get)(pk=device.id)
             yield device  # type: ignore
