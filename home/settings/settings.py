@@ -256,28 +256,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
 
-
-def traces_sampler(sampling_context):
-    op = sampling_context["transaction_context"]["op"]
-    # 如果是 Celery 任务(op = "celery.task")，不存在 wsgi_environ
-    if op == "http.server":
-        if "wsgi_environ" in sampling_context:
-            path: str = sampling_context["wsgi_environ"]["PATH_INFO"]
-            # Sentry 一个月只支持接受 10000 次 Transactions
-            # 传感器每 10 秒就会上报一次数据，所以降低频率
-            if path.startswith("/iot"):
-                return 0.0001
-        elif "asgi_scope" in sampling_context:
-            path: str = sampling_context["asgi_scope"]["path"]
-            if path.startswith("/iot"):
-                return 0.0001
-
-    return 1
-
-
 sentry_sdk.init(
     integrations=[DjangoIntegration(), RedisIntegration()],
-    traces_sampler=traces_sampler,
     send_default_pii=True,
     # 会在 Actions 自动编译的过程中修改
     release="version",
