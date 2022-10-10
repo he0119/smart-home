@@ -113,21 +113,14 @@ jobs:
     steps:
       - name: Deploy to server
         uses: appleboy/ssh-action@master
-        env:
-          TAG_NAME: ${{ github.event.release.tag_name }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script_stop: true
-          envs: TAG_NAME
           script: |
-            cd websites
-            sed -i "s#he0119/smart-home:.*#he0119/smart-home:master#g" docker-compose.yml
-            sudo docker-compose pull
-            sudo docker-compose down
-            sudo docker-compose up -d
-            sudo docker exec smart-home python manage.py migrate
+            cd ${{ secrets.WEBSITES_ROOT }}
+            sudo ./deploy.sh
 
   deploy_prod:
     name: Deploy Prod
@@ -140,21 +133,14 @@ jobs:
     steps:
       - name: Deploy to server
         uses: appleboy/ssh-action@master
-        env:
-          TAG_NAME: ${{ github.event.release.tag_name }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script_stop: true
-          envs: TAG_NAME
           script: |
-            cd websites
-            sed -i "s#he0119/smart-home:.*#he0119/smart-home:$TAG_NAME#g" docker-compose.yml
-            sudo docker-compose pull
-            sudo docker-compose down
-            sudo docker-compose up -d
-            sudo docker exec smart-home python manage.py migrate
+            cd ${{ secrets.WEBSITES_ROOT }}
+            sudo ./deploy.sh
 
   sentry_release:
     name: Sentry Release
