@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Fixed
+
+- 修复清除过期会话任务不可用的问题
+
 ## [0.9.0] - 2022-10-02
 
 ### Added

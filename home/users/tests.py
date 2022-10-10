@@ -7,6 +7,7 @@ from home.utils import GraphQLTestCase
 
 from . import types
 from .models import Avatar, Config, Session
+from .tasks import clear_sessions
 
 
 class ModelTests(TestCase):
@@ -521,3 +522,13 @@ class SessionTests(GraphQLTestCase):
         data = content.data["deleteSession"]
         self.assertEqual(data["__typename"], "OperationInfo")
         self.assertEqual(data["messages"][0]["message"], "只能删除自己的会话")
+
+
+class TaskTests(TestCase):
+    fixtures = ["users"]
+
+    def test_clear_sessions(self):
+        """测试清理过期的会话"""
+        self.assertEqual(Session.objects.count(), 2)
+        clear_sessions()
+        self.assertEqual(Session.objects.count(), 0)
