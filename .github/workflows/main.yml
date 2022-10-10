@@ -120,7 +120,7 @@ jobs:
           script_stop: true
           script: |
             cd ${{ secrets.WEBSITES_ROOT }}
-            ./deploy.sh
+            sudo ./deploy.sh
 
   deploy_prod:
     name: Deploy Prod
@@ -140,7 +140,7 @@ jobs:
           script_stop: true
           script: |
             cd ${{ secrets.WEBSITES_ROOT }}
-            ./deploy.sh
+            sudo ./deploy.sh
 
   sentry_release:
     name: Sentry Release
