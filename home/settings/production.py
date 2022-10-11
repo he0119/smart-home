@@ -1,4 +1,4 @@
-""" Production settings
+""" 生产环境配置
 """
 import json
 import os
@@ -8,9 +8,12 @@ DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
 # CSRF
-# https://docs.djangoproject.com/en/4.0/ref/settings/#csrf-trusted-origins
+# https://docs.djangoproject.com/zh-hans/4.0/ref/settings/#csrf-trusted-origins
 
 CSRF_TRUSTED_ORIGINS = json.loads(os.getenv("CSRF_TRUSTED_ORIGINS", "[]"))
+
+# Database
+# https://docs.djangoproject.com/zh-hans/4.0/ref/settings/#databases
 
 DATABASES = {
     "default": {
@@ -24,18 +27,16 @@ DATABASES = {
 }
 
 # Security
-# https://docs.djangoproject.com/en/3.0/topics/security/
+# https://docs.djangoproject.com/zh-hans/4.0/topics/security/
 
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
-SECURE_REFERRER_POLICY = "same-origin"
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-SECURE_BROWSER_XSS_FILTER = True
 
 # Email
-# https://docs.djangoproject.com/zh-hans/3.0/topics/email/
+# https://docs.djangoproject.com/zh-hans/4.0/topics/email/
 
 EMAIL_HOST = "smtp.exmail.qq.com"
 EMAIL_PORT = 465

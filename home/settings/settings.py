@@ -141,8 +141,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "home.wsgi.application"
-
 # Channels
 # https://channels.readthedocs.io/en/stable/topics/channel_layers.html
 

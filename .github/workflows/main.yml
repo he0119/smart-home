@@ -59,8 +59,6 @@ jobs:
         run: |
           poetry run coverage run manage.py test --no-input
           poetry run coverage xml
-        env:
-          TESTING_SERVER: true
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
 
