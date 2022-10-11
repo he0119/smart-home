@@ -10,8 +10,6 @@ RUN python install-poetry.py --yes
 
 ENV PATH="${PATH}:/root/.local/bin"
 
-COPY ./pyproject.toml ./poetry.lock* /tmp/
-
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 FROM python:3.10-slim
