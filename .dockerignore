@@ -1,4 +1,5 @@
 # 文件夹
+.devcontainer
 .git
 .github
 .vscode
@@ -13,3 +14,4 @@ codecov.yml
 docker-compose.yml
 Dockerfile
 .pre-commit-config.yaml
+CHANGELOG.md
