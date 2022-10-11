@@ -34,4 +34,7 @@ RUN rm requirements.txt
 # 复制网站
 COPY . .
 
+# Gunicon 配置
+COPY ./docker/gunicorn.conf.py .
+
 CMD ["gunicorn", "home.asgi:application", "-k", "uvicorn.workers.UvicornWorker"]
