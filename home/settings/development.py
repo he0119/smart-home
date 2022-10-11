@@ -4,15 +4,19 @@ import os
 
 from .settings import INSTALLED_APPS, MIDDLEWARE, SECRET_KEY
 
+# Corsheaders
+# https://github.com/adamchainz/django-cors-headers#setup
+
 ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS.append("corsheaders")
 MIDDLEWARE = ["corsheaders.middleware.CorsMiddleware"] + MIDDLEWARE
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ["https://*"]
 
 # _Debug Toolbar
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
 # https://blb-ventures.github.io/strawberry-django-plus/debug-toolbar/
+
 INSTALLED_APPS.append("debug_toolbar")
 MIDDLEWARE = [
     "strawberry_django_plus.middlewares.debug_toolbar.DebugToolbarMiddleware"
