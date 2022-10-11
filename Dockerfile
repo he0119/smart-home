@@ -19,7 +19,7 @@ ENV TZ=Asia/Shanghai
 COPY ./docker/start.sh /start.sh
 RUN chmod +x /start.sh
 
-COPY ./docker/gunicorn.conf.py /gunicorn.conf.py
+COPY ./docker/gunicorn_conf.py /gunicorn_conf.py
 
 # 安装 uvicorn, gunicorn
 # https://www.uvicorn.org/#quickstart
