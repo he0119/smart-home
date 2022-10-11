@@ -15,9 +15,6 @@ FROM python:3.10-slim
 # 设置时区
 ENV TZ=Asia/Shanghai
 
-# 非交互模式，方便后面的 APT 命令
-ENV DEBIAN_FRONTEND noninteractive
-
 # Gunicon 配置
 COPY ./docker/start.sh /start.sh
 RUN chmod +x /start.sh
@@ -27,9 +24,9 @@ COPY ./docker/gunicorn.conf.py /gunicorn.conf.py
 # 安装 uvicorn, gunicorn
 # https://www.uvicorn.org/#quickstart
 RUN apt-get update \
-  && apt-get install --no-install-recommends gcc \
+  && apt-get install -y --no-install-recommends gcc \
   && pip install --no-cache-dir --upgrade "uvicorn[standard]" gunicorn \
-  && apt-get purge --auto-remove \
+  && apt-get purge -y --auto-remove \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
