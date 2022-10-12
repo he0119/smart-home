@@ -509,7 +509,7 @@ class WebSocketsTests(TestCase):
             "iot", {"type": "set_device", "id": "1", "data": {"valve1": True}}
         )
 
-        response = await communicator.receive_json_from()
+        response = await communicator.receive_json_from(10)
 
         self.assertEqual(response["method"], "set_properties")
         self.assertEqual(response["params"], {"valve1": True})
@@ -758,10 +758,10 @@ class SubscriptionTests(TestCase):
                 "payload": {"query": f"{query}", "variables": variables},
             }
         )
-        response = await ws.receive_json_from()
+        response = await ws.receive_json_from(10)
         assert response["type"] == GQL_CONNECTION_ACK
 
-        response = await ws.receive_json_from()
+        response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA
         assert response["id"] == "demo_consumer"
         data = response["payload"]["data"]["device"]
@@ -772,7 +772,7 @@ class SubscriptionTests(TestCase):
         channel_layer = get_channel_layer()
         await channel_layer.group_send("device.1", {"type": "update"})  # type: ignore
 
-        response = await ws.receive_json_from()
+        response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA
         assert response["id"] == "demo_consumer"
         data = response["payload"]["data"]["device"]
@@ -804,10 +804,10 @@ class SubscriptionTests(TestCase):
                 "payload": {"query": f"{query}", "variables": variables},
             }
         )
-        response = await ws.receive_json_from()
+        response = await ws.receive_json_from(10)
         assert response["type"] == GQL_CONNECTION_ACK
 
-        response = await ws.receive_json_from()
+        response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA
         assert response["id"] == "demo_consumer"
         assert response["payload"]["errors"][0]["message"] == "['设备不存在']"
@@ -834,10 +834,10 @@ class SubscriptionTests(TestCase):
                 "payload": {"query": f"{query}", "variables": variables},
             }
         )
-        response = await ws.receive_json_from()
+        response = await ws.receive_json_from(10)
         assert response["type"] == GQL_CONNECTION_ACK
 
-        response = await ws.receive_json_from()
+        response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA
         assert response["id"] == "demo_consumer"
         data = response["payload"]["data"]["autowateringData"]
@@ -847,7 +847,7 @@ class SubscriptionTests(TestCase):
         channel_layer = get_channel_layer()
         await channel_layer.group_send("autowatering_data.1", {"type": "update", "pk": 2})  # type: ignore
 
-        response = await ws.receive_json_from()
+        response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA
         assert response["id"] == "demo_consumer"
         data = response["payload"]["data"]["autowateringData"]
@@ -877,10 +877,10 @@ class SubscriptionTests(TestCase):
                 "payload": {"query": f"{query}", "variables": variables},
             }
         )
-        response = await ws.receive_json_from()
+        response = await ws.receive_json_from(10)
         assert response["type"] == GQL_CONNECTION_ACK
 
-        response = await ws.receive_json_from()
+        response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA
         assert response["id"] == "demo_consumer"
         assert response["payload"]["errors"][0]["message"] == "['设备不存在']"
