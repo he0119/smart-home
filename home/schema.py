@@ -1,5 +1,6 @@
 import strawberry
 from strawberry.tools import merge_types
+from strawberry_django_plus.optimizer import DjangoOptimizerExtension
 
 import home.board.schema
 import home.iot.schema
@@ -34,4 +35,6 @@ schema = strawberry.Schema(
     query=Query,
     mutation=Mutation,
     subscription=Subscription,
+    # https://blb-ventures.github.io/strawberry-django-plus/query-optimizer/
+    extensions=[DjangoOptimizerExtension],
 )
