@@ -748,9 +748,14 @@ class SubscriptionTests(TestCase):
         """
         variables = {"id": relay.to_base64(types.Device, 1)}
         ws = get_ws_client(self.user)
+
         res = await ws.connect()
         assert res == (True, GRAPHQL_WS_PROTOCOL)
+
         await ws.send_json_to({"type": GQL_CONNECTION_INIT})
+        response = await ws.receive_json_from(10)
+        assert response["type"] == GQL_CONNECTION_ACK
+
         await ws.send_json_to(
             {
                 "type": GQL_START,
@@ -758,9 +763,6 @@ class SubscriptionTests(TestCase):
                 "payload": {"query": f"{query}", "variables": variables},
             }
         )
-        response = await ws.receive_json_from(10)
-        assert response["type"] == GQL_CONNECTION_ACK
-
         response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA
         assert response["id"] == "demo_consumer"
@@ -794,9 +796,14 @@ class SubscriptionTests(TestCase):
         """
         variables = {"id": relay.to_base64(types.Device, 0)}
         ws = get_ws_client(self.user)
+
         res = await ws.connect()
         assert res == (True, GRAPHQL_WS_PROTOCOL)
+
         await ws.send_json_to({"type": GQL_CONNECTION_INIT})
+        response = await ws.receive_json_from(10)
+        assert response["type"] == GQL_CONNECTION_ACK
+
         await ws.send_json_to(
             {
                 "type": GQL_START,
@@ -804,9 +811,6 @@ class SubscriptionTests(TestCase):
                 "payload": {"query": f"{query}", "variables": variables},
             }
         )
-        response = await ws.receive_json_from(10)
-        assert response["type"] == GQL_CONNECTION_ACK
-
         response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA
         assert response["id"] == "demo_consumer"
@@ -824,9 +828,14 @@ class SubscriptionTests(TestCase):
         """
         variables = {"deviceId": relay.to_base64(types.Device, 1)}
         ws = get_ws_client(self.user)
+
         res = await ws.connect()
         assert res == (True, GRAPHQL_WS_PROTOCOL)
+
         await ws.send_json_to({"type": GQL_CONNECTION_INIT})
+        response = await ws.receive_json_from(10)
+        assert response["type"] == GQL_CONNECTION_ACK
+
         await ws.send_json_to(
             {
                 "type": GQL_START,
@@ -834,9 +843,6 @@ class SubscriptionTests(TestCase):
                 "payload": {"query": f"{query}", "variables": variables},
             }
         )
-        response = await ws.receive_json_from(10)
-        assert response["type"] == GQL_CONNECTION_ACK
-
         response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA
         assert response["id"] == "demo_consumer"
@@ -867,9 +873,14 @@ class SubscriptionTests(TestCase):
         """
         variables = {"deviceId": relay.to_base64(types.Device, 0)}
         ws = get_ws_client(self.user)
+
         res = await ws.connect()
         assert res == (True, GRAPHQL_WS_PROTOCOL)
+
         await ws.send_json_to({"type": GQL_CONNECTION_INIT})
+        response = await ws.receive_json_from(10)
+        assert response["type"] == GQL_CONNECTION_ACK
+
         await ws.send_json_to(
             {
                 "type": GQL_START,
@@ -877,9 +888,6 @@ class SubscriptionTests(TestCase):
                 "payload": {"query": f"{query}", "variables": variables},
             }
         )
-        response = await ws.receive_json_from(10)
-        assert response["type"] == GQL_CONNECTION_ACK
-
         response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA
         assert response["id"] == "demo_consumer"
