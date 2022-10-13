@@ -65,7 +65,7 @@ class User(relay.Node):
     email: auto
     session: list[Session]
 
-    @gql.django.field(only=["avatar__url"], select_related=["avatar"])
+    @gql.django.field(select_related=["avatar"])
     def avatar_url(self) -> Optional[str]:
         if hasattr(self, "avatar"):
             return self.avatar.avatar.url  # type: ignore
