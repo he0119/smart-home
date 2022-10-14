@@ -69,6 +69,9 @@ class TopicTests(GraphQLTestCase):
                     edges {
                         node {
                             title
+                            user {
+                                avatarUrl
+                            }
                         }
                     }
                 }
