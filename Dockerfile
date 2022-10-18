@@ -10,7 +10,13 @@ COPY ./pyproject.toml ./poetry.lock* /tmp/
 
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-FROM python:3.10-slim
+FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
+
+FROM --platform=$BUILDPLATFORM python:3.10-slim
+# copy xx scripts to your build stage
+COPY --from=xx / /
+# export TARGETPLATFORM (or other TARGET*)
+ARG TARGETPLATFORM
 
 # 设置时区
 ENV TZ=Asia/Shanghai
@@ -23,7 +29,7 @@ COPY ./docker/gunicorn_conf.py /gunicorn_conf.py
 
 # 安装 uvicorn, gunicorn
 # https://www.uvicorn.org/#quickstart
-RUN apt-get update \
+RUN xx-apt-get update \
   && apt-get install -y --no-install-recommends gcc \
   && pip install --no-cache-dir --upgrade "uvicorn[standard]" gunicorn \
   && apt-get purge -y --auto-remove \
