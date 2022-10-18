@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from strawberry_django_plus.gql import relay
 
-from home.utils import GraphQLTestCase
+from home.tests import GraphQLTestCase
 
 from . import types
 from .models import Comment, Topic

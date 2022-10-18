@@ -9,7 +9,7 @@ from home.push.tasks import (
     get_enable_reg_ids,
     get_enable_reg_ids_except_user,
 )
-from home.utils import GraphQLTestCase
+from home.tests import GraphQLTestCase
 
 from . import types
 from .models import MiPush

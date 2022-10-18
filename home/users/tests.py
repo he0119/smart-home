@@ -3,7 +3,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.testcases import TestCase
 from strawberry_django_plus import relay
 
-from home.utils import GraphQLTestCase
+from home.tests import GraphQLTestCase
 
 from . import types
 from .models import Avatar, Config, Session

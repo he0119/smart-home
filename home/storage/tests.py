@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 from strawberry_django_plus.gql import relay
 
-from home.utils import GraphQLTestCase
+from home.tests import GraphQLTestCase
 
 from . import types
 from .models import Item, Picture, Storage

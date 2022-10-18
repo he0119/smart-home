@@ -23,7 +23,7 @@ from strawberry.subscriptions.protocols.graphql_ws import (
 )
 from strawberry_django_plus.gql import relay
 
-from home.utils import GraphQLTestCase, get_ws_client
+from home.tests import GraphQLTestCase, get_ws_client
 
 from . import types
 from .api import DeviceAPI, WeatherAPI
