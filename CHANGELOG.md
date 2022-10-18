@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 ### Fixed
 
 - 修复清除过期会话任务不可用的问题
+- 使用 Query Optimizer 解决 N+1 问题
 
 ## [0.9.0] - 2022-10-02
 
