@@ -7,8 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.9.1] - 2022-10-02
+
+### Changed
+
+- 使用 RedisPubSubChannelLayer 以修复测试报错
+
 ### Fixed
 
+- 修复 device_id 判断时的类型问题
 - 修复清除过期会话任务不可用的问题
 - 使用 Query Optimizer 解决 N+1 问题
 
@@ -240,7 +247,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[unreleased]: https://github.com/he0119/smart-home/compare/v0.9.0...HEAD
+[unreleased]: https://github.com/he0119/smart-home/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/he0119/smart-home/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/he0119/smart-home/compare/v0.8.4...v0.9.0
 [0.8.4]: https://github.com/he0119/smart-home/compare/v0.8.3...v0.8.4
 [0.8.3]: https://github.com/he0119/smart-home/compare/v0.8.2...v0.8.3
