@@ -771,6 +771,9 @@ class SubscriptionTests(TestCase):
         assert data["name"] == "test"
         assert data["location"] == "location"
 
+        # 交出控制权，给 subscription 设置 channel_listen 的机会
+        await asyncio.sleep(0)
+
         channel_layer = get_channel_layer()
         await channel_layer.group_send("device.1", {"type": "update"})  # type: ignore
 
@@ -849,6 +852,8 @@ class SubscriptionTests(TestCase):
         data = response["payload"]["data"]["autowateringData"]
         assert data["id"] == relay.to_base64(types.AutowateringData, 3)
         assert data["time"] == "2020-08-02T13:40:55+00:00"
+
+        await asyncio.sleep(0)
 
         channel_layer = get_channel_layer()
         await channel_layer.group_send("autowatering_data.1", {"type": "update", "pk": 2})  # type: ignore
