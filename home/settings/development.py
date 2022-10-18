@@ -37,7 +37,7 @@ DATABASES = {
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "BACKEND": "channels_redis.pubsub.RedisPubSubChannelLayer",
         "CONFIG": {
             "hosts": [os.getenv("CHANNEL_REDIS_URL")],
             "symmetric_encryption_keys": [SECRET_KEY],
