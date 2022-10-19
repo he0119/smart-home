@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Fixed
+
+- 重新启用不小心删掉的性能监控
+
 ## [0.9.1] - 2022-10-02
 
 ### Changed

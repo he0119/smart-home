@@ -253,10 +253,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Sentry
 # https://docs.sentry.io/platforms/python/guides/django/
+# https://docs.sentry.io/platforms/python/guides/django/performance/#configure-the-sample-rate
 
 sentry_sdk.init(
     integrations=[DjangoIntegration(), RedisIntegration()],
     send_default_pii=True,
+    # 性能监控的比例
+    # 必须设置才会启用性能监控
+    # Set traces_sample_rate to 1.0 to capture 100%
+    traces_sample_rate=1.0,
     # 会在 Actions 自动编译的过程中修改
     release="version",
 )
