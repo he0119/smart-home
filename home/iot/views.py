@@ -59,21 +59,13 @@ class CommandContent(TypedDict):
 class IotConsumer(AsyncJsonWebsocketConsumer):
     groups = ["iot"]
 
-    # FIXME: 有时候会出现之前的连接，在重连之后才断开的情况
-    # 从而导致设备状态不正确
-    # WebSocket HANDSHAKING /api/iot/ [127.0.0.1:46468]
-    # WebSocket CONNECT /api/iot/ [127.0.0.1:46468]
-    # 2022-10-02 11:46:11 CST - iot - INFO - test 在线
-    # WebSocket DISCONNECT /api/iot/ [127.0.0.1:57946]
-    # 2022-10-02 11:46:47 CST - iot - INFO - test 离线
-    # 注意两个的端口不一致，说明是两次连接
     async def connect(self):
         if device := self.scope["device"]:
             await self.accept()
             device = cast(Device, device)
             device.is_online = True
             device.online_at = timezone.now()
-            await sync_to_async(device.save)(update_fields=["is_online", "offline_at"])
+            await sync_to_async(device.save)(update_fields=["is_online", "online_at"])
             await self.channel_layer.group_send(  # type: ignore
                 f"device.{device.id}", {"type": "update"}
             )
@@ -84,8 +76,25 @@ class IotConsumer(AsyncJsonWebsocketConsumer):
     async def disconnect(self, close_code):
         if device := self.scope["device"]:
             device = cast(Device, device)
+            await sync_to_async(device.refresh_from_db)()
             device.is_online = False
             device.offline_at = timezone.now()
+            # 第一次连接建立
+            # [2022-10-22 10:48:11 +0800] [10] [INFO] ('172.20.0.7', 60862) - "WebSocket /api/iot/" [accepted]
+            # [2022-10-22 10:48:11 +0800] [10] [INFO] connection open
+            # 然后设备离线，重连，第二次连接建立
+            # [2022-10-22 10:48:27 +0800] [10] [INFO] ('172.20.0.7', 50890) - "WebSocket /api/iot/" [accepted]
+            # [2022-10-22 10:48:27 +0800] [10] [INFO] connection open
+            # 第一次连接超时关闭
+            # [2022-10-22 10:48:30 +0800] [10] [INFO] connection closed
+            # 如果设备离线，会自动重连，但是会新建一个连接，但是旧的连接此时还没有超时关闭
+            # 当在线时间与离线时间的差值小于 20 秒（当前 WebSocket 的超时时间）时，则不修改状态。
+            # 因为此时的离线事件是上一次的连接，而不是当前连接
+            if device.online_at and (
+                device.offline_at - device.online_at
+            ) < timezone.timedelta(seconds=20):
+                return
+
             await sync_to_async(device.save)(update_fields=["is_online", "offline_at"])
             await self.channel_layer.group_send(  # type: ignore
                 f"device.{device.id}", {"type": "update"}

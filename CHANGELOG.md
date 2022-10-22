@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 ### Fixed
 
 - 修复小米推送无法使用的问题
+- 修复设备状态不正确的问题
 
 ## [0.9.2] - 2022-10-19
 
