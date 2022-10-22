@@ -7,6 +7,15 @@ import json
 import multiprocessing
 import os
 
+from uvicorn.workers import UvicornWorker as BaseUvicornWorker
+
+
+class UvicornWorker(BaseUvicornWorker):
+    # https://github.com/encode/uvicorn/issues/266#issuecomment-469270510
+    # 因为 django 不支持，禁用 lifespan
+    CONFIG_KWARGS = {"lifespan": "off"}
+
+
 workers_per_core_str = os.getenv("WORKERS_PER_CORE", "1")
 max_workers_str = os.getenv("MAX_WORKERS")
 use_max_workers = None
