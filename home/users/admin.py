@@ -143,7 +143,7 @@ class OwnerFilter(admin.SimpleListFilter):
 
 
 class SessionAdmin(admin.ModelAdmin):
-    list_display = ("ip", "user", "is_valid", "location", "device")
+    list_display = ("ip", "user", "is_valid", "last_activity", "location", "device")
     exclude = ("session_key",)
     list_filter = (ExpiredFilter, OwnerFilter)
 

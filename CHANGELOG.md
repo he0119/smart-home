@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 ### Changed
 
 - 切换至 HTTPX
+- 管理页面中会话显示最近活跃时间
 
 ### Fixed
 
