@@ -431,8 +431,12 @@ class WebSocketsTests(TestCase):
         connected, subprotocol = await communicator.connect()
         assert connected
 
-        device = await sync_to_async(Device.objects.get)(pk=1)
+        device: Device = await sync_to_async(Device.objects.get)(pk=1)
         self.assertEqual(device.is_online, True)
+
+        # 将上次上线时间设置为 1 分钟前
+        device.online_at = timezone.now() - timezone.timedelta(minutes=1)
+        await sync_to_async(device.save)(update_fields=["online_at"])
 
         # 离线
         await communicator.disconnect()
@@ -513,6 +517,23 @@ class WebSocketsTests(TestCase):
 
         self.assertEqual(response["method"], "set_properties")
         self.assertEqual(response["params"], {"valve1": True})
+
+    async def test_client_connected_disconnected_immediately(self):
+        """测试客户端连接后，设备马上离线"""
+        communicator = get_iot_client(self.device)
+
+        # 在线
+        connected, subprotocol = await communicator.connect()
+        assert connected
+
+        device = await sync_to_async(Device.objects.get)(id=1)
+        self.assertEqual(device.is_online, True)
+
+        # 马上离线
+        await communicator.disconnect()
+
+        device = await sync_to_async(Device.objects.get)(id=1)
+        self.assertEqual(device.is_online, True)
 
 
 def mocked_httpx_get(*args, **kwargs):
