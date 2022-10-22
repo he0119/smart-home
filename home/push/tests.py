@@ -356,3 +356,10 @@ class TaskTests(TestCase):
         push_to_users(["1"], "title", "description", "/iot")
 
         self.assertTrue(mock_send.call_args_list)
+
+    @mock.patch.object(sender, "send", side_effect=mocked_sender_send)
+    def test_push_to_users_without_secrets(self, mock_send):
+        with self.settings(MI_PUSH_APP_SECRET=""):
+            push_to_users(["1"], "title", "description", "/iot")
+
+            self.assertFalse(mock_send.call_args_list)
