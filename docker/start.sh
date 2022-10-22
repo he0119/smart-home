@@ -18,7 +18,7 @@ else
   DEFAULT_GUNICORN_CONF=/gunicorn_conf.py
 fi
 export GUNICORN_CONF=${GUNICORN_CONF:-$DEFAULT_GUNICORN_CONF}
-export WORKER_CLASS=${WORKER_CLASS:-"uvicorn.workers.UvicornWorker"}
+export WORKER_CLASS=${WORKER_CLASS:-"__config__.UvicornWorker"}
 
 # If there's a prestart.sh script in the /app directory or other path specified, run it before starting
 PRE_START_PATH=${PRE_START_PATH:-/app/prestart.sh}
