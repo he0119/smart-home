@@ -2,7 +2,7 @@ import json
 import re
 from typing import Any, Dict, List, Tuple
 
-import requests
+import httpx
 
 from home.utils import channel_group_send
 
@@ -49,7 +49,7 @@ class WeatherAPI:
         od27 相对湿度
         """
         url = f"http://forecast.weather.com.cn/town/weather1dn/{self.location_id}.shtml"
-        r = requests.get(url)
+        r = httpx.get(url)
         r.encoding = "utf-8"
         match = re.findall(r"observe24h_data = ({.+});", r.text)
         for text in match:

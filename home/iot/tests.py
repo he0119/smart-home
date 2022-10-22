@@ -515,7 +515,7 @@ class WebSocketsTests(TestCase):
         self.assertEqual(response["params"], {"valve1": True})
 
 
-def mocked_requests_get(*args, **kwargs):
+def mocked_httpx_get(*args, **kwargs):
     """天气信息的测试数据"""
 
     class MockResponse:
@@ -534,7 +534,7 @@ def mocked_requests_get(*args, **kwargs):
 class ApiTests(TestCase):
     """测试 API"""
 
-    @mock.patch("requests.get", side_effect=mocked_requests_get)
+    @mock.patch("httpx.get", side_effect=mocked_httpx_get)
     def test_get_rainfall(self, mock_get):
         api = WeatherAPI("101270102006")
         rainfall = api.rainfall_24h()
@@ -575,7 +575,7 @@ class TaskTests(TestCase):
     fixtures = ["users", "push"]
 
     @mock.patch("home.iot.api.channel_group_send")
-    @mock.patch("requests.get", side_effect=mocked_requests_get)
+    @mock.patch("httpx.get", side_effect=mocked_httpx_get)
     def test_autowatering(self, mock_get, mock_send):
         """测试自动浇水"""
         autowatering("101270102006", 10, "1", ["valve1"])
@@ -588,7 +588,7 @@ class TaskTests(TestCase):
         )
 
     @mock.patch("home.iot.api.channel_group_send")
-    @mock.patch("requests.get", side_effect=mocked_requests_get)
+    @mock.patch("httpx.get", side_effect=mocked_httpx_get)
     def test_autowatering_do_not_need_water(self, mock_get, mock_send):
         """测试不需要浇水的情况"""
         autowatering("101270102006", 0, "1", ["valve1"])
@@ -599,7 +599,7 @@ class TaskTests(TestCase):
         mock_send.assert_not_called()
 
     @mock.patch("home.iot.api.channel_group_send")
-    @mock.patch("requests.get", side_effect=mocked_requests_get)
+    @mock.patch("httpx.get", side_effect=mocked_httpx_get)
     def test_autowatering_with_error(self, mock_get, mock_send):
         """测试自动重试"""
         with self.assertRaises(Exception):
