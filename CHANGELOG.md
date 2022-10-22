@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Changed
+
+- 切换至 HTTPX
+
 ## [0.9.2] - 2022-10-19
 
 ### Fixed
