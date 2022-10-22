@@ -14,6 +14,7 @@ import os
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.httpx import HttpxIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -256,7 +257,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 # https://docs.sentry.io/platforms/python/guides/django/performance/#configure-the-sample-rate
 
 sentry_sdk.init(
-    integrations=[DjangoIntegration(), RedisIntegration()],
+    integrations=[DjangoIntegration(), RedisIntegration(), HttpxIntegration()],
     send_default_pii=True,
     # 性能监控的比例
     # 必须设置才会启用性能监控
