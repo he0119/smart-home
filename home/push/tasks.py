@@ -71,5 +71,7 @@ def push_to_users(
     根据 regids, 发送消息到指定的一组设备上, regids 的个数不得超过 1000 个。
     <https://dev.mi.com/console/doc/detail?pId=1278#_2_1>
     """
-    message = build_message(title, description, payload, is_important)
-    return sender.send(message.message_dict(), ",".join(reg_ids))
+    if settings.MI_PUSH_APP_SECRET:
+        message = build_message(title, description, payload, is_important)
+        return sender.send(message.message_dict(), ",".join(reg_ids))
+    return "未设置 MI_PUSH_APP_SECRET，不推送"

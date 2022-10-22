@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 切换至 HTTPX
 
+### Fixed
+
+- 修复小米推送无法使用的问题
+
 ## [0.9.2] - 2022-10-19
 
 ### Fixed

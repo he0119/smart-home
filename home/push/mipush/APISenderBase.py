@@ -1,7 +1,7 @@
-import collections
 import json
 import logging
 import time
+import typing
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -84,7 +84,7 @@ def _encode_params(**kw):
         if isinstance(v, str):
             qv = v.encode("utf-8") if isinstance(v, str) else v
             args["%s" % k] = qv
-        elif isinstance(v, collections.Iterable):
+        elif isinstance(v, typing.Iterable):
             for i in v:
                 qv = i.encode("utf-8") if isinstance(i, str) else str(i)
                 args["%s" % k] = qv
