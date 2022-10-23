@@ -66,7 +66,6 @@ class Mutation:
         description: Optional[str],
         parent_id: Optional[relay.GlobalID],
     ) -> types.Storage:
-
         # 检查需要修改的位置是否存在
         try:
             storage = id.resolve_node(info, ensure_type=models.Storage)
@@ -84,11 +83,15 @@ class Mutation:
         if description is not UNSET and description is not None:
             storage.description = description
 
-        if parent_id:
-            try:
-                parent = parent_id.resolve_node(info, ensure_type=models.Storage)
-            except:
-                raise ValidationError("上一级位置不存在")
+        if parent_id is not UNSET:
+            # 为空则说明是根位置，即 家
+            if parent_id:
+                try:
+                    parent = parent_id.resolve_node(info, ensure_type=models.Storage)
+                except:
+                    raise ValidationError("上一级位置不存在")
+            else:
+                parent = None
 
             storage.parent = parent
 

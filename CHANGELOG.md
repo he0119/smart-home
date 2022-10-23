@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Fixed
+
+- 修复无法设置位置至根位置的问题
+
 ## [0.9.3] - 2022-10-22
 
 ### Changed

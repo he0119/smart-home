@@ -418,6 +418,49 @@ class StorageTests(GraphQLTestCase):
         self.assertEqual(data["__typename"], "OperationInfo")
         self.assertEqual(data["messages"][0]["message"], "无法修改不存在的位置")
 
+    def test_update_storage_root(self):
+        """测试修改位置至根节点
+
+        即 parentId 为 None
+        """
+        mutation = """
+            mutation updateStorage($input: UpdateStorageInput!) {
+                updateStorage(input: $input) {
+                    ... on Storage {
+                        __typename
+                        id
+                        name
+                        description
+                        parent {
+                            __typename
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        """
+        variables = {
+            "input": {
+                "id": relay.to_base64(types.Storage, "3"),
+                "name": "test",
+                "description": "some",
+                "parentId": None,
+            }
+        }
+
+        old_storage = Storage.objects.get(pk=3)
+        self.assertEqual(old_storage.name, "工具箱")
+
+        content = self.client.execute(mutation, variables)
+
+        storage = content.data["updateStorage"]
+        self.assertEqual(storage["__typename"], "Storage")
+        self.assertEqual(storage["id"], relay.to_base64(types.Storage, "3"))
+        self.assertEqual(storage["name"], "test")
+        self.assertEqual(storage["description"], "some")
+        self.assertEqual(storage["parent"], None)
+
     def test_delete_storage_not_exist(self):
         mutation = """
             mutation deleteStorage($input: DeleteStorageInput!) {
