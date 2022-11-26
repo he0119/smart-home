@@ -1,6 +1,6 @@
 services:
   app:
-    image: mcr.microsoft.com/vscode/devcontainers/python:3.10
+    image: mcr.microsoft.com/devcontainers/universal:2-linux
     environment:
       - DEVELOPMENT_SERVER=true
       - POSTGRES_DB=postgres
