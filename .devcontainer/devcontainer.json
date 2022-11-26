@@ -32,5 +32,5 @@
   // Use 'postCreateCommand' to run commands after the container is created.
   "postCreateCommand": "pipx install poetry && pipx install pre-commit && poetry config virtualenvs.in-project true && poetry install && pre-commit install && poetry run python ./manage.py migrate && poetry run python ./manage.py loaddata users board iot storage",
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-  "remoteUser": "vscode"
+  // "remoteUser": "vscode"
 }
