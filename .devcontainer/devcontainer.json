@@ -7,11 +7,7 @@
   "service": "app",
   "workspaceFolder": "/workspace",
   // Set *default* container specific settings.json values on container create.
-  "settings": {
-    "python.defaultInterpreterPath": "/usr/local/bin/python",
-    "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-    "python.testing.pytestPath": "/usr/local/py-utils/bin/pytest"
-  },
+  "settings": {},
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
     "ms-python.python",
@@ -34,7 +30,7 @@
   // This can be used to network with other containers or the host.
   // "forwardPorts": [5000, 5432],
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "poetry install && pre-commit install && poetry run python ./manage.py migrate && poetry run python ./manage.py loaddata users board iot storage",
+  "postCreateCommand": "pipx install poetry && pipx install pre-commit && poetry install && pre-commit install && poetry run python ./manage.py migrate && poetry run python ./manage.py loaddata users board iot storage",
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode"
 }
