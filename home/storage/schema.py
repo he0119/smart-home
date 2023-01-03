@@ -40,22 +40,18 @@ class Mutation:
         description: Optional[str],
         parent_id: Optional[relay.GlobalID],
     ) -> types.Storage:
-        try:
-            models.Storage.objects.get(name=name)
-            raise ValidationError("名称重复")
-        except models.Storage.DoesNotExist:
-            storage = models.Storage(name=name, description=description)
-            if parent_id:
-                # 检查上一级位置是否存在
-                try:
-                    parent = parent_id.resolve_node(info, ensure_type=models.Storage)
-                except:
-                    raise ValidationError("上一级位置不存在")
+        storage = models.Storage(name=name, description=description)
+        if parent_id:
+            # 检查上一级位置是否存在
+            try:
+                parent = parent_id.resolve_node(info, ensure_type=models.Storage)
+            except:
+                raise ValidationError("上一级位置不存在")
 
-                storage.parent = parent
+            storage.parent = parent
 
-            storage.save()
-            return storage  # type: ignore
+        storage.save()
+        return storage  # type: ignore
 
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_storage(
@@ -74,11 +70,7 @@ class Mutation:
 
         # 当名称不为空，且与当前名称不同时，才需要修改名称
         if name and name != storage.name:
-            try:
-                models.Storage.objects.get(name=name)
-                raise ValidationError("名称重复")
-            except models.Storage.DoesNotExist:
-                storage.name = name
+            storage.name = name
 
         if description is not UNSET and description is not None:
             storage.description = description
@@ -120,27 +112,23 @@ class Mutation:
         expired_at: Optional[datetime],
     ) -> types.Item:
         try:
-            models.Item.objects.get(name=name)
-            raise ValidationError("名称重复")
-        except models.Item.DoesNotExist:
-            try:
-                storage = storage_id.resolve_node(info, ensure_type=models.Storage)
-            except:
-                raise ValidationError("位置不存在")
+            storage = storage_id.resolve_node(info, ensure_type=models.Storage)
+        except:
+            raise ValidationError("位置不存在")
 
-            item = models.Item(
-                name=name,
-                number=number,
-                description=description,
-                storage=storage,
-                price=price,
-                expired_at=expired_at,
-            )
-            item.created_by = info.context.request.user
-            item.edited_by = info.context.request.user
-            item.edited_at = timezone.now()
-            item.save()
-            return item  # type: ignore
+        item = models.Item(
+            name=name,
+            number=number,
+            description=description,
+            storage=storage,
+            price=price,
+            expired_at=expired_at,
+        )
+        item.created_by = info.context.request.user
+        item.edited_by = info.context.request.user
+        item.edited_at = timezone.now()
+        item.save()
+        return item  # type: ignore
 
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def update_item(
@@ -160,11 +148,7 @@ class Mutation:
             raise ValidationError("无法修改不存在的物品")
 
         if name and name != item.name:
-            try:
-                models.Item.objects.get(name=name)
-                raise ValidationError("名称重复")
-            except models.Item.DoesNotExist:
-                item.name = name
+            item.name = name
 
         if storage_id is not UNSET and storage_id is not None:
             try:
