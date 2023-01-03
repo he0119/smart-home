@@ -115,6 +115,12 @@ class Mutation:
         except:
             raise ValidationError("位置不存在")
 
+        if price is UNSET:
+            price = None
+
+        if expired_at is UNSET:
+            expired_at = None
+
         item = models.Item(
             name=name,
             number=number,
@@ -163,8 +169,12 @@ class Mutation:
         if description is not UNSET and description is not None:
             item.description = description
 
-        item.price = price
-        item.expired_at = expired_at
+        if price is not UNSET:
+            item.price = price
+
+        if expired_at is not UNSET:
+            item.expired_at = expired_at
+
         item.edited_by = info.context.request.user
         item.edited_at = timezone.now()
         # 如果修改已删除的物品，则自动恢复它
