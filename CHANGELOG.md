@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 修复无法设置位置至根位置的问题
 
+### Removed
+
+- 删除名称的唯一约束
+
 ## [0.9.3] - 2022-10-22
 
 ### Changed
