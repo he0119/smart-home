@@ -9,7 +9,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 class Storage(MPTTModel):
     id = models.AutoField("ID", primary_key=True, auto_created=True)
-    name = models.CharField("名字", max_length=200, unique=True)
+    name = models.CharField("名字", max_length=200)
     parent = TreeForeignKey(
         "self",
         verbose_name="属于",
@@ -37,7 +37,7 @@ class Storage(MPTTModel):
 
 class Item(models.Model):
     id = models.AutoField("ID", primary_key=True, auto_created=True)
-    name = models.CharField("名字", max_length=200, unique=True)
+    name = models.CharField("名字", max_length=200)
     number = models.IntegerField("数量")
     description = models.CharField("备注", max_length=200, blank=True)
     price = models.FloatField(

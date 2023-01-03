@@ -237,6 +237,7 @@ class StorageTests(GraphQLTestCase):
         self.assertEqual(storages, [])
 
     def test_add_storage(self):
+        """添加位置"""
         mutation = """
             mutation addStorage($input: AddStorageInput!) {
                 addStorage(input: $input) {
@@ -269,6 +270,7 @@ class StorageTests(GraphQLTestCase):
         self.assertEqual(storage["parent"]["id"], relay.to_base64(types.Storage, 1))
 
     def test_delete_storage(self):
+        """删除位置"""
         mutation = """
             mutation deleteStorage($input: DeleteStorageInput!) {
                 deleteStorage(input: $input) {
@@ -286,12 +288,19 @@ class StorageTests(GraphQLTestCase):
             }
         }
 
-        content = self.client.execute(mutation, variables)
+        self.client.execute(mutation, variables)
 
         with self.assertRaises(Storage.DoesNotExist):
             Storage.objects.get(name="工具箱")
 
     def test_update_storage(self):
+        """更新位置"""
+        old_storage = Storage.objects.get(pk=3)
+        self.assertEqual(old_storage.id, 3)
+        self.assertEqual(old_storage.name, "工具箱")
+        self.assertEqual(old_storage.description, "")
+        self.assertEqual(old_storage.parent_id, 2)
+
         mutation = """
             mutation updateStorage($input: UpdateStorageInput!) {
                 updateStorage(input: $input) {
@@ -301,9 +310,7 @@ class StorageTests(GraphQLTestCase):
                         name
                         description
                         parent {
-                            __typename
                             id
-                            name
                         }
                     }
                 }
@@ -311,15 +318,12 @@ class StorageTests(GraphQLTestCase):
         """
         variables = {
             "input": {
-                "id": relay.to_base64(types.Storage, "3"),
+                "id": relay.to_base64(types.Storage, old_storage.id),
                 "name": "test",
                 "description": "some",
                 "parentId": relay.to_base64(types.Storage, 1),
             }
         }
-
-        old_storage = Storage.objects.get(pk=3)
-        self.assertEqual(old_storage.name, "工具箱")
 
         content = self.client.execute(mutation, variables)
 
@@ -329,44 +333,49 @@ class StorageTests(GraphQLTestCase):
         self.assertEqual(storage["name"], "test")
         self.assertEqual(storage["description"], "some")
         self.assertEqual(storage["parent"]["id"], relay.to_base64(types.Storage, 1))
-        self.assertEqual(storage["parent"]["name"], "阳台")
 
     def test_add_storage_name_duplicate(self):
+        """添加相同名称的位置"""
+        old_storage = Storage.objects.get(pk=1)
+
         mutation = """
             mutation addStorage($input: AddStorageInput!) {
                 addStorage(input: $input) {
-                    ... on OperationInfo {
+                    ... on Storage {
                         __typename
-                        messages {
-                            message
-                        }
+                        id
+                        name
                     }
                 }
             }
         """
         variables = {
             "input": {
-                "name": "阳台",
-                "description": "some",
+                "name": old_storage.name,
             }
         }
 
         content = self.client.execute(mutation, variables)
 
-        data = content.data["addStorage"]
-        self.assertEqual(data["__typename"], "OperationInfo")
-        self.assertEqual(data["messages"][0]["message"], "名称重复")
+        storage = content.data["addStorage"]
+        self.assertEqual(storage["__typename"], "Storage")
+        self.assertNotEqual(
+            storage["id"], relay.to_base64(types.Storage, old_storage.id)
+        )
+        self.assertEqual(storage["name"], old_storage.name)
 
     def test_update_storage_name_duplicate(self):
-        """测试修改名称重复"""
+        """更新位置名称为已有名称"""
+        old_storage = Storage.objects.get(pk=2)
+        self.assertEqual(old_storage.name, "阳台储物柜")
+
         mutation = """
             mutation updateStorage($input: UpdateStorageInput!) {
                 updateStorage(input: $input) {
-                    ... on OperationInfo {
+                    ... on Storage {
                         __typename
-                        messages {
-                            message
-                        }
+                        id
+                        name
                     }
                 }
             }
@@ -374,19 +383,18 @@ class StorageTests(GraphQLTestCase):
         variables = {
             "input": {
                 "id": relay.to_base64(types.Storage, 1),
-                "name": "阳台储物柜",
-                "description": "some",
+                "name": old_storage.name,
             }
         }
 
-        old_storage = Storage.objects.get(pk=1)
-        self.assertEqual(old_storage.name, "阳台")
-
         content = self.client.execute(mutation, variables)
 
-        data = content.data["updateStorage"]
-        self.assertEqual(data["__typename"], "OperationInfo")
-        self.assertEqual(data["messages"][0]["message"], "名称重复")
+        storage = content.data["updateStorage"]
+        self.assertEqual(storage["__typename"], "Storage")
+        self.assertNotEqual(
+            storage["id"], relay.to_base64(types.Storage, old_storage.id)
+        )
+        self.assertEqual(storage["name"], old_storage.name)
 
     def test_update_storage_not_exist(self):
         mutation = """
@@ -721,6 +729,7 @@ class ItemTests(GraphQLTestCase):
         self.assertEqual(set(names), {"雨伞"})
 
     def test_add_item(self):
+        """添加物品"""
         mutation = """
             mutation addItem($input: AddItemInput!) {
                 addItem(input: $input) {
@@ -761,8 +770,13 @@ class ItemTests(GraphQLTestCase):
         self.assertEqual(item["__typename"], "Item")
         self.assertEqual(item["name"], "test")
         self.assertEqual(item["description"], "some")
+        self.assertEqual(item["number"], 1)
+        self.assertEqual(item["storage"]["id"], relay.to_base64(types.Storage, "1"))
+        self.assertEqual(item["price"], 12.0)
+        self.assertEqual(item["expiredAt"], None)
 
     def test_delete_item(self):
+        """删除物品"""
         mutation = """
             mutation deleteItem($input: DeleteItemInput!) {
                 deleteItem(input: $input) {
@@ -776,12 +790,13 @@ class ItemTests(GraphQLTestCase):
             "input": {"itemId": relay.to_base64(types.Item, umbrella.id)},
         }
 
-        content = self.client.execute(mutation, variables)
+        self.client.execute(mutation, variables)
 
         deleted_umbrella = Item.objects.get(name="雨伞")
         self.assertEqual(deleted_umbrella.is_deleted, True)
 
     def test_restore_item(self):
+        """恢复物品"""
         mutation = """
             mutation restoreItem($input: RestoreItemInput!) {
                 restoreItem(input: $input) {
@@ -795,12 +810,18 @@ class ItemTests(GraphQLTestCase):
             "input": {"itemId": relay.to_base64(types.Item, umbrella.id)},
         }
 
-        content = self.client.execute(mutation, variables)
+        self.client.execute(mutation, variables)
 
         restore_umbrella = Item.objects.get(name="雨伞")
         self.assertEqual(restore_umbrella.is_deleted, False)
 
     def test_update_item(self):
+        """更新物品"""
+        old_item = Item.objects.get(pk=1)
+        self.assertEqual(old_item.name, "雨伞")
+        self.assertEqual(old_item.number, 1)
+        self.assertEqual(old_item.description, "")
+
         mutation = """
             mutation updateItem($input: UpdateItemInput!) {
                 updateItem(input: $input) {
@@ -827,7 +848,7 @@ class ItemTests(GraphQLTestCase):
         expiration_date = timezone.now()
         variables = {
             "input": {
-                "id": relay.to_base64(types.Item, "1"),
+                "id": relay.to_base64(types.Item, old_item.id),
                 "name": "test",
                 "number": 2,
                 "storageId": relay.to_base64(types.Storage, "2"),
@@ -836,9 +857,6 @@ class ItemTests(GraphQLTestCase):
                 "expiredAt": expiration_date.isoformat(),
             }
         }
-
-        old_item = Item.objects.get(pk=1)
-        self.assertEqual(old_item.name, "雨伞")
 
         content = self.client.execute(mutation, variables)
         item = content.data["updateItem"]
@@ -909,13 +927,18 @@ class ItemTests(GraphQLTestCase):
         self.assertEqual(item["isDeleted"], False)
 
     def test_add_item_name_duplicate(self):
+        """添加相同名称的物品"""
         mutation = """
             mutation addItem($input: AddItemInput!) {
                 addItem(input: $input) {
-                    ... on OperationInfo {
+                    ... on Item {
                         __typename
-                        messages {
-                            message
+                        id
+                        name
+                        number
+                        description
+                        storage {
+                            id
                         }
                     }
                 }
@@ -927,26 +950,27 @@ class ItemTests(GraphQLTestCase):
                 "number": 1,
                 "storageId": relay.to_base64(types.Storage, 1),
                 "description": "some",
-                "price": 12.0,
-                "expiredAt": None,
             }
         }
 
         content = self.client.execute(mutation, variables)
 
-        data = content.data["addItem"]
-        self.assertEqual(data["__typename"], "OperationInfo")
-        self.assertEqual(data["messages"][0]["message"], "名称重复")
+        item = content.data["addItem"]
+        self.assertEqual(item["__typename"], "Item")
+        self.assertEqual(item["name"], "雨伞")
+        self.assertEqual(item["number"], 1)
+        self.assertEqual(item["description"], "some")
+        self.assertEqual(item["storage"]["id"], relay.to_base64(types.Storage, 1))
 
     def test_update_item_name_duplicate(self):
+        """更新物品名称为已存在的名称"""
         mutation = """
             mutation updateItem($input: UpdateItemInput!) {
                 updateItem(input: $input) {
-                    ... on OperationInfo {
+                    ... on Item {
                         __typename
-                        messages {
-                            message
-                        }
+                        id
+                        name
                     }
                 }
             }
@@ -955,16 +979,14 @@ class ItemTests(GraphQLTestCase):
             "input": {
                 "id": relay.to_base64(types.Item, "1"),
                 "name": "口罩",
-                "number": 2,
-                "storageId": relay.to_base64(types.Storage, "2"),
             }
         }
 
         content = self.client.execute(mutation, variables)
 
-        data = content.data["updateItem"]
-        self.assertEqual(data["__typename"], "OperationInfo")
-        self.assertEqual(data["messages"][0]["message"], "名称重复")
+        item = content.data["updateItem"]
+        self.assertEqual(item["__typename"], "Item")
+        self.assertEqual(item["name"], "口罩")
 
     def test_delete_item_not_exist(self):
         mutation = """
