@@ -83,7 +83,7 @@ def parse_device(value):
             break
 
     if browser and device:
-        return "%(browser)s on %(device)s" % {"browser": browser, "device": device}
+        return f"{browser} on {device}"
 
     if browser:
         return browser

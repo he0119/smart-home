@@ -2,7 +2,7 @@ import asyncio
 import base64
 import os
 from datetime import date, timedelta
-from typing import Optional, cast
+from typing import cast
 from unittest import mock
 
 from asgiref.sync import sync_to_async
@@ -393,7 +393,7 @@ class DeviceTests(GraphQLTestCase):
         self.assertEqual(set(data), {1.0})
 
 
-def get_iot_client(device: Optional[Device] = None) -> WebsocketCommunicator:
+def get_iot_client(device: Device | None = None) -> WebsocketCommunicator:
     """获取物联网 WebSocket 客户端"""
     application = URLRouter(
         [
@@ -545,7 +545,7 @@ def mocked_httpx_get(*args, **kwargs):
 
     if args[0] == "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml":
         filepath = os.path.join(settings.BASE_DIR, "home/iot/mock/weather.shtml")
-        with open(filepath, "r", encoding="utf8") as f:
+        with open(filepath, encoding="utf8") as f:
             text = f.read()
         return MockResponse(text)
     if args[0] == "http://forecast.weather.com.cn/town/weather1dn/1.shtml":

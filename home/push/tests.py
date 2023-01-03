@@ -175,7 +175,7 @@ class PushTests(GraphQLTestCase):
     def test_get_enable_reg_ids(self):
         """测试获取所有启用用户的注册标识码"""
         reg_ids = get_enable_reg_ids()
-        self.assertEqual(set(reg_ids), set(["regidofuser1", "regid2ofuser1"]))
+        self.assertEqual(set(reg_ids), {"regidofuser1", "regid2ofuser1"})
 
     def test_get_enable_reg_ids_except_user(self):
         """测试获取除指定用户以外的所有启用用户的注册标识码"""
@@ -298,12 +298,12 @@ class DisabledPushTests(TestCase):
     def test_get_enable_reg_ids(self):
         """测试获取所有启用用户的注册标识码"""
         reg_ids = get_enable_reg_ids()
-        self.assertEqual(set(reg_ids), set(["regidofuser2", "regid2ofuser2"]))
+        self.assertEqual(set(reg_ids), {"regidofuser2", "regid2ofuser2"})
 
     def test_get_enable_reg_ids_except_user(self):
         """测试获取除指定用户以外的所有启用用户的注册标识码"""
         reg_ids = get_enable_reg_ids_except_user(self.user)
-        self.assertEqual(set(reg_ids), set(["regidofuser2", "regid2ofuser2"]))
+        self.assertEqual(set(reg_ids), {"regidofuser2", "regid2ofuser2"})
 
 
 class MiPushMessageTest(TestCase):

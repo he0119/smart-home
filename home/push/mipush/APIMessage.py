@@ -1,4 +1,3 @@
-# coding=utf-8
 from .APIConstants import Constants
 
 
@@ -13,14 +12,14 @@ class MessageDict(dict):
         self[key] = value
 
 
-class PushTargetMessage(object):
+class PushTargetMessage:
     def __init__(self, push_message, target_type, target):
         self.push_message = push_message
         self.target_type = target_type
         self.target = target
 
 
-class PushMessage(object):
+class PushMessage:
     def __init__(self):
         self.__message_dict = MessageDict()
 
@@ -70,11 +69,11 @@ class PushMessage(object):
 
     def extra(self, extra):
         for k, v in extra.items():
-            self.__message_dict["%s%s" % (Constants.http_param_extra_prefix, k)] = v
+            self.__message_dict[f"{Constants.http_param_extra_prefix}{k}"] = v
         return self
 
     def extra_element(self, key, value):
-        self.__message_dict["%s%s" % (Constants.http_param_extra_prefix, key)] = value
+        self.__message_dict[f"{Constants.http_param_extra_prefix}{key}"] = value
         return self
 
     """
@@ -82,7 +81,7 @@ class PushMessage(object):
     """
 
     def aps_element(self, key, value):
-        self.__message_dict["%s%s" % (Constants.http_param_aps_prefix, key)] = value
+        self.__message_dict[f"{Constants.http_param_aps_prefix}{key}"] = value
         return self
 
     def aps_title(self, value):

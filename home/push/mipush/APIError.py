@@ -10,7 +10,7 @@ class APIError(Exception):
         Exception.__init__(self, error)
 
     def __str__(self):
-        return "APIError: %s: %s, request: %s" % (
+        return "APIError: {}: {}, request: {}".format(
             self.error_code,
             self.error,
             self.request,
