@@ -1,4 +1,3 @@
-# coding=utf-8
 import logging
 
 from .APIConstants import Constants
@@ -23,7 +22,7 @@ class APITools(Base):
         return self._try_http_request(
             Constants.request_path.V2_CHECK_SCHEDULE_JOB_EXIST,
             retry_times,
-            **{Constants.http_param_job_id: job_id}
+            **{Constants.http_param_job_id: job_id},
         )
 
     def delete_schedule_job(self, job_id, retry_times=1):
@@ -35,7 +34,7 @@ class APITools(Base):
         return self._try_http_request(
             Constants.request_path.V2_DELETE_SCHEDULE_JOB,
             retry_times,
-            **{Constants.http_param_job_id: job_id}
+            **{Constants.http_param_job_id: job_id},
         )
 
     def delete_schedule_job_key(self, job_key, retry_times=1):
@@ -47,7 +46,7 @@ class APITools(Base):
         return self._try_http_request(
             Constants.request_path.V3_DELETE_SCHEDULE_JOB,
             retry_times,
-            **{Constants.http_param_job_key: job_key}
+            **{Constants.http_param_job_key: job_key},
         )
 
     def delete_topic(self, msg_id, retry_times=3):
@@ -60,7 +59,7 @@ class APITools(Base):
         return self._try_http_request(
             Constants.request_path.V2_DELETE_BROADCAST_MESSAGE,
             retry_times,
-            **{Constants.http_param_token_message_id: msg_id}
+            **{Constants.http_param_token_message_id: msg_id},
         )
 
     def query_device_aliases(self, package_name, reg_id, retry_times=3):
@@ -78,7 +77,7 @@ class APITools(Base):
             Constants.request_path.V1_GET_ALL_ALIAS,
             retry_times,
             Constants.__HTTP_GET__,
-            **param
+            **param,
         )
 
     def query_device_topics(self, package_name, reg_id, retry_times=3):
@@ -96,7 +95,7 @@ class APITools(Base):
             Constants.request_path.V1_GET_ALL_TOPIC,
             retry_times,
             Constants.__HTTP_GET__,
-            **param
+            **param,
         )
 
     def query_device_user_accounts(self, package_name, reg_id, retry_times=3):
@@ -114,7 +113,7 @@ class APITools(Base):
             Constants.request_path.V1_GET_ALL_ACCOUNT,
             retry_times,
             Constants.__HTTP_GET__,
-            **param
+            **param,
         )
 
     def query_device_presence(self, package_name, reg_id, retry_times=3):
@@ -175,7 +174,7 @@ class APITools(Base):
             Constants.request_path.V1_MESSAGE_STATUS,
             retry_times,
             Constants.__HTTP_GET__,
-            **params
+            **params,
         )
 
     def query_message_group_status(self, job_key, retry_times=3):
@@ -190,7 +189,7 @@ class APITools(Base):
             Constants.request_path.V1_MESSAGE_STATUS,
             retry_times,
             Constants.__HTTP_GET__,
-            **params
+            **params,
         )
 
     def query_message_status_time_range(self, begin_time, end_time, retry_times=3):
@@ -200,9 +199,7 @@ class APITools(Base):
         :param end_time: 结束时间(单位: 毫秒(ms))
         :param retry_times: 重试次数
         """
-        logging.info(
-            "'query message status time range: [%s - %s]'" % (begin_time, end_time)
-        )
+        logging.info(f"'query message status time range: [{begin_time} - {end_time}]'")
         params = {
             Constants.http_param_trace_begin_time: begin_time,
             Constants.http_param_trace_end_time: end_time,
@@ -211,7 +208,7 @@ class APITools(Base):
             Constants.request_path.V1_MESSAGES_STATUS,
             retry_times,
             Constants.__HTTP_GET__,
-            **params
+            **params,
         )
 
     def query_stat_data(self, start_date, end_date, package_name, retry_times=3):
@@ -235,7 +232,7 @@ class APITools(Base):
             Constants.request_path.V1_GET_MESSAGE_COUNTERS,
             retry_times,
             Constants.__HTTP_GET__,
-            **params
+            **params,
         )
 
     def validate_reg_ids(self, reg_ids, retry_times=3):
@@ -261,7 +258,7 @@ class APITools(Base):
             Constants.request_path.V1_EMQ_ACK_INFO,
             retry_times,
             Constants.__HTTP_GET__,
-            **params
+            **params,
         )
 
     def fetch_click_info(self, package_name, retry_times=3):
@@ -276,7 +273,7 @@ class APITools(Base):
             Constants.request_path.V1_EMQ_CLICK_INFO,
             retry_times,
             Constants.__HTTP_GET__,
-            **params
+            **params,
         )
 
     def fetch_invalid_reg_id(self, package_name, retry_times=3):
@@ -291,5 +288,5 @@ class APITools(Base):
             Constants.request_path.V1_EMQ_INVALID_REGID,
             retry_times,
             Constants.__HTTP_GET__,
-            **params
+            **params,
         )

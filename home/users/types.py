@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from strawberry import auto
@@ -66,7 +64,7 @@ class User(relay.Node):
     session: list[Session]
 
     @gql.django.field(select_related=["avatar"])
-    def avatar_url(self) -> Optional[str]:
+    def avatar_url(self) -> str | None:
         if hasattr(self, "avatar"):
             return self.avatar.avatar.url  # type: ignore
 

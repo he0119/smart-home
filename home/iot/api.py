@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 import httpx
 
@@ -19,7 +19,7 @@ class DeviceAPI:
             {"type": "set_device", "id": self.device_id, "data": payload},
         )
 
-    def set_multiple_status(self, status: List[Tuple]):
+    def set_multiple_status(self, status: list[tuple]):
         """设置设备的多个参数"""
         payload = {key: value for key, value in status}
         channel_group_send(
@@ -37,7 +37,7 @@ class WeatherAPI:
     def __init__(self, location_id: str) -> None:
         self.location_id = location_id
 
-    def weather_24h(self) -> List[Dict]:
+    def weather_24h(self) -> list[dict]:
         """最近 24 小时的天气数据
 
         数据按时间降序排列

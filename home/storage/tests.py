@@ -157,7 +157,7 @@ class StorageTests(GraphQLTestCase):
         content = self.client.execute(query)
 
         names = [item["node"]["name"] for item in content.data["storages"]["edges"]]
-        self.assertEqual(set(names), set(["阳台", "阳台储物柜", "工具箱", "工具箱2"]))
+        self.assertEqual(set(names), {"阳台", "阳台储物柜", "工具箱", "工具箱2"})
 
     def test_get_root_storage(self):
         """测试获取根节点"""
@@ -1490,9 +1490,7 @@ class PictureTests(GraphQLTestCase):
         )
 
     def test_add_picture(self):
-        test_file = SimpleUploadedFile(
-            name="test.txt", content="file_text".encode("utf-8")
-        )
+        test_file = SimpleUploadedFile(name="test.txt", content=b"file_text")
 
         mutation = """
             mutation addPicture($input: AddPictureInput!) {
@@ -1533,9 +1531,7 @@ class PictureTests(GraphQLTestCase):
         self.assertEqual(picture["description"], "test")
 
     def test_add_picture_not_exist(self):
-        test_file = SimpleUploadedFile(
-            name="test.txt", content="file_text".encode("utf-8")
-        )
+        test_file = SimpleUploadedFile(name="test.txt", content=b"file_text")
 
         mutation = """
             mutation addPicture($input: AddPictureInput!) {
@@ -1612,9 +1608,7 @@ class PictureTests(GraphQLTestCase):
         self.assertEqual(data["messages"][0]["message"], "无法删除不存在的图片")
 
     def test_update_picture(self):
-        test_file = SimpleUploadedFile(
-            name="test.txt", content="file_text".encode("utf-8")
-        )
+        test_file = SimpleUploadedFile(name="test.txt", content=b"file_text")
 
         mutation = """
             mutation updatePicture($input: UpdatePictureInput!) {

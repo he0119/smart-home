@@ -50,7 +50,7 @@ def _http_call(url, method, authorization, token, **kw):
     :param kw: params
     """
     params = urllib.parse.urlencode(_encode_params(**kw)).encode("utf-8")
-    http_url = "%s?%s" % (url, params) if method == Constants.__HTTP_GET__ else url
+    http_url = f"{url}?{params}" if method == Constants.__HTTP_GET__ else url
     http_body = None if method == Constants.__HTTP_GET__ else params
     req = urllib.request.Request(http_url, data=http_body)
     if authorization:
@@ -94,7 +94,7 @@ def _encode_params(**kw):
     return args
 
 
-class Base(object):
+class Base:
     def __init__(self, security, token=None):
         self.security = security
         self.token = token
@@ -147,9 +147,7 @@ class Base(object):
     def build_proxy(self):
         if self.proxy:
             opener = urllib.request.build_opener(
-                urllib.request.ProxyHandler(
-                    {"%s:%s" % (self.proxy_ip, self.proxy_port)}
-                ),
+                urllib.request.ProxyHandler({f"{self.proxy_ip}:{self.proxy_port}"}),
                 urllib.request.HTTPHandler(debuglevel=1),
             )
             urllib.request.install_opener(opener)

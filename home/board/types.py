@@ -68,4 +68,4 @@ class Comment(relay.Node):
     created_at: auto
     edited_at: auto
     parent: Optional["Comment"]
-    reply_to: Optional[User]
+    reply_to: User | None

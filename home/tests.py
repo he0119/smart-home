@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from channels.testing import WebsocketCommunicator
 from django.test import TestCase
@@ -11,9 +11,9 @@ from strawberry_django_plus.test.client import TestClient
 
 @dataclass
 class Response:
-    errors: List[GraphQLFormattedError]
-    data: Dict[str, Any]
-    extensions: Optional[Dict[str, Any]]
+    errors: list[GraphQLFormattedError]
+    data: dict[str, Any]
+    extensions: dict[str, Any] | None
 
 
 class MyTestClient(TestClient):
@@ -26,11 +26,11 @@ class MyTestClient(TestClient):
 
     def request(
         self,
-        body: Dict[str, object],
-        headers: Optional[Dict[str, object]] = None,
-        files: Optional[Dict[str, object]] = None,
+        body: dict[str, object],
+        headers: dict[str, object] | None = None,
+        files: dict[str, object] | None = None,
     ):
-        kwargs: Dict[str, object] = {"data": body}
+        kwargs: dict[str, object] = {"data": body}
         # 默认的测试客户端居然没用上 headers
         if headers:
             kwargs.update(headers)
@@ -44,10 +44,10 @@ class MyTestClient(TestClient):
     def execute(
         self,
         query: str,
-        variables: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, Any]] = None,
-        asserts_errors: Optional[bool] = True,
-        files: Optional[Dict[str, Any]] = None,
+        variables: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+        asserts_errors: bool | None = True,
+        files: dict[str, Any] | None = None,
     ) -> Response:
         """执行查询
 
