@@ -1,4 +1,3 @@
-# coding=utf-8
 import random
 import time
 from functools import reduce
@@ -15,16 +14,16 @@ class Singleton(type):
     """
 
     def __init__(cls, name, bases, kw):
-        super(Singleton, cls).__init__(name, bases, kw)
+        super().__init__(name, bases, kw)
         cls._instance = None
 
     def __call__(cls, *args, **kw):
         if cls._instance is None:
-            cls._instance = super(Singleton, cls).__call__(*args)
+            cls._instance = super().__call__(*args)
         return cls._instance
 
 
-class Server(object):
+class Server:
     """
     服务model(包含host, 最小权重, 最大权重, 权重速率)
     """
@@ -54,7 +53,7 @@ class Server(object):
         lock.release()
 
 
-class ServerSwitch(object, metaclass=Singleton):
+class ServerSwitch(metaclass=Singleton):
     """
     服务host选举类(单例)
     加权轮询算法

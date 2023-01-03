@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import List, Optional
 
 from celery import shared_task
 from django.db.models import Max, Min
@@ -13,7 +12,7 @@ from .models import AutowateringData, AutowateringDataDaily, Device
 
 @shared_task(bind=True)
 def autowatering(
-    self, location_id: str, limit: float, device_id: str, valves: List[str]
+    self, location_id: str, limit: float, device_id: str, valves: list[str]
 ) -> str:
     """根据当地的降雨情况自动浇水
 
@@ -67,7 +66,7 @@ def clean_autowatering_database():
     ) - timedelta(days=29)
 
     for device in Device.objects.all():
-        min_time: Optional[datetime] = device.data.aggregate(Min("time"))["time__min"]  # type: ignore
+        min_time: datetime | None = device.data.aggregate(Min("time"))["time__min"]  # type: ignore
         if not min_time:
             continue
 

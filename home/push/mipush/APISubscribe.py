@@ -1,4 +1,3 @@
-# coding=utf-8
 from .APIConstants import Constants
 from .APIError import APIError
 from .APISenderBase import Base

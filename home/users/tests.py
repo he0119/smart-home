@@ -337,9 +337,7 @@ class UserAvatarTests(GraphQLTestCase):
     def test_update_avatar(self):
         self.client.authenticate(self.user_without_avatar)
 
-        test_file = SimpleUploadedFile(
-            name="test.txt", content="file_text".encode("utf-8")
-        )
+        test_file = SimpleUploadedFile(name="test.txt", content=b"file_text")
 
         mutation = """
             mutation updateAvatar($input: UpdateAvatarInput!) {
@@ -368,9 +366,7 @@ class UserAvatarTests(GraphQLTestCase):
     def test_update_avatar_already_exist(self):
         self.client.authenticate(self.user)
 
-        test_file = SimpleUploadedFile(
-            name="test.txt", content="file_text".encode("utf-8")
-        )
+        test_file = SimpleUploadedFile(name="test.txt", content=b"file_text")
 
         mutation = """
             mutation updateAvatar($input: UpdateAvatarInput!) {

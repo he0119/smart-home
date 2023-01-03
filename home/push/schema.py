@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.conf import settings
 from strawberry.types import Info
 from strawberry_django_plus import gql
@@ -18,7 +16,7 @@ class Query:
     )
 
     @gql.django.field(permission_classes=[IsAuthenticated])
-    def mi_push(self, info: Info, device_id: str) -> Optional[types.MiPush]:
+    def mi_push(self, info: Info, device_id: str) -> types.MiPush | None:
         try:
             mi_push = models.MiPush.objects.filter(user=info.context.request.user).get(
                 device_id=device_id

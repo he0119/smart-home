@@ -1,6 +1,6 @@
+from collections.abc import AsyncGenerator, Awaitable
 from distutils.util import strtobool
 from enum import Enum
-from typing import AsyncGenerator, Awaitable, Optional
 
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
@@ -60,9 +60,9 @@ class Mutation:
         self,
         info: Info,
         id: relay.GlobalID,
-        name: Optional[str],
-        device_type: Optional[str],
-        location: Optional[str],
+        name: str | None,
+        device_type: str | None,
+        location: str | None,
     ) -> types.Device:
         try:
             device = id.resolve_node(info, ensure_type=models.Device)

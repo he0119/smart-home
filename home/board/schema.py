@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from strawberry.types import Info
@@ -32,7 +30,7 @@ class Mutation:
         self,
         info: Info,
         title: str,
-        description: Optional[str],
+        description: str | None,
     ) -> types.Topic:
         topic = models.Topic(
             title=title,
@@ -60,8 +58,8 @@ class Mutation:
         self,
         info: Info,
         id: relay.GlobalID,
-        title: Optional[str],
-        description: Optional[str],
+        title: str | None,
+        description: str | None,
     ) -> types.Topic:
         try:
             topic = id.resolve_node(info, ensure_type=models.Topic)
@@ -158,7 +156,7 @@ class Mutation:
         info: Info,
         topic_id: relay.GlobalID,
         body: str,
-        parent_id: Optional[relay.GlobalID],
+        parent_id: relay.GlobalID | None,
     ) -> types.Comment:
         try:
             topic = topic_id.resolve_node(info, ensure_type=models.Topic)

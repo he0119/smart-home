@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -37,8 +36,8 @@ class Mutation:
         self,
         info: Info,
         name: str,
-        description: Optional[str],
-        parent_id: Optional[relay.GlobalID],
+        description: str | None,
+        parent_id: relay.GlobalID | None,
     ) -> types.Storage:
         storage = models.Storage(name=name, description=description)
         if parent_id:
@@ -58,9 +57,9 @@ class Mutation:
         self,
         info: Info,
         id: relay.GlobalID,
-        name: Optional[str],
-        description: Optional[str],
-        parent_id: Optional[relay.GlobalID],
+        name: str | None,
+        description: str | None,
+        parent_id: relay.GlobalID | None,
     ) -> types.Storage:
         # 检查需要修改的位置是否存在
         try:
@@ -108,8 +107,8 @@ class Mutation:
         number: int,
         storage_id: relay.GlobalID,
         description: str,
-        price: Optional[float],
-        expired_at: Optional[datetime],
+        price: float | None,
+        expired_at: datetime | None,
     ) -> types.Item:
         try:
             storage = storage_id.resolve_node(info, ensure_type=models.Storage)
@@ -135,12 +134,12 @@ class Mutation:
         self,
         info: Info,
         id: relay.GlobalID,
-        name: Optional[str],
-        number: Optional[int],
-        description: Optional[str],
-        price: Optional[float],
-        expired_at: Optional[datetime],
-        storage_id: Optional[relay.GlobalID],
+        name: str | None,
+        number: int | None,
+        description: str | None,
+        price: float | None,
+        expired_at: datetime | None,
+        storage_id: relay.GlobalID | None,
     ) -> types.Item:
         try:
             item = id.resolve_node(info, ensure_type=models.Item)
@@ -281,12 +280,12 @@ class Mutation:
         self,
         info: Info,
         id: relay.GlobalID,
-        file: Optional[Upload],
-        description: Optional[str],
-        box_x: Optional[float],
-        box_y: Optional[float],
-        box_h: Optional[float],
-        box_w: Optional[float],
+        file: Upload | None,
+        description: str | None,
+        box_x: float | None,
+        box_y: float | None,
+        box_h: float | None,
+        box_w: float | None,
     ) -> types.Picture:
         try:
             picture = id.resolve_node(info, ensure_type=models.Picture)
