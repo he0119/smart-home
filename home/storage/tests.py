@@ -682,6 +682,25 @@ class ItemTests(GraphQLTestCase):
         self.assertEqual(len(content.data["items"]["edges"]), 1)
         self.assertEqual(content.data["items"]["edges"][0]["node"]["name"], "垃圾")
 
+    def test_get_missing_storage_items(self):
+        """获取没有存放位置的物品"""
+        query = """
+            query items {
+                items(filters: {storage: {isNull: true}}) {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        """
+        content = self.client.execute(query)
+
+        self.assertEqual(len(content.data["items"]["edges"]), 1)
+        self.assertEqual(content.data["items"]["edges"][0]["node"]["name"], "未分类")
+
     def test_get_recently_edited_items(self):
         query = """
             query recentlyEditedItems  {
