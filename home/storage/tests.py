@@ -584,6 +584,32 @@ class ItemTests(GraphQLTestCase):
         item = content.data["item"]["pictures"]["edges"][0]["node"]
         self.assertEqual(item["description"], "测试一")
 
+    def test_get_item_missing_storage(self):
+        """获取没有位置的物品"""
+        missing = Item.objects.get(name="未分类")
+
+        query = """
+            query item($id: GlobalID!) {
+                item(id: $id) {
+                    id
+                    name
+                    storage {
+                        id
+                        name
+                    }
+                }
+            }
+        """
+        variables = {
+            "id": relay.to_base64(types.Item, missing.id),
+        }
+
+        content = self.client.execute(query, variables)
+
+        item = content.data["item"]
+        self.assertEqual(item["name"], missing.name)
+        self.assertIsNone(item["storage"])
+
     def test_item_connection_filter(self):
         umbrella = Item.objects.get(name="雨伞")
 
@@ -635,7 +661,7 @@ class ItemTests(GraphQLTestCase):
         """
         content = self.client.execute(query)
 
-        self.assertEqual(len(content.data["items"]["edges"]), 4)
+        self.assertEqual(len(content.data["items"]["edges"]), 5)
 
     def test_get_deleted_items(self):
         """测试获取已删除的物品"""
@@ -1182,7 +1208,7 @@ class ConsumableTests(GraphQLTestCase):
         content = self.client.execute(query)
 
         names = [item["node"]["name"] for item in content.data["items"]["edges"]]
-        self.assertCountEqual(names, ["电池", "口罩", "雨伞"])
+        self.assertCountEqual(names, ["电池", "口罩", "雨伞", "未分类"])
 
     def test_get_consumable_is_null(self):
         """consumables 参数为 null 时，默认获取所有物品"""
@@ -1207,7 +1233,7 @@ class ConsumableTests(GraphQLTestCase):
         content = self.client.execute(query)
 
         names = [item["node"]["name"] for item in content.data["items"]["edges"]]
-        self.assertCountEqual(names, ["电池", "口罩", "雨伞", "手表"])
+        self.assertCountEqual(names, ["电池", "口罩", "雨伞", "手表", "未分类"])
 
     def test_add_consumable(self):
         """添加耗材"""

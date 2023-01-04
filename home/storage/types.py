@@ -62,7 +62,7 @@ class Item(relay.Node):
     description: auto
     price: auto
     expired_at: auto
-    storage: "Storage"
+    storage: "Storage | None"
     created_at: auto
     created_by: User
     edited_at: auto
