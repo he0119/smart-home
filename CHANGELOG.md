@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 ### Fixed
 
 - 修复无法设置位置至根位置的问题
+- 修复获取没有存放位置的物品时的报错
 
 ### Removed
 
