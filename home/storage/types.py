@@ -1,6 +1,7 @@
 from typing import Optional
 
 from strawberry import auto
+from strawberry_django.filters import FilterLookup
 from strawberry_django_plus import gql
 from strawberry_django_plus.gql import relay
 
@@ -22,10 +23,19 @@ class PictureOrder:
     created_at: auto
 
 
+@gql.input
+class StorageFilterLookup:
+    id: relay.GlobalID | None = gql.UNSET
+    name: FilterLookup[str] | None = gql.UNSET
+    description: FilterLookup[str] | None = gql.UNSET
+    level: FilterLookup[int] | None = gql.UNSET
+    is_null: bool | None = gql.UNSET
+
+
 @gql.django.filters.filter(model=models.Item, lookups=True)
 class ItemFilter:
     name: auto
-    storage: auto
+    storage: StorageFilterLookup
     description: auto
     expired_at: auto
     # FIXME: 现在这样只能在提供了 filter 参数的情况下，才会生效（就算参数为空字典也行）。

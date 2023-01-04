@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Added
+
+- 支持获取没有存放位置的物品
+
 ### Fixed
 
 - 修复无法设置位置至根位置的问题
