@@ -11,7 +11,7 @@ version = "0.9.3"
 [tool.poetry.dependencies]
 python = "^3.10"
 django = "^4.1.5"
-strawberry-django-plus = {extras = ["debug-toolbar"], version = "^1.29"}
+strawberry-django-plus = {extras = ["debug-toolbar"], version = "^2.0.4"}
 channels = "^4.0.0"
 channels-redis = "^4.0.0"
 celery = "^5.2.2"
@@ -29,12 +29,12 @@ geoip2 = "^4.6.0"
 httpx = "^0.23.0"
 
 [tool.poetry.group.dev.dependencies]
+isort = "*"
+black = "*"
+coverage = "*"
+pre-commit = "*"
 django-cors-headers = "^3.4.0"
 eventlet = "^0.33.0"
-isort = "^5.9.3"
-black = "^22.3.0"
-coverage = "^6.5"
-pre-commit = "^2.17.0"
 daphne = "^4.0.0"
 
 [tool.black]
