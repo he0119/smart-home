@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.9.4] - 2023-02-05
+
 ### Added
 
 - 支持获取没有存放位置的物品
+
+### Changed
+
+- 升级至 Django 4.1.6
 
 ### Fixed
 
@@ -278,7 +284,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[unreleased]: https://github.com/he0119/smart-home/compare/v0.9.3...HEAD
+[unreleased]: https://github.com/he0119/smart-home/compare/v0.9.4...HEAD
+[0.9.4]: https://github.com/he0119/smart-home/compare/v0.9.3...v0.9.4
 [0.9.3]: https://github.com/he0119/smart-home/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/he0119/smart-home/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/he0119/smart-home/compare/v0.9.0...v0.9.1
