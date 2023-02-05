@@ -116,9 +116,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script_stop: true
-          script: |
-            cd ${{ secrets.WEBSITES_ROOT }}
-            sudo ./deploy.sh
+          script: sudo ${{ secrets.WEBSITES_ROOT }}/deploy.sh
 
   deploy_prod:
     name: Deploy Prod
@@ -136,9 +134,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script_stop: true
-          script: |
-            cd ${{ secrets.WEBSITES_ROOT }}
-            sudo ./deploy.sh
+          script: sudo ${{ secrets.WEBSITES_ROOT }}/deploy.sh
 
   sentry_release:
     name: Sentry Release
