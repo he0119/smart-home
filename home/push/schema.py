@@ -42,7 +42,6 @@ class Mutation:
         device_id: str,
         model: str,
     ) -> types.MiPush:
-
         try:
             # 因为一个设备可能登录其他账号
             # 并且一个设备只有一个设备标识码

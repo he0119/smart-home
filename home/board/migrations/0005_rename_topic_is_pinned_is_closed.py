@@ -28,7 +28,6 @@ def reverse_set_is_closed(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("board", "0004_add_closed_at"),
     ]
