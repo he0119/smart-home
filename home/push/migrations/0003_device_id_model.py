@@ -18,7 +18,6 @@ def reverse_delete_all_push(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("push", "0002_mipush_reg_id"),

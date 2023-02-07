@@ -8,7 +8,6 @@ import home.storage.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("storage", "0006_do_not_allow_null"),

@@ -27,7 +27,6 @@ def reverse_set_edited_at(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("board", "0003_rename_field"),
     ]

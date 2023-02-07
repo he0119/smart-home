@@ -17,7 +17,6 @@ def reverse_set_date_added(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("storage", "0001_initial"),
     ]
