@@ -81,7 +81,11 @@ MEDIA_URL = os.getenv("MEDIA_URL")
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
 
 if os.getenv("AWS_S3_ENDPOINT_URL"):
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+    }
 
     MEDIA_ROOT = ""
 

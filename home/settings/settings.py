@@ -247,6 +247,15 @@ MI_PUSH_APP_SECRET = "app_secret"
 
 MEDIA_ROOT = "media"
 
+# Storages
+# https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-STORAGES
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.InMemoryStorage",
+    },
+}
+
 # AutoField
 # https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
 
