@@ -72,9 +72,12 @@ def get_ws_client(user) -> WebsocketCommunicator:
     class DebuggableGraphQLWSConsumer(GraphQLWSConsumer):
         async def get_context(self, *args, **kwargs) -> object:
             context = await super().get_context(*args, **kwargs)
-            context.tasks = self._handler.tasks  # type: ignore
-            context.connectionInitTimeoutTask = None  # type: ignore
-            context.ws.scope["user"] = user
+            context["ws"] = self._handler._ws
+            context["tasks"] = self._handler.tasks
+            context["connectionInitTimeoutTask"] = getattr(
+                self._handler, "connection_init_timeout_task", None
+            )
+            context["ws"].scope["user"] = user
             return context
 
     return WebsocketCommunicator(

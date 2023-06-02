@@ -129,14 +129,12 @@ class Subscription:
         info: Info,
         device_id: relay.GlobalID,
     ) -> AsyncGenerator[types.AutowateringData, None]:
-        ws = info.context.ws
+        ws = info.context["ws"]
 
         # 发送最新的数据
         # 让客户端可以马上显示数据
         try:
-            device = await device_id.resolve_node(
-                info, ensure_type=Awaitable[models.Device]
-            )
+            device = await device_id.aresolve_node(info, ensure_type=models.Device)
         except:
             raise ValidationError("设备不存在")
 
@@ -148,7 +146,7 @@ class Subscription:
             "update", groups=[f"autowatering_data.{device.id}"]
         ):
             data = await sync_to_async(AutowateringData.objects.get)(pk=message["pk"])
-            yield data
+            yield data  # type: ignore
 
     @gql.subscription(permission_classes=[IsAuthenticated])
     async def device(
@@ -156,16 +154,14 @@ class Subscription:
         info: Info,
         id: relay.GlobalID,
     ) -> AsyncGenerator[types.Device, None]:
-        ws = info.context.ws
+        ws = info.context["ws"]
 
-        device: models.Device = await id.resolve_node(info)  # type: ignore
+        device = await id.aresolve_node(info)
         if not device:
             raise ValidationError("设备不存在")
 
         yield device  # type: ignore
 
-        async for message in ws.channel_listen(
-            "update", groups=[f"device.{device.id}"]
-        ):
+        async for _ in ws.channel_listen("update", groups=[f"device.{device.id}"]):
             device = await sync_to_async(Device.objects.get)(pk=device.id)
             yield device  # type: ignore
