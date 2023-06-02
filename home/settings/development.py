@@ -2,7 +2,7 @@
 """
 import os
 
-from .settings import INSTALLED_APPS, MIDDLEWARE, SECRET_KEY
+from .settings import INSTALLED_APPS, MIDDLEWARE
 
 # Corsheaders
 # https://github.com/adamchainz/django-cors-headers#setup
@@ -23,30 +23,15 @@ MIDDLEWARE = [
 ] + MIDDLEWARE
 INTERNAL_IPS = ["127.0.0.1"]
 
-# 开发服务器配置，从环境变量里读取
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST"),
-        "PORT": os.getenv("POSTGRES_PORT"),
-    }
-}
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.pubsub.RedisPubSubChannelLayer",
-        "CONFIG": {
-            "hosts": [os.getenv("CHANNEL_REDIS_URL")],
-            "symmetric_encryption_keys": [SECRET_KEY],
-        },
-    },
-}
-
 if os.getenv("AWS_S3_ENDPOINT_URL"):
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 
     MEDIA_URL = os.getenv("MEDIA_URL")
     MEDIA_ROOT = ""

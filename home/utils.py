@@ -17,8 +17,8 @@ class IsAuthenticated(BasePermission):
 
     # This method can also be async!
     def has_permission(self, source: Any, info: Info, **kwargs) -> bool:
-        if not hasattr(info.context.request, "user"):
-            user = info.context.request.scope["user"]
+        if isinstance(info.context, dict):
+            user = info.context["request"].scope["user"]
         else:
             user = info.context.request.user
         return user.is_authenticated and user.is_active
