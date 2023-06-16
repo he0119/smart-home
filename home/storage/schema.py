@@ -43,7 +43,7 @@ class Mutation:
         if parent_id:
             # 检查上一级位置是否存在
             try:
-                parent = parent_id.resolve_node(info, ensure_type=models.Storage)
+                parent = parent_id.resolve_node_sync(info, ensure_type=models.Storage)
             except:
                 raise ValidationError("上一级位置不存在")
 
@@ -63,7 +63,7 @@ class Mutation:
     ) -> types.Storage:
         # 检查需要修改的位置是否存在
         try:
-            storage = id.resolve_node(info, ensure_type=models.Storage)
+            storage = id.resolve_node_sync(info, ensure_type=models.Storage)
         except:
             raise ValidationError("无法修改不存在的位置")
 
@@ -78,7 +78,9 @@ class Mutation:
             # 为空则说明是根位置，即 家
             if parent_id:
                 try:
-                    parent = parent_id.resolve_node(info, ensure_type=models.Storage)
+                    parent = parent_id.resolve_node_sync(
+                        info, ensure_type=models.Storage
+                    )
                 except:
                     raise ValidationError("上一级位置不存在")
             else:
@@ -92,7 +94,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_storage(self, info: Info, storage_id: relay.GlobalID) -> types.Storage:
         try:
-            storage = storage_id.resolve_node(info, ensure_type=models.Storage)
+            storage = storage_id.resolve_node_sync(info, ensure_type=models.Storage)
         except:
             raise ValidationError("无法删除不存在的位置")
 
@@ -111,7 +113,7 @@ class Mutation:
         expired_at: datetime | None,
     ) -> types.Item:
         try:
-            storage = storage_id.resolve_node(info, ensure_type=models.Storage)
+            storage = storage_id.resolve_node_sync(info, ensure_type=models.Storage)
         except:
             raise ValidationError("位置不存在")
 
@@ -148,7 +150,7 @@ class Mutation:
         storage_id: relay.GlobalID | None,
     ) -> types.Item:
         try:
-            item = id.resolve_node(info, ensure_type=models.Item)
+            item = id.resolve_node_sync(info, ensure_type=models.Item)
         except:
             raise ValidationError("无法修改不存在的物品")
 
@@ -157,7 +159,7 @@ class Mutation:
 
         if storage_id is not UNSET and storage_id is not None:
             try:
-                storage = storage_id.resolve_node(info, ensure_type=models.Storage)
+                storage = storage_id.resolve_node_sync(info, ensure_type=models.Storage)
             except:
                 raise ValidationError("位置不存在")
 
@@ -187,7 +189,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_item(self, info: Info, item_id: relay.GlobalID) -> types.Item:
         try:
-            item = item_id.resolve_node(info, ensure_type=models.Item)
+            item = item_id.resolve_node_sync(info, ensure_type=models.Item)
         except:
             raise ValidationError("无法删除不存在的物品")
 
@@ -197,7 +199,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def restore_item(self, info: Info, item_id: relay.GlobalID) -> types.Item:
         try:
-            item = item_id.resolve_node(info, ensure_type=models.Item)
+            item = item_id.resolve_node_sync(info, ensure_type=models.Item)
         except:
             raise ValidationError("物品不存在")
 
@@ -212,13 +214,15 @@ class Mutation:
         consumable_ids: list[relay.GlobalID],
     ) -> types.Item:
         try:
-            item = id.resolve_node(info, ensure_type=models.Item)
+            item = id.resolve_node_sync(info, ensure_type=models.Item)
         except:
             raise ValidationError("无法修改不存在的物品")
 
         for consumable_id in consumable_ids:
             try:
-                consumable = consumable_id.resolve_node(info, ensure_type=models.Item)
+                consumable = consumable_id.resolve_node_sync(
+                    info, ensure_type=models.Item
+                )
             except:
                 raise ValidationError("耗材不存在")
             # 不能添加自己作为自己的耗材
@@ -239,13 +243,15 @@ class Mutation:
         consumable_ids: list[relay.GlobalID],
     ) -> types.Item:
         try:
-            item = id.resolve_node(info, ensure_type=models.Item)
+            item = id.resolve_node_sync(info, ensure_type=models.Item)
         except:
             raise ValidationError("无法修改不存在的物品")
 
         for consumable_id in consumable_ids:
             try:
-                consumable = consumable_id.resolve_node(info, ensure_type=models.Item)
+                consumable = consumable_id.resolve_node_sync(
+                    info, ensure_type=models.Item
+                )
             except:
                 raise ValidationError("耗材不存在")
             item.consumables.remove(consumable)
@@ -268,7 +274,7 @@ class Mutation:
         box_w: float,
     ) -> types.Picture:
         try:
-            item = item_id.resolve_node(info, ensure_type=models.Item)
+            item = item_id.resolve_node_sync(info, ensure_type=models.Item)
         except:
             raise ValidationError("无法给不存在的物品添加图片")
 
@@ -298,7 +304,7 @@ class Mutation:
         box_w: float | None,
     ) -> types.Picture:
         try:
-            picture = id.resolve_node(info, ensure_type=models.Picture)
+            picture = id.resolve_node_sync(info, ensure_type=models.Picture)
         except:
             raise ValidationError("无法修改不存在的图片")
 
@@ -321,7 +327,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_picture(self, info: Info, picture_id: relay.GlobalID) -> types.Picture:
         try:
-            picture = picture_id.resolve_node(info, ensure_type=models.Picture)
+            picture = picture_id.resolve_node_sync(info, ensure_type=models.Picture)
         except:
             raise ValidationError("无法删除不存在的图片")
 

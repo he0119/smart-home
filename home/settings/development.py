@@ -19,7 +19,7 @@ CSRF_TRUSTED_ORIGINS = ["https://*"]
 
 INSTALLED_APPS.append("debug_toolbar")
 MIDDLEWARE = [
-    "strawberry_django_plus.middlewares.debug_toolbar.DebugToolbarMiddleware"
+    "strawberry_django.middlewares.debug_toolbar.DebugToolbarMiddleware"
 ] + MIDDLEWARE
 INTERNAL_IPS = ["127.0.0.1"]
 

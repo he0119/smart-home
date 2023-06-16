@@ -65,7 +65,7 @@ class Mutation:
         location: str | None,
     ) -> types.Device:
         try:
-            device = id.resolve_node(info, ensure_type=models.Device)
+            device = id.resolve_node_sync(info, ensure_type=models.Device)
         except:
             raise ValidationError("设备不存在")
 
@@ -85,7 +85,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_device(self, info: Info, device_id: relay.GlobalID) -> types.Device:
         try:
-            device = device_id.resolve_node(info, ensure_type=models.Device)
+            device = device_id.resolve_node_sync(info, ensure_type=models.Device)
         except:
             raise ValidationError("设备不存在")
 
@@ -103,7 +103,7 @@ class Mutation:
         value_type: ValueType,
     ) -> types.Device:
         try:
-            device = id.resolve_node(info, ensure_type=models.Device)
+            device = id.resolve_node_sync(info, ensure_type=models.Device)
         except:
             raise ValidationError("设备不存在")
 
@@ -134,7 +134,7 @@ class Subscription:
         # 发送最新的数据
         # 让客户端可以马上显示数据
         try:
-            device = await device_id.aresolve_node(info, ensure_type=models.Device)
+            device = await device_id.resolve_node_sync(info, ensure_type=models.Device)
         except:
             raise ValidationError("设备不存在")
 
@@ -156,7 +156,7 @@ class Subscription:
     ) -> AsyncGenerator[types.Device, None]:
         ws = info.context["ws"]
 
-        device = await id.aresolve_node(info)
+        device = await id.resolve_node_sync(info)
         if not device:
             raise ValidationError("设备不存在")
 

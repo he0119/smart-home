@@ -62,7 +62,7 @@ class Mutation:
         description: str | None,
     ) -> types.Topic:
         try:
-            topic = id.resolve_node(info, ensure_type=models.Topic)
+            topic = id.resolve_node_sync(info, ensure_type=models.Topic)
         except:
             raise ValidationError("话题不存在")
 
@@ -86,7 +86,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
-            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+            topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
         except:
             raise ValidationError("话题不存在")
 
@@ -103,7 +103,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def close_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
-            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+            topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
         except:
             raise ValidationError("话题不存在")
 
@@ -116,7 +116,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def reopen_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
-            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+            topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
         except:
             raise ValidationError("话题不存在")
 
@@ -129,7 +129,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def pin_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
-            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+            topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
         except:
             raise ValidationError("话题不存在")
 
@@ -141,7 +141,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def unpin_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
-            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+            topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
         except:
             raise ValidationError("话题不存在")
 
@@ -159,7 +159,7 @@ class Mutation:
         parent_id: relay.GlobalID | None,
     ) -> types.Comment:
         try:
-            topic = topic_id.resolve_node(info, ensure_type=models.Topic)
+            topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
         except:
             raise ValidationError("话题不存在")
 
@@ -173,7 +173,7 @@ class Mutation:
         )
         if parent_id:
             try:
-                parent_comment = parent_id.resolve_node(
+                parent_comment = parent_id.resolve_node_sync(
                     info, ensure_type=models.Comment
                 )
             except:
@@ -203,7 +203,7 @@ class Mutation:
         body: str,
     ) -> types.Comment:
         try:
-            comment = id.resolve_node(info, ensure_type=models.Comment)
+            comment = id.resolve_node_sync(info, ensure_type=models.Comment)
         except:
             raise ValidationError("评论不存在")
 
@@ -222,7 +222,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_comment(self, info: Info, comment_id: relay.GlobalID) -> types.Comment:
         try:
-            comment = comment_id.resolve_node(info, ensure_type=models.Comment)
+            comment = comment_id.resolve_node_sync(info, ensure_type=models.Comment)
         except:
             raise ValidationError("评论不存在")
 
