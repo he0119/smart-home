@@ -2,7 +2,7 @@ from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from strawberry_django_plus.gql import relay
+from strawberry import relay
 
 from home.push.tasks import (
     build_message,

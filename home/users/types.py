@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from strawberry import auto
+from strawberry import auto, relay
 from strawberry.types import Info
 from strawberry_django_plus import gql
-from strawberry_django_plus.gql import relay
 
 from . import models
 

@@ -1,8 +1,9 @@
 from django.contrib import auth
 from django.core.exceptions import ValidationError
+from strawberry import relay
 from strawberry.file_uploads import Upload
 from strawberry.types import Info
-from strawberry_django_plus import gql, relay
+from strawberry_django_plus import gql
 
 from home.utils import IsAuthenticated
 

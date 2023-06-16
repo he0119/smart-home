@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.testcases import TestCase
-from strawberry_django_plus import relay
+from strawberry import relay
 
 from home.tests import GraphQLTestCase
 

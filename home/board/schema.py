@@ -1,8 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from strawberry import relay
 from strawberry.types import Info
 from strawberry_django_plus import gql
-from strawberry_django_plus.gql import relay
 
 from home.push.tasks import get_enable_reg_ids_except_user, push_to_users
 from home.utils import IsAuthenticated

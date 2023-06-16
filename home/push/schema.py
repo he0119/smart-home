@@ -1,7 +1,7 @@
 from django.conf import settings
+from strawberry import relay
 from strawberry.types import Info
 from strawberry_django_plus import gql
-from strawberry_django_plus.gql import relay
 
 from home.utils import IsAuthenticated
 

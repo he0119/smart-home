@@ -4,9 +4,9 @@ from enum import Enum
 
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
+from strawberry import relay
 from strawberry.types import Info
 from strawberry_django_plus import gql
-from strawberry_django_plus.gql import relay
 
 from home.utils import IsAuthenticated, channel_group_send
 

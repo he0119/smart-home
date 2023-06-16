@@ -1,6 +1,5 @@
-from strawberry import auto
+from strawberry import auto, relay
 from strawberry_django_plus import gql
-from strawberry_django_plus.gql import relay
 
 from home.users.types import User, UserFilter
 
