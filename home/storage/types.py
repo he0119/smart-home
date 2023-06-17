@@ -9,6 +9,11 @@ from home.users.types import User
 from . import models
 
 
+@gql.django.ordering.order(models.Storage)
+class StorageOrder:
+    name: auto
+
+
 @gql.django.ordering.order(models.Item)
 class ItemOrder:
     created_at: auto
@@ -78,26 +83,30 @@ class Item(relay.Node):
     edited_by: User
     is_deleted: auto
     deleted_at: auto
-    consumables: relay.Connection["Item"] = gql.django.connection(
-        filters=ItemFilter, order=ItemOrder
-    )
-    pictures: relay.Connection["Picture"] = gql.django.connection(
-        filters=PictureFilter, order=PictureOrder
-    )
+    consumables: gql.django.ListConnectionWithTotalCount[
+        "Item"
+    ] = gql.django.connection(filters=ItemFilter, order=ItemOrder)
+    pictures: gql.django.ListConnectionWithTotalCount[
+        "Picture"
+    ] = gql.django.connection(filters=PictureFilter, order=PictureOrder)
 
 
-@gql.django.type(models.Storage, filters=StorageFilter)
+# FIXME: 如果仅有 filters 没有 order，则 filters 不会显示，临时添加一个没啥用的 order。
+# https://github.com/blb-ventures/strawberry-django-plus/issues/243
+@gql.django.type(models.Storage, filters=StorageFilter, order=StorageOrder)
 class Storage(relay.Node):
     name: auto
     description: auto
     parent: Optional["Storage"]
-    children: relay.Connection["Storage"] = gql.django.connection(filters=StorageFilter)
-    items: relay.Connection[Item] = gql.django.connection(
+    children: gql.django.ListConnectionWithTotalCount[
+        "Storage"
+    ] = gql.django.connection(filters=StorageFilter)
+    items: gql.django.ListConnectionWithTotalCount[Item] = gql.django.connection(
         filters=ItemFilter, order=ItemOrder
     )
-    ancestors: relay.Connection["Storage"] = gql.django.connection(
-        filters=StorageFilter
-    )
+    ancestors: gql.django.ListConnectionWithTotalCount[
+        "Storage"
+    ] = gql.django.connection(filters=StorageFilter)
 
     # NOTE: 如果是像下面这样写就会报错
     # AttributeError: 'str' object has no attribute 'CONNECTION_CLASS'

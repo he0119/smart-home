@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from typing import Any, Literal, TypedDict
 
 from strawberry import auto, relay
@@ -73,6 +74,12 @@ class Device(relay.Node):
     offline_at: auto
     token: auto
 
-    @gql.django.connection(filters=AutowateringDataFilter, order=AutowateringDataOrder)
-    def autowatering_data(self, info) -> relay.Connection[AutowateringData]:
-        return models.AutowateringData.objects.all()  # type: ignore
+    # FIXME: Device.autowatering_data() got an unexpected keyword argument 'filters'
+    # 暂时不清楚原因
+    @gql.django.connection(
+        gql.django.ListConnectionWithTotalCount[AutowateringData],
+        filters=AutowateringDataFilter,
+        order=AutowateringDataOrder,
+    )
+    def autowatering_data(self, info) -> Iterable[models.AutowateringData]:
+        return models.AutowateringData.objects.all()

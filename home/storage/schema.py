@@ -15,17 +15,17 @@ from . import models, types
 @gql.type
 class Query:
     item: types.Item = gql.django.node(permission_classes=[IsAuthenticated])
-    items: relay.Connection[types.Item] = gql.django.connection(
+    items: gql.django.ListConnectionWithTotalCount[types.Item] = gql.django.connection(
         permission_classes=[IsAuthenticated]
     )
     storage: types.Storage = gql.django.node(permission_classes=[IsAuthenticated])
-    storages: relay.Connection[types.Storage] = gql.django.connection(
-        permission_classes=[IsAuthenticated]
-    )
+    storages: gql.django.ListConnectionWithTotalCount[
+        types.Storage
+    ] = gql.django.connection(permission_classes=[IsAuthenticated])
     picture: types.Picture = gql.django.node(permission_classes=[IsAuthenticated])
-    pictures: relay.Connection[types.Picture] = gql.django.connection(
-        permission_classes=[IsAuthenticated]
-    )
+    pictures: gql.django.ListConnectionWithTotalCount[
+        types.Picture
+    ] = gql.django.connection(permission_classes=[IsAuthenticated])
 
 
 @gql.type

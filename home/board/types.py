@@ -46,9 +46,9 @@ class Topic(relay.Node):
     created_at: auto
     edited_at: auto
     is_pinned: auto
-    comments: relay.Connection["Comment"] = gql.django.connection(
-        filters=CommentFilter, order=CommentOrder
-    )
+    comments: gql.django.ListConnectionWithTotalCount[
+        "Comment"
+    ] = gql.django.connection(filters=CommentFilter, order=CommentOrder)
 
     # FIXME: Strawberry 的 bug，看起来少传了一个 self 参数，暂时对我没影响
     # https://github.com/strawberry-graphql/strawberry-graphql-django/issues/173

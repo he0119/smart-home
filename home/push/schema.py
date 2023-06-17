@@ -11,9 +11,9 @@ from . import models, types
 @gql.type
 class Query:
     mipush: types.MiPush = gql.django.node(permission_classes=[IsAuthenticated])
-    mi_pushs: relay.Connection[types.MiPush] = gql.django.connection(
-        permission_classes=[IsAuthenticated]
-    )
+    mi_pushs: gql.django.ListConnectionWithTotalCount[
+        types.MiPush
+    ] = gql.django.connection(permission_classes=[IsAuthenticated])
 
     @gql.django.field(permission_classes=[IsAuthenticated])
     def mi_push(self, info: Info, device_id: str) -> types.MiPush | None:

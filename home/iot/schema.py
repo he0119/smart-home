@@ -1,4 +1,4 @@
-from collections.abc import AsyncGenerator, Awaitable
+from collections.abc import AsyncGenerator, Awaitable, Iterable
 from distutils.util import strtobool
 from enum import Enum
 
@@ -18,12 +18,12 @@ from .models import AutowateringData, Device
 @gql.type
 class Query:
     device: types.Device = gql.django.node(permission_classes=[IsAuthenticated])
-    devices: relay.Connection[types.Device] = gql.django.connection(
-        permission_classes=[IsAuthenticated]
-    )
-    autowatering_data: relay.Connection[types.AutowateringData] = gql.django.connection(
-        permission_classes=[IsAuthenticated]
-    )
+    devices: gql.django.ListConnectionWithTotalCount[
+        types.Device
+    ] = gql.django.connection(permission_classes=[IsAuthenticated])
+    autowatering_data: gql.django.ListConnectionWithTotalCount[
+        types.AutowateringData
+    ] = gql.django.connection(permission_classes=[IsAuthenticated])
 
 
 @gql.enum
@@ -134,7 +134,7 @@ class Subscription:
         # 发送最新的数据
         # 让客户端可以马上显示数据
         try:
-            device = await device_id.resolve_node_sync(info, ensure_type=models.Device)
+            device = await device_id.resolve_node(info, ensure_type=models.Device)
         except:
             raise ValidationError("设备不存在")
 
@@ -156,7 +156,7 @@ class Subscription:
     ) -> AsyncGenerator[types.Device, None]:
         ws = info.context["ws"]
 
-        device = await id.resolve_node_sync(info)
+        device: models.Device | None = await id.resolve_node(info)  # type: ignore
         if not device:
             raise ValidationError("设备不存在")
 

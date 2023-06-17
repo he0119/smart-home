@@ -14,13 +14,13 @@ from .utils import unmark
 @gql.type
 class Query:
     topic: types.Topic = gql.django.node(permission_classes=[IsAuthenticated])
-    topics: relay.Connection[types.Topic] = gql.django.connection(
-        permission_classes=[IsAuthenticated]
-    )
+    topics: gql.django.ListConnectionWithTotalCount[
+        types.Topic
+    ] = gql.django.connection(permission_classes=[IsAuthenticated])
     comment: types.Comment = gql.django.node(permission_classes=[IsAuthenticated])
-    comments: relay.Connection[types.Comment] = gql.django.connection(
-        permission_classes=[IsAuthenticated]
-    )
+    comments: gql.django.ListConnectionWithTotalCount[
+        types.Comment
+    ] = gql.django.connection(permission_classes=[IsAuthenticated])
 
 
 @gql.type
