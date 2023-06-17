@@ -50,10 +50,8 @@ class Topic(relay.Node):
         "Comment"
     ] = gql.django.connection(filters=CommentFilter, order=CommentOrder)
 
-    # FIXME: Strawberry 的 bug，看起来少传了一个 self 参数，暂时对我没影响
-    # https://github.com/strawberry-graphql/strawberry-graphql-django/issues/173
-    @staticmethod
-    def get_queryset(queryset, info):
+    @classmethod
+    def get_queryset(cls, queryset, info):
         return queryset.annotate(
             active_at=Greatest(Max("comments__created_at"), "edited_at")
         )
