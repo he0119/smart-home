@@ -14,6 +14,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import path
 from django.utils import timezone
+from strawberry import relay
 from strawberry.subscriptions import GRAPHQL_WS_PROTOCOL
 from strawberry.subscriptions.protocols.graphql_ws import (
     GQL_CONNECTION_ACK,
@@ -21,7 +22,6 @@ from strawberry.subscriptions.protocols.graphql_ws import (
     GQL_DATA,
     GQL_START,
 )
-from strawberry_django_plus.gql import relay
 
 from home.tests import GraphQLTestCase, get_ws_client
 

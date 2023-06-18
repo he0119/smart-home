@@ -1,8 +1,10 @@
+from collections.abc import Iterable
 from typing import Any, Literal, TypedDict
 
-from strawberry import auto
+from strawberry import UNSET, auto, relay
+from strawberry_django.filters import apply as apply_filters
+from strawberry_django.ordering import apply as apply_ordering
 from strawberry_django_plus import gql
-from strawberry_django_plus.gql import relay
 
 from . import models
 
@@ -74,6 +76,22 @@ class Device(relay.Node):
     offline_at: auto
     token: auto
 
-    @gql.django.connection(filters=AutowateringDataFilter, order=AutowateringDataOrder)
-    def autowatering_data(self, info) -> relay.Connection[AutowateringData]:
-        return models.AutowateringData.objects.all()  # type: ignore
+    # NOTE: 临时的解决方法
+    # https://github.com/blb-ventures/strawberry-django-plus/issues/245
+    @gql.django.connection(
+        gql.django.ListConnectionWithTotalCount[AutowateringData],
+        filters=AutowateringDataFilter,
+        order=AutowateringDataOrder,
+    )
+    def autowatering_data(
+        self,
+        info,
+        filters: AutowateringDataFilter | None = UNSET,
+        order: AutowateringDataOrder | None = UNSET,
+    ) -> Iterable[models.AutowateringData]:
+        qs = models.AutowateringData.objects.all()
+        if filters is not UNSET:
+            qs = apply_filters(filters, qs, info=info)
+        if order is not UNSET:
+            qs = apply_ordering(order, qs)
+        return qs

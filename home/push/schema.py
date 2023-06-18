@@ -1,7 +1,7 @@
 from django.conf import settings
+from strawberry import relay
 from strawberry.types import Info
 from strawberry_django_plus import gql
-from strawberry_django_plus.gql import relay
 
 from home.utils import IsAuthenticated
 
@@ -11,9 +11,9 @@ from . import models, types
 @gql.type
 class Query:
     mipush: types.MiPush = gql.django.node(permission_classes=[IsAuthenticated])
-    mi_pushs: relay.Connection[types.MiPush] = gql.django.connection(
-        permission_classes=[IsAuthenticated]
-    )
+    mi_pushs: gql.django.ListConnectionWithTotalCount[
+        types.MiPush
+    ] = gql.django.connection(permission_classes=[IsAuthenticated])
 
     @gql.django.field(permission_classes=[IsAuthenticated])
     def mi_push(self, info: Info, device_id: str) -> types.MiPush | None:

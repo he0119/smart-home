@@ -38,6 +38,7 @@ class Session(AbstractBaseSession):
         null=True,
         on_delete=models.CASCADE,
         verbose_name="用户",
+        related_name="session",
     )
     user_agent = models.CharField("用户代理", null=True, blank=True, max_length=200)
     last_activity = models.DateTimeField("最近活跃时间", auto_now=True)

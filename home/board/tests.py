@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from strawberry_django_plus.gql import relay
+from strawberry import relay
 
 from home.tests import GraphQLTestCase
 

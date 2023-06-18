@@ -104,6 +104,7 @@ INSTALLED_APPS = [
     # GraphQL
     "channels",
     "strawberry.django",
+    "strawberry_django",
     "strawberry_django_plus",
     # 我的应用
     "home.users",

@@ -1,9 +1,8 @@
 from typing import Optional
 
-from strawberry import auto
+from strawberry import auto, relay
 from strawberry_django.filters import FilterLookup
 from strawberry_django_plus import gql
-from strawberry_django_plus.gql import relay
 
 from home.users.types import User
 
@@ -79,12 +78,12 @@ class Item(relay.Node):
     edited_by: User
     is_deleted: auto
     deleted_at: auto
-    consumables: relay.Connection["Item"] = gql.django.connection(
-        filters=ItemFilter, order=ItemOrder
-    )
-    pictures: relay.Connection["Picture"] = gql.django.connection(
-        filters=PictureFilter, order=PictureOrder
-    )
+    consumables: gql.django.ListConnectionWithTotalCount[
+        "Item"
+    ] = gql.django.connection(filters=ItemFilter, order=ItemOrder)
+    pictures: gql.django.ListConnectionWithTotalCount[
+        "Picture"
+    ] = gql.django.connection(filters=PictureFilter, order=PictureOrder)
 
 
 @gql.django.type(models.Storage, filters=StorageFilter)
@@ -92,13 +91,15 @@ class Storage(relay.Node):
     name: auto
     description: auto
     parent: Optional["Storage"]
-    children: relay.Connection["Storage"] = gql.django.connection(filters=StorageFilter)
-    items: relay.Connection[Item] = gql.django.connection(
+    children: gql.django.ListConnectionWithTotalCount[
+        "Storage"
+    ] = gql.django.connection(filters=StorageFilter)
+    items: gql.django.ListConnectionWithTotalCount[Item] = gql.django.connection(
         filters=ItemFilter, order=ItemOrder
     )
-    ancestors: relay.Connection["Storage"] = gql.django.connection(
-        filters=StorageFilter
-    )
+    ancestors: gql.django.ListConnectionWithTotalCount[
+        "Storage"
+    ] = gql.django.connection(filters=StorageFilter)
 
     # NOTE: 如果是像下面这样写就会报错
     # AttributeError: 'str' object has no attribute 'CONNECTION_CLASS'

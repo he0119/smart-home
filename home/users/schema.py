@@ -1,8 +1,9 @@
 from django.contrib import auth
 from django.core.exceptions import ValidationError
+from strawberry import relay
 from strawberry.file_uploads import Upload
 from strawberry.types import Info
-from strawberry_django_plus import gql, relay
+from strawberry_django_plus import gql
 
 from home.utils import IsAuthenticated
 
@@ -84,7 +85,7 @@ class Mutation:
     @gql.django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_session(self, info: Info, id: relay.GlobalID) -> types.Session:
         try:
-            session = id.resolve_node(info, ensure_type=models.Session)
+            session = id.resolve_node_sync(info, ensure_type=models.Session)
         except:
             raise ValidationError("会话不存在")
 
