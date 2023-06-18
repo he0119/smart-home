@@ -9,11 +9,6 @@ from home.users.types import User
 from . import models
 
 
-@gql.django.ordering.order(models.Storage)
-class StorageOrder:
-    name: auto
-
-
 @gql.django.ordering.order(models.Item)
 class ItemOrder:
     created_at: auto
@@ -91,9 +86,7 @@ class Item(relay.Node):
     ] = gql.django.connection(filters=PictureFilter, order=PictureOrder)
 
 
-# FIXME: 如果仅有 filters 没有 order，则 filters 不会显示，临时添加一个没啥用的 order。
-# https://github.com/blb-ventures/strawberry-django-plus/issues/243
-@gql.django.type(models.Storage, filters=StorageFilter, order=StorageOrder)
+@gql.django.type(models.Storage, filters=StorageFilter)
 class Storage(relay.Node):
     name: auto
     description: auto
