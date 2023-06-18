@@ -25,7 +25,7 @@ repos:
     rev: v3.6.0
     hooks:
       - id: pyupgrade
-        args: [--py310-plus]
+        args: [--py311-plus]
 
   - repo: https://github.com/hadialqattan/pycln
     rev: v2.1.5
