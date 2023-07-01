@@ -2174,18 +2174,18 @@ test = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "strawberry-django-plus"
-version = "3.0.1"
+version = "3.0.3"
 description = "Enhanced Strawberry GraphQL integration with Django"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "strawberry_django_plus-3.0.1-py3-none-any.whl", hash = "sha256:d03cd91ae1826e9333c891ab3100fb3e9ef509f45a45af284788c095ec962621"},
-    {file = "strawberry_django_plus-3.0.1.tar.gz", hash = "sha256:45758cdb558527ecffa988112ba4cbf4539cdf612e487dc21a111c3030eeb7b7"},
+    {file = "strawberry_django_plus-3.0.3-py3-none-any.whl", hash = "sha256:295abb8468947f288d5198721ccd94a76a3df1d39b9d7fcfe229caa8484f14a4"},
+    {file = "strawberry_django_plus-3.0.3.tar.gz", hash = "sha256:78d1c9aff77507bdc2c8d2c989fd8bd02325cbf3697c6f35d5e39e9c314f4bda"},
 ]
 
 [package.dependencies]
 django = ">=3.2"
-strawberry-graphql = ">=0.184.0"
+strawberry-graphql = ">=0.187.5"
 strawberry-graphql-django = ">=0.9.4"
 typing-extensions = ">=4.2.0"
 
@@ -2194,19 +2194,19 @@ enum = ["django-choices-field (>=2.0)"]
 
 [[package]]
 name = "strawberry-graphql"
-version = "0.186.1"
+version = "0.192.0"
 description = "A library for creating GraphQL APIs"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "strawberry_graphql-0.186.1-py3-none-any.whl", hash = "sha256:8aca8db58036f924e79e869d4f8f6c25a0a4063124aa40742dfc9a62dc816f1b"},
-    {file = "strawberry_graphql-0.186.1.tar.gz", hash = "sha256:6c9603dce5f0f852a1af784c4516a7cd2358aec598c1528ac97d4008bd211e77"},
+    {file = "strawberry_graphql-0.192.0-py3-none-any.whl", hash = "sha256:1eb84b96e75fccabbfc4b908da4bfc6e9177ab1632d246323ef99b7482da079a"},
+    {file = "strawberry_graphql-0.192.0.tar.gz", hash = "sha256:1662a99fd6d7df8f4def7b6e11f19c42c12d459f5f9a3ccc3d3812fa6d5d5083"},
 ]
 
 [package.dependencies]
 graphql-core = ">=3.2.0,<3.3.0"
 python-dateutil = ">=2.7.0,<3.0.0"
-typing_extensions = ">=4.1.0"
+typing-extensions = ">=4.5.0"
 
 [package.extras]
 aiohttp = ["aiohttp (>=3.7.4.post0,<4.0.0)"]
@@ -2543,4 +2543,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "bee5704703a4d97e8b6e47c8315ac6c8a23960c098b89d0aca3b6ac265c3e369"
+content-hash = "5dc8a33b3d8d360cdea1a4f2ddaf8ccaf1839349609afed7540fa391e52a5d21"
