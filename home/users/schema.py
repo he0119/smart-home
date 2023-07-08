@@ -1,25 +1,26 @@
+import strawberry
+import strawberry_django
 from django.contrib import auth
 from django.core.exceptions import ValidationError
 from strawberry import relay
 from strawberry.file_uploads import Upload
 from strawberry.types import Info
-from strawberry_django_plus import gql
 
 from home.utils import IsAuthenticated
 
 from . import models, types
 
 
-@gql.type
+@strawberry.type
 class Query:
-    @gql.django.field(permission_classes=[IsAuthenticated])
+    @strawberry_django.field(permission_classes=[IsAuthenticated])
     def viewer(self, info: Info) -> types.User:
         return info.context.request.user
 
 
-@gql.type
+@strawberry.type
 class Mutation:
-    @gql.django.input_mutation
+    @strawberry_django.input_mutation(handle_django_errors=True)
     def login(self, info: Info, username: str, password: str) -> types.User:
         request = info.context.request
         user = auth.authenticate(request, username=username, password=password)
@@ -29,14 +30,18 @@ class Mutation:
         auth.logout(request)
         raise ValidationError("用户名或密码错误")
 
-    @gql.django.mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def logout(self, info: Info) -> types.User:
         request = info.context.request
         user = request.user
         auth.logout(request)
         return user
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def update_config(self, info: Info, key: str, value: str) -> types.Config:
         user = info.context.request.user
 
@@ -54,7 +59,9 @@ class Mutation:
 
         return config  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def delete_config(self, info: Info, key: str) -> types.Config:
         user = info.context.request.user
 
@@ -65,7 +72,9 @@ class Mutation:
         else:
             raise ValidationError("key not found")
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def update_avatar(self, info: Info, file: Upload) -> types.Avatar:
         user = info.context.request.user
 
@@ -82,7 +91,9 @@ class Mutation:
 
         return avatar  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def delete_session(self, info: Info, id: relay.GlobalID) -> types.Session:
         try:
             session = id.resolve_node_sync(info, ensure_type=models.Session)

@@ -1,12 +1,13 @@
-from collections.abc import AsyncGenerator, Awaitable, Iterable
+from collections.abc import AsyncGenerator
 from distutils.util import strtobool
 from enum import Enum
 
+import strawberry
+import strawberry_django
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError
 from strawberry import relay
 from strawberry.types import Info
-from strawberry_django_plus import gql
 
 from home.utils import IsAuthenticated, channel_group_send
 
@@ -15,18 +16,18 @@ from .api import DeviceAPI
 from .models import AutowateringData, Device
 
 
-@gql.type
+@strawberry.type
 class Query:
-    device: types.Device = gql.django.node(permission_classes=[IsAuthenticated])
-    devices: gql.django.ListConnectionWithTotalCount[
+    device: types.Device = strawberry_django.node(permission_classes=[IsAuthenticated])
+    devices: strawberry_django.relay.ListConnectionWithTotalCount[
         types.Device
-    ] = gql.django.connection(permission_classes=[IsAuthenticated])
-    autowatering_data: gql.django.ListConnectionWithTotalCount[
+    ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
+    autowatering_data: strawberry_django.relay.ListConnectionWithTotalCount[
         types.AutowateringData
-    ] = gql.django.connection(permission_classes=[IsAuthenticated])
+    ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
 
 
-@gql.enum
+@strawberry.enum
 class ValueType(Enum):
     BOOLEAN = "boolean"
     FLOAT = "float"
@@ -34,9 +35,11 @@ class ValueType(Enum):
     STRING = "string"
 
 
-@gql.type
+@strawberry.type
 class Mutation:
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def add_device(
         self,
         info: Info,
@@ -55,7 +58,9 @@ class Mutation:
 
         return device  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def update_device(
         self,
         info: Info,
@@ -82,7 +87,9 @@ class Mutation:
 
         return device  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def delete_device(self, info: Info, device_id: relay.GlobalID) -> types.Device:
         try:
             device = device_id.resolve_node_sync(info, ensure_type=models.Device)
@@ -93,7 +100,9 @@ class Mutation:
 
         return device  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def set_device(
         self,
         info: Info,
@@ -121,9 +130,9 @@ class Mutation:
         return device  # type: ignore
 
 
-@gql.type
+@strawberry.type
 class Subscription:
-    @gql.subscription(permission_classes=[IsAuthenticated])
+    @strawberry.subscription(permission_classes=[IsAuthenticated])
     async def autowatering_data(
         self,
         info: Info,
@@ -148,7 +157,7 @@ class Subscription:
             data = await sync_to_async(AutowateringData.objects.get)(pk=message["pk"])
             yield data  # type: ignore
 
-    @gql.subscription(permission_classes=[IsAuthenticated])
+    @strawberry.subscription(permission_classes=[IsAuthenticated])
     async def device(
         self,
         info: Info,

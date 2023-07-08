@@ -6,7 +6,7 @@ from django.test import TestCase
 from graphql import GraphQLFormattedError
 from strawberry.channels import GraphQLWSConsumer
 from strawberry.subscriptions import GRAPHQL_WS_PROTOCOL
-from strawberry_django_plus.test.client import TestClient
+from strawberry_django.test.client import TestClient
 
 
 @dataclass
@@ -39,7 +39,7 @@ class MyTestClient(TestClient):
         else:
             kwargs["content_type"] = "application/json"
 
-        return self.client.post(self.path, **kwargs)
+        return self.client.post(self.path, **kwargs)  # type: ignore
 
     def execute(
         self,
@@ -73,7 +73,7 @@ def get_ws_client(user) -> WebsocketCommunicator:
         async def get_context(self, *args, **kwargs) -> object:
             context = await super().get_context(*args, **kwargs)
             context["ws"] = self._handler._ws
-            context["tasks"] = self._handler.tasks
+            context["tasks"] = self._handler.tasks  # type: ignore
             context["connectionInitTimeoutTask"] = getattr(
                 self._handler, "connection_init_timeout_task", None
             )

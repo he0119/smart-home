@@ -1,10 +1,10 @@
 from collections.abc import Iterable
 from typing import Any, Literal, TypedDict
 
+import strawberry_django
 from strawberry import UNSET, auto, relay
 from strawberry_django.filters import apply as apply_filters
 from strawberry_django.ordering import apply as apply_ordering
-from strawberry_django_plus import gql
 
 from . import models
 
@@ -17,18 +17,18 @@ class SetDeviceEvent(TypedDict):
     data: dict[str, Any]
 
 
-@gql.django.ordering.order(models.AutowateringData)
+@strawberry_django.ordering.order(models.AutowateringData)
 class AutowateringDataOrder:
     time: auto
 
 
-@gql.django.filters.filter(model=models.AutowateringData, lookups=True)
+@strawberry_django.filters.filter(model=models.AutowateringData, lookups=True)
 class AutowateringDataFilter:
-    device: "DeviceFilter"
     time: auto
+    device: "DeviceFilter |None" = UNSET
 
 
-@gql.django.ordering.order(models.Device)
+@strawberry_django.ordering.order(models.Device)
 class DeviceOrder:
     created_at: auto
     edited_at: auto
@@ -37,7 +37,7 @@ class DeviceOrder:
     offline_at: auto
 
 
-@gql.django.filters.filter(model=models.Device, lookups=True)
+@strawberry_django.filters.filter(model=models.Device, lookups=True)
 class DeviceFilter:
     id: relay.GlobalID
     name: auto
@@ -45,7 +45,7 @@ class DeviceFilter:
     location: auto
 
 
-@gql.django.type(
+@strawberry_django.type(
     models.AutowateringData, filters=AutowateringDataFilter, order=AutowateringDataOrder
 )
 class AutowateringData(relay.Node):
@@ -64,7 +64,7 @@ class AutowateringData(relay.Node):
     pump_delay: auto
 
 
-@gql.django.type(models.Device, filters=DeviceFilter, order=DeviceOrder)
+@strawberry_django.type(models.Device, filters=DeviceFilter, order=DeviceOrder)
 class Device(relay.Node):
     name: auto
     device_type: auto
@@ -78,8 +78,8 @@ class Device(relay.Node):
 
     # NOTE: 临时的解决方法
     # https://github.com/blb-ventures/strawberry-django-plus/issues/245
-    @gql.django.connection(
-        gql.django.ListConnectionWithTotalCount[AutowateringData],
+    @strawberry_django.connection(
+        strawberry_django.relay.ListConnectionWithTotalCount[AutowateringData],
         filters=AutowateringDataFilter,
         order=AutowateringDataOrder,
     )
@@ -93,5 +93,5 @@ class Device(relay.Node):
         if filters is not UNSET:
             qs = apply_filters(filters, qs, info=info)
         if order is not UNSET:
-            qs = apply_ordering(order, qs)
+            qs = apply_ordering(order, qs)  # type: ignore
         return qs
