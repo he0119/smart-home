@@ -1,46 +1,47 @@
 from typing import Optional
 
-from strawberry import auto, relay
+import strawberry
+import strawberry_django
+from strawberry import relay
 from strawberry_django.filters import FilterLookup
-from strawberry_django_plus import gql
 
 from home.users.types import User
 
 from . import models
 
 
-@gql.django.ordering.order(models.Item)
+@strawberry_django.ordering.order(models.Item)
 class ItemOrder:
-    created_at: auto
-    edited_at: auto
-    expired_at: auto
-    deleted_at: auto
+    created_at: strawberry.auto
+    edited_at: strawberry.auto
+    expired_at: strawberry.auto
+    deleted_at: strawberry.auto
 
 
-@gql.django.ordering.order(models.Picture)
+@strawberry_django.ordering.order(models.Picture)
 class PictureOrder:
-    created_at: auto
+    created_at: strawberry.auto
 
 
-@gql.input
+@strawberry.input
 class StorageFilterLookup:
-    id: relay.GlobalID | None = gql.UNSET
-    name: FilterLookup[str] | None = gql.UNSET
-    description: FilterLookup[str] | None = gql.UNSET
-    level: FilterLookup[int] | None = gql.UNSET
-    is_null: bool | None = gql.UNSET
+    id: relay.GlobalID | None = strawberry.UNSET
+    name: FilterLookup[str] | None = strawberry.UNSET
+    description: FilterLookup[str] | None = strawberry.UNSET
+    level: FilterLookup[int] | None = strawberry.UNSET
+    is_null: bool | None = strawberry.UNSET
 
 
-@gql.django.filters.filter(model=models.Item, lookups=True)
+@strawberry_django.filters.filter(model=models.Item, lookups=True)
 class ItemFilter:
-    name: auto
-    storage: StorageFilterLookup
-    description: auto
-    expired_at: auto
+    name: strawberry.auto
+    description: strawberry.auto
+    expired_at: strawberry.auto
     # FIXME: 现在这样只能在提供了 filter 参数的情况下，才会生效（就算参数为空字典也行）。
-    is_deleted: auto = False
+    is_deleted: strawberry.auto = False
     """ 默认排除已删除的物品 """
-    consumables: bool
+    consumables: bool | None = None
+    storage: StorageFilterLookup | None = strawberry.UNSET
 
     def filter_consumables(self, queryset):
         if self.consumables is None:
@@ -50,79 +51,79 @@ class ItemFilter:
         return queryset.filter(consumables=None)
 
 
-@gql.django.filters.filter(model=models.Storage, lookups=True)
+@strawberry_django.filters.filter(model=models.Storage, lookups=True)
 class StorageFilter:
-    name: auto
-    description: auto
-    level: auto
+    name: strawberry.auto
+    description: strawberry.auto
+    level: strawberry.auto
 
 
-@gql.django.filters.filter(models.Picture, lookups=True)
+@strawberry_django.filters.filter(models.Picture, lookups=True)
 class PictureFilter:
-    id: auto
-    item: ItemFilter
-    description: auto
+    id: strawberry.auto
+    description: strawberry.auto
+    item: ItemFilter | None = strawberry.UNSET
 
 
-@gql.django.type(models.Item, filters=ItemFilter, order=ItemOrder)
+@strawberry_django.type(models.Item, filters=ItemFilter, order=ItemOrder)
 class Item(relay.Node):
-    name: auto
-    number: auto
-    description: auto
-    price: auto
-    expired_at: auto
+    name: strawberry.auto
+    number: strawberry.auto
+    description: strawberry.auto
+    price: strawberry.auto
+    expired_at: strawberry.auto
     storage: "Storage | None"
-    created_at: auto
+    created_at: strawberry.auto
     created_by: User
-    edited_at: auto
+    edited_at: strawberry.auto
     edited_by: User
-    is_deleted: auto
-    deleted_at: auto
-    consumables: gql.django.ListConnectionWithTotalCount[
+    is_deleted: strawberry.auto
+    deleted_at: strawberry.auto
+    consumables: strawberry_django.relay.ListConnectionWithTotalCount[
         "Item"
-    ] = gql.django.connection(filters=ItemFilter, order=ItemOrder)
-    pictures: gql.django.ListConnectionWithTotalCount[
+    ] = strawberry_django.connection(filters=ItemFilter, order=ItemOrder)
+    pictures: strawberry_django.relay.ListConnectionWithTotalCount[
         "Picture"
-    ] = gql.django.connection(filters=PictureFilter, order=PictureOrder)
+    ] = strawberry_django.connection(filters=PictureFilter, order=PictureOrder)
 
 
-@gql.django.type(models.Storage, filters=StorageFilter)
+@strawberry_django.type(models.Storage, filters=StorageFilter)
 class Storage(relay.Node):
-    name: auto
-    description: auto
+    name: strawberry.auto
+    description: strawberry.auto
     parent: Optional["Storage"]
-    children: gql.django.ListConnectionWithTotalCount[
+    children: strawberry_django.relay.ListConnectionWithTotalCount[
         "Storage"
-    ] = gql.django.connection(filters=StorageFilter)
-    items: gql.django.ListConnectionWithTotalCount[Item] = gql.django.connection(
-        filters=ItemFilter, order=ItemOrder
-    )
-    ancestors: gql.django.ListConnectionWithTotalCount[
+    ] = strawberry_django.connection(filters=StorageFilter)
+    items: strawberry_django.relay.ListConnectionWithTotalCount[
+        Item
+    ] = strawberry_django.connection(filters=ItemFilter, order=ItemOrder)
+    ancestors: strawberry_django.relay.ListConnectionWithTotalCount[
         "Storage"
-    ] = gql.django.connection(filters=StorageFilter)
+    ] = strawberry_django.connection(filters=StorageFilter)
 
     # NOTE: 如果是像下面这样写就会报错
     # AttributeError: 'str' object has no attribute 'CONNECTION_CLASS'
-    # @gql.django.connection
+    # @strawberry_django.connection
     # def ancestors(self, info) -> list["Storage"]:
     #     return self.get_ancestors()
 
 
-@gql.django.type(models.Picture, filters=PictureFilter, order=PictureOrder)
+@strawberry_django.type(models.Picture, filters=PictureFilter, order=PictureOrder)
 class Picture(relay.Node):
-    description: auto
+    description: strawberry.auto
     item: Item
-    created_at: auto
+    created_at: strawberry.auto
     created_by: User
-    box_x: auto
-    box_y: auto
-    box_h: auto
-    box_w: auto
+    box_x: strawberry.auto
+    box_y: strawberry.auto
+    box_h: strawberry.auto
+    box_w: strawberry.auto
 
-    @gql.field
+    @strawberry.field
     def name(self, info) -> str:
         return self.picture.name.split("/")[-1]  # type: ignore
 
-    @gql.field
+    @strawberry.field
     def url(self, info) -> str:
         return self.picture.url  # type: ignore

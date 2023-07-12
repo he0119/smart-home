@@ -1,54 +1,55 @@
 from typing import Optional
 
+import strawberry
+import strawberry_django
 from django.db.models import Max
 from django.db.models.functions import Greatest
-from strawberry import auto, relay
-from strawberry_django_plus import gql
+from strawberry import relay
 
 from home.users.types import User
 
 from . import models
 
 
-@gql.django.ordering.order(models.Comment)
+@strawberry_django.ordering.order(models.Comment)
 class CommentOrder:
-    created_at: auto
+    created_at: strawberry.auto
 
 
-@gql.django.filters.filter(model=models.Comment, lookups=True)
+@strawberry_django.filters.filter(model=models.Comment, lookups=True)
 class CommentFilter:
-    topic: "TopicFilter"
-    level: auto
+    level: strawberry.auto
+    topic: "TopicFilter | None" = strawberry.UNSET
 
 
-@gql.django.ordering.order(models.Topic)
+@strawberry_django.ordering.order(models.Topic)
 class TopicOrder:
-    created_at: auto
-    edited_at: auto
-    is_closed: auto
-    is_pinned: auto
-    active_at: auto
+    created_at: strawberry.auto
+    edited_at: strawberry.auto
+    is_closed: strawberry.auto
+    is_pinned: strawberry.auto
+    active_at: strawberry.auto
 
 
-@gql.django.filters.filter(model=models.Topic, lookups=True)
+@strawberry_django.filters.filter(model=models.Topic, lookups=True)
 class TopicFilter:
     id: relay.GlobalID
-    title: auto
+    title: strawberry.auto
 
 
-@gql.django.type(models.Topic, filters=TopicFilter, order=TopicOrder)
+@strawberry_django.type(models.Topic, filters=TopicFilter, order=TopicOrder)
 class Topic(relay.Node):
-    title: auto
-    description: auto
-    is_closed: auto
-    closed_at: auto
+    title: strawberry.auto
+    description: strawberry.auto
+    is_closed: strawberry.auto
+    closed_at: strawberry.auto
     user: User
-    created_at: auto
-    edited_at: auto
-    is_pinned: auto
-    comments: gql.django.ListConnectionWithTotalCount[
+    created_at: strawberry.auto
+    edited_at: strawberry.auto
+    is_pinned: strawberry.auto
+    comments: strawberry_django.relay.ListConnectionWithTotalCount[
         "Comment"
-    ] = gql.django.connection(filters=CommentFilter, order=CommentOrder)
+    ] = strawberry_django.connection(filters=CommentFilter, order=CommentOrder)
 
     @classmethod
     def get_queryset(cls, queryset, info):
@@ -57,12 +58,12 @@ class Topic(relay.Node):
         )
 
 
-@gql.django.type(models.Comment, filters=CommentFilter, order=CommentOrder)
+@strawberry_django.type(models.Comment, filters=CommentFilter, order=CommentOrder)
 class Comment(relay.Node):
     topic: Topic
     user: User
-    body: auto
-    created_at: auto
-    edited_at: auto
+    body: strawberry.auto
+    created_at: strawberry.auto
+    edited_at: strawberry.auto
     parent: Optional["Comment"]
     reply_to: User | None

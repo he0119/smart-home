@@ -1,27 +1,28 @@
-from strawberry import auto, relay
-from strawberry_django_plus import gql
+import strawberry
+import strawberry_django
+from strawberry import relay
 
 from home.users.types import User, UserFilter
 
 from . import models
 
 
-@gql.django.filters.filter(model=models.MiPush, lookups=True)
+@strawberry_django.filters.filter(model=models.MiPush, lookups=True)
 class MiPushFilter:
     user: UserFilter
-    model: auto
+    model: strawberry.auto
 
 
-@gql.django.type(models.MiPush, filters=MiPushFilter)
+@strawberry_django.type(models.MiPush, filters=MiPushFilter)
 class MiPush(relay.Node):
     user: User
-    enable: auto
-    reg_id: auto
-    device_id: auto
-    model: auto
+    enable: strawberry.auto
+    reg_id: strawberry.auto
+    device_id: strawberry.auto
+    model: strawberry.auto
 
 
-@gql.type
+@strawberry.type
 class MiPushKey:
     app_id: str
     app_key: str

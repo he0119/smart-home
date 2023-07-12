@@ -1,36 +1,43 @@
 from datetime import datetime
 
+import strawberry
+import strawberry_django
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from strawberry import UNSET, relay
+from strawberry import relay
 from strawberry.file_uploads import Upload
 from strawberry.types import Info
-from strawberry_django_plus import gql
 
 from home.utils import IsAuthenticated
 
 from . import models, types
 
 
-@gql.type
+@strawberry.type
 class Query:
-    item: types.Item = gql.django.node(permission_classes=[IsAuthenticated])
-    items: gql.django.ListConnectionWithTotalCount[types.Item] = gql.django.connection(
+    item: types.Item = strawberry_django.node(permission_classes=[IsAuthenticated])
+    items: strawberry_django.relay.ListConnectionWithTotalCount[
+        types.Item
+    ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
+    storage: types.Storage = strawberry_django.node(
         permission_classes=[IsAuthenticated]
     )
-    storage: types.Storage = gql.django.node(permission_classes=[IsAuthenticated])
-    storages: gql.django.ListConnectionWithTotalCount[
+    storages: strawberry_django.relay.ListConnectionWithTotalCount[
         types.Storage
-    ] = gql.django.connection(permission_classes=[IsAuthenticated])
-    picture: types.Picture = gql.django.node(permission_classes=[IsAuthenticated])
-    pictures: gql.django.ListConnectionWithTotalCount[
+    ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
+    picture: types.Picture = strawberry_django.node(
+        permission_classes=[IsAuthenticated]
+    )
+    pictures: strawberry_django.relay.ListConnectionWithTotalCount[
         types.Picture
-    ] = gql.django.connection(permission_classes=[IsAuthenticated])
+    ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
 
 
-@gql.type
+@strawberry.type
 class Mutation:
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def add_storage(
         self,
         info: Info,
@@ -51,7 +58,9 @@ class Mutation:
         storage.save()
         return storage  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def update_storage(
         self,
         info: Info,
@@ -70,10 +79,10 @@ class Mutation:
         if name and name != storage.name:
             storage.name = name
 
-        if description is not UNSET and description is not None:
+        if description is not strawberry.UNSET and description is not None:
             storage.description = description
 
-        if parent_id is not UNSET:
+        if parent_id is not strawberry.UNSET:
             # 为空则说明是根位置，即 家
             if parent_id:
                 try:
@@ -90,7 +99,9 @@ class Mutation:
         storage.save()
         return storage  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def delete_storage(self, info: Info, storage_id: relay.GlobalID) -> types.Storage:
         try:
             storage = storage_id.resolve_node_sync(info, ensure_type=models.Storage)
@@ -100,7 +111,9 @@ class Mutation:
         storage.delete()
         return storage  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def add_item(
         self,
         info: Info,
@@ -116,10 +129,10 @@ class Mutation:
         except:
             raise ValidationError("位置不存在")
 
-        if price is UNSET:
+        if price is strawberry.UNSET:
             price = None
 
-        if expired_at is UNSET:
+        if expired_at is strawberry.UNSET:
             expired_at = None
 
         item = models.Item(
@@ -136,7 +149,9 @@ class Mutation:
         item.save()
         return item  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def update_item(
         self,
         info: Info,
@@ -156,7 +171,7 @@ class Mutation:
         if name and name != item.name:
             item.name = name
 
-        if storage_id is not UNSET and storage_id is not None:
+        if storage_id is not strawberry.UNSET and storage_id is not None:
             try:
                 storage = storage_id.resolve_node_sync(info, ensure_type=models.Storage)
             except:
@@ -164,16 +179,16 @@ class Mutation:
 
             item.storage = storage
 
-        if number is not UNSET and number is not None:
+        if number is not strawberry.UNSET and number is not None:
             item.number = number
 
-        if description is not UNSET and description is not None:
+        if description is not strawberry.UNSET and description is not None:
             item.description = description
 
-        if price is not UNSET:
+        if price is not strawberry.UNSET:
             item.price = price
 
-        if expired_at is not UNSET:
+        if expired_at is not strawberry.UNSET:
             item.expired_at = expired_at
 
         item.edited_by = info.context.request.user
@@ -185,7 +200,9 @@ class Mutation:
             item.save()
         return item  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def delete_item(self, info: Info, item_id: relay.GlobalID) -> types.Item:
         try:
             item = item_id.resolve_node_sync(info, ensure_type=models.Item)
@@ -195,7 +212,9 @@ class Mutation:
         item.delete()
         return item  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def restore_item(self, info: Info, item_id: relay.GlobalID) -> types.Item:
         try:
             item = item_id.resolve_node_sync(info, ensure_type=models.Item)
@@ -205,7 +224,9 @@ class Mutation:
         item.restore()
         return item  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def add_consumable(
         self,
         info: Info,
@@ -234,7 +255,9 @@ class Mutation:
         item.save()
         return item  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def delete_consumable(
         self,
         info: Info,
@@ -260,7 +283,9 @@ class Mutation:
         item.save()
         return item  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def add_picture(
         self,
         info: Info,
@@ -290,7 +315,9 @@ class Mutation:
         picture.save()
         return picture  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def update_picture(
         self,
         info: Info,
@@ -307,23 +334,25 @@ class Mutation:
         except:
             raise ValidationError("无法修改不存在的图片")
 
-        if description is not UNSET and description is not None:
+        if description is not strawberry.UNSET and description is not None:
             picture.description = description
         if file:
             picture.picture = file  # type: ignore
-        if box_x is not UNSET and box_x is not None:
+        if box_x is not strawberry.UNSET and box_x is not None:
             picture.box_x = box_x
-        if box_y is not UNSET and box_y is not None:
+        if box_y is not strawberry.UNSET and box_y is not None:
             picture.box_y = box_y
-        if box_h is not UNSET and box_h is not None:
+        if box_h is not strawberry.UNSET and box_h is not None:
             picture.box_h = box_h
-        if box_w is not UNSET and box_w is not None:
+        if box_w is not strawberry.UNSET and box_w is not None:
             picture.box_w = box_w
 
         picture.save()
         return picture  # type: ignore
 
-    @gql.django.input_mutation(permission_classes=[IsAuthenticated])
+    @strawberry_django.input_mutation(
+        permission_classes=[IsAuthenticated], handle_django_errors=True
+    )
     def delete_picture(self, info: Info, picture_id: relay.GlobalID) -> types.Picture:
         try:
             picture = picture_id.resolve_node_sync(info, ensure_type=models.Picture)
