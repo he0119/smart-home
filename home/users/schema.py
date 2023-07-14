@@ -20,7 +20,7 @@ class Query:
 
 @strawberry.type
 class Mutation:
-    @strawberry_django.input_mutation(handle_django_errors=True)
+    @strawberry_django.input_mutation()
     def login(self, info: Info, username: str, password: str) -> types.User:
         request = info.context.request
         user = auth.authenticate(request, username=username, password=password)
@@ -30,18 +30,14 @@ class Mutation:
         auth.logout(request)
         raise ValidationError("用户名或密码错误")
 
-    @strawberry_django.mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.mutation(permission_classes=[IsAuthenticated])
     def logout(self, info: Info) -> types.User:
         request = info.context.request
         user = request.user
         auth.logout(request)
         return user
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def update_config(self, info: Info, key: str, value: str) -> types.Config:
         user = info.context.request.user
 
@@ -59,9 +55,7 @@ class Mutation:
 
         return config  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_config(self, info: Info, key: str) -> types.Config:
         user = info.context.request.user
 
@@ -72,9 +66,7 @@ class Mutation:
         else:
             raise ValidationError("key not found")
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def update_avatar(self, info: Info, file: Upload) -> types.Avatar:
         user = info.context.request.user
 
@@ -91,9 +83,7 @@ class Mutation:
 
         return avatar  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_session(self, info: Info, id: relay.GlobalID) -> types.Session:
         try:
             session = id.resolve_node_sync(info, ensure_type=models.Session)

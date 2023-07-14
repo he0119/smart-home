@@ -35,9 +35,7 @@ class Query:
 
 @strawberry.type
 class Mutation:
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def add_storage(
         self,
         info: Info,
@@ -58,9 +56,7 @@ class Mutation:
         storage.save()
         return storage  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def update_storage(
         self,
         info: Info,
@@ -99,9 +95,7 @@ class Mutation:
         storage.save()
         return storage  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_storage(self, info: Info, storage_id: relay.GlobalID) -> types.Storage:
         try:
             storage = storage_id.resolve_node_sync(info, ensure_type=models.Storage)
@@ -111,9 +105,7 @@ class Mutation:
         storage.delete()
         return storage  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def add_item(
         self,
         info: Info,
@@ -149,9 +141,7 @@ class Mutation:
         item.save()
         return item  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def update_item(
         self,
         info: Info,
@@ -200,9 +190,7 @@ class Mutation:
             item.save()
         return item  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_item(self, info: Info, item_id: relay.GlobalID) -> types.Item:
         try:
             item = item_id.resolve_node_sync(info, ensure_type=models.Item)
@@ -212,9 +200,7 @@ class Mutation:
         item.delete()
         return item  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def restore_item(self, info: Info, item_id: relay.GlobalID) -> types.Item:
         try:
             item = item_id.resolve_node_sync(info, ensure_type=models.Item)
@@ -224,9 +210,7 @@ class Mutation:
         item.restore()
         return item  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def add_consumable(
         self,
         info: Info,
@@ -255,9 +239,7 @@ class Mutation:
         item.save()
         return item  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_consumable(
         self,
         info: Info,
@@ -283,9 +265,7 @@ class Mutation:
         item.save()
         return item  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def add_picture(
         self,
         info: Info,
@@ -315,9 +295,7 @@ class Mutation:
         picture.save()
         return picture  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def update_picture(
         self,
         info: Info,
@@ -350,9 +328,7 @@ class Mutation:
         picture.save()
         return picture  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_picture(self, info: Info, picture_id: relay.GlobalID) -> types.Picture:
         try:
             picture = picture_id.resolve_node_sync(info, ensure_type=models.Picture)
