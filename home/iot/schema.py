@@ -37,9 +37,7 @@ class ValueType(Enum):
 
 @strawberry.type
 class Mutation:
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def add_device(
         self,
         info: Info,
@@ -58,9 +56,7 @@ class Mutation:
 
         return device  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def update_device(
         self,
         info: Info,
@@ -87,9 +83,7 @@ class Mutation:
 
         return device  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_device(self, info: Info, device_id: relay.GlobalID) -> types.Device:
         try:
             device = device_id.resolve_node_sync(info, ensure_type=models.Device)
@@ -100,9 +94,7 @@ class Mutation:
 
         return device  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def set_device(
         self,
         info: Info,

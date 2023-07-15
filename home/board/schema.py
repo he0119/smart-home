@@ -28,9 +28,7 @@ class Query:
 
 @strawberry.type
 class Mutation:
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def add_topic(
         self,
         info: Info,
@@ -58,9 +56,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def update_topic(
         self,
         info: Info,
@@ -90,9 +86,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
@@ -109,9 +103,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def close_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
@@ -124,9 +116,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def reopen_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
@@ -139,9 +129,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def pin_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
@@ -153,9 +141,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def unpin_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
@@ -167,9 +153,7 @@ class Mutation:
 
         return topic  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def add_comment(
         self,
         info: Info,
@@ -214,9 +198,7 @@ class Mutation:
             )  # type: ignore
         return comment  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def update_comment(
         self,
         info: Info,
@@ -240,9 +222,7 @@ class Mutation:
 
         return comment  # type: ignore
 
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def delete_comment(self, info: Info, comment_id: relay.GlobalID) -> types.Comment:
         try:
             comment = comment_id.resolve_node_sync(info, ensure_type=models.Comment)

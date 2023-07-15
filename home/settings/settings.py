@@ -288,3 +288,15 @@ SESSION_SAVE_EVERY_REQUEST = True
 # https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en
 
 GEOIP_PATH = os.path.join(BASE_DIR, "geoip")
+
+# STRAWBERRY_DJANGO
+# https://strawberry-graphql.github.io/strawberry-graphql-django/guide/settings/
+
+STRAWBERRY_DJANGO = {
+    "FIELD_DESCRIPTION_FROM_HELP_TEXT": True,
+    "TYPE_DESCRIPTION_FROM_MODEL_DOCSTRING": True,
+    "MUTATIONS_DEFAULT_ARGUMENT_NAME": "input",
+    "MUTATIONS_DEFAULT_HANDLE_ERRORS": True,
+    "GENERATE_ENUMS_FROM_CHOICES": False,
+    "MAP_AUTO_ID_AS_GLOBAL_ID": True,
+}

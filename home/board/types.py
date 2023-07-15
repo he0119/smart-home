@@ -52,7 +52,7 @@ class Topic(relay.Node):
     ] = strawberry_django.connection(filters=CommentFilter, order=CommentOrder)
 
     @classmethod
-    def get_queryset(cls, queryset, info):
+    def get_queryset(cls, queryset, info, **kwargs):
         return queryset.annotate(
             active_at=Greatest(Max("comments__created_at"), "edited_at")
         )

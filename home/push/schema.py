@@ -34,9 +34,7 @@ class Query:
 
 @strawberry.type
 class Mutation:
-    @strawberry_django.input_mutation(
-        permission_classes=[IsAuthenticated], handle_django_errors=True
-    )
+    @strawberry_django.input_mutation(permission_classes=[IsAuthenticated])
     def update_mi_push(
         self,
         info: Info,
