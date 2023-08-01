@@ -20,7 +20,7 @@ django-cleanup = "^8.0.0"
 django-mptt = "^0.14.0"
 django-storages = "^1.11.1"
 boto3 = "^1.21.32"
-markdown = "^3.3.3"
+markdown = "^3.4.4"
 pillow = "^10.0.0"
 psycopg = { extras = ["binary"], version = "^3.1.8" }
 redis = "^4.2.1"
