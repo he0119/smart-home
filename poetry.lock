@@ -1651,6 +1651,7 @@ files = [
     {file = "Pillow-10.0.0-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:3b08d4cc24f471b2c8ca24ec060abf4bebc6b144cb89cba638c720546b1cf538"},
     {file = "Pillow-10.0.0-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:d737a602fbd82afd892ca746392401b634e278cb65d55c4b7a8f48e9ef8d008d"},
     {file = "Pillow-10.0.0-cp311-cp311-win_amd64.whl", hash = "sha256:3a82c40d706d9aa9734289740ce26460a11aeec2d9c79b7af87bb35f0073c12f"},
+    {file = "Pillow-10.0.0-cp311-cp311-win_arm64.whl", hash = "sha256:bc2ec7c7b5d66b8ec9ce9f720dbb5fa4bace0f545acd34870eff4a369b44bf37"},
     {file = "Pillow-10.0.0-cp312-cp312-macosx_10_10_x86_64.whl", hash = "sha256:d80cf684b541685fccdd84c485b31ce73fc5c9b5d7523bf1394ce134a60c6883"},
     {file = "Pillow-10.0.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:76de421f9c326da8f43d690110f0e79fe3ad1e54be811545d7d91898b4c8493e"},
     {file = "Pillow-10.0.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:81ff539a12457809666fef6624684c008e00ff6bf455b4b89fd00a140eecd640"},
@@ -1660,6 +1661,7 @@ files = [
     {file = "Pillow-10.0.0-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:d50b6aec14bc737742ca96e85d6d0a5f9bfbded018264b3b70ff9d8c33485551"},
     {file = "Pillow-10.0.0-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:00e65f5e822decd501e374b0650146063fbb30a7264b4d2744bdd7b913e0cab5"},
     {file = "Pillow-10.0.0-cp312-cp312-win_amd64.whl", hash = "sha256:f31f9fdbfecb042d046f9d91270a0ba28368a723302786c0009ee9b9f1f60199"},
+    {file = "Pillow-10.0.0-cp312-cp312-win_arm64.whl", hash = "sha256:1ce91b6ec08d866b14413d3f0bbdea7e24dfdc8e59f562bb77bc3fe60b6144ca"},
     {file = "Pillow-10.0.0-cp38-cp38-macosx_10_10_x86_64.whl", hash = "sha256:349930d6e9c685c089284b013478d6f76e3a534e36ddfa912cde493f235372f3"},
     {file = "Pillow-10.0.0-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:3a684105f7c32488f7153905a4e3015a3b6c7182e106fe3c37fbb5ef3e6994c3"},
     {file = "Pillow-10.0.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:b4f69b3700201b80bb82c3a97d5e9254084f6dd5fb5b16fc1a7b974260f89f43"},
@@ -2151,13 +2153,13 @@ test = ["pytest", "pytest-cov"]
 
 [[package]]
 name = "strawberry-graphql"
-version = "0.194.4"
+version = "0.198.0"
 description = "A library for creating GraphQL APIs"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "strawberry_graphql-0.194.4-py3-none-any.whl", hash = "sha256:80d1a4a4b2a5f434cc5d1c489724bc149db2834a37c9c64d2191086876373893"},
-    {file = "strawberry_graphql-0.194.4.tar.gz", hash = "sha256:803e9525c35a216f0e89b76b9d6a934653ca6fa14f7eb42399e57c0c4183afdd"},
+    {file = "strawberry_graphql-0.198.0-py3-none-any.whl", hash = "sha256:ae2316641b380c309a70ef71e21c5ef606ef151032c1471936c6c731834eaf90"},
+    {file = "strawberry_graphql-0.198.0.tar.gz", hash = "sha256:12f57e435b0c07497a6b0d84d5f21e638a254db571826af53a1a45604506c023"},
 ]
 
 [package.dependencies]
@@ -2172,7 +2174,7 @@ chalice = ["chalice (>=1.22,<2.0)"]
 channels = ["asgiref (>=3.2,<4.0)", "channels (>=3.0.5)"]
 cli = ["libcst (>=0.4.7)", "pygments (>=2.3,<3.0)", "rich (>=12.0.0)", "typer (>=0.7.0)"]
 debug = ["libcst (>=0.4.7)", "rich (>=12.0.0)"]
-debug-server = ["libcst (>=0.4.7)", "pygments (>=2.3,<3.0)", "python-multipart (>=0.0.5,<0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.7.0)", "uvicorn (>=0.11.6,<0.22.0)"]
+debug-server = ["libcst (>=0.4.7)", "pygments (>=2.3,<3.0)", "python-multipart (>=0.0.5,<0.0.7)", "rich (>=12.0.0)", "starlette (>=0.18.0)", "typer (>=0.7.0)", "uvicorn (>=0.11.6)"]
 django = ["Django (>=3.2)", "asgiref (>=3.2,<4.0)"]
 fastapi = ["fastapi (>=0.65.2)", "python-multipart (>=0.0.5,<0.0.7)"]
 flask = ["flask (>=1.1)"]
@@ -2184,19 +2186,19 @@ starlite = ["starlite (>=1.48.0)"]
 
 [[package]]
 name = "strawberry-graphql-django"
-version = "0.12.0"
+version = "0.15.0"
 description = "Strawberry GraphQL Django extension"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "strawberry_graphql_django-0.12.0-py3-none-any.whl", hash = "sha256:cc43c1dadae509e79ae5afa547265a55c8f2bfd70854d78c22e11b3c5608ebd8"},
-    {file = "strawberry_graphql_django-0.12.0.tar.gz", hash = "sha256:443f38c1e54800bbb982902b566b77ee40e186ea20e57345f4e47eb66a4014dd"},
+    {file = "strawberry_graphql_django-0.15.0-py3-none-any.whl", hash = "sha256:91b30971f95d2a754fa19ea24b1007f15c60c2cef8fabd88304cba3434f8bd7a"},
+    {file = "strawberry_graphql_django-0.15.0.tar.gz", hash = "sha256:a89dce650dc33f268550f847d9ca3ac54313ce08b1f3c60d8f5c859e3227a879"},
 ]
 
 [package.dependencies]
 Django = ">=3.2"
 django-debug-toolbar = {version = ">=3.4", optional = true, markers = "extra == \"debug-toolbar\""}
-strawberry-graphql = ">=0.194.1"
+strawberry-graphql = ">=0.198.0"
 
 [package.extras]
 debug-toolbar = ["django-debug-toolbar (>=3.4)"]
@@ -2501,4 +2503,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "5fe289a1b5e583e9c6e1637a4c4f0f2333baa99d82f3eb41c7791526bb6555b6"
+content-hash = "5281cfbcebe6873ef879f5c193c71c3f94188a05b3230e5ba9c5209e1932b69e"
