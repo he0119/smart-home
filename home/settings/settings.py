@@ -148,7 +148,7 @@ ASGI_APPLICATION = "home.asgi.application"
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.pubsub.RedisPubSubChannelLayer",
-        "CONFIG": {"hosts": ["redis://localhost:6379"]},
+        "CONFIG": {"hosts": ["redis://redis:6379"]},
     },
 }
 
@@ -161,7 +161,7 @@ DATABASES = {
         "NAME": "postgres",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "localhost",
+        "HOST": "postgres",
         "PORT": "5432",
     }
 }
@@ -216,8 +216,8 @@ MPTT_DEFAULT_LEVEL_INDICATOR = "--"
 # Celery
 # https://docs.celeryproject.org/en/stable/getting-started/brokers/redis.html
 
-CELERY_BROKER_URL = "redis://localhost:6379"
-CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
