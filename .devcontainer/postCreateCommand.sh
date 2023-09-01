@@ -2,7 +2,6 @@
 
 git config --global --add safe.directory /workspace
 
-pipx install poetry
 pipx install pre-commit
 
 poetry install
