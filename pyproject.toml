@@ -45,6 +45,9 @@ profile = "black"
 line_length = 88
 skip_gitignore = true
 
+[tool.pyright]
+typeCheckingMode = "basic"
+
 [build-system]
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core>=1.0.0"]

@@ -3,37 +3,46 @@
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
-  // Set *default* container specific settings.json values on container create.
-  "settings": {
-    "python.analysis.typeCheckingMode": "basic",
-    "python.linting.pylintEnabled": false
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    "ghcr.io/devcontainers-contrib/features/poetry:2": {}
   },
-  // Add the IDs of extensions you want installed when the container is created.
-  "extensions": [
-	"ms-python.python",
-	"ms-python.vscode-pylance",
-	"ms-python.black-formatter",
-	"ms-python.isort",
-	"mhutchie.git-graph",
-	"GitHub.copilot",
-	"GitHub.vscode-pull-request-github",
-	"eamodio.gitlens",
-	"VisualStudioExptTeam.vscodeintellicode",
-	"EditorConfig.EditorConfig",
-	"usernamehw.errorlens",
-	"tamasfe.even-better-toml",
-	"mikestead.dotenv",
-	"DavidAnson.vscode-markdownlint",
-	"ms-ossdata.vscode-postgresql",
-  "MS-CEINTL.vscode-language-pack-zh-hans",
-  "ms-azuretools.vscode-docker"
-],
+  "customizations": {
+    "vscode": {
+      // Set *default* container specific settings.json values on container create.
+      "settings": {},
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "mhutchie.git-graph",
+        "GitHub.copilot",
+        "GitHub.vscode-pull-request-github",
+        "eamodio.gitlens",
+        "VisualStudioExptTeam.vscodeintellicode",
+        "EditorConfig.EditorConfig",
+        "usernamehw.errorlens",
+        "tamasfe.even-better-toml",
+        "mikestead.dotenv",
+        "DavidAnson.vscode-markdownlint",
+        "ms-ossdata.vscode-postgresql",
+        "MS-CEINTL.vscode-language-pack-zh-hans",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // This can be used to network with other containers or the host.
-  // "forwardPorts": [5000, 5432],
+  "forwardPorts": [
+    8000
+  ],
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
-  "onCreateCommand": "bash .devcontainer/onCreateCommand.sh"
+  "postCreateCommand": "bash .devcontainer/postCreateCommand.sh"
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   // "remoteUser": "vscode"
 }
