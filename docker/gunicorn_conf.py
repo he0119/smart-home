@@ -77,4 +77,4 @@ log_data = {
     "host": host,
     "port": port,
 }
-print(json.dumps(log_data, indent=2))
+print(json.dumps(log_data, indent=2))  # noqa: T201

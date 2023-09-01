@@ -21,7 +21,7 @@ class DeviceAPI:
 
     def set_multiple_status(self, status: list[tuple]):
         """设置设备的多个参数"""
-        payload = {key: value for key, value in status}
+        payload = dict(status)
         channel_group_send(
             "iot",
             {"type": "set_device", "id": self.device_id, "data": payload},

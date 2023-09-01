@@ -66,7 +66,7 @@ class Mutation:
     ) -> types.Topic:
         try:
             topic = id.resolve_node_sync(info, ensure_type=models.Topic)
-        except:
+        except Exception:
             raise ValidationError("话题不存在")
 
         if topic.user != info.context.request.user:
@@ -90,7 +90,7 @@ class Mutation:
     def delete_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
-        except:
+        except Exception:
             raise ValidationError("话题不存在")
 
         if topic.user != info.context.request.user:
@@ -107,7 +107,7 @@ class Mutation:
     def close_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
-        except:
+        except Exception:
             raise ValidationError("话题不存在")
 
         topic.is_closed = True
@@ -120,7 +120,7 @@ class Mutation:
     def reopen_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
-        except:
+        except Exception:
             raise ValidationError("话题不存在")
 
         topic.is_closed = False
@@ -133,7 +133,7 @@ class Mutation:
     def pin_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
-        except:
+        except Exception:
             raise ValidationError("话题不存在")
 
         topic.is_pinned = True
@@ -145,7 +145,7 @@ class Mutation:
     def unpin_topic(self, info: Info, topic_id: relay.GlobalID) -> types.Topic:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
-        except:
+        except Exception:
             raise ValidationError("话题不存在")
 
         topic.is_pinned = False
@@ -163,7 +163,7 @@ class Mutation:
     ) -> types.Comment:
         try:
             topic = topic_id.resolve_node_sync(info, ensure_type=models.Topic)
-        except:
+        except Exception:
             raise ValidationError("话题不存在")
 
         if topic.is_closed:
@@ -179,7 +179,7 @@ class Mutation:
                 parent_comment = parent_id.resolve_node_sync(
                     info, ensure_type=models.Comment
                 )
-            except:
+            except Exception:
                 raise ValidationError("回复的评论不存在")
             # 若回复层级超过二级，则转换为二级
             comment.parent_id = parent_comment.get_root().id  # type: ignore
@@ -207,7 +207,7 @@ class Mutation:
     ) -> types.Comment:
         try:
             comment = id.resolve_node_sync(info, ensure_type=models.Comment)
-        except:
+        except Exception:
             raise ValidationError("评论不存在")
 
         if comment.user != info.context.request.user:
@@ -226,7 +226,7 @@ class Mutation:
     def delete_comment(self, info: Info, comment_id: relay.GlobalID) -> types.Comment:
         try:
             comment = comment_id.resolve_node_sync(info, ensure_type=models.Comment)
-        except:
+        except Exception:
             raise ValidationError("评论不存在")
 
         if comment.user != info.context.request.user:

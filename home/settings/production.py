@@ -45,13 +45,12 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 SERVER_EMAIL = os.getenv("EMAIL_HOST_USER")
 DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
-ADMINS = [
-    admin
-    for admin in zip(
+ADMINS = list(
+    zip(
         os.getenv("ADMINS_NAME", "").split(";"),
         os.getenv("ADMINS_EMAIL", "").split(";"),
     )
-]
+)
 
 # Celery
 # https://docs.celeryproject.org/en/stable/getting-started/brokers/redis.html

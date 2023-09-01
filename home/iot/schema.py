@@ -67,7 +67,7 @@ class Mutation:
     ) -> types.Device:
         try:
             device = id.resolve_node_sync(info, ensure_type=models.Device)
-        except:
+        except Exception:
             raise ValidationError("设备不存在")
 
         # 仅在传入数据时修改
@@ -87,7 +87,7 @@ class Mutation:
     def delete_device(self, info: Info, device_id: relay.GlobalID) -> types.Device:
         try:
             device = device_id.resolve_node_sync(info, ensure_type=models.Device)
-        except:
+        except Exception:
             raise ValidationError("设备不存在")
 
         device.delete()
@@ -105,7 +105,7 @@ class Mutation:
     ) -> types.Device:
         try:
             device = id.resolve_node_sync(info, ensure_type=models.Device)
-        except:
+        except Exception:
             raise ValidationError("设备不存在")
 
         # 转换 value 的类型
@@ -136,7 +136,7 @@ class Subscription:
         # 让客户端可以马上显示数据
         try:
             device = await device_id.resolve_node(info, ensure_type=models.Device)
-        except:
+        except Exception:
             raise ValidationError("设备不存在")
 
         last = await sync_to_async(device.data.last)()  # type: ignore

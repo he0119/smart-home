@@ -42,7 +42,7 @@ class BasicAuthMiddleware:
                     split = header[1].decode().strip().split(" ")
                     device_id, token = base64.b64decode(split[1]).decode().split(":", 1)
                     scope["device"] = await get_device(device_id, token)
-                except:
+                except Exception:
                     pass
 
                 break

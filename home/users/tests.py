@@ -460,7 +460,7 @@ class SessionTests(GraphQLTestCase):
             }
         }
 
-        content = self.client.execute(mutation, variables)
+        self.client.execute(mutation, variables)
 
         with self.assertRaises(Session.DoesNotExist):
             Session.objects.get(pk="b3hywvvlnly7unshlqu6yhrsyps3phjq")

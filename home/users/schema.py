@@ -87,7 +87,7 @@ class Mutation:
     def delete_session(self, info: Info, id: relay.GlobalID) -> types.Session:
         try:
             session = id.resolve_node_sync(info, ensure_type=models.Session)
-        except:
+        except Exception:
             raise ValidationError("会话不存在")
 
         if session.user != info.context.request.user:

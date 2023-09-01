@@ -48,7 +48,7 @@ class Mutation:
             # 检查上一级位置是否存在
             try:
                 parent = parent_id.resolve_node_sync(info, ensure_type=models.Storage)
-            except:
+            except Exception:
                 raise ValidationError("上一级位置不存在")
 
             storage.parent = parent
@@ -68,7 +68,7 @@ class Mutation:
         # 检查需要修改的位置是否存在
         try:
             storage = id.resolve_node_sync(info, ensure_type=models.Storage)
-        except:
+        except Exception:
             raise ValidationError("无法修改不存在的位置")
 
         # 当名称不为空，且与当前名称不同时，才需要修改名称
@@ -85,7 +85,7 @@ class Mutation:
                     parent = parent_id.resolve_node_sync(
                         info, ensure_type=models.Storage
                     )
-                except:
+                except Exception:
                     raise ValidationError("上一级位置不存在")
             else:
                 parent = None
@@ -99,7 +99,7 @@ class Mutation:
     def delete_storage(self, info: Info, storage_id: relay.GlobalID) -> types.Storage:
         try:
             storage = storage_id.resolve_node_sync(info, ensure_type=models.Storage)
-        except:
+        except Exception:
             raise ValidationError("无法删除不存在的位置")
 
         storage.delete()
@@ -118,7 +118,7 @@ class Mutation:
     ) -> types.Item:
         try:
             storage = storage_id.resolve_node_sync(info, ensure_type=models.Storage)
-        except:
+        except Exception:
             raise ValidationError("位置不存在")
 
         if price is strawberry.UNSET:
@@ -155,7 +155,7 @@ class Mutation:
     ) -> types.Item:
         try:
             item = id.resolve_node_sync(info, ensure_type=models.Item)
-        except:
+        except Exception:
             raise ValidationError("无法修改不存在的物品")
 
         if name and name != item.name:
@@ -164,7 +164,7 @@ class Mutation:
         if storage_id is not strawberry.UNSET and storage_id is not None:
             try:
                 storage = storage_id.resolve_node_sync(info, ensure_type=models.Storage)
-            except:
+            except Exception:
                 raise ValidationError("位置不存在")
 
             item.storage = storage
@@ -194,7 +194,7 @@ class Mutation:
     def delete_item(self, info: Info, item_id: relay.GlobalID) -> types.Item:
         try:
             item = item_id.resolve_node_sync(info, ensure_type=models.Item)
-        except:
+        except Exception:
             raise ValidationError("无法删除不存在的物品")
 
         item.delete()
@@ -204,7 +204,7 @@ class Mutation:
     def restore_item(self, info: Info, item_id: relay.GlobalID) -> types.Item:
         try:
             item = item_id.resolve_node_sync(info, ensure_type=models.Item)
-        except:
+        except Exception:
             raise ValidationError("物品不存在")
 
         item.restore()
@@ -219,7 +219,7 @@ class Mutation:
     ) -> types.Item:
         try:
             item = id.resolve_node_sync(info, ensure_type=models.Item)
-        except:
+        except Exception:
             raise ValidationError("无法修改不存在的物品")
 
         for consumable_id in consumable_ids:
@@ -227,7 +227,7 @@ class Mutation:
                 consumable = consumable_id.resolve_node_sync(
                     info, ensure_type=models.Item
                 )
-            except:
+            except Exception:
                 raise ValidationError("耗材不存在")
             # 不能添加自己作为自己的耗材
             if item.name == consumable.name:
@@ -248,7 +248,7 @@ class Mutation:
     ) -> types.Item:
         try:
             item = id.resolve_node_sync(info, ensure_type=models.Item)
-        except:
+        except Exception:
             raise ValidationError("无法修改不存在的物品")
 
         for consumable_id in consumable_ids:
@@ -256,7 +256,7 @@ class Mutation:
                 consumable = consumable_id.resolve_node_sync(
                     info, ensure_type=models.Item
                 )
-            except:
+            except Exception:
                 raise ValidationError("耗材不存在")
             item.consumables.remove(consumable)
 
@@ -279,7 +279,7 @@ class Mutation:
     ) -> types.Picture:
         try:
             item = item_id.resolve_node_sync(info, ensure_type=models.Item)
-        except:
+        except Exception:
             raise ValidationError("无法给不存在的物品添加图片")
 
         picture = models.Picture(
@@ -309,7 +309,7 @@ class Mutation:
     ) -> types.Picture:
         try:
             picture = id.resolve_node_sync(info, ensure_type=models.Picture)
-        except:
+        except Exception:
             raise ValidationError("无法修改不存在的图片")
 
         if description is not strawberry.UNSET and description is not None:
@@ -332,7 +332,7 @@ class Mutation:
     def delete_picture(self, info: Info, picture_id: relay.GlobalID) -> types.Picture:
         try:
             picture = picture_id.resolve_node_sync(info, ensure_type=models.Picture)
-        except:
+        except Exception:
             raise ValidationError("无法删除不存在的图片")
 
         picture.delete()

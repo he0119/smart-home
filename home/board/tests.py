@@ -769,7 +769,7 @@ class CommentTests(GraphQLTestCase):
             }
         }
 
-        content = self.client.execute(mutation, variables)
+        self.client.execute(mutation, variables)
 
         with self.assertRaises(Comment.DoesNotExist):
             Comment.objects.get(body="测试评论一")
