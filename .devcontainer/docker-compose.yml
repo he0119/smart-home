@@ -19,7 +19,7 @@ services:
     command: sleep infinity
 
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
-    # network_mode: service:db
+    network_mode: service:postgres
 
     # Uncomment the next line to use a non-root user for all processes.
     # user: vscode
@@ -41,6 +41,7 @@ services:
     image: redis:latest
     container_name: redis
     restart: unless-stopped
+    network_mode: service:postgres
 
 volumes:
   postgres-data:

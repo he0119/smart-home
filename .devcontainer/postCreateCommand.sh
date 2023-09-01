@@ -1,9 +1,5 @@
 #!/bin/bash
 
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-source ~/.bashrc
-
 git config --global --add safe.directory /workspace
 
 pipx install poetry
