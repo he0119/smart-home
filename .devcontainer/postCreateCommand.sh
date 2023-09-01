@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git config --global --add safe.directory /workspace
+git config --global --add safe.directory /smart-home
 
 pipx install pre-commit
 

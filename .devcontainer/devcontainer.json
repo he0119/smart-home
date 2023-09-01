@@ -2,7 +2,7 @@
   "name": "Smart Home",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
-  "workspaceFolder": "/workspace",
+  "workspaceFolder": "/smart-home",
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
@@ -13,7 +13,27 @@
   "customizations": {
     "vscode": {
       // Set *default* container specific settings.json values on container create.
-      "settings": {},
+      "settings": {
+        // GitHub Issues
+        "githubIssues.queries": [
+          {
+            "label": "My Issues",
+            "query": "default"
+          },
+          {
+            "label": "Created Issues",
+            "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc"
+          },
+          {
+            "label": "v0.10.0",
+            "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc milestone:\"v0.9.0\""
+          },
+          {
+            "label": "plan",
+            "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc milestone:\"plan\""
+          }
+        ]
+      },
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
         "ms-python.python",
@@ -26,9 +46,7 @@
         "eamodio.gitlens",
         "VisualStudioExptTeam.vscodeintellicode",
         "EditorConfig.EditorConfig",
-        "usernamehw.errorlens",
         "tamasfe.even-better-toml",
-        "mikestead.dotenv",
         "DavidAnson.vscode-markdownlint",
         "ms-ossdata.vscode-postgresql",
         "MS-CEINTL.vscode-language-pack-zh-hans",

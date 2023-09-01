@@ -3,17 +3,9 @@ services:
     image: mcr.microsoft.com/devcontainers/universal:2-linux
     environment:
       - DEVELOPMENT_SERVER=true
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - CELERY_BROKER_URL=redis://redis:6379/1
-      - CELERY_RESULT_BACKEND=redis://redis:6379/1
-      - CHANNEL_REDIS_URL=redis://redis:6379/2
 
     volumes:
-      - ..:/workspace:cached
+      - ..:/smart-home:cached
 
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity

@@ -134,3 +134,7 @@ media
 
 # GeoIP
 *.mmdb
+
+# VSCode
+.vscode/*
+!.vscode/launch.json
