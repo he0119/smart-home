@@ -48,6 +48,11 @@ skip_gitignore = true
 [tool.pyright]
 typeCheckingMode = "basic"
 
+[tool.ruff]
+select = ["E", "W", "F", "UP", "C", "T", "PYI", "Q"]
+ignore = ["E402", "E501", "C901", "UP037"]
+exclude = ["home/push/mipush"]
+
 [build-system]
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core>=1.0.0"]

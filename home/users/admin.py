@@ -107,7 +107,7 @@ def parse_location(value):
     except Exception:
         try:
             location = geoip() and geoip().country(value)  # type: ignore
-        except Exception as e:
+        except Exception:
             location = None
     if location and location["country_name"]:
         if "city" in location and location["city"]:

@@ -2,7 +2,7 @@ from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-from .mipush.APIMessage import *
+from .mipush.APIMessage import Constants, PushMessage
 from .mipush.APISender import APISender
 
 sender = APISender(settings.MI_PUSH_APP_SECRET)

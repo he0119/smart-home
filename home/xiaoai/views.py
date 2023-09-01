@@ -110,5 +110,5 @@ def is_xiaomi(headers: dict) -> bool:
             return True
         else:
             return False
-    except:
+    except Exception:
         return False

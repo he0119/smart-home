@@ -17,5 +17,5 @@
       "label": "plan",
       "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc milestone:\"plan\""
     }
-  ],
+  ]
 }

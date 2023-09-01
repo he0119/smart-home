@@ -43,12 +43,12 @@ class ModelTests(TestCase):
     def test_autowateringdata_str(self):
         data = AutowateringData.objects.get(pk=1)
 
-        self.assertEqual(str(data), f"test 2020-08-02T13:40:35+00:00")
+        self.assertEqual(str(data), "test 2020-08-02T13:40:35+00:00")
 
     def test_autowateringdata_daily_str(self):
         data = AutowateringDataDaily.objects.get(pk=1)
 
-        self.assertEqual(str(data), f"test 2020-01-01")
+        self.assertEqual(str(data), "test 2020-01-01")
 
 
 class DeviceTests(GraphQLTestCase):
@@ -193,7 +193,7 @@ class DeviceTests(GraphQLTestCase):
         # 确认自动浇水有数据
         self.assertNotEqual(list(AutowateringData.objects.all()), [])
 
-        content = self.client.execute(mutation, variables)
+        self.client.execute(mutation, variables)
 
         with self.assertRaises(Device.DoesNotExist):
             Device.objects.get(name="test")
@@ -493,7 +493,7 @@ class WebSocketsTests(TestCase):
             }
         )
         with self.assertRaises(asyncio.exceptions.TimeoutError):
-            response = await communicator.receive_from(1)
+            await communicator.receive_from(1)
 
         autowatering_data = await sync_to_async(AutowateringData.objects.last)()
         autowatering_data = cast(AutowateringData, autowatering_data)
@@ -571,7 +571,7 @@ class ApiTests(TestCase):
     @mock.patch("home.iot.api.channel_group_send")
     def test_set_status(self, mock_send):
         device = DeviceAPI("1")
-        r = device.set_status("valve1", True)
+        device.set_status("valve1", True)
 
         mock_send.assert_called_once_with(
             "iot", {"type": "set_device", "id": "1", "data": {"valve1": True}}
@@ -580,7 +580,7 @@ class ApiTests(TestCase):
     @mock.patch("home.iot.api.channel_group_send")
     def test_set_multiple_status(self, mock_send):
         device = DeviceAPI("1")
-        r = device.set_multiple_status([("valve1", True), ("valve2", False)])
+        device.set_multiple_status([("valve1", True), ("valve2", False)])
 
         mock_send.assert_called_once_with(
             "iot",

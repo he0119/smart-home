@@ -37,7 +37,7 @@ class StorageModelTests(TestCase):
         balcony = Storage.objects.get(name="阳台")
         locker = Storage.objects.get(name="阳台储物柜")
         toolbox = Storage.objects.get(name="工具箱")
-        toolbox2 = Storage.objects.get(name="工具箱2")
+        Storage.objects.get(name="工具箱2")
 
         self.assertEqual(balcony.parent, None)
         self.assertEqual(list(balcony.get_ancestors()), [])
@@ -1646,7 +1646,7 @@ class PictureTests(GraphQLTestCase):
             "input": {"pictureId": relay.to_base64(types.Picture, picture.id)},
         }
 
-        content = self.client.execute(mutation, variables)
+        self.client.execute(mutation, variables)
 
         with self.assertRaises(Picture.DoesNotExist):
             Picture.objects.get(pk=1)

@@ -1,1 +1,1 @@
-from django.contrib.sessions.management.commands.clearsessions import Command
+from django.contrib.sessions.management.commands.clearsessions import Command as Command

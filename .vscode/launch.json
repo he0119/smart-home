@@ -9,9 +9,7 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
-      "args": [
-        "runserver",
-      ],
+      "args": ["runserver"],
       "django": true,
       "env": {
         "DEVELOPMENT_SERVER": "true"
@@ -23,9 +21,7 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
-      "args": [
-        "test"
-      ],
+      "args": ["test"],
       "django": true,
       "env": {
         "DEVELOPMENT_SERVER": "true"
@@ -36,11 +32,7 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
-      "args": [
-        "test",
-        "-k",
-        "${selectedText}"
-      ],
+      "args": ["test", "-k", "${selectedText}"],
       "django": true,
       "env": {
         "DEVELOPMENT_SERVER": "true"
@@ -52,10 +44,7 @@
       "type": "python",
       "request": "launch",
       "module": "celery",
-      "args": [
-        "-A",
-        "home","worker","--beat","-l","info",
-      ],
+      "args": ["-A", "home", "worker", "--beat", "-l", "info"],
       "env": {
         "DEVELOPMENT_SERVER": "true"
       },
