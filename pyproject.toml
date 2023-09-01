@@ -14,7 +14,7 @@ django = "^4.2.4"
 strawberry-graphql-django = { extras = ["debug-toolbar"], version = "^0.16.0" }
 channels = "^4.0.0"
 channels-redis = "^4.0.0"
-celery = "^5.2.2"
+celery = "^5.3.3"
 django-celery-beat = "^2.4.0"
 django-cleanup = "^8.0.0"
 django-mptt = "^0.14.0"
