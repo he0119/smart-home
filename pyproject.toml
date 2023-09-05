@@ -10,21 +10,21 @@ version = "0.9.5"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-django = "^4.2.4"
-strawberry-graphql-django = { extras = ["debug-toolbar"], version = "^0.16.0" }
+django = "^4.2.5"
+strawberry-graphql-django = { extras = ["debug-toolbar"], version = "^0.16.1" }
 channels = "^4.0.0"
 channels-redis = "^4.0.0"
-celery = "^5.2.2"
+celery = "^5.3.4"
 django-celery-beat = "^2.4.0"
 django-cleanup = "^8.0.0"
 django-mptt = "^0.14.0"
-django-storages = "^1.11.1"
-boto3 = "^1.21.32"
+django-storages = "^1.14"
+boto3 = "^1.28.40"
 markdown = "^3.3.3"
 pillow = "^10.0.0"
 psycopg = { extras = ["binary"], version = "^3.1.8" }
 redis = "^4.2.1"
-sentry-sdk = "^1.28.0"
+sentry-sdk = "^1.30.0"
 geoip2 = "^4.6.0"
 httpx = "^0.24.1"
 
