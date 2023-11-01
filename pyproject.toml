@@ -33,7 +33,7 @@ isort = "*"
 black = "*"
 coverage = "*"
 pre-commit = "*"
-django-cors-headers = "^4.0.0"
+django-cors-headers = "^4.3.0"
 eventlet = "^0.33.0"
 daphne = "^4.0.0"
 
