@@ -877,7 +877,9 @@ class SubscriptionTests(TestCase):
         await asyncio.sleep(0)
 
         channel_layer = get_channel_layer()
-        await channel_layer.group_send("autowatering_data.1", {"type": "update", "pk": 2})  # type: ignore
+        await channel_layer.group_send(
+            "autowatering_data.1", {"type": "update", "pk": 2}
+        )  # type: ignore
 
         response = await ws.receive_json_from(10)
         assert response["type"] == GQL_DATA

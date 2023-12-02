@@ -11,7 +11,10 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name="autowateringdata",
-            options={"verbose_name": "自动浇水设备数据", "verbose_name_plural": "自动浇水设备数据"},
+            options={
+                "verbose_name": "自动浇水设备数据",
+                "verbose_name_plural": "自动浇水设备数据",
+            },
         ),
         migrations.AlterField(
             model_name="device",

@@ -100,7 +100,10 @@ class XiaoaiTest(TestCase):
             {
                 "version": "1.0",
                 "response": {
-                    "to_speak": {"type": 0, "text": "共找到1个物品，口罩在阳台储物柜。"},
+                    "to_speak": {
+                        "type": 0,
+                        "text": "共找到1个物品，口罩在阳台储物柜。",
+                    },
                 },
                 "is_session_end": True,
             },

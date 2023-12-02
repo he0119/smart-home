@@ -29,21 +29,10 @@ geoip2 = "^4.6.0"
 httpx = "^0.24.1"
 
 [tool.poetry.group.dev.dependencies]
-isort = "*"
-black = "*"
 coverage = "*"
-pre-commit = "*"
 django-cors-headers = "^4.0.0"
 eventlet = "^0.33.0"
 daphne = "^4.0.0"
-
-[tool.black]
-line-length = 88
-
-[tool.isort]
-profile = "black"
-line_length = 88
-skip_gitignore = true
 
 [tool.pyright]
 typeCheckingMode = "basic"

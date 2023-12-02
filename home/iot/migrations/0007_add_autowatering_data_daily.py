@@ -27,8 +27,14 @@ class Migration(migrations.Migration):
                 ("max_temperature", models.FloatField(verbose_name="最高温度")),
                 ("min_humidity", models.FloatField(verbose_name="最低湿度")),
                 ("max_humidity", models.FloatField(verbose_name="最高湿度")),
-                ("min_wifi_signal", models.IntegerField(verbose_name="最低无线信号强度")),
-                ("max_wifi_signal", models.IntegerField(verbose_name="最高无线信号强度")),
+                (
+                    "min_wifi_signal",
+                    models.IntegerField(verbose_name="最低无线信号强度"),
+                ),
+                (
+                    "max_wifi_signal",
+                    models.IntegerField(verbose_name="最高无线信号强度"),
+                ),
                 (
                     "device",
                     models.ForeignKey(

@@ -38,8 +38,7 @@
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "ms-python.black-formatter",
-        "ms-python.isort",
+        "charliermarsh.ruff",
         "mhutchie.git-graph",
         "GitHub.copilot",
         "GitHub.vscode-pull-request-github",
@@ -50,7 +49,8 @@
         "DavidAnson.vscode-markdownlint",
         "ms-ossdata.vscode-postgresql",
         "MS-CEINTL.vscode-language-pack-zh-hans",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "fabiospampinato.vscode-todo-plus"
       ]
     }
   },
