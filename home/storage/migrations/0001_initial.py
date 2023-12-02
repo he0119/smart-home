@@ -96,7 +96,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "expiration_date",
-                    models.DateTimeField(blank=True, null=True, verbose_name="有效期至"),
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="有效期至"
+                    ),
                 ),
                 (
                     "editor",

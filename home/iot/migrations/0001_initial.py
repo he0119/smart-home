@@ -37,7 +37,9 @@ class Migration(migrations.Migration):
                 ("date_online", models.DateTimeField(verbose_name="上线日期")),
                 (
                     "date_offline",
-                    models.DateTimeField(blank=True, null=True, verbose_name="离线日期"),
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="离线日期"
+                    ),
                 ),
             ],
             options={

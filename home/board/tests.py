@@ -583,7 +583,10 @@ class CommentTests(GraphQLTestCase):
 
         content = self.client.execute(query)
         comments = [item["node"]["body"] for item in content.data["comments"]["edges"]]
-        self.assertEqual(set(comments), {"测试评论一", "测试评论二", "评论测试评论一", "测试评论关闭的话题"})
+        self.assertEqual(
+            set(comments),
+            {"测试评论一", "测试评论二", "评论测试评论一", "测试评论关闭的话题"},
+        )
 
     def test_get_comments_by_topic_id(self):
         """测试通过 topicId 来获取评论"""
