@@ -625,49 +625,47 @@ class CommentTests(GraphQLTestCase):
         comments = [item["node"]["body"] for item in content.data["comments"]["edges"]]
         self.assertEqual(set(comments), {"测试评论一"})
 
-    # FIXME: 暂时不支持多个排序
-    # https://github.com/strawberry-graphql/strawberry-graphql-django/issues/150
-    # def test_get_last_comments(self):
-    #     query = """
-    #         query topics {
-    #             topics(order: {isPinned: DESC, isClosed: DESC, activeAt: DESC}) {
-    #                 pageInfo {
-    #                     hasNextPage
-    #                     endCursor
-    #                 }
-    #                 edges {
-    #                     node {
-    #                         id
-    #                         title
-    #                         description
-    #                         isClosed
-    #                         isPinned
-    #                         createdAt
-    #                         editedAt
-    #                         user {
-    #                         username
-    #                         email
-    #                         }
-    #                         comments(last: 1, after: null) {
-    #                             edges {
-    #                                 node {
-    #                                     body
-    #                                 }
-    #                             }
-    #                         }
-    #                     }
-    #                 }
-    #             }
-    #         }
-    #     """
+    def test_get_last_comments(self):
+        query = """
+            query topics {
+                topics(order: {isPinned: DESC, isClosed: ASC, activeAt: DESC}) {
+                    pageInfo {
+                        hasNextPage
+                        endCursor
+                    }
+                    edges {
+                        node {
+                            id
+                            title
+                            description
+                            isClosed
+                            isPinned
+                            createdAt
+                            editedAt
+                            user {
+                            username
+                            email
+                            }
+                            comments(last: 1, after: null) {
+                                edges {
+                                    node {
+                                        body
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        """
 
-    #     content = self.client.execute(query)
+        content = self.client.execute(query)
 
-    #     comments = [
-    #         item["node"]["body"]
-    #         for item in content.data["topics"]["edges"][1]["node"]["comments"]["edges"]
-    #     ]
-    #     self.assertEqual(set(comments), {"测试评论二"})
+        comments = [
+            item["node"]["body"]
+            for item in content.data["topics"]["edges"][1]["node"]["comments"]["edges"]
+        ]
+        self.assertEqual(comments, ["测试评论二"])
 
     def test_add_comment(self):
         mutation = """
