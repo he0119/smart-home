@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Changed
+
+- 升级至 Django 4.2.8
+
+### Fixed
+
+- 修复话题排序问题
+
 ## [0.9.5] - 2023-06-18
 
 ### Changed
