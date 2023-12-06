@@ -535,6 +535,38 @@ class WebSocketsTests(TestCase):
         device = await sync_to_async(Device.objects.get)(id=1)
         self.assertEqual(device.is_online, True)
 
+    async def test_device_online_on_message_publish(self):
+        """测试上报数据时将设备上线"""
+        communicator = get_iot_client(self.device)
+
+        device = await sync_to_async(Device.objects.get)(id=1)
+        self.assertEqual(device.is_online, False)
+
+        await communicator.send_json_to(
+            {
+                "id": 1607658685,
+                "method": "properties_changed",
+                "params": {
+                    "temperature": 4.0,
+                    "humidity": 0,
+                    "valve1": False,
+                    "valve2": False,
+                    "valve3": False,
+                    "pump": False,
+                    "valve1_delay": 60,
+                    "valve2_delay": 60,
+                    "valve3_delay": 60,
+                    "pump_delay": 60,
+                    "wifi_signal": -43,
+                },
+            }
+        )
+        with self.assertRaises(asyncio.exceptions.TimeoutError):
+            await communicator.receive_from(1)
+
+        device = await sync_to_async(Device.objects.get)(id=1)
+        self.assertEqual(device.is_online, True)
+
 
 def mocked_httpx_get(*args, **kwargs):
     """天气信息的测试数据"""
