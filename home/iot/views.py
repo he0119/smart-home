@@ -59,17 +59,20 @@ class CommandContent(TypedDict):
 class IotConsumer(AsyncJsonWebsocketConsumer):
     groups = ["iot"]
 
+    async def _set_device_online(self, device: Device):
+        """设置设备在线"""
+        device.is_online = True
+        device.online_at = timezone.now()
+        await sync_to_async(device.save)(update_fields=["is_online", "online_at"])
+        await self.channel_layer.group_send(  # type: ignore
+            f"device.{device.id}", {"type": "update"}
+        )
+        logger.info(f"{device.name} 在线")
+
     async def connect(self):
         if device := self.scope["device"]:
             await self.accept()
-            device = cast(Device, device)
-            device.is_online = True
-            device.online_at = timezone.now()
-            await sync_to_async(device.save)(update_fields=["is_online", "online_at"])
-            await self.channel_layer.group_send(  # type: ignore
-                f"device.{device.id}", {"type": "update"}
-            )
-            logger.info(f"{device.name} 在线")
+            await self._set_device_online(device)
         else:
             await self.close(3000)
 
@@ -103,6 +106,11 @@ class IotConsumer(AsyncJsonWebsocketConsumer):
 
     async def receive_json(self, content: CommandContent):
         device: Device = self.scope["device"]
+
+        # 如果接收到数据时设备记录的状态不是在线则将其设置为在线
+        # 不知道为什么有时候状态还是不同步
+        if not device.is_online:
+            await self._set_device_online(device)
 
         method = content["method"]
         if method == "properties_changed":
