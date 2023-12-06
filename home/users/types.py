@@ -37,21 +37,10 @@ class Config(relay.Node):
     value: strawberry.auto
 
 
-@strawberry.type
-class Image:
-    @strawberry.field
-    def name(self) -> str:
-        return self.name  # type: ignore
-
-    @strawberry.field
-    def url(self) -> str:
-        return self.url  # type: ignore
-
-
 @strawberry_django.type(models.Avatar)
 class Avatar(relay.Node):
     user: "User"
-    avatar: Image
+    avatar: strawberry.auto
     created_at: strawberry.auto
 
 
@@ -62,6 +51,7 @@ class User(relay.Node):
     password: strawberry.auto
     email: strawberry.auto
     session: list[Session]
+    avatar: Avatar
 
     @strawberry_django.field(select_related=["avatar"])
     def avatar_url(self) -> str | None:

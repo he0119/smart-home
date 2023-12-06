@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 修复话题排序问题
 - 修复物联网设备在线状态异常的问题
+- 修复对 ImageField 的支持
 
 ## [0.9.5] - 2023-06-18
 
