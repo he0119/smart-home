@@ -10,7 +10,7 @@ version = "0.9.6"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-django = "^4.2.4"
+django = "^4.2.10"
 strawberry-graphql-django = { extras = ["debug-toolbar"], version = "^0.27.0" }
 channels = "^4.0.0"
 channels-redis = "^4.0.0"
