@@ -47,9 +47,9 @@ class Topic(relay.Node):
     created_at: strawberry.auto
     edited_at: strawberry.auto
     is_pinned: strawberry.auto
-    comments: strawberry_django.relay.ListConnectionWithTotalCount[
-        "Comment"
-    ] = strawberry_django.connection(filters=CommentFilter, order=CommentOrder)
+    comments: strawberry_django.relay.ListConnectionWithTotalCount["Comment"] = (
+        strawberry_django.connection(filters=CommentFilter, order=CommentOrder)
+    )
 
     @classmethod
     def get_queryset(cls, queryset, info, **kwargs):

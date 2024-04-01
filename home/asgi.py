@@ -6,6 +6,7 @@ It exposes the ASGI callable as a module-level variable named ``application``.
 For more information on this file, see
 https://docs.djangoproject.com/zh-hans/4.0/howto/deployment/asgi/
 """
+
 import os
 
 from channels.auth import AuthMiddlewareStack

@@ -1,5 +1,5 @@
-""" 开发环境配置
-"""
+"""开发环境配置"""
+
 import os
 
 from .settings import INSTALLED_APPS, MIDDLEWARE

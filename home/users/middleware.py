@@ -1,7 +1,8 @@
-""" 用户相关的中间件
+"""用户相关的中间件
 
 https://docs.djangoproject.com/zh-hans/4.0/topics/http/middleware/
 """
+
 from importlib import import_module
 
 from django.conf import settings

@@ -11,9 +11,9 @@ from . import models, types
 @strawberry.type
 class Query:
     mipush: types.MiPush = strawberry_django.node(permission_classes=[IsAuthenticated])
-    mi_pushs: strawberry_django.relay.ListConnectionWithTotalCount[
-        types.MiPush
-    ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
+    mi_pushs: strawberry_django.relay.ListConnectionWithTotalCount[types.MiPush] = (
+        strawberry_django.connection(permission_classes=[IsAuthenticated])
+    )
 
     @strawberry_django.field(permission_classes=[IsAuthenticated])
     def mi_push(self, info: Info, device_id: str) -> types.MiPush | None:
