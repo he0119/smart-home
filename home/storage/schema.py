@@ -16,21 +16,21 @@ from . import models, types
 @strawberry.type
 class Query:
     item: types.Item = strawberry_django.node(permission_classes=[IsAuthenticated])
-    items: strawberry_django.relay.ListConnectionWithTotalCount[
-        types.Item
-    ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
+    items: strawberry_django.relay.ListConnectionWithTotalCount[types.Item] = (
+        strawberry_django.connection(permission_classes=[IsAuthenticated])
+    )
     storage: types.Storage = strawberry_django.node(
         permission_classes=[IsAuthenticated]
     )
-    storages: strawberry_django.relay.ListConnectionWithTotalCount[
-        types.Storage
-    ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
+    storages: strawberry_django.relay.ListConnectionWithTotalCount[types.Storage] = (
+        strawberry_django.connection(permission_classes=[IsAuthenticated])
+    )
     picture: types.Picture = strawberry_django.node(
         permission_classes=[IsAuthenticated]
     )
-    pictures: strawberry_django.relay.ListConnectionWithTotalCount[
-        types.Picture
-    ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
+    pictures: strawberry_django.relay.ListConnectionWithTotalCount[types.Picture] = (
+        strawberry_django.connection(permission_classes=[IsAuthenticated])
+    )
 
 
 @strawberry.type

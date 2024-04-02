@@ -1,4 +1,4 @@
-""" Gunicorn 配置
+"""Gunicorn 配置
 
 https://docs.gunicorn.org/en/latest/settings.html
 """

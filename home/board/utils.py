@@ -1,4 +1,5 @@
-""" https://stackoverflow.com/a/54923798 """
+"""https://stackoverflow.com/a/54923798"""
+
 from io import StringIO
 
 from markdown import Markdown

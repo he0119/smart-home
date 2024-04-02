@@ -79,12 +79,12 @@ class Item(relay.Node):
     edited_by: User
     is_deleted: strawberry.auto
     deleted_at: strawberry.auto
-    consumables: strawberry_django.relay.ListConnectionWithTotalCount[
-        "Item"
-    ] = strawberry_django.connection(filters=ItemFilter, order=ItemOrder)
-    pictures: strawberry_django.relay.ListConnectionWithTotalCount[
-        "Picture"
-    ] = strawberry_django.connection(filters=PictureFilter, order=PictureOrder)
+    consumables: strawberry_django.relay.ListConnectionWithTotalCount["Item"] = (
+        strawberry_django.connection(filters=ItemFilter, order=ItemOrder)
+    )
+    pictures: strawberry_django.relay.ListConnectionWithTotalCount["Picture"] = (
+        strawberry_django.connection(filters=PictureFilter, order=PictureOrder)
+    )
 
 
 @strawberry_django.type(models.Storage, filters=StorageFilter)
@@ -92,15 +92,15 @@ class Storage(relay.Node):
     name: strawberry.auto
     description: strawberry.auto
     parent: Optional["Storage"]
-    children: strawberry_django.relay.ListConnectionWithTotalCount[
-        "Storage"
-    ] = strawberry_django.connection(filters=StorageFilter)
-    items: strawberry_django.relay.ListConnectionWithTotalCount[
-        Item
-    ] = strawberry_django.connection(filters=ItemFilter, order=ItemOrder)
-    ancestors: strawberry_django.relay.ListConnectionWithTotalCount[
-        "Storage"
-    ] = strawberry_django.connection(filters=StorageFilter)
+    children: strawberry_django.relay.ListConnectionWithTotalCount["Storage"] = (
+        strawberry_django.connection(filters=StorageFilter)
+    )
+    items: strawberry_django.relay.ListConnectionWithTotalCount[Item] = (
+        strawberry_django.connection(filters=ItemFilter, order=ItemOrder)
+    )
+    ancestors: strawberry_django.relay.ListConnectionWithTotalCount["Storage"] = (
+        strawberry_django.connection(filters=StorageFilter)
+    )
 
     # NOTE: 如果是像下面这样写就会报错
     # AttributeError: 'str' object has no attribute 'CONNECTION_CLASS'

@@ -1,5 +1,5 @@
-""" 生产环境配置
-"""
+"""生产环境配置"""
+
 import json
 import os
 
