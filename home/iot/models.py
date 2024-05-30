@@ -5,10 +5,6 @@ from django.utils.crypto import get_random_string
 class Device(models.Model):
     """设备"""
 
-    class Meta:
-        verbose_name = "设备"
-        verbose_name_plural = "设备"
-
     id = models.AutoField("ID", primary_key=True, auto_created=True)
     name = models.CharField("名字", max_length=100)
     device_type = models.CharField("类型", max_length=100)
@@ -20,21 +16,20 @@ class Device(models.Model):
     offline_at = models.DateTimeField("离线时间", null=True, blank=True)
     token = models.CharField("令牌", max_length=100)
 
-    def generate_token(self):
-        """生成令牌"""
-        self.token = get_random_string(30)
+    class Meta:
+        verbose_name = "设备"
+        verbose_name_plural = "设备"
 
     def __str__(self):
         return self.name
 
+    def generate_token(self):
+        """生成令牌"""
+        self.token = get_random_string(30)
+
 
 class AutowateringData(models.Model):
     """自动浇水设备数据"""
-
-    class Meta:
-        verbose_name = "自动浇水设备数据"
-        verbose_name_plural = "自动浇水设备数据"
-        indexes = [models.Index(fields=["-time"])]
 
     id = models.AutoField("ID", primary_key=True, auto_created=True)
     device = models.ForeignKey(
@@ -53,17 +48,17 @@ class AutowateringData(models.Model):
     valve3_delay = models.IntegerField("阀门3延迟")
     pump_delay = models.IntegerField("水泵延迟")
 
+    class Meta:
+        verbose_name = "自动浇水设备数据"
+        verbose_name_plural = "自动浇水设备数据"
+        indexes = [models.Index(fields=["-time"])]
+
     def __str__(self):
         return f"{self.device.name} {self.time.isoformat()}"
 
 
 class AutowateringDataDaily(models.Model):
     """自动浇水设备每日数据"""
-
-    class Meta:
-        verbose_name = "自动浇水设备每日数据"
-        verbose_name_plural = "自动浇水设备每日数据"
-        indexes = [models.Index(fields=["-time"])]
 
     id = models.AutoField("ID", primary_key=True, auto_created=True)
     device = models.ForeignKey(
@@ -76,6 +71,11 @@ class AutowateringDataDaily(models.Model):
     max_humidity = models.FloatField("最高湿度")
     min_wifi_signal = models.IntegerField("最低无线信号强度")
     max_wifi_signal = models.IntegerField("最高无线信号强度")
+
+    class Meta:
+        verbose_name = "自动浇水设备每日数据"
+        verbose_name_plural = "自动浇水设备每日数据"
+        indexes = [models.Index(fields=["-time"])]
 
     def __str__(self):
         return f"{self.device.name} {self.time.isoformat()}"

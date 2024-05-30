@@ -14,7 +14,7 @@ class SessionStore(DBStore):
         self.ip = ip
 
     @classmethod
-    def get_model_class(cls):
+    def get_model_class(cls):  # type: ignore
         return Session
 
     def create_model_instance(self, data):
@@ -40,7 +40,7 @@ class Session(AbstractBaseSession):
         verbose_name="用户",
         related_name="session",
     )
-    user_agent = models.CharField("用户代理", null=True, blank=True, max_length=200)
+    user_agent = models.CharField("用户代理", blank=True, max_length=200)
     last_activity = models.DateTimeField("最近活跃时间", auto_now=True)
     ip = models.GenericIPAddressField("IP", null=True, blank=True)
 
