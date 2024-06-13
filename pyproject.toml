@@ -16,7 +16,7 @@ requires = ["poetry-core>=1.0.0"]
 [tool.poetry.dependencies]
 python = "^3.12"
 django = "^5.0.6"
-strawberry-graphql-django = { extras = ["debug-toolbar"], version = "^0.41.1" }
+strawberry-graphql-django = { extras = ["debug-toolbar"], version = "^0.44.1" }
 channels = "^4.1.0"
 channels-redis = "^4.2.0"
 celery = "^5.3.0"
