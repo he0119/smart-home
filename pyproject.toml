@@ -50,7 +50,7 @@ exclude = ["home/push/mipush"]
 select = [
   "W",   # pycodestyle warnings
   "E",   # pycodestyle errors
-  "F",   # Pyflakes
+  "F",   # pyflakes
   "UP",  # pyupgrade
   "C4",  # flake8-comprehensions
   "T10", # flake8-debugger
@@ -60,9 +60,8 @@ select = [
   "Q",   # flake8-quotes
 ]
 ignore = [
-  "E402",  # module-import-not-at-top-of-file, Module level import not at top of cell
-  "E501",  # line too long
-  "UP037", # quoted-annotation,	Remove quotes from type annotation
+  "E402", # module-import-not-at-top-of-file, Module level import not at top of cell
+  "E501", # line too long
 ]
 
 [tool.coverage.report]
