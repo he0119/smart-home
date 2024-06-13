@@ -35,6 +35,6 @@ schema = strawberry.Schema(
     query=Query,
     mutation=Mutation,
     subscription=Subscription,
-    # https://strawberry-graphql.github.io/strawberry-graphql-django/guide/optimizer/
+    # https://strawberry-graphql.github.io/strawberry-django/guide/optimizer/
     extensions=[DjangoOptimizerExtension],
 )

@@ -40,7 +40,7 @@ jobs:
       - name: Set up Python
         uses: he0119/setup-python@main
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       - name: Set build version
         id: setVersion
         run: |

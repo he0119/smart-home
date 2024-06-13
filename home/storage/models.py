@@ -24,7 +24,7 @@ class Storage(MPTTModel):
     def ancestors(self):
         return self.get_ancestors()
 
-    class Meta:
+    class Meta:  # type: ignore
         verbose_name = "位置"
         verbose_name_plural = "位置"
 
@@ -91,7 +91,7 @@ class Item(models.Model):
     def __str__(self):
         return self.name
 
-    def delete(self):
+    def delete(self):  # type: ignore
         self.is_deleted = True
         self.deleted_at = timezone.now()
         self.save()

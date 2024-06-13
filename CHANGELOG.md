@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+### Changed
+
+- 升级至 Django 5.0.6
+
 ## [0.9.6] - 2023-12-06
 
 ### Changed

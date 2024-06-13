@@ -299,4 +299,7 @@ STRAWBERRY_DJANGO = {
     "MUTATIONS_DEFAULT_HANDLE_ERRORS": True,
     "GENERATE_ENUMS_FROM_CHOICES": False,
     "MAP_AUTO_ID_AS_GLOBAL_ID": True,
+    # https://strawberry-graphql.github.io/strawberry-django/guide/filters/#legacy-filtering
+    # TODO: 迁移至最新的写法
+    "USE_DEPRECATED_FILTERS": True,
 }

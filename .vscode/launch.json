@@ -6,7 +6,7 @@
   "configurations": [
     {
       "name": "Python: Django",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
       "args": ["runserver"],
@@ -18,7 +18,7 @@
     },
     {
       "name": "Python: Django Test",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
       "args": ["test"],
@@ -29,7 +29,7 @@
     },
     {
       "name": "Python: Django Test Method",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
       "args": ["test", "-k", "${selectedText}"],
@@ -41,7 +41,7 @@
     },
     {
       "name": "Python: Celery",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "module": "celery",
       "args": ["-A", "home", "worker", "--beat", "-l", "info"],
