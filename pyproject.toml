@@ -9,6 +9,10 @@ repository = "https://github.com/he0119/smart-home"
 version = "0.9.6"
 package-mode = false
 
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
+
 [tool.poetry.dependencies]
 python = "^3.12"
 django = "^5.0.6"
@@ -61,6 +65,11 @@ ignore = [
   "UP037", # quoted-annotation,	Remove quotes from type annotation
 ]
 
-[build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core>=1.0.0"]
+[tool.coverage.report]
+omit = [
+  "*/migrations/*",
+  "*/admin.py",
+  "home/push/mipush/*",
+  "home/settings",
+  "manage.py",
+]
