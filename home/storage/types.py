@@ -2,6 +2,7 @@ from typing import Optional
 
 import strawberry
 import strawberry_django
+from django.db.models import Q
 from strawberry import relay
 from strawberry_django.filters import FilterLookup
 
@@ -40,15 +41,15 @@ class ItemFilter:
     # FIXME: 现在这样只能在提供了 filter 参数的情况下，才会生效（就算参数为空字典也行）。
     is_deleted: strawberry.auto = False
     """ 默认排除已删除的物品 """
-    consumables: bool | None = None
     storage: StorageFilterLookup | None = strawberry.UNSET
 
-    def filter_consumables(self, queryset):
-        if self.consumables is None:
-            return queryset
-        if self.consumables:
-            return queryset.exclude(consumables=None)
-        return queryset.filter(consumables=None)
+    @strawberry_django.filter_field(filter_none=True)
+    def consumables(self, value: bool | None, prefix: str) -> Q:
+        if value is None:
+            return Q()
+        if value:
+            return Q(consumables__isnull=False)
+        return Q(consumables__isnull=True)
 
 
 @strawberry_django.filters.filter(model=models.Storage, lookups=True)
