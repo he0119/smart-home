@@ -36,21 +36,23 @@
       },
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
+        "MS-CEINTL.vscode-language-pack-zh-hans",
         "ms-python.python",
         "ms-python.vscode-pylance",
         "charliermarsh.ruff",
-        "mhutchie.git-graph",
         "GitHub.copilot",
         "GitHub.vscode-pull-request-github",
+        "github.vscode-github-actions",
+        "mhutchie.git-graph",
         "eamodio.gitlens",
-        "VisualStudioExptTeam.vscodeintellicode",
         "EditorConfig.EditorConfig",
         "tamasfe.even-better-toml",
         "DavidAnson.vscode-markdownlint",
         "ms-ossdata.vscode-postgresql",
-        "MS-CEINTL.vscode-language-pack-zh-hans",
         "ms-azuretools.vscode-docker",
-        "fabiospampinato.vscode-todo-plus"
+        "fabiospampinato.vscode-todo-plus",
+        "ryanluker.vscode-coverage-gutters",
+        "silesky.toggle-boolean"
       ]
     }
   },
