@@ -1,4 +1,4 @@
-FROM python:3.11 as requirements-stage
+FROM python:3.12 as requirements-stage
 
 WORKDIR /tmp
 
@@ -10,7 +10,7 @@ COPY ./pyproject.toml ./poetry.lock* /tmp/
 
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # 设置时区
 ENV TZ=Asia/Shanghai
