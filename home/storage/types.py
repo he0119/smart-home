@@ -39,7 +39,7 @@ class ItemFilter:
     description: strawberry.auto
     expired_at: strawberry.auto
     # FIXME: 现在这样只能在提供了 filter 参数的情况下，才会生效（就算参数为空字典也行）。
-    is_deleted: strawberry.auto = False
+    is_deleted: bool = False
     """ 默认排除已删除的物品 """
     storage: StorageFilterLookup | None = strawberry.UNSET
 
