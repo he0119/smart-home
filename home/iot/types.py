@@ -17,18 +17,18 @@ class SetDeviceEvent(TypedDict):
     data: dict[str, Any]
 
 
-@strawberry_django.ordering.order(models.AutowateringData)
+@strawberry_django.order(models.AutowateringData)
 class AutowateringDataOrder:
     time: auto
 
 
-@strawberry_django.filters.filter(model=models.AutowateringData, lookups=True)
+@strawberry_django.filter(model=models.AutowateringData, lookups=True)
 class AutowateringDataFilter:
     time: auto
     device: "DeviceFilter |None" = UNSET
 
 
-@strawberry_django.ordering.order(models.Device)
+@strawberry_django.order(models.Device)
 class DeviceOrder:
     created_at: auto
     edited_at: auto
@@ -37,7 +37,7 @@ class DeviceOrder:
     offline_at: auto
 
 
-@strawberry_django.filters.filter(model=models.Device, lookups=True)
+@strawberry_django.filter(model=models.Device, lookups=True)
 class DeviceFilter:
     id: relay.GlobalID
     name: auto

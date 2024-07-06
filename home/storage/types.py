@@ -4,14 +4,14 @@ import strawberry
 import strawberry_django
 from django.db.models import Q
 from strawberry import relay
-from strawberry_django.filters import FilterLookup
+from strawberry_django import FilterLookup
 
 from home.users.types import User
 
 from . import models
 
 
-@strawberry_django.ordering.order(models.Item)
+@strawberry_django.order(models.Item)
 class ItemOrder:
     created_at: strawberry.auto
     edited_at: strawberry.auto
@@ -19,7 +19,7 @@ class ItemOrder:
     deleted_at: strawberry.auto
 
 
-@strawberry_django.ordering.order(models.Picture)
+@strawberry_django.order(models.Picture)
 class PictureOrder:
     created_at: strawberry.auto
 
@@ -33,7 +33,7 @@ class StorageFilterLookup:
     is_null: bool | None = strawberry.UNSET
 
 
-@strawberry_django.filters.filter(model=models.Item, lookups=True)
+@strawberry_django.filter(model=models.Item, lookups=True)
 class ItemFilter:
     name: strawberry.auto
     description: strawberry.auto
@@ -52,14 +52,14 @@ class ItemFilter:
         return Q(consumables__isnull=True)
 
 
-@strawberry_django.filters.filter(model=models.Storage, lookups=True)
+@strawberry_django.filter(model=models.Storage, lookups=True)
 class StorageFilter:
     name: strawberry.auto
     description: strawberry.auto
     level: strawberry.auto
 
 
-@strawberry_django.filters.filter(models.Picture, lookups=True)
+@strawberry_django.filter(models.Picture, lookups=True)
 class PictureFilter:
     id: strawberry.auto
     description: strawberry.auto
