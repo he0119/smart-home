@@ -1,6 +1,7 @@
 """开发环境配置"""
 
 import os
+import sys
 
 from .settings import INSTALLED_APPS, MIDDLEWARE
 
@@ -15,12 +16,16 @@ CSRF_TRUSTED_ORIGINS = ["https://*"]
 
 # _Debug Toolbar
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
-# https://blb-ventures.github.io/strawberry-django-plus/debug-toolbar/
+# https://strawberry-graphql.github.io/strawberry-django/integrations/debug-toolbar/
 
-INSTALLED_APPS.append("debug_toolbar")
-MIDDLEWARE = [
-    "strawberry_django.middlewares.debug_toolbar.DebugToolbarMiddleware"
-] + MIDDLEWARE
+# Enable the debug toolbar only when not running tests
+# https://github.com/jazzband/django-debug-toolbar/issues/1920
+ENABLE_DEBUG_TOOLBAR = "test" not in sys.argv
+if ENABLE_DEBUG_TOOLBAR:
+    INSTALLED_APPS.append("debug_toolbar")
+    MIDDLEWARE = [
+        "strawberry_django.middlewares.debug_toolbar.DebugToolbarMiddleware"
+    ] + MIDDLEWARE
 INTERNAL_IPS = ["127.0.0.1"]
 
 if os.getenv("AWS_S3_ENDPOINT_URL"):

@@ -11,18 +11,18 @@ from home.users.types import User
 from . import models
 
 
-@strawberry_django.ordering.order(models.Comment)
+@strawberry_django.order(models.Comment)
 class CommentOrder:
     created_at: strawberry.auto
 
 
-@strawberry_django.filters.filter(model=models.Comment, lookups=True)
+@strawberry_django.filter(model=models.Comment, lookups=True)
 class CommentFilter:
     level: strawberry.auto
     topic: "TopicFilter | None" = strawberry.UNSET
 
 
-@strawberry_django.ordering.order(models.Topic)
+@strawberry_django.order(models.Topic)
 class TopicOrder:
     created_at: strawberry.auto
     edited_at: strawberry.auto
@@ -31,7 +31,7 @@ class TopicOrder:
     active_at: strawberry.auto
 
 
-@strawberry_django.filters.filter(model=models.Topic, lookups=True)
+@strawberry_django.filter(model=models.Topic, lookups=True)
 class TopicFilter:
     id: relay.GlobalID
     title: strawberry.auto

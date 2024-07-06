@@ -8,7 +8,7 @@ from strawberry.types import Info
 from . import models
 
 
-@strawberry_django.filters.filter(model=get_user_model(), lookups=True)
+@strawberry_django.filter(model=get_user_model(), lookups=True)
 class UserFilter:
     username: strawberry.auto
 
