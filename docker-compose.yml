@@ -30,8 +30,8 @@ services:
       redis:
         condition: service_healthy
   postgres:
+    image: he0119/postgres
     build: ./docker/postgres
-    image: he0119/postgres:14
     container_name: postgres
     restart: always
     volumes:
