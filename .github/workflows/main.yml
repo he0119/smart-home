@@ -44,9 +44,7 @@ jobs:
       - name: Install prerequisites
         run: rye sync
       - name: Run tests
-        run: |
-          rye run coverage run manage.py test --no-input
-          rye run coverage xml
+        run: rye run test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
