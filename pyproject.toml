@@ -58,13 +58,13 @@ exclude = ["home/push/mipush"]
 select = [
     "W",   # pycodestyle warnings
     "E",   # pycodestyle errors
-    "F",   # Pyflakes
+    "F",   # pyflakes
     "UP",  # pyupgrade
     "C4",  # flake8-comprehensions
     "T10", # flake8-debugger
     "T20", # flake8-print
     "PYI", # flake8-pyi
-    "PT",  # flake8-pytest-style
+    "DJ",  # flake8-django
     "Q",   # flake8-quotes
 ]
 ignore = [
