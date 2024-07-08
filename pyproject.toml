@@ -69,6 +69,7 @@ select = [
 ]
 ignore = [
     "E402", # module-import-not-at-top-of-file, Module level import not at top of cell
+    "E501", # line too long
 ]
 
 [tool.coverage.report]
