@@ -37,14 +37,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: he0119/setup-python@main
+      - name: Setup rye
+        uses: eifinger/setup-rye@v4
         with:
-          python-version: "3.12"
+          enable-cache: true
+      - name: Install prerequisites
+        run: rye sync
+      - name: Run tests
+        run: rye run test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
       - name: Set build version
         id: setVersion
         run: |
-          VERSION=$(poetry version -s)
+          VERSION=$(rye version)
           COMMIT_ID=$(git rev-parse --short HEAD)
           if [[ "${{github.event_name}}" == "release" && "${{github.event.action}}" == "published" ]]; then
             echo "environment=prod" >> $GITHUB_OUTPUT
@@ -53,16 +61,6 @@ jobs:
             echo "environment=dev" >> $GITHUB_OUTPUT
             echo "version=$VERSION-git.$COMMIT_ID" >> $GITHUB_OUTPUT
           fi
-      - name: Install prerequisites
-        run: poetry install
-      - name: Run tests
-        run: |
-          poetry run coverage run manage.py test --no-input
-          poetry run coverage xml
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 
   docker:
     name: Docker

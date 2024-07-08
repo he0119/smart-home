@@ -5,10 +5,7 @@
   "workspaceFolder": "/smart-home",
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
-    "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.12"
-    },
-    "ghcr.io/devcontainers-contrib/features/poetry:2": {}
+    "ghcr.io/schlich/devcontainer-features/rye:1": {}
   },
   "customizations": {
     "vscode": {
@@ -60,7 +57,7 @@
   // This can be used to network with other containers or the host.
   "forwardPorts": [8000],
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bash .devcontainer/postCreateCommand.sh"
+  "postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-  // "remoteUser": "vscode"
+  "remoteUser": "root"
 }

@@ -1,15 +1,3 @@
-FROM python:3.12 as requirements-stage
-
-WORKDIR /tmp
-
-RUN curl -sSL https://install.python-poetry.org | python -
-
-ENV PATH="${PATH}:/root/.local/bin"
-
-COPY ./pyproject.toml ./poetry.lock* /tmp/
-
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
-
 FROM python:3.12-slim
 
 # 设置时区
@@ -35,9 +23,8 @@ WORKDIR /app
 ENV APP_MODULE home.asgi:application
 
 # 安装依赖
-COPY --from=requirements-stage /tmp/requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
-RUN rm requirements.txt
+COPY requirements.lock ./
+RUN PYTHONDONTWRITEBYTECODE=1 pip install --no-cache-dir -r requirements.lock
 
 # 复制网站
 COPY . .
