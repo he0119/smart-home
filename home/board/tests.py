@@ -667,10 +667,8 @@ class CommentTests(GraphQLTestCase):
         ]
         self.assertEqual(comments, ["评论测试评论一"])
 
-    # FIXME: 以前的写法，发现只要有 last 参数，就会报错
-    # django.core.exceptions.FullResultSet
-    # 关掉 DjangoOptimizerExtension 后就不会报错，暂时不清楚原因
     def test_get_last_comments_last_one(self):
+        """https://github.com/he0119/smart-home/issues/576"""
         query = """
             query topics {
               topics(order: {isPinned: DESC, isClosed: ASC, activeAt: DESC}) {
