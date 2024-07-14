@@ -628,34 +628,34 @@ class CommentTests(GraphQLTestCase):
     def test_get_last_comments(self):
         query = """
             query topics {
-                topics(order: {isPinned: DESC, isClosed: ASC, activeAt: DESC}) {
-                    pageInfo {
-                        hasNextPage
-                        endCursor
-                    }
-                    edges {
-                        node {
-                            id
-                            title
-                            description
-                            isClosed
-                            isPinned
-                            createdAt
-                            editedAt
-                            user {
-                            username
-                            email
-                            }
-                            comments(first: 1, order: {createdAt: DESC}) {
-                                edges {
-                                    node {
-                                        body
-                                    }
-                                }
-                            }
-                        }
-                    }
+              topics(order: {isPinned: DESC, isClosed: ASC, activeAt: DESC}) {
+                pageInfo {
+                  hasNextPage
+                  endCursor
                 }
+                edges {
+                  node {
+                    id
+                    title
+                    description
+                    isClosed
+                    isPinned
+                    createdAt
+                    editedAt
+                    user {
+                      username
+                      email
+                    }
+                    comments(first: 1, order: {createdAt: DESC}) {
+                      edges {
+                        node {
+                          body
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
         """
 
@@ -667,50 +667,34 @@ class CommentTests(GraphQLTestCase):
         ]
         self.assertEqual(comments, ["评论测试评论一"])
 
-    # FIXME: 以前的写法，发现只要有 last 参数，就会报错
-    # django.core.exceptions.FullResultSet
-    # 关掉 DjangoOptimizerExtension 后就不会报错，暂时不清楚原因
-    # def test_get_last_comments(self):
-    #     query = """
-    #         query topics {
-    #             topics(order: {isPinned: DESC, isClosed: ASC, activeAt: DESC}) {
-    #                 pageInfo {
-    #                     hasNextPage
-    #                     endCursor
-    #                 }
-    #                 edges {
-    #                     node {
-    #                         id
-    #                         title
-    #                         description
-    #                         isClosed
-    #                         isPinned
-    #                         createdAt
-    #                         editedAt
-    #                         user {
-    #                         username
-    #                         email
-    #                         }
-    #                         comments(last: 1, after: null) {
-    #                             edges {
-    #                                 node {
-    #                                     body
-    #                                 }
-    #                             }
-    #                         }
-    #                     }
-    #                 }
-    #             }
-    #         }
-    #     """
+    def test_get_last_comments_last_one(self):
+        """https://github.com/he0119/smart-home/issues/576"""
+        query = """
+            query topics {
+              topics(order: {isPinned: DESC, isClosed: ASC, activeAt: DESC}) {
+                edges {
+                  node {
+                    comments(last: 1) {
+                      edges {
+                        node {
+                          id
+                          body
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        """
 
-    #     content = self.client.execute(query)
+        content = self.client.execute(query)
 
-    #     comments = [
-    #         item["node"]["body"]
-    #         for item in content.data["topics"]["edges"][1]["node"]["comments"]["edges"]
-    #     ]
-    #     self.assertEqual(comments, ["测试评论二"])
+        comments = [
+            item["node"]["body"]
+            for item in content.data["topics"]["edges"][1]["node"]["comments"]["edges"]
+        ]
+        self.assertEqual(comments, ["评论测试评论一"])
 
     def test_add_comment(self):
         mutation = """
