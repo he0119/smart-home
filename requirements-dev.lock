@@ -179,7 +179,7 @@ sqlparse==0.5.0
     # via django-debug-toolbar
 strawberry-graphql==0.235.2
     # via strawberry-graphql-django
-strawberry-graphql-django==0.46.1
+strawberry-graphql-django==0.46.2
 twisted==24.3.0
     # via daphne
 txaio==23.1.1

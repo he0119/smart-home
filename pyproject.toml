@@ -4,7 +4,7 @@ version = "0.9.6"
 description = "Smart home."
 dependencies = [
   "django>=5.0.6",
-  "strawberry-graphql-django[debug-toolbar]>=0.46.1",
+  "strawberry-graphql-django>=0.46.2",
   "channels>=4.1.0",
   "channels-redis>=4.2.0",
   "celery>=5.4.0",
@@ -37,6 +37,7 @@ dev-dependencies = [
   "django-cors-headers>=4.4.0",
   "eventlet>=0.36.1",
   "daphne>=4.1.2",
+  "strawberry-graphql-django[debug-toolbar]>=0.46.2",
 ]
 
 [tool.rye.scripts]

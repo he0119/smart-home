@@ -628,34 +628,34 @@ class CommentTests(GraphQLTestCase):
     def test_get_last_comments(self):
         query = """
             query topics {
-                topics(order: {isPinned: DESC, isClosed: ASC, activeAt: DESC}) {
-                    pageInfo {
-                        hasNextPage
-                        endCursor
-                    }
-                    edges {
-                        node {
-                            id
-                            title
-                            description
-                            isClosed
-                            isPinned
-                            createdAt
-                            editedAt
-                            user {
-                            username
-                            email
-                            }
-                            comments(first: 1, order: {createdAt: DESC}) {
-                                edges {
-                                    node {
-                                        body
-                                    }
-                                }
-                            }
-                        }
-                    }
+              topics(order: {isPinned: DESC, isClosed: ASC, activeAt: DESC}) {
+                pageInfo {
+                  hasNextPage
+                  endCursor
                 }
+                edges {
+                  node {
+                    id
+                    title
+                    description
+                    isClosed
+                    isPinned
+                    createdAt
+                    editedAt
+                    user {
+                      username
+                      email
+                    }
+                    comments(first: 1, order: {createdAt: DESC}) {
+                      edges {
+                        node {
+                          body
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
         """
 
@@ -673,13 +673,14 @@ class CommentTests(GraphQLTestCase):
     def test_get_last_comments_last_one(self):
         query = """
             query topics {
-              topics {
+              topics(order: {isPinned: DESC, isClosed: ASC, activeAt: DESC}) {
                 edges {
                   node {
                     comments(last: 1) {
                       edges {
                         node {
                           id
+                          body
                         }
                       }
                     }
@@ -695,7 +696,7 @@ class CommentTests(GraphQLTestCase):
             item["node"]["body"]
             for item in content.data["topics"]["edges"][1]["node"]["comments"]["edges"]
         ]
-        self.assertEqual(comments, ["测试评论二"])
+        self.assertEqual(comments, ["评论测试评论一"])
 
     def test_add_comment(self):
         mutation = """
