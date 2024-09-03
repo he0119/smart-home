@@ -140,7 +140,7 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           docker run --name test-docker-container -d he0119/smart-home:test > /dev/null
-          sleep 10
+          sleep 20
           CONTAINER_STATE=$(docker ps -f name=test-docker-container -a --format '{{.State}}')
           if [[ $CONTAINER_STATE = "running" ]]; then
               echo "container still running, check passed"
