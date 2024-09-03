@@ -5,7 +5,7 @@
   "workspaceFolder": "/smart-home",
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
-    "ghcr.io/schlich/devcontainer-features/rye:1": {},
+    "ghcr.io/va-h/devcontainers-features/uv:1": {},
     "ghcr.io/devcontainers-contrib/features/pre-commit:2": {}
   },
   "customizations": {

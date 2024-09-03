@@ -1,13 +1,8 @@
 FROM python:3.12-slim
+COPY --from=ghcr.io/astral-sh/uv:0.4.1 /uv /bin/uv
 
 # 设置时区
 ENV TZ=Asia/Shanghai
-
-# Gunicon 配置
-COPY ./docker/start.sh /start.sh
-RUN chmod +x /start.sh
-
-COPY ./docker/gunicorn_conf.py /gunicorn_conf.py
 
 # 安装 uvicorn, gunicorn
 # https://www.uvicorn.org/#quickstart
@@ -22,9 +17,14 @@ WORKDIR /app
 # Django
 ENV APP_MODULE home.asgi:application
 
+# Gunicon 配置
+COPY ./docker/gunicorn_conf.py /gunicorn_conf.py
+COPY ./docker/start.sh /start.sh
+RUN chmod +x /start.sh
+
 # 安装依赖
-COPY requirements.lock ./
-RUN PYTHONDONTWRITEBYTECODE=1 pip install --no-cache-dir -r requirements.lock
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --compile-bytecode
 
 # 复制网站
 COPY . .
