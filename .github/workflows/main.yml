@@ -163,7 +163,7 @@ jobs:
     if: github.event_name != 'pull_request'
     steps:
       - name: Tailscale
-        uses: tailscale/github-action@0bf9b9f36bcd380d8fdc5f505d1f3b87abaea429
+        uses: tailscale/github-action@0893401420d9a7a3c0bb10dc15e1e42283fcda4e
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
@@ -182,7 +182,7 @@ jobs:
     if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
     steps:
       - name: Tailscale
-        uses: tailscale/github-action@0bf9b9f36bcd380d8fdc5f505d1f3b87abaea429
+        uses: tailscale/github-action@0893401420d9a7a3c0bb10dc15e1e42283fcda4e
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
