@@ -29,19 +29,21 @@ Repository = "https://github.com/he0119/smart-home.git"
 Issues = "https://github.com/he0119/smart-home/issues"
 Changelog = "https://github.com/he0119/smart-home/blob/master/CHANGELOG.md"
 
-[tool.rye]
-managed = true
-virtual = true
+[tool.uv]
 dev-dependencies = [
   "coverage>=7.5.4",
   "django-cors-headers>=4.4.0",
   "eventlet>=0.36.1",
   "daphne>=4.1.2",
   "strawberry-graphql-django[debug-toolbar]>=0.46.2",
+  "poethepoet>=0.28.0",
 ]
 
-[tool.rye.scripts]
-test = { chain = ["test:run", "test:report"] }
+[tool.uv.pip]
+universal = true
+
+[tool.poe.tasks]
+test = ["test:run", "test:report"]
 "test:run" = "coverage run manage.py test --no-input"
 "test:report" = "coverage xml"
 loaddata = "python manage.py loaddata"
