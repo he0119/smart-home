@@ -93,12 +93,6 @@ jobs:
         env:
           VERSION: ${{ needs.test.outputs.version }}
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: he0119/smart-home
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -112,16 +106,52 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Docker meta
+        if: github.event_name != 'pull_request'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: he0119/smart-home
+
       - name: Build and push
+        if: github.event_name != 'pull_request'
         uses: docker/build-push-action@v6
         with:
           context: .
           # platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Build for test
+        if: github.event_name == 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: he0119/smart-home:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test Image
+        if: github.event_name == 'pull_request'
+        run: |
+          docker run --name test-docker-container -d he0119/smart-home:test > /dev/null
+          sleep 10
+          CONTAINER_STATE=$(docker ps -f name=test-docker-container -a --format '{{.State}}')
+          if [[ $CONTAINER_STATE = "running" ]]; then
+              echo "container still running, check passed"
+              docker rm -f test-docker-container > /dev/null
+              exit
+          else
+              echo "container exited"
+              docker logs test-docker-container
+              docker rm test-docker-container > /dev/null
+              exit 1
+          fi
 
   deploy_dev:
     name: Deploy Dev
