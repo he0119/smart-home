@@ -29,4 +29,4 @@ RUN uv sync --frozen --compile-bytecode
 # 复制网站
 COPY . .
 
-CMD ["/start.sh"]
+CMD ["uv", "run", "/start.sh"]
