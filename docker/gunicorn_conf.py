@@ -7,7 +7,7 @@ import json
 import multiprocessing
 import os
 
-from uvicorn.workers import UvicornWorker as BaseUvicornWorker
+from uvicorn_worker import UvicornWorker as BaseUvicornWorker
 
 
 class UvicornWorker(BaseUvicornWorker):

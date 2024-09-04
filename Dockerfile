@@ -4,14 +4,6 @@ COPY --from=ghcr.io/astral-sh/uv:0.4.3 /uv /bin/uv
 # 设置时区
 ENV TZ=Asia/Shanghai
 
-# 安装 uvicorn, gunicorn
-# https://www.uvicorn.org/#quickstart
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends gcc \
-  && pip install --no-cache-dir --upgrade "uvicorn[standard]" gunicorn \
-  && apt-get purge -y --auto-remove \
-  && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /app
 
 # Django
