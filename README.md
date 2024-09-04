@@ -33,4 +33,16 @@
 
 ## 部署
 
-具体方法请访问专门的 [仓库](https://github.com/he0119/smart-home-deploy)
+```bash
+# 首先克隆代码到本地
+git clone https://github.com/he0119/smart-home.git
+# 复制并填写配置
+cp .example.env .env
+vim .env
+# 下载 GeoIP 文件
+# https://docs.djangoproject.com/zh-hans/5.1/ref/contrib/gis/geoip2/
+# 并将下载好的文件放入 geoip 文件夹中
+mv *.mmdb ./geoip
+# 启动项目
+sudo docker compose up -d
+```

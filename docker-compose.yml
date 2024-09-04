@@ -3,10 +3,10 @@ services:
     image: he0119/smart-home:latest
     container_name: smart-home
     restart: always
-    user: 500:500
     volumes:
-      - ./static:/usr/src/app/static
-      - ./logs:/usr/src/app/logs
+      - ./logs:/app/logs
+      - ./static:/app/static
+      - ./geoip:/app/geoip
     env_file:
       - ./.env
     depends_on:
@@ -19,9 +19,9 @@ services:
     command: celery -A home worker --beat -l info
     container_name: celery
     restart: always
-    user: 500:500
     volumes:
-      - ./logs:/usr/src/app/logs
+      - ./logs:/app/logs
+      - ./geoip:/app/geoip
     env_file:
       - ./.env
     depends_on:
@@ -52,7 +52,3 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-networks:
-  default:
-    external:
-      name: website
