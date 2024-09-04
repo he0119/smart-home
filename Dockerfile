@@ -19,6 +19,7 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --no-dev --frozen --compile-bytecode
 
 # 复制网站
-COPY . .
+COPY manage.py prestart.sh /app/
+COPY home /app/home/
 
-CMD ["uv", "run", "/start.sh"]
+CMD ["uv", "run", "--no-dev", "/start.sh"]
