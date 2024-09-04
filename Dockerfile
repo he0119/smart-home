@@ -16,7 +16,7 @@ RUN chmod +x /start.sh
 
 # 安装依赖
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --compile-bytecode
+RUN uv sync --no-dev --frozen --compile-bytecode
 
 # 复制网站
 COPY . .
