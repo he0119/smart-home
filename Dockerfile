@@ -7,9 +7,9 @@ ENV TZ=Asia/Shanghai
 WORKDIR /app
 
 # Django
-ENV APP_MODULE home.asgi:application
+ENV APP_MODULE=home.asgi:application
 
-# Gunicon 配置
+# Gunicorn 配置
 COPY ./docker/gunicorn_conf.py /gunicorn_conf.py
 COPY ./docker/start.sh /start.sh
 RUN chmod +x /start.sh
