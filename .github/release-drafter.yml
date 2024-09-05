@@ -5,17 +5,19 @@ exclude-labels:
   - "dependencies"
   - "skip-changelog"
 autolabeler:
-  - label: "bug"
-    branch:
-      - '/fix\/.+/'
-  - label: "change"
-    branch:
-      - '/change\/.+/'
   - label: "enhancement"
     branch:
       - '/feature\/.+/'
       - '/feat\/.+/'
-      - '/improve\/.+/'
+  - label: "bug"
+    branch:
+      - '/fix\/.+/'
+  - label: "ci"
+    files:
+      - .github/**/*
+  - label: "breaking-change"
+    title:
+      - "/.+!:.+/"
   - label: "board"
     files:
       - home/board/**/*
@@ -31,12 +33,6 @@ autolabeler:
   - label: "xiaoai"
     files:
       - home/xiaoai/**/*
-  - label: "ci"
-    files:
-      - .github/**/*
-  - label: "breaking-change"
-    title:
-      - "/.+!:.+/"
 categories:
   - title: 💥 破坏性变更
     labels:
