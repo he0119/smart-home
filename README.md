@@ -1,7 +1,7 @@
 # Smart Home
 
 [![CI](https://github.com/he0119/smart-home/actions/workflows/main.yml/badge.svg)](https://github.com/he0119/smart-home/actions/workflows/main.yml)
-[![codecov](https://codecov.io/gh/he0119/smart-home/branch/master/graph/badge.svg?token=N8K81G7A0Q)](https://codecov.io/gh/he0119/smart-home)
+[![codecov](https://codecov.io/gh/he0119/smart-home/branch/main/graph/badge.svg?token=N8K81G7A0Q)](https://codecov.io/gh/he0119/smart-home)
 
 智慧家庭
 
