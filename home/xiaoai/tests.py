@@ -62,11 +62,11 @@ class XiaoaiTest(TestCase):
 
     def setUp(self) -> None:
         self.headers = {
-            "Authorization": "MIAI-HmacSHA256-V1 key_id::f117594ae9af4bf5bdc1319972c7b2bb310fd0022ea8da52114c430e2b68218b",
-            "X-Xiaomi-Date": "Tue, 8 Dec 2020 03:26:17 GMT",
-            "Host": "smart-test.hehome.xyz",
-            "Content-Type": "application/json",
-            "Content-Md5": "Content-Md5",
+            "HTTP_Authorization": "MIAI-HmacSHA256-V1 key_id::f117594ae9af4bf5bdc1319972c7b2bb310fd0022ea8da52114c430e2b68218b",
+            "HTTP_X-Xiaomi-Date": "Tue, 8 Dec 2020 03:26:17 GMT",
+            "HTTP_Host": "smart-test.hehome.xyz",
+            "HTTP_Content-Type": "application/json",
+            "HTTP_Content-Md5": "Content-Md5",
         }
 
     def test_xiaoai_get(self):
@@ -92,7 +92,7 @@ class XiaoaiTest(TestCase):
             reverse("xiaoai:xiaoai"),
             data=get_command_data("口罩"),
             content_type="application/json",
-            headers=self.headers,
+            **self.headers,  # type: ignore
         )
 
         self.assertEqual(response.status_code, 200)
@@ -117,7 +117,7 @@ class XiaoaiTest(TestCase):
             reverse("xiaoai:xiaoai"),
             data=get_command_data("手机"),
             content_type="application/json",
-            headers=self.headers,
+            **self.headers,  # type: ignore
         )
 
         self.assertEqual(response.status_code, 200)
@@ -139,7 +139,7 @@ class XiaoaiTest(TestCase):
             reverse("xiaoai:xiaoai"),
             data=get_command_data("手机", "test"),
             content_type="application/json",
-            headers=self.headers,
+            **self.headers,  # type: ignore
         )
 
         self.assertEqual(response.status_code, 200)
