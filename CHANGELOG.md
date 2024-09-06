@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 升级至 Django 5.0.6
 
+### Fixed
+
+- 修复小爱同学自定义技能签名以及返回格式的问题
+
 ## [0.9.6] - 2023-12-06
 
 ### Changed

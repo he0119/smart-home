@@ -1,6 +1,7 @@
 import json
 
 from django.test import TestCase
+from django.test.client import RequestFactory
 from django.urls import reverse
 
 from .views import is_xiaomi, xiaomi_hmac
@@ -61,11 +62,11 @@ class XiaoaiTest(TestCase):
 
     def setUp(self) -> None:
         self.headers = {
-            "HTTP_Authorization": "MIAI-HmacSHA256-V1 key_id::2ba08b462b8409d51131c661e23609d7575d3fa584713b0e52e9d4d651b0e3c9",
-            "HTTP_X-Xiaomi-Date": "Tue, 8 Dec 2020 03:26:17 GMT",
-            "HTTP_Host": "smart-test.hehome.xyz",
-            "HTTP_Content-Type": "application/json",
-            "HTTP_Content-Md5": "Content-Md5",
+            "Authorization": "MIAI-HmacSHA256-V1 key_id::f117594ae9af4bf5bdc1319972c7b2bb310fd0022ea8da52114c430e2b68218b",
+            "X-Xiaomi-Date": "Tue, 8 Dec 2020 03:26:17 GMT",
+            "Host": "smart-test.hehome.xyz",
+            "Content-Type": "application/json",
+            "Content-Md5": "Content-Md5",
         }
 
     def test_xiaoai_get(self):
@@ -91,7 +92,7 @@ class XiaoaiTest(TestCase):
             reverse("xiaoai:xiaoai"),
             data=get_command_data("口罩"),
             content_type="application/json",
-            **self.headers,
+            headers=self.headers,
         )
 
         self.assertEqual(response.status_code, 200)
@@ -104,6 +105,7 @@ class XiaoaiTest(TestCase):
                         "type": 0,
                         "text": "共找到1个物品，口罩在阳台储物柜。",
                     },
+                    "not_understand": False,
                 },
                 "is_session_end": True,
             },
@@ -115,7 +117,7 @@ class XiaoaiTest(TestCase):
             reverse("xiaoai:xiaoai"),
             data=get_command_data("手机"),
             content_type="application/json",
-            **self.headers,
+            headers=self.headers,
         )
 
         self.assertEqual(response.status_code, 200)
@@ -125,6 +127,7 @@ class XiaoaiTest(TestCase):
                 "version": "1.0",
                 "response": {
                     "to_speak": {"type": 0, "text": "找不到名字是手机的物品。"},
+                    "not_understand": False,
                 },
                 "is_session_end": True,
             },
@@ -136,7 +139,7 @@ class XiaoaiTest(TestCase):
             reverse("xiaoai:xiaoai"),
             data=get_command_data("手机", "test"),
             content_type="application/json",
-            **self.headers,
+            headers=self.headers,
         )
 
         self.assertEqual(response.status_code, 200)
@@ -146,6 +149,7 @@ class XiaoaiTest(TestCase):
                 "version": "1.0",
                 "response": {
                     "to_speak": {"type": 0, "text": "对不起，我没有理解到你的意思。"},
+                    "not_understand": True,
                 },
                 "is_session_end": False,
             },
@@ -161,7 +165,8 @@ class XiaoaiTest(TestCase):
         }
         signature = "2ba08b462b8409d51131c661e23609d7575d3fa584713b0e52e9d4d651b0e3c9"
 
-        self.assertEqual(xiaomi_hmac(headers), signature)
+        request = RequestFactory().post("/xiaoai", headers=headers)
+        self.assertEqual(xiaomi_hmac(request), signature)
 
     def test_is_xiaomi(self):
         """测试判断是否为小米服务器发出的请求"""
@@ -172,8 +177,18 @@ class XiaoaiTest(TestCase):
             "Content-Type": "application/json",
             "Content-Md5": "Content-Md5",
         }
+        request = RequestFactory().post("/xiaoai", headers=headers)
+        self.assertEqual(is_xiaomi(request), True)
 
-        self.assertEqual(is_xiaomi(headers), True)
+        headers = {
+            "Authorization": "MIAI-HmacSHA256-V1 key_id::f117594ae9af4bf5bdc1319972c7b2bb310fd0022ea8da52114c430e2b68218b",
+            "X-Xiaomi-Date": "Tue, 8 Dec 2020 03:26:17 GMT",
+            "Host": "smart-test.hehome.xyz",
+            "Content-Type": "application/json",
+            "Content-Md5": "Content-Md5",
+        }
+        request = RequestFactory().post("/api/xiaoai/", headers=headers)
+        self.assertEqual(is_xiaomi(request), True)
 
     def test_wrong_sign_method(self):
         """测试签名方式版本不正确的情况"""
@@ -185,7 +200,8 @@ class XiaoaiTest(TestCase):
             "Content-Md5": "Content-Md5",
         }
 
-        self.assertEqual(is_xiaomi(headers), False)
+        request = RequestFactory().post("/xiaoai", headers=headers)
+        self.assertEqual(is_xiaomi(request), False)
 
     def test_wrong_key_id(self):
         """测试密钥ID不正确的情况"""
@@ -197,7 +213,8 @@ class XiaoaiTest(TestCase):
             "Content-Md5": "Content-Md5",
         }
 
-        self.assertEqual(is_xiaomi(headers), False)
+        request = RequestFactory().post("/xiaoai", headers=headers)
+        self.assertEqual(is_xiaomi(request), False)
 
     def test_wrong_signature(self):
         """测试签名不正确的情况"""
@@ -209,4 +226,5 @@ class XiaoaiTest(TestCase):
             "Content-Md5": "Content-Md5",
         }
 
-        self.assertEqual(is_xiaomi(headers), False)
+        request = RequestFactory().post("/xiaoai", headers=headers)
+        self.assertEqual(is_xiaomi(request), False)
