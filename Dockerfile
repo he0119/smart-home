@@ -8,6 +8,7 @@ WORKDIR /app
 
 # Django
 ENV APP_MODULE=home.asgi:application
+ENV PRODUCTION_SERVER=true
 
 # Gunicorn 配置
 COPY ./docker/gunicorn_conf.py /gunicorn_conf.py
