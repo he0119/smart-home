@@ -18,7 +18,7 @@ logger = logging.getLogger("xiaoai")
 def xiaoai(request):
     """小爱同学"""
     if request.method == "POST":
-        if is_xiaomi(request.headers):
+        if is_xiaomi(request):
             received_json_data = json.loads(request.body)
             response = process_request(received_json_data)
             return JsonResponse(response)
@@ -35,6 +35,7 @@ def process_request(data: dict) -> dict:
     """
     logger.info(data)
     message = ""
+    not_understand = False
     is_session_end = True
 
     slot_info = data["request"]["slot_info"]
@@ -44,6 +45,7 @@ def process_request(data: dict) -> dict:
 
     if not message:
         message = "对不起，我没有理解到你的意思。"
+        not_understand = True
         is_session_end = False
 
     # 构造小米支持的格式
@@ -52,6 +54,7 @@ def process_request(data: dict) -> dict:
         "version": "1.0",
         "response": {
             "to_speak": {"type": 0, "text": message},
+            "not_understand": not_understand,
         },
         "is_session_end": is_session_end,
     }
@@ -74,21 +77,23 @@ def find_item(name: str) -> str:
     return f"找不到名字是{name}的物品。"
 
 
-def xiaomi_hmac(headers: dict):
+def xiaomi_hmac(request):
     """小米签名
 
     MIAI-HmacSHA256-V1
     """
+    headers = request.headers
     secret = settings.XIAOAI_SECRET
-    method = "POST"
-    url_path = "/xiaoai"
+    method = request.method
+    url_path = request.path
     param = ""
     xiaomi_date = headers["X-Xiaomi-Date"]
     host = headers["Host"]
     content_type = headers["Content-Type"]
     md5 = headers["Content-Md5"]
-    source = (
-        f"{method}\n{url_path}\n{param}\n{xiaomi_date}\n{host}\n{content_type}\n{md5}\n"
+    # 拼接签名字符串，最后一行是空行
+    source = "\n".join(
+        [method, url_path, param, xiaomi_date, host, content_type, md5, ""]
     )
     signature = (
         HMAC(base64.b64decode(secret), source.encode("utf8"), sha256).digest().hex()
@@ -96,16 +101,17 @@ def xiaomi_hmac(headers: dict):
     return signature
 
 
-def is_xiaomi(headers: dict) -> bool:
+def is_xiaomi(request) -> bool:
     """是否是小米发送的请求"""
     try:
+        headers = request.headers
         authorization = headers["Authorization"]
         sign_version = authorization.split()[0]
         key_id, scope, signature = authorization.split()[1].split(":")
         if sign_version == "MIAI-HmacSHA256-V1":
             if key_id != settings.XIAOAI_KEY_ID:
                 return False
-            if signature != xiaomi_hmac(headers):
+            if signature != xiaomi_hmac(request):
                 return False
             return True
         else:
