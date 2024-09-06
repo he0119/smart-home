@@ -7,7 +7,12 @@ from django.db import models
 
 
 class SessionStore(DBStore):
-    def __init__(self, session_key=None, user_agent=None, ip=None):
+    def __init__(
+        self,
+        session_key: str | None = None,
+        user_agent: str = "",
+        ip: str | None = None,
+    ):
         super().__init__(session_key)
         # Truncate user_agent string to max_length of the CharField
         self.user_agent = user_agent[:200] if user_agent else user_agent
