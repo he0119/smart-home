@@ -61,6 +61,9 @@ class XiaoaiTest(TestCase):
     fixtures = ["users", "storage"]
 
     def setUp(self) -> None:
+        # NOTE: 如果不加 HTTP_ 前缀，直接通过 self.client.post(headers=headers) 传递会报错
+        # 除了 Content-Type ，函数获取不到其他设置的 headers。
+        # {'Cookie': '', 'Content-Length': '959', 'Content-Type': 'application/json'}
         self.headers = {
             "HTTP_Authorization": "MIAI-HmacSHA256-V1 key_id::f117594ae9af4bf5bdc1319972c7b2bb310fd0022ea8da52114c430e2b68218b",
             "HTTP_X-Xiaomi-Date": "Tue, 8 Dec 2020 03:26:17 GMT",
