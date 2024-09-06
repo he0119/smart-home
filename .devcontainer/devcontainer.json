@@ -30,7 +30,12 @@
             "label": "plan",
             "query": "author:${user} state:open repo:${owner}/${repository} sort:created-desc milestone:\"plan\""
           }
-        ]
+        ],
+        // Django
+        "python.testing.unittestEnabled": true,
+        "python.testing.pytestEnabled": false,
+        "python.envFile": "${workspaceFolder}/.env",
+        "python.testing.unittestArgs": []
       },
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
