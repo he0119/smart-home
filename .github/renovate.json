@@ -1,12 +1,34 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "dependencyDashboard": true,
   "extends": [
-    "config:base",
+    "config:recommended",
     "schedule:monthly",
-    "group:allNonMajor",
     ":semanticCommitTypeAll(chore)"
   ],
   "labels": ["dependencies"],
   "rangeStrategy": "bump",
-  "ignoreDeps": ["python"]
+  "ignoreDeps": ["python", "eorzeaenv"],
+  "packageRules": [
+    {
+      "groupName": "Python dependencies",
+      "matchManagers": ["pep621"],
+      "matchDepTypes": ["project.dependencies"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "groupName": "Python dev-dependencies",
+      "matchManagers": ["pep621"],
+      "matchDepTypes": ["tool.uv.dev-dependencies"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "groupName": "GitHub actions dependencies",
+      "matchManagers": ["github-actions"]
+    },
+    {
+      "groupName": "Docker dependencies",
+      "matchManagers": ["dockerfile", "docker-compose"]
+    }
+  ]
 }
