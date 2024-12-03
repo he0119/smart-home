@@ -21,7 +21,7 @@ jobs:
       version: ${{ steps.setVersion.outputs.version }}
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v2
+        uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
@@ -48,7 +48,7 @@ jobs:
         run: uv run poe test
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
