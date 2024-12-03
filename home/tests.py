@@ -5,7 +5,7 @@ from channels.testing import WebsocketCommunicator
 from django.test import TestCase
 from graphql import GraphQLFormattedError
 from strawberry.channels import GraphQLWSConsumer
-from strawberry.subscriptions import GRAPHQL_WS_PROTOCOL
+from strawberry.subscriptions import GRAPHQL_TRANSPORT_WS_PROTOCOL
 from strawberry_django.test.client import TestClient
 
 
@@ -62,7 +62,7 @@ class GraphQLTestCase(TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # 为了正确的类型提示
-        self.client: MyTestClient
+        self.client: MyTestClient  # type: ignore
 
 
 def get_ws_client(user) -> WebsocketCommunicator:
@@ -72,20 +72,13 @@ def get_ws_client(user) -> WebsocketCommunicator:
     class DebuggableGraphQLWSConsumer(GraphQLWSConsumer):
         async def get_context(self, *args, **kwargs) -> object:
             context = await super().get_context(*args, **kwargs)
-            context["ws"] = self._handler._ws
-            context["tasks"] = self._handler.tasks  # type: ignore
-            context["connectionInitTimeoutTask"] = getattr(
-                self._handler, "connection_init_timeout_task", None
-            )
             context["ws"].scope["user"] = user
             return context
 
     return WebsocketCommunicator(
         DebuggableGraphQLWSConsumer.as_asgi(
-            schema=schema, subscription_protocols=(GRAPHQL_WS_PROTOCOL,)
+            schema=schema, subscription_protocols=(GRAPHQL_TRANSPORT_WS_PROTOCOL,)
         ),
         "",
-        subprotocols=[
-            GRAPHQL_WS_PROTOCOL,
-        ],
+        subprotocols=[GRAPHQL_TRANSPORT_WS_PROTOCOL],
     )
