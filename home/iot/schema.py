@@ -128,7 +128,7 @@ class Subscription:
         self,
         info: Info,
         device_id: relay.GlobalID,
-    ) -> AsyncGenerator[types.AutowateringData, None]:
+    ) -> AsyncGenerator[types.AutowateringData]:
         ws = info.context["ws"]
 
         # 发送最新的数据
@@ -153,7 +153,7 @@ class Subscription:
         self,
         info: Info,
         id: relay.GlobalID,
-    ) -> AsyncGenerator[types.Device, None]:
+    ) -> AsyncGenerator[types.Device]:
         ws = info.context["ws"]
 
         device: models.Device | None = await id.resolve_node(info)  # type: ignore
