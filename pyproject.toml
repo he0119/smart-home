@@ -58,13 +58,13 @@ bump = "bump-my-version bump"
 show-bump = "bump-my-version show-bump"
 
 [tool.pyright]
-pythonVersion = "3.12"
+pythonVersion = "3.13"
 pythonPlatform = "All"
 typeCheckingMode = "standard"
 
 [tool.ruff]
 line-length = 88
-target-version = "py312"
+target-version = "py313"
 exclude = ["home/push/mipush"]
 
 [tool.ruff.lint]
