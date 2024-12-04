@@ -110,7 +110,7 @@ def parse_location(value):
         except Exception:
             location = None
     if location and location["country_name"]:
-        if "city" in location and location["city"]:
+        if location.get("city"):
             return "{}, {}".format(location["city"], location["country_name"])
         return location["country_name"]
     return None

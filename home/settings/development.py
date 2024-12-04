@@ -10,7 +10,7 @@ from .settings import INSTALLED_APPS, MIDDLEWARE
 
 ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS.append("corsheaders")
-MIDDLEWARE = ["corsheaders.middleware.CorsMiddleware"] + MIDDLEWARE
+MIDDLEWARE = ["corsheaders.middleware.CorsMiddleware", *MIDDLEWARE]
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ["https://*"]
 
@@ -24,8 +24,9 @@ ENABLE_DEBUG_TOOLBAR = "test" not in sys.argv
 if ENABLE_DEBUG_TOOLBAR:
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE = [
-        "strawberry_django.middlewares.debug_toolbar.DebugToolbarMiddleware"
-    ] + MIDDLEWARE
+        "strawberry_django.middlewares.debug_toolbar.DebugToolbarMiddleware",
+        *MIDDLEWARE,
+    ]
 INTERNAL_IPS = ["127.0.0.1"]
 
 if os.getenv("AWS_S3_ENDPOINT_URL"):
