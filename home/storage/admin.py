@@ -35,10 +35,9 @@ class ItemAdmin(admin.ModelAdmin):
     )
     search_fields = ["name", "description"]
 
+    @admin.display(description="耗材")
     def get_consumables(self, obj):
         return "\n".join([p.name for p in obj.consumables.all()])
-
-    get_consumables.short_description = "耗材"
 
 
 admin.site.register(Storage, StorageAdmin)

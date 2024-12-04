@@ -1,5 +1,6 @@
 import logging
 import re
+from typing import Any
 
 from django.contrib import admin
 from django.contrib.gis.geoip2 import HAS_GEOIP2
@@ -120,8 +121,8 @@ class ExpiredFilter(admin.SimpleListFilter):
     title = "有效的"
     parameter_name = "active"
 
-    def lookups(self, request, model_admin):
-        return (("1", "有效"), ("0", "失效"))
+    def lookups(self, request, model_admin) -> list[tuple[str, str]]:
+        return [("1", "有效"), ("0", "失效")]
 
     def queryset(self, request, queryset):
         if self.value() == "1":
@@ -134,8 +135,8 @@ class OwnerFilter(admin.SimpleListFilter):
     title = "从属"
     parameter_name = "owner"
 
-    def lookups(self, request, model_admin):
-        return (("my", "我"),)
+    def lookups(self, request, model_admin) -> list[tuple[Any, str]]:
+        return [("my", "我")]
 
     def queryset(self, request, queryset):
         if self.value() == "my":
