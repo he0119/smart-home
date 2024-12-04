@@ -1,5 +1,4 @@
 from collections.abc import AsyncGenerator
-from distutils.util import strtobool
 from enum import Enum
 
 import strawberry
@@ -9,7 +8,7 @@ from django.core.exceptions import ValidationError
 from strawberry import relay
 from strawberry.types import Info
 
-from home.utils import IsAuthenticated, channel_group_send
+from home.utils import IsAuthenticated, channel_group_send, strtobool
 
 from . import models, types
 from .api import DeviceAPI
