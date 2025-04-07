@@ -496,7 +496,7 @@ class WebSocketsTests(TestCase):
             await communicator.receive_from(1)
 
         autowatering_data = await sync_to_async(AutowateringData.objects.last)()
-        autowatering_data = cast(AutowateringData, autowatering_data)
+        autowatering_data = cast("AutowateringData", autowatering_data)
         self.assertEqual(autowatering_data.temperature, 4.0)
         self.assertEqual(autowatering_data.wifi_signal, -43)
 
@@ -685,7 +685,7 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(AutowateringData.objects.count(), 0)
         self.assertEqual(AutowateringDataDaily.objects.count(), 2)
         daily_data = AutowateringDataDaily.objects.last()
-        daily_data = cast(AutowateringDataDaily, daily_data)
+        daily_data = cast("AutowateringDataDaily", daily_data)
         self.assertEqual(daily_data.time, date(2020, 8, 2))
         self.assertEqual(daily_data.min_temperature, 1.0)
         self.assertEqual(daily_data.max_temperature, 3.0)
@@ -772,7 +772,7 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(AutowateringData.objects.count(), 1)
         self.assertEqual(AutowateringDataDaily.objects.count(), 2)
         daily_data = AutowateringDataDaily.objects.last()
-        daily_data = cast(AutowateringDataDaily, daily_data)
+        daily_data = cast("AutowateringDataDaily", daily_data)
         self.assertEqual(daily_data.time, now.date() - timedelta(days=30))
         self.assertEqual(daily_data.min_temperature, 1.0)
         self.assertEqual(daily_data.max_temperature, 3.0)
