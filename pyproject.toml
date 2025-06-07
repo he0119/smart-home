@@ -41,7 +41,7 @@ dev-dependencies = [
   "daphne>=4.1.2",
   "strawberry-graphql-django[debug-toolbar]>=0.50.0",
   "poethepoet>=0.31.1",
-  "bump-my-version>=0.28.1",
+  "bump-my-version>=1.2.0",
 ]
 
 [tool.uv.pip]
