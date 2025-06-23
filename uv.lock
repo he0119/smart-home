@@ -1224,15 +1224,15 @@ wheels = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.19.0"
+version = "2.30.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a2/0e/cc0e60f0e0cfd5a9e42622ff5a227301c6475a56bcfa82e8e893bc209f20/sentry_sdk-2.19.0.tar.gz", hash = "sha256:ee4a4d2ae8bfe3cac012dcf3e4607975904c137e1738116549fc3dbbb6ff0e36", size = 298045, upload-time = "2024-11-21T15:42:12.815Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/04/4c/af31e0201b48469786ddeb1bf6fd3dfa3a291cc613a0fe6a60163a7535f9/sentry_sdk-2.30.0.tar.gz", hash = "sha256:436369b02afef7430efb10300a344fb61a11fe6db41c2b11f41ee037d2dd7f45", size = 326767, upload-time = "2025-06-12T10:34:34.733Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c6/6b/191ca63f05d3ecc7600b5b3abd493a4c1b8468289c9737a7735ade1fedca/sentry_sdk-2.19.0-py2.py3-none-any.whl", hash = "sha256:7b0b3b709dee051337244a09a30dbf6e95afe0d34a1f8b430d45e0982a7c125b", size = 322158, upload-time = "2024-11-21T15:42:10.335Z" },
+    { url = "https://files.pythonhosted.org/packages/5a/99/31ac6faaae33ea698086692638f58d14f121162a8db0039e68e94135e7f1/sentry_sdk-2.30.0-py2.py3-none-any.whl", hash = "sha256:59391db1550662f746ea09b483806a631c3ae38d6340804a1a4c0605044f6877", size = 343149, upload-time = "2025-06-12T10:34:32.896Z" },
 ]
 
 [[package]]
@@ -1320,7 +1320,7 @@ requires-dist = [
     { name = "markdown", specifier = ">=3.7" },
     { name = "pillow", specifier = ">=11.0.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.3" },
-    { name = "sentry-sdk", specifier = ">=2.19.0" },
+    { name = "sentry-sdk", specifier = ">=2.30.0" },
     { name = "strawberry-graphql-django", specifier = ">=0.62.0" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.32.1" },
     { name = "uvicorn-worker", specifier = ">=0.2.0" },
