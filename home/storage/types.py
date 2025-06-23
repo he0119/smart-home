@@ -11,7 +11,7 @@ from home.users.types import User
 from . import models
 
 
-@strawberry_django.order(models.Item)
+@strawberry_django.order_type(models.Item)
 class ItemOrder:
     created_at: strawberry.auto
     edited_at: strawberry.auto
@@ -19,7 +19,7 @@ class ItemOrder:
     deleted_at: strawberry.auto
 
 
-@strawberry_django.order(models.Picture)
+@strawberry_django.order_type(models.Picture)
 class PictureOrder:
     created_at: strawberry.auto
 

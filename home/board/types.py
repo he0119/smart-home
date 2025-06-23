@@ -11,7 +11,7 @@ from home.users.types import User
 from . import models
 
 
-@strawberry_django.order(models.Comment)
+@strawberry_django.order_type(models.Comment)
 class CommentOrder:
     created_at: strawberry.auto
 
@@ -22,7 +22,7 @@ class CommentFilter:
     topic: "TopicFilter | None" = strawberry.UNSET
 
 
-@strawberry_django.order(models.Topic)
+@strawberry_django.order_type(models.Topic)
 class TopicOrder:
     created_at: strawberry.auto
     edited_at: strawberry.auto
