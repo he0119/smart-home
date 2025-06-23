@@ -17,7 +17,7 @@ class SetDeviceEvent(TypedDict):
     data: dict[str, Any]
 
 
-@strawberry_django.order_type(models.AutowateringData)
+@strawberry_django.order_type(models.AutowateringData, one_of=False)
 class AutowateringDataOrder:
     time: auto
 
@@ -28,7 +28,7 @@ class AutowateringDataFilter:
     device: "DeviceFilter |None" = UNSET
 
 
-@strawberry_django.order_type(models.Device)
+@strawberry_django.order_type(models.Device, one_of=False)
 class DeviceOrder:
     created_at: auto
     edited_at: auto
