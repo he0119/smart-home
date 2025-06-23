@@ -18,10 +18,10 @@ from .models import AutowateringData, Device
 @strawberry.type
 class Query:
     device: types.Device = strawberry_django.node(permission_classes=[IsAuthenticated])
-    devices: strawberry_django.relay.ListConnectionWithTotalCount[types.Device] = (
+    devices: strawberry_django.relay.DjangoListConnection[types.Device] = (
         strawberry_django.connection(permission_classes=[IsAuthenticated])
     )
-    autowatering_data: strawberry_django.relay.ListConnectionWithTotalCount[
+    autowatering_data: strawberry_django.relay.DjangoListConnection[
         types.AutowateringData
     ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
 

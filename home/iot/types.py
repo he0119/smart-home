@@ -79,7 +79,7 @@ class Device(relay.Node):
     # NOTE: 临时的解决方法
     # https://github.com/blb-ventures/strawberry-django-plus/issues/245
     @strawberry_django.connection(
-        strawberry_django.relay.ListConnectionWithTotalCount[AutowateringData],
+        strawberry_django.relay.DjangoListConnection[AutowateringData],
         filters=AutowateringDataFilter,
         order=AutowateringDataOrder,
     )

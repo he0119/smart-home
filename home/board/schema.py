@@ -15,13 +15,13 @@ from .utils import unmark
 @strawberry.type
 class Query:
     topic: types.Topic = strawberry_django.node(permission_classes=[IsAuthenticated])
-    topics: strawberry_django.relay.ListConnectionWithTotalCount[types.Topic] = (
+    topics: strawberry_django.relay.DjangoListConnection[types.Topic] = (
         strawberry_django.connection(permission_classes=[IsAuthenticated])
     )
     comment: types.Comment = strawberry_django.node(
         permission_classes=[IsAuthenticated]
     )
-    comments: strawberry_django.relay.ListConnectionWithTotalCount[types.Comment] = (
+    comments: strawberry_django.relay.DjangoListConnection[types.Comment] = (
         strawberry_django.connection(permission_classes=[IsAuthenticated])
     )
 
