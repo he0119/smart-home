@@ -662,7 +662,8 @@ class CommentTests(GraphQLTestCase):
         comments = [item["node"]["body"] for item in content.data["topics"]["edges"][1]["node"]["comments"]["edges"]]
         self.assertEqual(comments, ["评论测试评论一"])
 
-    # 不知道为什么 last 又出问题了
+    # FIXME: 不知道为什么 last 又出问题了
+    # 失效了，会获取到所有的评论
     # def test_get_last_comments_last_one(self):
     #     """https://github.com/he0119/smart-home/issues/576"""
     #     query = """
