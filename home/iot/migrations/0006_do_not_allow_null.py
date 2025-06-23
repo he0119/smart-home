@@ -12,25 +12,19 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="mqttacl",
             name="clientid",
-            field=models.CharField(
-                blank=True, default="", max_length=100, verbose_name="客户端 ID"
-            ),
+            field=models.CharField(blank=True, default="", max_length=100, verbose_name="客户端 ID"),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name="mqttacl",
             name="ipaddr",
-            field=models.CharField(
-                blank=True, default="", max_length=60, verbose_name="IP 地址"
-            ),
+            field=models.CharField(blank=True, default="", max_length=60, verbose_name="IP 地址"),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name="mqttacl",
             name="username",
-            field=models.CharField(
-                blank=True, default="", max_length=100, verbose_name="用户名"
-            ),
+            field=models.CharField(blank=True, default="", max_length=100, verbose_name="用户名"),
             preserve_default=False,
         ),
     ]

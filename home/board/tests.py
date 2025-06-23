@@ -56,9 +56,7 @@ class TopicTests(GraphQLTestCase):
 
         title = content.data["topic"]["title"]
         self.assertEqual(title, helloworld.title)
-        comments = [
-            item["node"]["body"] for item in content.data["topic"]["comments"]["edges"]
-        ]
+        comments = [item["node"]["body"] for item in content.data["topic"]["comments"]["edges"]]
         self.assertEqual(set(comments), {"测试评论一"})
 
     def test_get_topics(self):
@@ -661,10 +659,7 @@ class CommentTests(GraphQLTestCase):
 
         content = self.client.execute(query)
 
-        comments = [
-            item["node"]["body"]
-            for item in content.data["topics"]["edges"][1]["node"]["comments"]["edges"]
-        ]
+        comments = [item["node"]["body"] for item in content.data["topics"]["edges"][1]["node"]["comments"]["edges"]]
         self.assertEqual(comments, ["评论测试评论一"])
 
     # 不知道为什么 last 又出问题了

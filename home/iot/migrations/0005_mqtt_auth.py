@@ -44,21 +44,15 @@ class Migration(migrations.Migration):
                 ("allow", models.IntegerField(verbose_name="允许")),
                 (
                     "ipaddr",
-                    models.CharField(
-                        blank=True, max_length=60, null=True, verbose_name="IP 地址"
-                    ),
+                    models.CharField(blank=True, max_length=60, null=True, verbose_name="IP 地址"),
                 ),
                 (
                     "username",
-                    models.CharField(
-                        blank=True, max_length=100, null=True, verbose_name="用户名"
-                    ),
+                    models.CharField(blank=True, max_length=100, null=True, verbose_name="用户名"),
                 ),
                 (
                     "clientid",
-                    models.CharField(
-                        blank=True, max_length=100, null=True, verbose_name="客户端 ID"
-                    ),
+                    models.CharField(blank=True, max_length=100, null=True, verbose_name="客户端 ID"),
                 ),
                 ("access", models.IntegerField(verbose_name="操作")),
                 ("topic", models.CharField(max_length=100, verbose_name="主题")),

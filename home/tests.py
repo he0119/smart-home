@@ -76,9 +76,7 @@ def get_ws_client(user) -> WebsocketCommunicator:
             return context
 
     return WebsocketCommunicator(
-        DebuggableGraphQLWSConsumer.as_asgi(
-            schema=schema, subscription_protocols=(GRAPHQL_TRANSPORT_WS_PROTOCOL,)
-        ),
+        DebuggableGraphQLWSConsumer.as_asgi(schema=schema, subscription_protocols=(GRAPHQL_TRANSPORT_WS_PROTOCOL,)),
         "",
         subprotocols=[GRAPHQL_TRANSPORT_WS_PROTOCOL],
     )

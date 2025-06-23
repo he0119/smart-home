@@ -47,15 +47,13 @@ class Topic(relay.Node):
     created_at: strawberry.auto
     edited_at: strawberry.auto
     is_pinned: strawberry.auto
-    comments: strawberry_django.relay.DjangoListConnection["Comment"] = (
-        strawberry_django.connection(filters=CommentFilter, order=CommentOrder)
+    comments: strawberry_django.relay.DjangoListConnection["Comment"] = strawberry_django.connection(
+        filters=CommentFilter, order=CommentOrder
     )
 
     @classmethod
     def get_queryset(cls, queryset, info, **kwargs):
-        return queryset.annotate(
-            active_at=Greatest(Max("comments__created_at"), "edited_at")
-        )
+        return queryset.annotate(active_at=Greatest(Max("comments__created_at"), "edited_at"))
 
 
 @strawberry_django.type(models.Comment, filters=CommentFilter, order=CommentOrder)

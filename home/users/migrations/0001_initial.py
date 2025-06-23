@@ -29,9 +29,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "avatar",
-                    models.ImageField(
-                        upload_to=home.users.models.get_file_path, verbose_name="头像"
-                    ),
+                    models.ImageField(upload_to=home.users.models.get_file_path, verbose_name="头像"),
                 ),
                 (
                     "created_at",

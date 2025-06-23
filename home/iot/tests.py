@@ -90,9 +90,7 @@ class DeviceTests(GraphQLTestCase):
         self.assertEqual(device["name"], test_device.name)
         self.assertEqual(device["deviceType"], test_device.device_type)
         self.assertEqual(device["location"], test_device.location)
-        data = [
-            item["node"]["temperature"] for item in device["autowateringData"]["edges"]
-        ]
+        data = [item["node"]["temperature"] for item in device["autowateringData"]["edges"]]
         self.assertEqual(set(data), {1.0, 2.0, 3.0})
 
     def test_get_devices(self):
@@ -186,9 +184,7 @@ class DeviceTests(GraphQLTestCase):
         """
 
         test_device = Device.objects.get(name="test")
-        variables = {
-            "input": {"deviceId": relay.to_base64(types.Device, test_device.id)}
-        }
+        variables = {"input": {"deviceId": relay.to_base64(types.Device, test_device.id)}}
 
         # 确认自动浇水有数据
         self.assertNotEqual(list(AutowateringData.objects.all()), [])
@@ -365,10 +361,7 @@ class DeviceTests(GraphQLTestCase):
 
         content = self.client.execute(query, variables)
 
-        data = [
-            item["node"]["temperature"]
-            for item in content.data["autowateringData"]["edges"]
-        ]
+        data = [item["node"]["temperature"] for item in content.data["autowateringData"]["edges"]]
         self.assertEqual(set(data), {1.0, 2.0, 3.0})
 
     def test_get_first_autowatering_data(self):
@@ -386,10 +379,7 @@ class DeviceTests(GraphQLTestCase):
         """
         content = self.client.execute(query)
 
-        data = [
-            item["node"]["temperature"]
-            for item in content.data["autowateringData"]["edges"]
-        ]
+        data = [item["node"]["temperature"] for item in content.data["autowateringData"]["edges"]]
         self.assertEqual(set(data), {1.0})
 
 
@@ -594,9 +584,7 @@ class ApiTests(TestCase):
         self.assertEqual(rainfall, 1)
 
         self.assertIn(
-            mock.call(
-                "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
-            ),
+            mock.call("http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"),
             mock_get.call_args_list,
         )
 
@@ -605,9 +593,7 @@ class ApiTests(TestCase):
         device = DeviceAPI("1")
         device.set_status("valve1", True)
 
-        mock_send.assert_called_once_with(
-            "iot", {"type": "set_device", "id": "1", "data": {"valve1": True}}
-        )
+        mock_send.assert_called_once_with("iot", {"type": "set_device", "id": "1", "data": {"valve1": True}})
 
     @mock.patch("home.iot.api.channel_group_send")
     def test_set_multiple_status(self, mock_send):
@@ -633,12 +619,8 @@ class TaskTests(TestCase):
         """测试自动浇水"""
         autowatering("101270102006", 10, "1", ["valve1"])
 
-        mock_get.assert_called_once_with(
-            "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
-        )
-        mock_send.assert_called_once_with(
-            "iot", {"type": "set_device", "id": "1", "data": {"valve1": True}}
-        )
+        mock_get.assert_called_once_with("http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml")
+        mock_send.assert_called_once_with("iot", {"type": "set_device", "id": "1", "data": {"valve1": True}})
 
     @mock.patch("home.iot.api.channel_group_send")
     @mock.patch("httpx.get", side_effect=mocked_httpx_get)
@@ -646,9 +628,7 @@ class TaskTests(TestCase):
         """测试不需要浇水的情况"""
         autowatering("101270102006", 0, "1", ["valve1"])
 
-        mock_get.assert_called_once_with(
-            "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
-        )
+        mock_get.assert_called_once_with("http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml")
         mock_send.assert_not_called()
 
     @mock.patch("home.iot.api.channel_group_send")
@@ -658,9 +638,7 @@ class TaskTests(TestCase):
         with self.assertRaises(Exception):
             autowatering("1", 0, "1", ["valve1"])
 
-        mock_get.assert_called_once_with(
-            "http://forecast.weather.com.cn/town/weather1dn/1.shtml"
-        )
+        mock_get.assert_called_once_with("http://forecast.weather.com.cn/town/weather1dn/1.shtml")
         mock_send.assert_not_called()
 
 
@@ -927,9 +905,7 @@ class SubscriptionTests(TestCase):
         channel_layer = get_channel_layer()
         assert channel_layer
 
-        await channel_layer.group_send(
-            "autowatering_data.1", {"type": "update", "pk": 2}
-        )
+        await channel_layer.group_send("autowatering_data.1", {"type": "update", "pk": 2})
 
         next_message2: NextMessage = await ws.receive_json_from(10)
         assert next_message2["id"] == "demo_consumer"

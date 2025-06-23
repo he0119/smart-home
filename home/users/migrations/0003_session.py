@@ -31,9 +31,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "user_agent",
-                    models.CharField(
-                        blank=True, max_length=200, null=True, verbose_name="用户代理"
-                    ),
+                    models.CharField(blank=True, max_length=200, null=True, verbose_name="用户代理"),
                 ),
                 (
                     "last_activity",
@@ -41,9 +39,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "ip",
-                    models.GenericIPAddressField(
-                        blank=True, null=True, verbose_name="IP"
-                    ),
+                    models.GenericIPAddressField(blank=True, null=True, verbose_name="IP"),
                 ),
                 (
                     "user",

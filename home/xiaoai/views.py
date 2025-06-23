@@ -92,12 +92,8 @@ def xiaomi_hmac(request):
     content_type = headers["Content-Type"]
     md5 = headers["Content-Md5"]
     # 拼接签名字符串，最后一行是空行
-    source = "\n".join(
-        [method, url_path, param, xiaomi_date, host, content_type, md5, ""]
-    )
-    signature = (
-        HMAC(base64.b64decode(secret), source.encode("utf8"), sha256).digest().hex()
-    )
+    source = "\n".join([method, url_path, param, xiaomi_date, host, content_type, md5, ""])
+    signature = HMAC(base64.b64decode(secret), source.encode("utf8"), sha256).digest().hex()
     return signature
 
 

@@ -32,9 +32,7 @@ class AutowateringData(models.Model):
     """自动浇水设备数据"""
 
     id = models.AutoField("ID", primary_key=True, auto_created=True)
-    device = models.ForeignKey(
-        Device, on_delete=models.CASCADE, related_name="data", verbose_name="设备"
-    )
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="data", verbose_name="设备")
     time = models.DateTimeField("时间")
     temperature = models.FloatField("温度")
     humidity = models.FloatField("湿度")
@@ -61,9 +59,7 @@ class AutowateringDataDaily(models.Model):
     """自动浇水设备每日数据"""
 
     id = models.AutoField("ID", primary_key=True, auto_created=True)
-    device = models.ForeignKey(
-        Device, on_delete=models.CASCADE, related_name="data_daily", verbose_name="设备"
-    )
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="data_daily", verbose_name="设备")
     time = models.DateField("时间")
     min_temperature = models.FloatField("最低温度")
     max_temperature = models.FloatField("最高温度")

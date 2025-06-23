@@ -202,10 +202,7 @@ class StorageTests(GraphQLTestCase):
         content = self.client.execute(query, variables)
 
         self.assertEqual(content.data["storage"]["name"], storage.name)
-        names = [
-            item["node"]["name"]
-            for item in content.data["storage"]["ancestors"]["edges"]
-        ]
+        names = [item["node"]["name"] for item in content.data["storage"]["ancestors"]["edges"]]
         self.assertEqual(names, ["阳台", "阳台储物柜"])
 
     def test_search(self):
@@ -359,9 +356,7 @@ class StorageTests(GraphQLTestCase):
 
         storage = content.data["addStorage"]
         self.assertEqual(storage["__typename"], "Storage")
-        self.assertNotEqual(
-            storage["id"], relay.to_base64(types.Storage, old_storage.id)
-        )
+        self.assertNotEqual(storage["id"], relay.to_base64(types.Storage, old_storage.id))
         self.assertEqual(storage["name"], old_storage.name)
 
     def test_update_storage_name_duplicate(self):
@@ -391,9 +386,7 @@ class StorageTests(GraphQLTestCase):
 
         storage = content.data["updateStorage"]
         self.assertEqual(storage["__typename"], "Storage")
-        self.assertNotEqual(
-            storage["id"], relay.to_base64(types.Storage, old_storage.id)
-        )
+        self.assertNotEqual(storage["id"], relay.to_base64(types.Storage, old_storage.id))
         self.assertEqual(storage["name"], old_storage.name)
 
     def test_update_storage_not_exist(self):
@@ -1196,12 +1189,7 @@ class ConsumableTests(GraphQLTestCase):
         names = [item["node"]["name"] for item in content.data["items"]["edges"]]
         self.assertEqual(set(names), {"手表"})
 
-        names = [
-            item["node"]["name"]
-            for item in content.data["items"]["edges"][0]["node"]["consumables"][
-                "edges"
-            ]
-        ]
+        names = [item["node"]["name"] for item in content.data["items"]["edges"][0]["node"]["consumables"]["edges"]]
         self.assertEqual(set(names), {"电池"})
 
     def test_get_consumable_is_empty(self):
@@ -1281,10 +1269,7 @@ class ConsumableTests(GraphQLTestCase):
 
         content = self.client.execute(mutation, variables)
 
-        names = [
-            item["node"]["name"]
-            for item in content.data["addConsumable"]["consumables"]["edges"]
-        ]
+        names = [item["node"]["name"] for item in content.data["addConsumable"]["consumables"]["edges"]]
         self.assertEqual(set(names), {"口罩"})
 
     def test_error_add_consumable_item_not_exist(self):
@@ -1399,10 +1384,7 @@ class ConsumableTests(GraphQLTestCase):
 
         content = self.client.execute(mutation, variables)
 
-        names = [
-            item["node"]["name"]
-            for item in content.data["deleteConsumable"]["consumables"]["edges"]
-        ]
+        names = [item["node"]["name"] for item in content.data["deleteConsumable"]["consumables"]["edges"]]
         self.assertCountEqual(names, [])
 
     def test_error_delete_consumable_item_not_exist(self):
@@ -1486,9 +1468,7 @@ class PictureTests(GraphQLTestCase):
 
         picture = content.data["picture"]
         self.assertEqual(picture["name"], "1-0f5faff6-38f9-426a-b790-79630739b956.jpg")
-        self.assertEqual(
-            picture["url"], "/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg"
-        )
+        self.assertEqual(picture["url"], "/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg")
 
     def test_get_pictures(self):
         query = """
@@ -1519,9 +1499,7 @@ class PictureTests(GraphQLTestCase):
 
         picture = content.data["pictures"]["edges"][0]["node"]
         self.assertEqual(picture["description"], "测试二")
-        self.assertEqual(
-            picture["url"], "/item_pictures/1-57f3cd93-f838-4281-9bd8-18e64aa7b3dd.jpg"
-        )
+        self.assertEqual(picture["url"], "/item_pictures/1-57f3cd93-f838-4281-9bd8-18e64aa7b3dd.jpg")
 
     def test_get_item_pictures(self):
         umbrella = Item.objects.get(name="雨伞")
@@ -1552,9 +1530,7 @@ class PictureTests(GraphQLTestCase):
         self.assertEqual(name, umbrella.name)
         picture = content.data["item"]["pictures"]["edges"][0]["node"]
         self.assertEqual(picture["name"], "1-0f5faff6-38f9-426a-b790-79630739b956.jpg")
-        self.assertEqual(
-            picture["url"], "/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg"
-        )
+        self.assertEqual(picture["url"], "/item_pictures/1-0f5faff6-38f9-426a-b790-79630739b956.jpg")
 
     def test_add_picture(self):
         test_file = SimpleUploadedFile(name="test.txt", content=b"file_text")

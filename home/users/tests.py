@@ -413,9 +413,7 @@ class SessionTests(GraphQLTestCase):
                 }
             }
         """
-        content = self.client.execute(
-            query, headers={"HTTP_X_FORWARDED_FOR": "1.1.1.1"}
-        )
+        content = self.client.execute(query, headers={"HTTP_X_FORWARDED_FOR": "1.1.1.1"})
 
         data = content.data["viewer"]["session"]
         self.assertEqual(len(data), 2)
@@ -432,9 +430,7 @@ class SessionTests(GraphQLTestCase):
 
         # 再次请求，这次应该能够获取到正确的 IP 地址
         # 因为在上一次请求中，已经将 IP 地址写入到了 session 中
-        content = self.client.execute(
-            query, headers={"HTTP_X_FORWARDED_FOR": "1.1.1.1"}
-        )
+        content = self.client.execute(query, headers={"HTTP_X_FORWARDED_FOR": "1.1.1.1"})
 
         data = content.data["viewer"]["session"]
         self.assertEqual(len(data), 2)
@@ -454,9 +450,7 @@ class SessionTests(GraphQLTestCase):
         """
         variables = {
             "input": {
-                "id": relay.to_base64(
-                    types.Session, "b3hywvvlnly7unshlqu6yhrsyps3phjq"
-                ),
+                "id": relay.to_base64(types.Session, "b3hywvvlnly7unshlqu6yhrsyps3phjq"),
             }
         }
 
@@ -507,9 +501,7 @@ class SessionTests(GraphQLTestCase):
         """
         variables = {
             "input": {
-                "id": relay.to_base64(
-                    types.Session, "voj866ttugmcns05agvl2bxetqel47ln"
-                ),
+                "id": relay.to_base64(types.Session, "voj866ttugmcns05agvl2bxetqel47ln"),
             }
         }
 

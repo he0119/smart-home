@@ -33,9 +33,7 @@ class Comment(MPTTModel):
     """评论"""
 
     id = models.AutoField("ID", primary_key=True, auto_created=True)
-    topic = models.ForeignKey(
-        Topic, on_delete=models.CASCADE, related_name="comments", verbose_name="话题"
-    )
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="comments", verbose_name="话题")
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

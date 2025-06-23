@@ -30,9 +30,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="item",
             name="date_added",
-            field=models.DateTimeField(
-                auto_now_add=True, null=True, verbose_name="添加时间"
-            ),
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name="添加时间"),
         ),
         migrations.RunPython(set_date_added, reverse_code=reverse_set_date_added),
         migrations.AlterField(

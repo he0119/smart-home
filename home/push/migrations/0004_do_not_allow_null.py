@@ -12,8 +12,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="mipush",
             name="reg_id",
-            field=models.CharField(
-                max_length=100, unique=True, verbose_name="注册标识码"
-            ),
+            field=models.CharField(max_length=100, unique=True, verbose_name="注册标识码"),
         ),
     ]

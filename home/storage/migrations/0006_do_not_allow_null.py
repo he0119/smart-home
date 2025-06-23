@@ -12,17 +12,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="item",
             name="description",
-            field=models.CharField(
-                blank=True, default="", max_length=200, verbose_name="备注"
-            ),
+            field=models.CharField(blank=True, default="", max_length=200, verbose_name="备注"),
             preserve_default=False,
         ),
         migrations.AlterField(
             model_name="storage",
             name="description",
-            field=models.CharField(
-                blank=True, default="", max_length=200, verbose_name="备注"
-            ),
+            field=models.CharField(blank=True, default="", max_length=200, verbose_name="备注"),
             preserve_default=False,
         ),
     ]

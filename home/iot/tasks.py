@@ -11,9 +11,7 @@ from .models import AutowateringData, AutowateringDataDaily, Device
 
 
 @shared_task(bind=True)
-def autowatering(
-    self, location_id: str, limit: float, device_id: str, valves: list[str]
-) -> str:
+def autowatering(self, location_id: str, limit: float, device_id: str, valves: list[str]) -> str:
     """根据当地的降雨情况自动浇水
 
     location_id: 中国天气网的地址 ID
@@ -61,9 +59,7 @@ def clean_autowatering_database():
     data = []
 
     # 今天零点作为最大值的范围就是前一天的最后了，所以 30 天前的数据，只需要减 29 天
-    max_time = timezone.now().replace(
-        hour=0, minute=0, second=0, microsecond=0
-    ) - timedelta(days=29)
+    max_time = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=29)
 
     for device in Device.objects.all():
         min_time: datetime | None = device.data.aggregate(Min("time"))["time__min"]  # type: ignore
@@ -90,20 +86,12 @@ def clean_autowatering_database():
                 continue
 
             # 获取最低温度和最高温度
-            min_temperature = all_day_data.aggregate(Min("temperature"))[
-                "temperature__min"
-            ]
-            max_temperature = all_day_data.aggregate(Max("temperature"))[
-                "temperature__max"
-            ]
+            min_temperature = all_day_data.aggregate(Min("temperature"))["temperature__min"]
+            max_temperature = all_day_data.aggregate(Max("temperature"))["temperature__max"]
             min_humidity = all_day_data.aggregate(Min("humidity"))["humidity__min"]
             max_humidity = all_day_data.aggregate(Max("humidity"))["humidity__max"]
-            min_wifi_signal = all_day_data.aggregate(Min("wifi_signal"))[
-                "wifi_signal__min"
-            ]
-            max_wifi_signal = all_day_data.aggregate(Max("wifi_signal"))[
-                "wifi_signal__max"
-            ]
+            min_wifi_signal = all_day_data.aggregate(Min("wifi_signal"))["wifi_signal__min"]
+            max_wifi_signal = all_day_data.aggregate(Max("wifi_signal"))["wifi_signal__max"]
             data.append(
                 AutowateringDataDaily(
                     device=device,

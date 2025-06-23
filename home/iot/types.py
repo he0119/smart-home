@@ -45,9 +45,7 @@ class DeviceFilter:
     location: auto
 
 
-@strawberry_django.type(
-    models.AutowateringData, filters=AutowateringDataFilter, order=AutowateringDataOrder
-)
+@strawberry_django.type(models.AutowateringData, filters=AutowateringDataFilter, order=AutowateringDataOrder)
 class AutowateringData(relay.Node):
     device: "Device"
     time: auto
