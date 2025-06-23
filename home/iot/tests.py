@@ -63,7 +63,7 @@ class DeviceTests(GraphQLTestCase):
         test_device = Device.objects.get(name="test")
 
         query = """
-            query device($id: GlobalID!) {
+            query device($id: ID!) {
                 device(id: $id) {
                     id
                     name
@@ -90,9 +90,7 @@ class DeviceTests(GraphQLTestCase):
         self.assertEqual(device["name"], test_device.name)
         self.assertEqual(device["deviceType"], test_device.device_type)
         self.assertEqual(device["location"], test_device.location)
-        data = [
-            item["node"]["temperature"] for item in device["autowateringData"]["edges"]
-        ]
+        data = [item["node"]["temperature"] for item in device["autowateringData"]["edges"]]
         self.assertEqual(set(data), {1.0, 2.0, 3.0})
 
     def test_get_devices(self):
@@ -186,9 +184,7 @@ class DeviceTests(GraphQLTestCase):
         """
 
         test_device = Device.objects.get(name="test")
-        variables = {
-            "input": {"deviceId": relay.to_base64(types.Device, test_device.id)}
-        }
+        variables = {"input": {"deviceId": relay.to_base64(types.Device, test_device.id)}}
 
         # 确认自动浇水有数据
         self.assertNotEqual(list(AutowateringData.objects.all()), [])
@@ -365,10 +361,7 @@ class DeviceTests(GraphQLTestCase):
 
         content = self.client.execute(query, variables)
 
-        data = [
-            item["node"]["temperature"]
-            for item in content.data["autowateringData"]["edges"]
-        ]
+        data = [item["node"]["temperature"] for item in content.data["autowateringData"]["edges"]]
         self.assertEqual(set(data), {1.0, 2.0, 3.0})
 
     def test_get_first_autowatering_data(self):
@@ -386,10 +379,7 @@ class DeviceTests(GraphQLTestCase):
         """
         content = self.client.execute(query)
 
-        data = [
-            item["node"]["temperature"]
-            for item in content.data["autowateringData"]["edges"]
-        ]
+        data = [item["node"]["temperature"] for item in content.data["autowateringData"]["edges"]]
         self.assertEqual(set(data), {1.0})
 
 
@@ -496,7 +486,7 @@ class WebSocketsTests(TestCase):
             await communicator.receive_from(1)
 
         autowatering_data = await sync_to_async(AutowateringData.objects.last)()
-        autowatering_data = cast(AutowateringData, autowatering_data)
+        autowatering_data = cast("AutowateringData", autowatering_data)
         self.assertEqual(autowatering_data.temperature, 4.0)
         self.assertEqual(autowatering_data.wifi_signal, -43)
 
@@ -594,9 +584,7 @@ class ApiTests(TestCase):
         self.assertEqual(rainfall, 1)
 
         self.assertIn(
-            mock.call(
-                "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
-            ),
+            mock.call("http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"),
             mock_get.call_args_list,
         )
 
@@ -605,9 +593,7 @@ class ApiTests(TestCase):
         device = DeviceAPI("1")
         device.set_status("valve1", True)
 
-        mock_send.assert_called_once_with(
-            "iot", {"type": "set_device", "id": "1", "data": {"valve1": True}}
-        )
+        mock_send.assert_called_once_with("iot", {"type": "set_device", "id": "1", "data": {"valve1": True}})
 
     @mock.patch("home.iot.api.channel_group_send")
     def test_set_multiple_status(self, mock_send):
@@ -633,12 +619,8 @@ class TaskTests(TestCase):
         """测试自动浇水"""
         autowatering("101270102006", 10, "1", ["valve1"])
 
-        mock_get.assert_called_once_with(
-            "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
-        )
-        mock_send.assert_called_once_with(
-            "iot", {"type": "set_device", "id": "1", "data": {"valve1": True}}
-        )
+        mock_get.assert_called_once_with("http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml")
+        mock_send.assert_called_once_with("iot", {"type": "set_device", "id": "1", "data": {"valve1": True}})
 
     @mock.patch("home.iot.api.channel_group_send")
     @mock.patch("httpx.get", side_effect=mocked_httpx_get)
@@ -646,9 +628,7 @@ class TaskTests(TestCase):
         """测试不需要浇水的情况"""
         autowatering("101270102006", 0, "1", ["valve1"])
 
-        mock_get.assert_called_once_with(
-            "http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml"
-        )
+        mock_get.assert_called_once_with("http://forecast.weather.com.cn/town/weather1dn/101270102006.shtml")
         mock_send.assert_not_called()
 
     @mock.patch("home.iot.api.channel_group_send")
@@ -658,9 +638,7 @@ class TaskTests(TestCase):
         with self.assertRaises(Exception):
             autowatering("1", 0, "1", ["valve1"])
 
-        mock_get.assert_called_once_with(
-            "http://forecast.weather.com.cn/town/weather1dn/1.shtml"
-        )
+        mock_get.assert_called_once_with("http://forecast.weather.com.cn/town/weather1dn/1.shtml")
         mock_send.assert_not_called()
 
 
@@ -685,7 +663,7 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(AutowateringData.objects.count(), 0)
         self.assertEqual(AutowateringDataDaily.objects.count(), 2)
         daily_data = AutowateringDataDaily.objects.last()
-        daily_data = cast(AutowateringDataDaily, daily_data)
+        daily_data = cast("AutowateringDataDaily", daily_data)
         self.assertEqual(daily_data.time, date(2020, 8, 2))
         self.assertEqual(daily_data.min_temperature, 1.0)
         self.assertEqual(daily_data.max_temperature, 3.0)
@@ -772,7 +750,7 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(AutowateringData.objects.count(), 1)
         self.assertEqual(AutowateringDataDaily.objects.count(), 2)
         daily_data = AutowateringDataDaily.objects.last()
-        daily_data = cast(AutowateringDataDaily, daily_data)
+        daily_data = cast("AutowateringDataDaily", daily_data)
         self.assertEqual(daily_data.time, now.date() - timedelta(days=30))
         self.assertEqual(daily_data.min_temperature, 1.0)
         self.assertEqual(daily_data.max_temperature, 3.0)
@@ -790,7 +768,7 @@ class SubscriptionTests(TestCase):
 
     async def test_device(self):
         query = """
-        subscription device($id: GlobalID!) {
+        subscription device($id: ID!) {
             device(id: $id) {
                 __typename
                 id
@@ -816,7 +794,8 @@ class SubscriptionTests(TestCase):
                 {
                     "id": "demo_consumer",
                     "type": "subscribe",
-                    "payload": {"query": f"{query}", "variables": variables},  # type: ignore
+                    # type: ignore
+                    "payload": {"query": f"{query}", "variables": variables},
                 }
             )
         )
@@ -851,7 +830,7 @@ class SubscriptionTests(TestCase):
     async def test_device_not_exist(self):
         """测试订阅不存在的设备"""
         query = """
-        subscription device($id: GlobalID!) {
+        subscription device($id: ID!) {
             device(id: $id) {
                 __typename
                 id
@@ -875,17 +854,19 @@ class SubscriptionTests(TestCase):
                 {
                     "id": "demo_consumer",
                     "type": "subscribe",
-                    "payload": {"query": f"{query}", "variables": variables},  # type: ignore
+                    # type: ignore
+                    "payload": {"query": f"{query}", "variables": variables},
                 }
             )
         )
         next_message: NextMessage = await ws.receive_json_from(10)
         assert next_message["id"] == "demo_consumer"
-        assert next_message["payload"]["errors"][0]["message"] == "['设备不存在']"  # type: ignore
+        # type: ignore
+        assert next_message["payload"]["errors"][0]["message"] == "['设备不存在']"
 
     async def test_autowatering_data(self):
         query = """
-        subscription autowatering_data($deviceId: GlobalID!) {
+        subscription autowatering_data($deviceId: ID!) {
             autowateringData(deviceId: $deviceId) {
                 __typename
                 id
@@ -909,7 +890,8 @@ class SubscriptionTests(TestCase):
                 {
                     "id": "demo_consumer",
                     "type": "subscribe",
-                    "payload": {"query": f"{query}", "variables": variables},  # type: ignore
+                    # type: ignore
+                    "payload": {"query": f"{query}", "variables": variables},
                 }
             )
         )
@@ -927,9 +909,7 @@ class SubscriptionTests(TestCase):
         channel_layer = get_channel_layer()
         assert channel_layer
 
-        await channel_layer.group_send(
-            "autowatering_data.1", {"type": "update", "pk": 2}
-        )
+        await channel_layer.group_send("autowatering_data.1", {"type": "update", "pk": 2})
 
         next_message2: NextMessage = await ws.receive_json_from(10)
         assert next_message2["id"] == "demo_consumer"
@@ -943,7 +923,7 @@ class SubscriptionTests(TestCase):
     async def test_autowatering_data_device_not_exist(self):
         """测试订阅不存在的设备"""
         query = """
-        subscription autowatering_data($deviceId: GlobalID!) {
+        subscription autowatering_data($deviceId: ID!) {
             autowateringData(deviceId: $deviceId) {
                 __typename
                 id
@@ -966,10 +946,12 @@ class SubscriptionTests(TestCase):
                 {
                     "id": "demo_consumer",
                     "type": "subscribe",
-                    "payload": {"query": f"{query}", "variables": variables},  # type: ignore
+                    # type: ignore
+                    "payload": {"query": f"{query}", "variables": variables},
                 }
             )
         )
         next_message: NextMessage = await ws.receive_json_from(10)
         assert next_message["id"] == "demo_consumer"
-        assert next_message["payload"]["errors"][0]["message"] == "['设备不存在']"  # type: ignore
+        # type: ignore
+        assert next_message["payload"]["errors"][0]["message"] == "['设备不存在']"

@@ -456,21 +456,21 @@ wheels = [
 
 [[package]]
 name = "django"
-version = "5.1.3"
+version = "5.2.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "sqlparse" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c6/85/ba2c2b83ba8b95354f99ed8344405d9571109ce0175028876209d6b93fba/Django-5.1.3.tar.gz", hash = "sha256:c0fa0e619c39325a169208caef234f90baa925227032ad3f44842ba14d75234a", size = 10698518, upload-time = "2024-11-05T05:24:27.27Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c6/af/77b403926025dc6f7fd7b31256394d643469418965eb528eab45d0505358/django-5.2.3.tar.gz", hash = "sha256:335213277666ab2c5cac44a792a6d2f3d58eb79a80c14b6b160cd4afc3b75684", size = 10850303, upload-time = "2025-06-10T10:14:05.174Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e5/f6/88ed57e1b3ed54ff18c1da352aecbd6f51784c3e642d97586b61f050f5b1/Django-5.1.3-py3-none-any.whl", hash = "sha256:8b38a9a12da3ae00cb0ba72da985ec4b14de6345046b1e174b1fd7254398f818", size = 8276180, upload-time = "2024-11-05T05:24:21.307Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/11/7aff961db37e1ea501a2bb663d27a8ce97f3683b9e5b83d3bfead8b86fa4/django-5.2.3-py3-none-any.whl", hash = "sha256:c517a6334e0fd940066aa9467b29401b93c37cec2e61365d663b80922542069d", size = 8301935, upload-time = "2025-06-10T10:13:58.993Z" },
 ]
 
 [[package]]
 name = "django-celery-beat"
-version = "2.7.0"
+version = "2.8.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "celery" },
@@ -480,9 +480,9 @@ dependencies = [
     { name = "python-crontab" },
     { name = "tzdata" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/03/8f/8a18f234173001bd7a7d63826d2d7f456b38031c892514d27c0f7aea10be/django_celery_beat-2.7.0.tar.gz", hash = "sha256:8482034925e09b698c05ad61c36ed2a8dbc436724a3fe119215193a4ca6dc967", size = 163472, upload-time = "2024-08-22T11:12:24.943Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/aa/11/0c8b412869b4fda72828572068312b10aafe7ccef7b41af3633af31f9d4b/django_celery_beat-2.8.1.tar.gz", hash = "sha256:dfad0201c0ac50c91a34700ef8fa0a10ee098cc7f3375fe5debed79f2204f80a", size = 175802, upload-time = "2025-05-13T06:58:29.246Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/29/f8/f5a25472222b19258c3a53ce71c4efd171a12ab3c988bb3026dec0522a64/django_celery_beat-2.7.0-py3-none-any.whl", hash = "sha256:851c680d8fbf608ca5fecd5836622beea89fa017bc2b3f94a5b8c648c32d84b1", size = 94097, upload-time = "2024-08-22T11:12:23.172Z" },
+    { url = "https://files.pythonhosted.org/packages/61/e5/3a0167044773dee989b498e9a851fc1663bea9ab879f1179f7b8a827ac10/django_celery_beat-2.8.1-py3-none-any.whl", hash = "sha256:da2b1c6939495c05a551717509d6e3b79444e114a027f7b77bf3727c2a39d171", size = 104833, upload-time = "2025-05-13T06:58:27.309Z" },
 ]
 
 [[package]]
@@ -1224,15 +1224,15 @@ wheels = [
 
 [[package]]
 name = "sentry-sdk"
-version = "2.19.0"
+version = "2.30.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a2/0e/cc0e60f0e0cfd5a9e42622ff5a227301c6475a56bcfa82e8e893bc209f20/sentry_sdk-2.19.0.tar.gz", hash = "sha256:ee4a4d2ae8bfe3cac012dcf3e4607975904c137e1738116549fc3dbbb6ff0e36", size = 298045, upload-time = "2024-11-21T15:42:12.815Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/04/4c/af31e0201b48469786ddeb1bf6fd3dfa3a291cc613a0fe6a60163a7535f9/sentry_sdk-2.30.0.tar.gz", hash = "sha256:436369b02afef7430efb10300a344fb61a11fe6db41c2b11f41ee037d2dd7f45", size = 326767, upload-time = "2025-06-12T10:34:34.733Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c6/6b/191ca63f05d3ecc7600b5b3abd493a4c1b8468289c9737a7735ade1fedca/sentry_sdk-2.19.0-py2.py3-none-any.whl", hash = "sha256:7b0b3b709dee051337244a09a30dbf6e95afe0d34a1f8b430d45e0982a7c125b", size = 322158, upload-time = "2024-11-21T15:42:10.335Z" },
+    { url = "https://files.pythonhosted.org/packages/5a/99/31ac6faaae33ea698086692638f58d14f121162a8db0039e68e94135e7f1/sentry_sdk-2.30.0-py2.py3-none-any.whl", hash = "sha256:59391db1550662f746ea09b483806a631c3ae38d6340804a1a4c0605044f6877", size = 343149, upload-time = "2025-06-12T10:34:32.896Z" },
 ]
 
 [[package]]
@@ -1310,7 +1310,7 @@ requires-dist = [
     { name = "celery", specifier = ">=5.4.0" },
     { name = "channels", specifier = "==4.1.0" },
     { name = "channels-redis", extras = ["cryptography"], specifier = ">=4.2.1" },
-    { name = "django", specifier = ">=5.1.3" },
+    { name = "django", specifier = ">=5.2.3" },
     { name = "django-celery-beat", specifier = ">=2.7.0" },
     { name = "django-cleanup", specifier = ">=9.0.0" },
     { name = "django-mptt", specifier = ">=0.16.0" },
@@ -1320,8 +1320,8 @@ requires-dist = [
     { name = "markdown", specifier = ">=3.7" },
     { name = "pillow", specifier = ">=11.0.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.3" },
-    { name = "sentry-sdk", specifier = ">=2.19.0" },
-    { name = "strawberry-graphql-django", specifier = ">=0.50.0" },
+    { name = "sentry-sdk", specifier = ">=2.30.0" },
+    { name = "strawberry-graphql-django", specifier = ">=0.62.0" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.32.1" },
     { name = "uvicorn-worker", specifier = ">=0.2.0" },
 ]
@@ -1357,30 +1357,31 @@ wheels = [
 
 [[package]]
 name = "strawberry-graphql"
-version = "0.253.1"
+version = "0.275.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "graphql-core" },
+    { name = "packaging" },
     { name = "python-dateutil" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f6/f3/0a18ad1f102e50aeb2ae612380bfb0264068e9d8efc4dda4b86e0052c9d1/strawberry_graphql-0.253.1.tar.gz", hash = "sha256:be43eac92e0896a7f1061ab293b89b060d369974e4c1444d16ad377d7a6f030d", size = 207814, upload-time = "2024-12-03T23:26:09.579Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/73/d7/d42a836e93fb798ea6e0f0da4857918340acdba8f206dd0ba5d71a12795d/strawberry_graphql-0.275.2.tar.gz", hash = "sha256:3c99851103a2859f26bfaea205a0e82383ac26513b003325fa03bb1f38f6f7e6", size = 209415, upload-time = "2025-06-22T17:36:32.636Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/24/b3/4745158fe8ebcd89bea2bdc6c070ef7a750bea52f6db299ae4fdc1bb2691/strawberry_graphql-0.253.1-py3-none-any.whl", hash = "sha256:f24cc55560546968255094aa080fb11a14eace4d61cd27eaf98dded863a2af17", size = 295163, upload-time = "2024-12-03T23:26:06.49Z" },
+    { url = "https://files.pythonhosted.org/packages/78/0b/ee9691938265b99d28717cd9d616617123bed4a7c15818f1e8fabdac6bfc/strawberry_graphql-0.275.2-py3-none-any.whl", hash = "sha256:23dc5bf7aec1e3ff99e54b7b1118d0308ea7f787963e46f79e6fe7df6bd56887", size = 305954, upload-time = "2025-06-22T17:36:30.08Z" },
 ]
 
 [[package]]
 name = "strawberry-graphql-django"
-version = "0.50.0"
+version = "0.62.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django" },
     { name = "strawberry-graphql" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5a/ae/0eb2f3f1d6636bff7566c684f4407e18b41d49e847f6da38d165b6d8b19b/strawberry_graphql_django-0.50.0.tar.gz", hash = "sha256:d17d104c72f63061146d2c03ad52802f58947ac53a8e3495d0a59c66aaa8d547", size = 75888, upload-time = "2024-11-09T22:33:53.267Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0d/3a/dfb42c4e284c078babdd386ec475959a8740015028e3b5457819c673a0aa/strawberry_graphql_django-0.62.0.tar.gz", hash = "sha256:99d78da7191a65d19adeb76c92d02e4381087b0a95830ad223dbae32f051f898", size = 84914, upload-time = "2025-06-16T17:24:26.178Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/85/d5/d857b34c129f7c691fc961681d793383ae81858a7566eee8772c0e602ceb/strawberry_graphql_django-0.50.0-py3-none-any.whl", hash = "sha256:0487d81c5239bc9cc94d485d9963efb23061ff70ed9080ca931077e94e5ad92a", size = 92347, upload-time = "2024-11-09T22:33:51.279Z" },
+    { url = "https://files.pythonhosted.org/packages/85/29/ed8a5c729f07eb994f2d1105ac53d27f78e498515be497ac29c358d1e004/strawberry_graphql_django-0.62.0-py3-none-any.whl", hash = "sha256:ae61e5c9b9f4577009e0027c5fcb15357c8d25823966ea57b03a777c0b372657", size = 106278, upload-time = "2025-06-16T17:24:24.461Z" },
 ]
 
 [package.optional-dependencies]

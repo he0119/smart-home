@@ -32,9 +32,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "picture",
-                    models.ImageField(
-                        upload_to=home.storage.models.get_file_path, verbose_name="图片"
-                    ),
+                    models.ImageField(upload_to=home.storage.models.get_file_path, verbose_name="图片"),
                 ),
                 (
                     "created_at",

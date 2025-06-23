@@ -35,7 +35,7 @@ class TopicTests(GraphQLTestCase):
         helloworld = Topic.objects.get(title="你好世界")
 
         query = """
-            query topic($id: GlobalID!) {
+            query topic($id: ID!) {
                 topic(id: $id) {
                     title
                     comments(first: 1, filters: {}, order: {}) {
@@ -56,9 +56,7 @@ class TopicTests(GraphQLTestCase):
 
         title = content.data["topic"]["title"]
         self.assertEqual(title, helloworld.title)
-        comments = [
-            item["node"]["body"] for item in content.data["topic"]["comments"]["edges"]
-        ]
+        comments = [item["node"]["body"] for item in content.data["topic"]["comments"]["edges"]]
         self.assertEqual(set(comments), {"测试评论一"})
 
     def test_get_topics(self):
@@ -550,7 +548,7 @@ class CommentTests(GraphQLTestCase):
         test_comment = Comment.objects.get(body="测试评论一")
 
         query = """
-            query comment($id: GlobalID!) {
+            query comment($id: ID!) {
                 comment(id: $id) {
                     body
                     parent {
@@ -591,7 +589,7 @@ class CommentTests(GraphQLTestCase):
     def test_get_comments_by_topic_id(self):
         """测试通过 topicId 来获取评论"""
         query = """
-            query comments($topicId: GlobalID!) {
+            query comments($topicId: ID!) {
                 comments(filters: {topic: {id: $topicId}}) {
                     edges {
                         node {
@@ -661,13 +659,11 @@ class CommentTests(GraphQLTestCase):
 
         content = self.client.execute(query)
 
-        comments = [
-            item["node"]["body"]
-            for item in content.data["topics"]["edges"][1]["node"]["comments"]["edges"]
-        ]
+        comments = [item["node"]["body"] for item in content.data["topics"]["edges"][1]["node"]["comments"]["edges"]]
         self.assertEqual(comments, ["评论测试评论一"])
 
-    # 不知道为什么 last 又出问题了
+    # FIXME: 不知道为什么 last 又出问题了
+    # 失效了，会获取到所有的评论
     # def test_get_last_comments_last_one(self):
     #     """https://github.com/he0119/smart-home/issues/576"""
     #     query = """

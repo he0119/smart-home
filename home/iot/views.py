@@ -93,9 +93,7 @@ class IotConsumer(AsyncJsonWebsocketConsumer):
             # 如果设备离线，会自动重连，但是会新建一个连接，但是旧的连接此时还没有超时关闭
             # 当在线时间与离线时间的差值小于 20 秒（当前 WebSocket 的超时时间）时，则不修改状态。
             # 因为此时的离线事件是上一次的连接，而不是当前连接
-            if device.online_at and (
-                device.offline_at - device.online_at
-            ) < timezone.timedelta(seconds=20):
+            if device.online_at and (device.offline_at - device.online_at) < timezone.timedelta(seconds=20):
                 return
 
             await sync_to_async(device.save)(update_fields=["is_online", "offline_at"])

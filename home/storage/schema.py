@@ -16,20 +16,16 @@ from . import models, types
 @strawberry.type
 class Query:
     item: types.Item = strawberry_django.node(permission_classes=[IsAuthenticated])
-    items: strawberry_django.relay.ListConnectionWithTotalCount[types.Item] = (
-        strawberry_django.connection(permission_classes=[IsAuthenticated])
-    )
-    storage: types.Storage = strawberry_django.node(
+    items: strawberry_django.relay.DjangoListConnection[types.Item] = strawberry_django.connection(
         permission_classes=[IsAuthenticated]
     )
-    storages: strawberry_django.relay.ListConnectionWithTotalCount[types.Storage] = (
-        strawberry_django.connection(permission_classes=[IsAuthenticated])
-    )
-    picture: types.Picture = strawberry_django.node(
+    storage: types.Storage = strawberry_django.node(permission_classes=[IsAuthenticated])
+    storages: strawberry_django.relay.DjangoListConnection[types.Storage] = strawberry_django.connection(
         permission_classes=[IsAuthenticated]
     )
-    pictures: strawberry_django.relay.ListConnectionWithTotalCount[types.Picture] = (
-        strawberry_django.connection(permission_classes=[IsAuthenticated])
+    picture: types.Picture = strawberry_django.node(permission_classes=[IsAuthenticated])
+    pictures: strawberry_django.relay.DjangoListConnection[types.Picture] = strawberry_django.connection(
+        permission_classes=[IsAuthenticated]
     )
 
 
@@ -82,9 +78,7 @@ class Mutation:
             # 为空则说明是根位置，即 家
             if parent_id:
                 try:
-                    parent = parent_id.resolve_node_sync(
-                        info, ensure_type=models.Storage
-                    )
+                    parent = parent_id.resolve_node_sync(info, ensure_type=models.Storage)
                 except Exception:
                     raise ValidationError("上一级位置不存在")
             else:
@@ -224,9 +218,7 @@ class Mutation:
 
         for consumable_id in consumable_ids:
             try:
-                consumable = consumable_id.resolve_node_sync(
-                    info, ensure_type=models.Item
-                )
+                consumable = consumable_id.resolve_node_sync(info, ensure_type=models.Item)
             except Exception:
                 raise ValidationError("耗材不存在")
             # 不能添加自己作为自己的耗材
@@ -253,9 +245,7 @@ class Mutation:
 
         for consumable_id in consumable_ids:
             try:
-                consumable = consumable_id.resolve_node_sync(
-                    info, ensure_type=models.Item
-                )
+                consumable = consumable_id.resolve_node_sync(info, ensure_type=models.Item)
             except Exception:
                 raise ValidationError("耗材不存在")
             item.consumables.remove(consumable)

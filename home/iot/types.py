@@ -17,18 +17,18 @@ class SetDeviceEvent(TypedDict):
     data: dict[str, Any]
 
 
-@strawberry_django.order(models.AutowateringData)
+@strawberry_django.order_type(models.AutowateringData, one_of=False)
 class AutowateringDataOrder:
     time: auto
 
 
-@strawberry_django.filter(model=models.AutowateringData, lookups=True)
+@strawberry_django.filter_type(model=models.AutowateringData, lookups=True)
 class AutowateringDataFilter:
     time: auto
     device: "DeviceFilter |None" = UNSET
 
 
-@strawberry_django.order(models.Device)
+@strawberry_django.order_type(models.Device, one_of=False)
 class DeviceOrder:
     created_at: auto
     edited_at: auto
@@ -37,7 +37,7 @@ class DeviceOrder:
     offline_at: auto
 
 
-@strawberry_django.filter(model=models.Device, lookups=True)
+@strawberry_django.filter_type(model=models.Device, lookups=True)
 class DeviceFilter:
     id: relay.GlobalID
     name: auto
@@ -45,9 +45,7 @@ class DeviceFilter:
     location: auto
 
 
-@strawberry_django.type(
-    models.AutowateringData, filters=AutowateringDataFilter, order=AutowateringDataOrder
-)
+@strawberry_django.type(models.AutowateringData, filters=AutowateringDataFilter, order=AutowateringDataOrder)
 class AutowateringData(relay.Node):
     device: "Device"
     time: auto
@@ -79,7 +77,7 @@ class Device(relay.Node):
     # NOTE: 临时的解决方法
     # https://github.com/blb-ventures/strawberry-django-plus/issues/245
     @strawberry_django.connection(
-        strawberry_django.relay.ListConnectionWithTotalCount[AutowateringData],
+        strawberry_django.relay.DjangoListConnection[AutowateringData],
         filters=AutowateringDataFilter,
         order=AutowateringDataOrder,
     )

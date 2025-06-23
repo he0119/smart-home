@@ -37,9 +37,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="mipush",
             name="device_id",
-            field=models.CharField(
-                max_length=100, null=True, unique=True, verbose_name="设备标识码"
-            ),
+            field=models.CharField(max_length=100, null=True, unique=True, verbose_name="设备标识码"),
         ),
         migrations.AddField(
             model_name="mipush",
@@ -50,9 +48,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="mipush",
             name="device_id",
-            field=models.CharField(
-                max_length=100, unique=True, verbose_name="设备标识码"
-            ),
+            field=models.CharField(max_length=100, unique=True, verbose_name="设备标识码"),
         ),
         migrations.AlterField(
             model_name="mipush",

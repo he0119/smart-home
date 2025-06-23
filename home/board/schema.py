@@ -15,14 +15,12 @@ from .utils import unmark
 @strawberry.type
 class Query:
     topic: types.Topic = strawberry_django.node(permission_classes=[IsAuthenticated])
-    topics: strawberry_django.relay.ListConnectionWithTotalCount[types.Topic] = (
-        strawberry_django.connection(permission_classes=[IsAuthenticated])
-    )
-    comment: types.Comment = strawberry_django.node(
+    topics: strawberry_django.relay.DjangoListConnection[types.Topic] = strawberry_django.connection(
         permission_classes=[IsAuthenticated]
     )
-    comments: strawberry_django.relay.ListConnectionWithTotalCount[types.Comment] = (
-        strawberry_django.connection(permission_classes=[IsAuthenticated])
+    comment: types.Comment = strawberry_django.node(permission_classes=[IsAuthenticated])
+    comments: strawberry_django.relay.DjangoListConnection[types.Comment] = strawberry_django.connection(
+        permission_classes=[IsAuthenticated]
     )
 
 
@@ -176,9 +174,7 @@ class Mutation:
         )
         if parent_id:
             try:
-                parent_comment = parent_id.resolve_node_sync(
-                    info, ensure_type=models.Comment
-                )
+                parent_comment = parent_id.resolve_node_sync(info, ensure_type=models.Comment)
             except Exception:
                 raise ValidationError("回复的评论不存在")
             # 若回复层级超过二级，则转换为二级

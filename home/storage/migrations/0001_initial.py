@@ -32,9 +32,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "description",
-                    models.CharField(
-                        blank=True, max_length=200, null=True, verbose_name="备注"
-                    ),
+                    models.CharField(blank=True, max_length=200, null=True, verbose_name="备注"),
                 ),
                 ("lft", models.PositiveIntegerField(editable=False)),
                 ("rght", models.PositiveIntegerField(editable=False)),
@@ -76,9 +74,7 @@ class Migration(migrations.Migration):
                 ("number", models.IntegerField(verbose_name="数量")),
                 (
                     "description",
-                    models.CharField(
-                        blank=True, max_length=200, null=True, verbose_name="备注"
-                    ),
+                    models.CharField(blank=True, max_length=200, null=True, verbose_name="备注"),
                 ),
                 (
                     "price",
@@ -96,9 +92,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "expiration_date",
-                    models.DateTimeField(
-                        blank=True, null=True, verbose_name="有效期至"
-                    ),
+                    models.DateTimeField(blank=True, null=True, verbose_name="有效期至"),
                 ),
                 (
                     "editor",

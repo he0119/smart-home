@@ -18,12 +18,12 @@ from .models import AutowateringData, Device
 @strawberry.type
 class Query:
     device: types.Device = strawberry_django.node(permission_classes=[IsAuthenticated])
-    devices: strawberry_django.relay.ListConnectionWithTotalCount[types.Device] = (
+    devices: strawberry_django.relay.DjangoListConnection[types.Device] = strawberry_django.connection(
+        permission_classes=[IsAuthenticated]
+    )
+    autowatering_data: strawberry_django.relay.DjangoListConnection[types.AutowateringData] = (
         strawberry_django.connection(permission_classes=[IsAuthenticated])
     )
-    autowatering_data: strawberry_django.relay.ListConnectionWithTotalCount[
-        types.AutowateringData
-    ] = strawberry_django.connection(permission_classes=[IsAuthenticated])
 
 
 @strawberry.enum
@@ -142,9 +142,7 @@ class Subscription:
         if last:
             yield last
 
-        async for message in ws.channel_listen(
-            "update", groups=[f"autowatering_data.{device.id}"]
-        ):
+        async for message in ws.channel_listen("update", groups=[f"autowatering_data.{device.id}"]):
             data = await sync_to_async(AutowateringData.objects.get)(pk=message["pk"])
             yield data  # type: ignore
 

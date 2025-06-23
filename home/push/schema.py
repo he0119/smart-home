@@ -11,25 +11,21 @@ from . import models, types
 @strawberry.type
 class Query:
     mipush: types.MiPush = strawberry_django.node(permission_classes=[IsAuthenticated])
-    mi_pushs: strawberry_django.relay.ListConnectionWithTotalCount[types.MiPush] = (
-        strawberry_django.connection(permission_classes=[IsAuthenticated])
+    mi_pushs: strawberry_django.relay.DjangoListConnection[types.MiPush] = strawberry_django.connection(
+        permission_classes=[IsAuthenticated]
     )
 
     @strawberry_django.field(permission_classes=[IsAuthenticated])
     def mi_push(self, info: Info, device_id: str) -> types.MiPush | None:
         try:
-            mi_push = models.MiPush.objects.filter(user=info.context.request.user).get(
-                device_id=device_id
-            )
+            mi_push = models.MiPush.objects.filter(user=info.context.request.user).get(device_id=device_id)
             return mi_push  # type: ignore
         except models.MiPush.DoesNotExist:
             return
 
     @strawberry_django.field(permission_classes=[IsAuthenticated])
     def mi_push_key(self) -> types.MiPushKey:
-        return types.MiPushKey(
-            app_id=settings.MI_PUSH_APP_ID, app_key=settings.MI_PUSH_APP_KEY
-        )
+        return types.MiPushKey(app_id=settings.MI_PUSH_APP_ID, app_key=settings.MI_PUSH_APP_KEY)
 
 
 @strawberry.type

@@ -7,7 +7,7 @@ from home.users.types import User, UserFilter
 from . import models
 
 
-@strawberry_django.filter(model=models.MiPush, lookups=True)
+@strawberry_django.filter_type(model=models.MiPush, lookups=True)
 class MiPushFilter:
     user: UserFilter
     model: strawberry.auto

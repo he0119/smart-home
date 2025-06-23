@@ -11,18 +11,18 @@ from home.users.types import User
 from . import models
 
 
-@strawberry_django.order(models.Comment)
+@strawberry_django.order_type(models.Comment, one_of=False)
 class CommentOrder:
     created_at: strawberry.auto
 
 
-@strawberry_django.filter(model=models.Comment, lookups=True)
+@strawberry_django.filter_type(model=models.Comment, lookups=True)
 class CommentFilter:
     level: strawberry.auto
     topic: "TopicFilter | None" = strawberry.UNSET
 
 
-@strawberry_django.order(models.Topic)
+@strawberry_django.order_type(models.Topic, one_of=False)
 class TopicOrder:
     created_at: strawberry.auto
     edited_at: strawberry.auto
@@ -31,7 +31,7 @@ class TopicOrder:
     active_at: strawberry.auto
 
 
-@strawberry_django.filter(model=models.Topic, lookups=True)
+@strawberry_django.filter_type(model=models.Topic, lookups=True)
 class TopicFilter:
     id: relay.GlobalID
     title: strawberry.auto
@@ -47,15 +47,13 @@ class Topic(relay.Node):
     created_at: strawberry.auto
     edited_at: strawberry.auto
     is_pinned: strawberry.auto
-    comments: strawberry_django.relay.ListConnectionWithTotalCount["Comment"] = (
-        strawberry_django.connection(filters=CommentFilter, order=CommentOrder)
+    comments: strawberry_django.relay.DjangoListConnection["Comment"] = strawberry_django.connection(
+        filters=CommentFilter, order=CommentOrder
     )
 
     @classmethod
     def get_queryset(cls, queryset, info, **kwargs):
-        return queryset.annotate(
-            active_at=Greatest(Max("comments__created_at"), "edited_at")
-        )
+        return queryset.annotate(active_at=Greatest(Max("comments__created_at"), "edited_at"))
 
 
 @strawberry_django.type(models.Comment, filters=CommentFilter, order=CommentOrder)
