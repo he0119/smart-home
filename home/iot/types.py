@@ -22,7 +22,7 @@ class AutowateringDataOrder:
     time: auto
 
 
-@strawberry_django.filter(model=models.AutowateringData, lookups=True)
+@strawberry_django.filter_type(model=models.AutowateringData, lookups=True)
 class AutowateringDataFilter:
     time: auto
     device: "DeviceFilter |None" = UNSET
@@ -37,7 +37,7 @@ class DeviceOrder:
     offline_at: auto
 
 
-@strawberry_django.filter(model=models.Device, lookups=True)
+@strawberry_django.filter_type(model=models.Device, lookups=True)
 class DeviceFilter:
     id: relay.GlobalID
     name: auto

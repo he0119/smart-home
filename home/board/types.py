@@ -16,7 +16,7 @@ class CommentOrder:
     created_at: strawberry.auto
 
 
-@strawberry_django.filter(model=models.Comment, lookups=True)
+@strawberry_django.filter_type(model=models.Comment, lookups=True)
 class CommentFilter:
     level: strawberry.auto
     topic: "TopicFilter | None" = strawberry.UNSET
@@ -31,7 +31,7 @@ class TopicOrder:
     active_at: strawberry.auto
 
 
-@strawberry_django.filter(model=models.Topic, lookups=True)
+@strawberry_django.filter_type(model=models.Topic, lookups=True)
 class TopicFilter:
     id: relay.GlobalID
     title: strawberry.auto

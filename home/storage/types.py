@@ -33,7 +33,7 @@ class StorageFilterLookup:
     is_null: bool | None = strawberry.UNSET
 
 
-@strawberry_django.filter(model=models.Item, lookups=True)
+@strawberry_django.filter_type(model=models.Item, lookups=True)
 class ItemFilter:
     name: strawberry.auto
     description: strawberry.auto
@@ -52,14 +52,14 @@ class ItemFilter:
         return Q(consumables__isnull=True)
 
 
-@strawberry_django.filter(model=models.Storage, lookups=True)
+@strawberry_django.filter_type(model=models.Storage, lookups=True)
 class StorageFilter:
     name: strawberry.auto
     description: strawberry.auto
     level: strawberry.auto
 
 
-@strawberry_django.filter(models.Picture, lookups=True)
+@strawberry_django.filter_type(models.Picture, lookups=True)
 class PictureFilter:
     id: strawberry.auto
     description: strawberry.auto
