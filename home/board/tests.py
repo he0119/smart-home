@@ -35,7 +35,7 @@ class TopicTests(GraphQLTestCase):
         helloworld = Topic.objects.get(title="你好世界")
 
         query = """
-            query topic($id: GlobalID!) {
+            query topic($id: ID!) {
                 topic(id: $id) {
                     title
                     comments(first: 1, filters: {}, order: {}) {
@@ -548,7 +548,7 @@ class CommentTests(GraphQLTestCase):
         test_comment = Comment.objects.get(body="测试评论一")
 
         query = """
-            query comment($id: GlobalID!) {
+            query comment($id: ID!) {
                 comment(id: $id) {
                     body
                     parent {
@@ -589,7 +589,7 @@ class CommentTests(GraphQLTestCase):
     def test_get_comments_by_topic_id(self):
         """测试通过 topicId 来获取评论"""
         query = """
-            query comments($topicId: GlobalID!) {
+            query comments($topicId: ID!) {
                 comments(filters: {topic: {id: $topicId}}) {
                     edges {
                         node {

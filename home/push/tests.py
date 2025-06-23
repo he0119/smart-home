@@ -121,7 +121,7 @@ class PushTests(GraphQLTestCase):
 
     def test_get_mipush_via_node(self):
         query = """
-            query miPush($id: GlobalID!) {
+            query miPush($id: ID!) {
                 mipush(id: $id) {
                     user {
                         username

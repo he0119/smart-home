@@ -72,7 +72,7 @@ class StorageTests(GraphQLTestCase):
         storage = Storage.objects.get(name="阳台储物柜")
 
         query = """
-            query storage($id: GlobalID!) {
+            query storage($id: ID!) {
                 storage(id: $id) {
                     id
                     name
@@ -101,7 +101,7 @@ class StorageTests(GraphQLTestCase):
         storage = Storage.objects.get(name="阳台储物柜")
 
         query = """
-            query storage($id: GlobalID!) {
+            query storage($id: ID!) {
                 storage(id: $id) {
                     id
                     name
@@ -183,7 +183,7 @@ class StorageTests(GraphQLTestCase):
 
     def test_get_storage_ancestors(self):
         query = """
-            query storage($id: GlobalID!)  {
+            query storage($id: ID!)  {
                 storage(id: $id) {
                     name
                     ancestors {
@@ -552,7 +552,7 @@ class ItemTests(GraphQLTestCase):
         umbrella = Item.objects.get(name="雨伞")
 
         query = """
-            query item($id: GlobalID!) {
+            query item($id: ID!) {
                 item(id: $id) {
                     id
                     name
@@ -582,7 +582,7 @@ class ItemTests(GraphQLTestCase):
         missing = Item.objects.get(name="未分类")
 
         query = """
-            query item($id: GlobalID!) {
+            query item($id: ID!) {
                 item(id: $id) {
                     id
                     name
@@ -607,7 +607,7 @@ class ItemTests(GraphQLTestCase):
         umbrella = Item.objects.get(name="雨伞")
 
         query = """
-            query item($id: GlobalID!) {
+            query item($id: ID!) {
                 item(id: $id) {
                     id
                     name
@@ -1451,7 +1451,7 @@ class PictureTests(GraphQLTestCase):
 
     def test_get_picture(self):
         query = """
-            query picture($id: GlobalID!) {
+            query picture($id: ID!) {
                 picture(id: $id) {
                     __typename
                     id
@@ -1505,7 +1505,7 @@ class PictureTests(GraphQLTestCase):
         umbrella = Item.objects.get(name="雨伞")
 
         query = """
-            query item($id: GlobalID!) {
+            query item($id: ID!) {
                 item(id: $id) {
                     id
                     name

@@ -63,7 +63,7 @@ class DeviceTests(GraphQLTestCase):
         test_device = Device.objects.get(name="test")
 
         query = """
-            query device($id: GlobalID!) {
+            query device($id: ID!) {
                 device(id: $id) {
                     id
                     name
@@ -486,7 +486,7 @@ class WebSocketsTests(TestCase):
             await communicator.receive_from(1)
 
         autowatering_data = await sync_to_async(AutowateringData.objects.last)()
-        autowatering_data = cast(AutowateringData, autowatering_data)
+        autowatering_data = cast("AutowateringData", autowatering_data)
         self.assertEqual(autowatering_data.temperature, 4.0)
         self.assertEqual(autowatering_data.wifi_signal, -43)
 
@@ -663,7 +663,7 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(AutowateringData.objects.count(), 0)
         self.assertEqual(AutowateringDataDaily.objects.count(), 2)
         daily_data = AutowateringDataDaily.objects.last()
-        daily_data = cast(AutowateringDataDaily, daily_data)
+        daily_data = cast("AutowateringDataDaily", daily_data)
         self.assertEqual(daily_data.time, date(2020, 8, 2))
         self.assertEqual(daily_data.min_temperature, 1.0)
         self.assertEqual(daily_data.max_temperature, 3.0)
@@ -750,7 +750,7 @@ class CleanDatabaseTests(TestCase):
         self.assertEqual(AutowateringData.objects.count(), 1)
         self.assertEqual(AutowateringDataDaily.objects.count(), 2)
         daily_data = AutowateringDataDaily.objects.last()
-        daily_data = cast(AutowateringDataDaily, daily_data)
+        daily_data = cast("AutowateringDataDaily", daily_data)
         self.assertEqual(daily_data.time, now.date() - timedelta(days=30))
         self.assertEqual(daily_data.min_temperature, 1.0)
         self.assertEqual(daily_data.max_temperature, 3.0)
@@ -768,7 +768,7 @@ class SubscriptionTests(TestCase):
 
     async def test_device(self):
         query = """
-        subscription device($id: GlobalID!) {
+        subscription device($id: ID!) {
             device(id: $id) {
                 __typename
                 id
@@ -794,7 +794,8 @@ class SubscriptionTests(TestCase):
                 {
                     "id": "demo_consumer",
                     "type": "subscribe",
-                    "payload": {"query": f"{query}", "variables": variables},  # type: ignore
+                    # type: ignore
+                    "payload": {"query": f"{query}", "variables": variables},
                 }
             )
         )
@@ -829,7 +830,7 @@ class SubscriptionTests(TestCase):
     async def test_device_not_exist(self):
         """测试订阅不存在的设备"""
         query = """
-        subscription device($id: GlobalID!) {
+        subscription device($id: ID!) {
             device(id: $id) {
                 __typename
                 id
@@ -853,17 +854,19 @@ class SubscriptionTests(TestCase):
                 {
                     "id": "demo_consumer",
                     "type": "subscribe",
-                    "payload": {"query": f"{query}", "variables": variables},  # type: ignore
+                    # type: ignore
+                    "payload": {"query": f"{query}", "variables": variables},
                 }
             )
         )
         next_message: NextMessage = await ws.receive_json_from(10)
         assert next_message["id"] == "demo_consumer"
-        assert next_message["payload"]["errors"][0]["message"] == "['设备不存在']"  # type: ignore
+        # type: ignore
+        assert next_message["payload"]["errors"][0]["message"] == "['设备不存在']"
 
     async def test_autowatering_data(self):
         query = """
-        subscription autowatering_data($deviceId: GlobalID!) {
+        subscription autowatering_data($deviceId: ID!) {
             autowateringData(deviceId: $deviceId) {
                 __typename
                 id
@@ -887,7 +890,8 @@ class SubscriptionTests(TestCase):
                 {
                     "id": "demo_consumer",
                     "type": "subscribe",
-                    "payload": {"query": f"{query}", "variables": variables},  # type: ignore
+                    # type: ignore
+                    "payload": {"query": f"{query}", "variables": variables},
                 }
             )
         )
@@ -919,7 +923,7 @@ class SubscriptionTests(TestCase):
     async def test_autowatering_data_device_not_exist(self):
         """测试订阅不存在的设备"""
         query = """
-        subscription autowatering_data($deviceId: GlobalID!) {
+        subscription autowatering_data($deviceId: ID!) {
             autowateringData(deviceId: $deviceId) {
                 __typename
                 id
@@ -942,10 +946,12 @@ class SubscriptionTests(TestCase):
                 {
                     "id": "demo_consumer",
                     "type": "subscribe",
-                    "payload": {"query": f"{query}", "variables": variables},  # type: ignore
+                    # type: ignore
+                    "payload": {"query": f"{query}", "variables": variables},
                 }
             )
         )
         next_message: NextMessage = await ws.receive_json_from(10)
         assert next_message["id"] == "demo_consumer"
-        assert next_message["payload"]["errors"][0]["message"] == "['设备不存在']"  # type: ignore
+        # type: ignore
+        assert next_message["payload"]["errors"][0]["message"] == "['设备不存在']"
