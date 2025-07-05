@@ -7,24 +7,24 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.13.5"
 dependencies = [
-  "django>=5.2.3",
+  "django>=5.2.4",
   "strawberry-graphql-django>=0.62.0",
   "channels==4.1.0",
   "channels-redis[cryptography]>=4.2.1",
-  "celery>=5.4.0",
-  "django-celery-beat>=2.7.0",
+  "celery>=5.5.3",
+  "django-celery-beat>=2.8.1",
   "django-cleanup>=9.0.0",
-  "django-mptt>=0.16.0",
-  "boto3>=1.35.73",
-  "markdown>=3.7",
-  "pillow>=11.0.0",
-  "psycopg[binary]>=3.2.3",
-  "sentry-sdk>=2.30.0",
+  "django-mptt>=0.17.0",
+  "boto3>=1.39.3",
+  "markdown>=3.8.2",
+  "pillow>=11.3.0",
+  "psycopg[binary]>=3.2.9",
+  "sentry-sdk>=2.32.0",
   "geoip2>=5.1.0",
-  "httpx>=0.28.0",
-  "uvicorn[standard]>=0.32.1",
+  "httpx>=0.28.1",
+  "uvicorn[standard]>=0.35.0",
   "gunicorn>=23.0.0",
-  "uvicorn-worker>=0.2.0",
+  "uvicorn-worker>=0.3.0",
 ]
 
 [project.urls]
