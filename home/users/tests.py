@@ -416,6 +416,8 @@ class SessionTests(GraphQLTestCase):
         content = self.client.execute(query, headers={"HTTP_X_FORWARDED_FOR": "1.1.1.1"})
 
         data = content.data["viewer"]["session"]
+        # 必须排序确保新的会话在后面
+        data.sort(key=lambda x: x["isCurrent"])
         self.assertEqual(len(data), 2)
         self.assertEqual(data[0]["isValid"], False)
         self.assertEqual(data[0]["isCurrent"], False)
@@ -433,6 +435,7 @@ class SessionTests(GraphQLTestCase):
         content = self.client.execute(query, headers={"HTTP_X_FORWARDED_FOR": "1.1.1.1"})
 
         data = content.data["viewer"]["session"]
+        data.sort(key=lambda x: x["isCurrent"])
         self.assertEqual(len(data), 2)
         self.assertEqual(data[1]["isValid"], True)
         self.assertEqual(data[1]["isCurrent"], True)
