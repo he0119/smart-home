@@ -16,7 +16,7 @@ services:
         condition: service_healthy
   celery:
     image: he0119/smart-home:latest
-    command: celery -A home worker --beat -l info
+    command: uv run --no-dev celery -A home worker --beat -l info
     container_name: celery
     restart: always
     volumes:
