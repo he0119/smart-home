@@ -115,7 +115,7 @@ jobs:
     needs: docker
     environment:
       name: dev
-      url: https://smart-dev.hehome.xyz
+      url: https://smart.dev.hehome.xyz
     if: github.event_name != 'pull_request'
     steps:
       - name: Tailscale
