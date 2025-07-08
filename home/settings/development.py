@@ -32,7 +32,7 @@ INTERNAL_IPS = ["127.0.0.1"]
 if os.getenv("AWS_S3_ENDPOINT_URL"):
     STORAGES = {
         "default": {
-            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "BACKEND": "storages.backends.s3.S3Storage",
         },
         "staticfiles": {
             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
