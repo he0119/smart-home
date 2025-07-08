@@ -35,5 +35,15 @@ services:
     restart: unless-stopped
     network_mode: service:postgres
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    restart: unless-stopped
+    command: server /data --console-address :9001
+    network_mode: service:postgres
+    volumes:
+      - minio-data:/data
+
 volumes:
   postgres-data:
+  minio-data:
