@@ -78,7 +78,7 @@ class IotConsumer(AsyncJsonWebsocketConsumer):
 
     async def disconnect(self, close_code):
         if device := self.scope["device"]:
-            device = cast(Device, device)
+            device = cast("Device", device)
             await sync_to_async(device.refresh_from_db)()
             device.is_online = False
             device.offline_at = timezone.now()
