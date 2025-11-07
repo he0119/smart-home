@@ -30,6 +30,7 @@ urlpatterns = [
         "graphql/",
         csrf_exempt(GraphQLView.as_view(schema=schema, multipart_uploads_enabled=True)),
     ),
+    path("oidc/", include("mozilla_django_oidc.urls")),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
 
