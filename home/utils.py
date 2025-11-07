@@ -48,7 +48,7 @@ def strtobool(val):
 
 class MyOIDCAB(OIDCAuthenticationBackend):
     def filter_users_by_claims(self, claims):
-        username = claims.get("username")
+        username = claims.get("preferred_username") or claims.get("username")
         if not username:
             return self.UserModel.objects.none()
         return self.UserModel.objects.filter(username__iexact=username)
