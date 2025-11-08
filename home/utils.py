@@ -2,6 +2,7 @@ from typing import Any
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 from strawberry.permission import BasePermission
 from strawberry.types import Info
 
@@ -43,3 +44,11 @@ def strtobool(val):
         return 0
     else:
         raise ValueError(f"invalid truth value {val!r}")
+
+
+class MyOIDCAB(OIDCAuthenticationBackend):
+    def filter_users_by_claims(self, claims):
+        username = claims.get("preferred_username") or claims.get("username")
+        if not username:
+            return self.UserModel.objects.none()
+        return self.UserModel.objects.filter(username__iexact=username)

@@ -25,6 +25,7 @@ dependencies = [
   "gunicorn>=23.0.0",
   "uvicorn[standard]>=0.35.0",
   "uvicorn-worker>=0.3.0",
+  "mozilla-django-oidc>=4.0.1",
 ]
 
 [project.urls]

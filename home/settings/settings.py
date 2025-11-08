@@ -93,6 +93,7 @@ LOGGING = {
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
+    "mozilla_django_oidc",  # OIDC 认证
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
@@ -300,3 +301,22 @@ STRAWBERRY_DJANGO = {
     "GENERATE_ENUMS_FROM_CHOICES": False,
     "MAP_AUTO_ID_AS_GLOBAL_ID": True,
 }
+
+# https://docs.djangoproject.com/zh-hans/5.2/topics/auth/customizing/
+# Add 'mozilla_django_oidc' authentication backend
+AUTHENTICATION_BACKENDS = [
+    "home.utils.MyOIDCAB",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+OIDC_OP_AUTHORIZATION_ENDPOINT = os.getenv("OIDC_OP_AUTHORIZATION_ENDPOINT", "")
+OIDC_OP_TOKEN_ENDPOINT = os.getenv("OIDC_OP_TOKEN_ENDPOINT", "")
+OIDC_OP_USER_ENDPOINT = os.getenv("OIDC_OP_USER_ENDPOINT", "")
+OIDC_OP_JWKS_ENDPOINT = os.getenv("OIDC_OP_JWKS_ENDPOINT", "")
+OIDC_RP_SIGN_ALGO = os.getenv("OIDC_RP_SIGN_ALGO", "RS256")
+OIDC_RP_CLIENT_ID = os.getenv("OIDC_RP_CLIENT_ID", "")
+OIDC_RP_CLIENT_SECRET = os.getenv("OIDC_RP_CLIENT_SECRET", "")
+OIDC_CREATE_USER = False
+
+LOGIN_REDIRECT_URL = "/admin/"
+LOGOUT_REDIRECT_URL = "/admin/login/"
