@@ -7,6 +7,6 @@ uv tool install pre-commit
 pre-commit install --install-hooks
 
 uv run poe migrate
-uv run poe loaddata users board iot storage
+uv run poe loaddata users board storage
 
 echo "MANAGE_PY_PATH=./manage.py" > .env
