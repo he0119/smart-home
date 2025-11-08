@@ -36,13 +36,13 @@ Changelog = "https://github.com/he0119/smart-home/blob/main/CHANGELOG.md"
 
 [tool.uv]
 dev-dependencies = [
-  "coverage>=7.9.2",
-  "django-cors-headers>=4.7.0",
-  "eventlet>=0.40.1",
+  "coverage>=7.11.1",
+  "django-cors-headers>=4.9.0",
+  "eventlet>=0.40.3",
   "daphne>=4.2.1",
   "strawberry-graphql-django[debug-toolbar]>=0.67.0",
-  "poethepoet>=0.36.0",
-  "bump-my-version>=1.2.0",
+  "poethepoet>=0.37.0",
+  "bump-my-version>=1.2.4",
 ]
 
 [tool.uv.pip]
