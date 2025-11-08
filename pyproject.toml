@@ -8,7 +8,7 @@ license = { file = "LICENSE" }
 requires-python = ">=3.13.5"
 dependencies = [
   "django>=5.2.4",
-  "strawberry-graphql-django>=0.65.1",
+  "strawberry-graphql-django>=0.67.0",
   "channels==4.1.0",
   "channels-redis[cryptography]>=4.2.1",
   "celery>=5.5.3",
@@ -40,9 +40,7 @@ dev-dependencies = [
   "django-cors-headers>=4.7.0",
   "eventlet>=0.40.1",
   "daphne>=4.2.1",
-  "strawberry-graphql-django[debug-toolbar]>=0.65.1",
-  # NOTE: 当前版本不支持 6.0.0 的 django-debug-toolbar
-  "django-debug-toolbar<6.0.0",
+  "strawberry-graphql-django[debug-toolbar]>=0.67.0",
   "poethepoet>=0.36.0",
   "bump-my-version>=1.2.0",
 ]
