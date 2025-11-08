@@ -21,9 +21,6 @@ autolabeler:
   - label: "board"
     files:
       - home/board/**/*
-  - label: "iot"
-    files:
-      - home/iot/**/*
   - label: "push"
     files:
       - home/push/**/*

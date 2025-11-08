@@ -313,7 +313,7 @@ class MiPushMessageTest(TestCase):
         message = build_message(
             title="test",
             description="test description",
-            payload="/iot",
+            payload="/board",
             is_important=False,
         )
 
@@ -321,14 +321,14 @@ class MiPushMessageTest(TestCase):
         self.assertEqual(message_dict["title"], "test")
         self.assertEqual(message_dict["description"], "test description")
         self.assertLessEqual(message_dict["notify_id"], 10000)
-        self.assertEqual(message_dict["payload"], "/iot")
+        self.assertEqual(message_dict["payload"], "/board")
         self.assertEqual(message_dict["extra.notification_style_type"], "1")
 
     def test_board_channel_mipush_message(self):
         message = build_message(
             title="test",
             description="test description",
-            payload="/iot",
+            payload="/board",
             is_important=True,
         )
 
@@ -336,7 +336,7 @@ class MiPushMessageTest(TestCase):
         self.assertEqual(message_dict["title"], "test")
         self.assertEqual(message_dict["description"], "test description")
         self.assertLessEqual(message_dict["notify_id"], 10000)
-        self.assertEqual(message_dict["payload"], "/iot")
+        self.assertEqual(message_dict["payload"], "/board")
         self.assertEqual(message_dict["extra.notification_style_type"], "1")
 
         self.assertEqual(message_dict["extra.channel_id"], "high_system")
@@ -353,13 +353,13 @@ class TaskTests(TestCase):
 
     @mock.patch.object(sender, "send", side_effect=mocked_sender_send)
     def test_push_to_users(self, mock_send):
-        push_to_users(["1"], "title", "description", "/iot")
+        push_to_users(["1"], "title", "description", "/board")
 
         self.assertTrue(mock_send.call_args_list)
 
     @mock.patch.object(sender, "send", side_effect=mocked_sender_send)
     def test_push_to_users_without_secrets(self, mock_send):
         with self.settings(MI_PUSH_APP_SECRET=""):
-            push_to_users(["1"], "title", "description", "/iot")
+            push_to_users(["1"], "title", "description", "/board")
 
             self.assertFalse(mock_send.call_args_list)
