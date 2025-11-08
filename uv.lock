@@ -1496,7 +1496,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "celery", specifier = ">=5.5.3" },
-    { name = "channels", specifier = "==4.3.1" },
+    { name = "channels", specifier = ">=4.3.1" },
     { name = "channels-redis", extras = ["cryptography"], specifier = ">=4.3.0" },
     { name = "django", specifier = ">=5.2.8" },
     { name = "django-celery-beat", specifier = ">=2.8.1" },
