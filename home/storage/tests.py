@@ -65,7 +65,7 @@ class StorageTests(GraphQLTestCase):
     fixtures = ["users", "storage"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
+        self.user = get_user_model().objects.get(username="he0119")
         self.client.authenticate(self.user)
 
     def test_get_storage(self):
@@ -545,7 +545,7 @@ class ItemTests(GraphQLTestCase):
     fixtures = ["users", "storage"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
+        self.user = get_user_model().objects.get(username="he0119")
         self.client.authenticate(self.user)
 
     def test_get_item(self):
@@ -1161,7 +1161,7 @@ class ConsumableTests(GraphQLTestCase):
     fixtures = ["users", "storage"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
+        self.user = get_user_model().objects.get(username="he0119")
         self.client.authenticate(self.user)
 
     def test_get_consumable(self):
@@ -1446,7 +1446,7 @@ class PictureTests(GraphQLTestCase):
     fixtures = ["users", "storage"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
+        self.user = get_user_model().objects.get(username="he0119")
         self.client.authenticate(self.user)
 
     def test_get_picture(self):

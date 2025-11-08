@@ -22,14 +22,14 @@ class ModelTests(TestCase):
     def test_mipush_str(self):
         mipush = MiPush.objects.get(pk=1)
 
-        self.assertEqual(str(mipush), "test")
+        self.assertEqual(str(mipush), "he0119")
 
 
 class PushTests(GraphQLTestCase):
     fixtures = ["users", "push"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
+        self.user = get_user_model().objects.get(username="he0119")
         self.client.authenticate(self.user)
 
     def test_get_mipush(self):
@@ -53,7 +53,7 @@ class PushTests(GraphQLTestCase):
         content = self.client.execute(query, variables)
 
         mipush = content.data["miPush"]
-        self.assertEqual(mipush["user"]["username"], "test")
+        self.assertEqual(mipush["user"]["username"], "he0119")
         self.assertEqual(mipush["enable"], True)
         self.assertEqual(mipush["regId"], "regidofuser1")
         self.assertEqual(mipush["model"], "modelofuser1")
@@ -63,7 +63,7 @@ class PushTests(GraphQLTestCase):
         content = self.client.execute(query, variables)
 
         mipush = content.data["miPush"]
-        self.assertEqual(mipush["user"]["username"], "test")
+        self.assertEqual(mipush["user"]["username"], "he0119")
         self.assertEqual(mipush["enable"], True)
         self.assertEqual(mipush["regId"], "regid2ofuser1")
         self.assertEqual(mipush["model"], "model2ofuser1")
@@ -91,14 +91,14 @@ class PushTests(GraphQLTestCase):
 
         # 第一个设备
         mipush = content.data["miPushs"]["edges"][0]["node"]
-        self.assertEqual(mipush["user"]["username"], "test")
+        self.assertEqual(mipush["user"]["username"], "he0119")
         self.assertEqual(mipush["enable"], True)
         self.assertEqual(mipush["regId"], "regidofuser1")
         self.assertEqual(mipush["model"], "modelofuser1")
 
         # 第二个设备
         mipush = content.data["miPushs"]["edges"][1]["node"]
-        self.assertEqual(mipush["user"]["username"], "test")
+        self.assertEqual(mipush["user"]["username"], "he0119")
         self.assertEqual(mipush["enable"], True)
         self.assertEqual(mipush["regId"], "regid2ofuser1")
         self.assertEqual(mipush["model"], "model2ofuser1")
@@ -138,7 +138,7 @@ class PushTests(GraphQLTestCase):
         content = self.client.execute(query, variables)
 
         mipush = content.data["mipush"]
-        self.assertEqual(mipush["user"]["username"], "test")
+        self.assertEqual(mipush["user"]["username"], "he0119")
         self.assertEqual(mipush["enable"], True)
         self.assertEqual(mipush["regId"], "regidofuser1")
         self.assertEqual(mipush["model"], "modelofuser1")
@@ -169,7 +169,7 @@ class PushTests(GraphQLTestCase):
         content = self.client.execute(mutation, variables)
 
         mipush = content.data["updateMiPush"]
-        self.assertEqual(mipush["user"]["username"], "test")
+        self.assertEqual(mipush["user"]["username"], "he0119")
         self.assertEqual(mipush["regId"], "testRegId")
 
     def test_get_enable_reg_ids(self):
@@ -187,7 +187,7 @@ class DifferentUserPushTests(GraphQLTestCase):
     fixtures = ["users", "push"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test2")
+        self.user = get_user_model().objects.get(username="test")
         self.client.authenticate(self.user)
 
     def test_update_mipush(self):
@@ -217,7 +217,7 @@ class DifferentUserPushTests(GraphQLTestCase):
         content = self.client.execute(mutation, variables)
 
         mipush = content.data["updateMiPush"]
-        self.assertEqual(mipush["user"]["username"], "test2")
+        self.assertEqual(mipush["user"]["username"], "test")
         self.assertEqual(mipush["regId"], "testRegId")
 
 
@@ -227,7 +227,7 @@ class EmptyPushTests(GraphQLTestCase):
     fixtures = ["users"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
+        self.user = get_user_model().objects.get(username="he0119")
         self.client.authenticate(self.user)
 
     def test_get_mipush(self):
@@ -273,7 +273,7 @@ class EmptyPushTests(GraphQLTestCase):
         content = self.client.execute(mutation, variables)
 
         mipush = content.data["updateMiPush"]
-        self.assertEqual(mipush["user"]["username"], "test")
+        self.assertEqual(mipush["user"]["username"], "he0119")
         self.assertEqual(mipush["regId"], "testRegId")
 
     def test_get_enable_reg_ids(self):
@@ -293,7 +293,7 @@ class DisabledPushTests(TestCase):
     fixtures = ["users", "push_disabled"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
+        self.user = get_user_model().objects.get(username="he0119")
 
     def test_get_enable_reg_ids(self):
         """测试获取所有启用用户的注册标识码"""

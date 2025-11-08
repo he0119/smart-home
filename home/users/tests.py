@@ -16,7 +16,7 @@ class ModelTests(TestCase):
     def test_avatar_str(self):
         avatar = Avatar.objects.get(pk=1)
 
-        self.assertEqual(str(avatar), "test")
+        self.assertEqual(str(avatar), "he0119")
 
     def test_config_str(self):
         config = Config.objects.get(pk=1)
@@ -28,8 +28,8 @@ class UserTests(GraphQLTestCase):
     fixtures = ["users"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
-        self.user_without_configs = get_user_model().objects.get(username="test2")
+        self.user = get_user_model().objects.get(username="he0119")
+        self.user_without_configs = get_user_model().objects.get(username="test")
 
     def test_login(self):
         """测试登录"""
@@ -44,7 +44,7 @@ class UserTests(GraphQLTestCase):
         """
         variables = {
             "input": {
-                "username": "test",
+                "username": "he0119",
                 "password": "12345678",
             }
         }
@@ -52,7 +52,7 @@ class UserTests(GraphQLTestCase):
         content = self.client.execute(query, variables)
 
         user = content.data["login"]
-        self.assertEqual(user["username"], "test")
+        self.assertEqual(user["username"], "he0119")
 
         query = """
             query viewer {
@@ -63,7 +63,7 @@ class UserTests(GraphQLTestCase):
             }
         """
         content = self.client.execute(query)
-        self.assertEqual(content.data["viewer"]["username"], "test")
+        self.assertEqual(content.data["viewer"]["username"], "he0119")
 
     def test_login_wrong_password(self):
         """测试密码错误"""
@@ -117,7 +117,7 @@ class UserTests(GraphQLTestCase):
         """
         content = self.client.execute(query)
         user = content.data["logout"]
-        self.assertEqual(user["username"], "test")
+        self.assertEqual(user["username"], "he0119")
 
         query = """
             query viewer {
@@ -141,7 +141,7 @@ class UserTests(GraphQLTestCase):
         """
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
-        self.assertEqual(content.data["viewer"]["username"], "test")
+        self.assertEqual(content.data["viewer"]["username"], "he0119")
         self.assertEqual(content.data["viewer"]["avatarUrl"], "/avatar_pictures/1.jpg")
 
     def test_unauthenticate_user(self):
@@ -315,8 +315,8 @@ class UserAvatarTests(GraphQLTestCase):
     fixtures = ["users"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
-        self.user_without_avatar = get_user_model().objects.get(username="test2")
+        self.user = get_user_model().objects.get(username="he0119")
+        self.user_without_avatar = get_user_model().objects.get(username="test")
 
     def test_avatar_not_exist(self):
         """测试头像不存在的情况"""
@@ -331,7 +331,7 @@ class UserAvatarTests(GraphQLTestCase):
         """
         content = self.client.execute(query)
         self.assertIsNone(content.errors)
-        self.assertEqual(content.data["viewer"]["username"], "test2")
+        self.assertEqual(content.data["viewer"]["username"], "test")
         self.assertEqual(content.data["viewer"]["avatarUrl"], None)
 
     def test_update_avatar(self):
@@ -396,7 +396,7 @@ class SessionTests(GraphQLTestCase):
     fixtures = ["users"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
+        self.user = get_user_model().objects.get(username="he0119")
         self.client.authenticate(self.user)
 
     def test_get_session(self):

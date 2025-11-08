@@ -27,7 +27,7 @@ class TopicTests(GraphQLTestCase):
     fixtures = ["users", "board", "push_disabled"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
+        self.user = get_user_model().objects.get(username="he0119")
         self.client.authenticate(self.user)
 
     def test_get_topic(self):
@@ -540,7 +540,7 @@ class CommentTests(GraphQLTestCase):
     fixtures = ["users", "board", "push_disabled"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test")
+        self.user = get_user_model().objects.get(username="he0119")
         self.client.authenticate(self.user)
 
     def test_get_comment(self):
@@ -745,7 +745,7 @@ class CommentTests(GraphQLTestCase):
         self.assertEqual(comment["__typename"], "Comment")
         self.assertEqual(comment["body"], "测试评论给测试评论二")
         self.assertEqual(comment["parent"]["id"], relay.to_base64(types.Comment, "1"))
-        self.assertEqual(comment["replyTo"]["username"], "test2")
+        self.assertEqual(comment["replyTo"]["username"], "test")
 
     def test_add_comment_with_parent_id_not_exist(self):
         """测试回复的评论不存在"""
@@ -988,7 +988,7 @@ class DifferentUserTopicTests(GraphQLTestCase):
     fixtures = ["users", "board", "push_disabled"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test2")
+        self.user = get_user_model().objects.get(username="test")
         self.client.authenticate(self.user)
 
     def test_delete_topic(self):
@@ -1051,7 +1051,7 @@ class DifferentUserCommentTests(GraphQLTestCase):
     fixtures = ["users", "board", "push_disabled"]
 
     def setUp(self):
-        self.user = get_user_model().objects.get(username="test2")
+        self.user = get_user_model().objects.get(username="test")
         self.client.authenticate(self.user)
 
     def test_delete_comment(self):
