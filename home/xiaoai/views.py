@@ -103,7 +103,7 @@ def is_xiaomi(request) -> bool:
         headers = request.headers
         authorization = headers["Authorization"]
         sign_version = authorization.split()[0]
-        key_id, scope, signature = authorization.split()[1].split(":")
+        key_id, _scope, signature = authorization.split()[1].split(":")
         if sign_version == "MIAI-HmacSHA256-V1":
             if key_id != settings.XIAOAI_KEY_ID:
                 return False
