@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 ## [Unreleased]
 
+## [0.12.0] - 2025-11-23
+
 ### Added
 
 - 添加 OIDC 支持
@@ -331,7 +333,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/lang/zh-CN/
 
 - 物品管理，通过两个表（位置和物品）存放数据，管理家庭物品的存放情况。
 
-[Unreleased]: https://github.com/he0119/smart-home/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/he0119/smart-home/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/he0119/smart-home/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/he0119/smart-home/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/he0119/smart-home/compare/v0.9.6...v0.10.0
 [0.9.6]: https://github.com/he0119/smart-home/compare/v0.9.5...v0.9.6
