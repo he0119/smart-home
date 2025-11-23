@@ -70,8 +70,10 @@ def get_ws_client(user) -> WebsocketCommunicator:
     from home.schema import schema
 
     class DebuggableGraphQLWSConsumer(GraphQLWSConsumer):
-        async def get_context(self, *args, **kwargs) -> object:
+        async def get_context(self, *args, **kwargs):  # type: ignore[override]
             context = await super().get_context(*args, **kwargs)
+            if context is None:
+                return None
             context["ws"].scope["user"] = user
             return context
 

@@ -4,6 +4,7 @@ from django.test.testcases import TestCase
 from strawberry import relay
 
 from home.tests import GraphQLTestCase
+from home.utils import MyOIDCAB
 
 from . import types
 from .models import Avatar, Config, Session
@@ -523,3 +524,31 @@ class TaskTests(TestCase):
         self.assertEqual(Session.objects.count(), 2)
         clear_sessions()
         self.assertEqual(Session.objects.count(), 0)
+
+
+class MyOIDCABTests(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.backend = MyOIDCAB()
+        self.user_model = get_user_model()
+
+    def test_filter_by_preferred_username(self):
+        user = self.user_model.objects.create_user(username="alice")
+
+        result = self.backend.filter_users_by_claims({"preferred_username": "ALICE"})
+
+        self.assertEqual(list(result), [user])
+
+    def test_filter_falls_back_to_username_claim(self):
+        user = self.user_model.objects.create_user(username="bob")
+
+        result = self.backend.filter_users_by_claims({"username": "Bob"})
+
+        self.assertEqual(list(result), [user])
+
+    def test_filter_returns_empty_without_username_claim(self):
+        self.user_model.objects.create_user(username="carol")
+
+        result = self.backend.filter_users_by_claims({})
+
+        self.assertFalse(result.exists())
