@@ -220,7 +220,7 @@ wheels = [
 
 [[package]]
 name = "bump-my-version"
-version = "1.2.4"
+version = "1.2.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -233,9 +233,9 @@ dependencies = [
     { name = "tomlkit" },
     { name = "wcmatch" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a0/fa/3ade689370780989831e574e82024d301ffa5ef75b3d169a7074c9419ce4/bump_my_version-1.2.4.tar.gz", hash = "sha256:998abb4f3774cf96137a77034a5a12a722b109b26a3afa044ec14622a0180fa3", size = 1157991, upload-time = "2025-10-04T14:13:31.658Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/45/11/0f73c652396f86197ea6d509c78e8c44c3483d9a86437ca53ce55edca8e8/bump_my_version-1.2.7.tar.gz", hash = "sha256:d915a10b41e0c9db5a2fa39bde9f45f92e1e4194242d819c9ceb9eca8831cd21", size = 1198071, upload-time = "2026-02-14T13:44:59.923Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/bb/893bcf542addd07f3ec92ca20ce028a0f254481f57039dc5b933a074d767/bump_my_version-1.2.4-py3-none-any.whl", hash = "sha256:b60ac52c8972c5a7e1e478d0334015a993ba5c27fad1b04bde558d25c667b0f5", size = 59732, upload-time = "2025-10-04T14:13:29.992Z" },
+    { url = "https://files.pythonhosted.org/packages/46/ed/ad1755f82cd5a0baafe342e7154696a93e57f04f86515402f14e5beceb36/bump_my_version-1.2.7-py3-none-any.whl", hash = "sha256:16f89360f979c0a8eb3249ebe3e13ae4f0cb5481d7bb58e12a9f66996922acfd", size = 60013, upload-time = "2026-02-14T13:44:58.318Z" },
 ]
 
 [[package]]
@@ -1813,7 +1813,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "bump-my-version", specifier = ">=1.2.4" },
+    { name = "bump-my-version", specifier = ">=1.2.7" },
     { name = "coverage", specifier = ">=7.12.0" },
     { name = "daphne", specifier = ">=4.2.1" },
     { name = "django-cors-headers", specifier = ">=4.9.0" },

@@ -42,7 +42,7 @@ dev = [
   "daphne>=4.2.1",
   "strawberry-graphql-django[debug-toolbar]>=0.67.2",
   "poethepoet>=0.37.0",
-  "bump-my-version>=1.2.4",
+  "bump-my-version>=1.2.7",
 ]
 
 [tool.uv.pip]
