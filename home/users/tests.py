@@ -414,7 +414,7 @@ class SessionTests(GraphQLTestCase):
                 }
             }
         """
-        content = self.client.execute(query, headers={"HTTP_X_FORWARDED_FOR": "1.1.1.1"})
+        content = self.client.execute(query, headers={"X-Forwarded-For": "1.1.1.1"})
 
         data = content.data["viewer"]["session"]
         # 必须排序确保新的会话在后面
@@ -433,7 +433,7 @@ class SessionTests(GraphQLTestCase):
 
         # 再次请求，这次应该能够获取到正确的 IP 地址
         # 因为在上一次请求中，已经将 IP 地址写入到了 session 中
-        content = self.client.execute(query, headers={"HTTP_X_FORWARDED_FOR": "1.1.1.1"})
+        content = self.client.execute(query, headers={"X-Forwarded-For": "1.1.1.1"})
 
         data = content.data["viewer"]["session"]
         data.sort(key=lambda x: x["isCurrent"])

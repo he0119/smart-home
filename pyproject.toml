@@ -7,25 +7,25 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.13.5"
 dependencies = [
-  "django>=5.2.8",
-  "strawberry-graphql-django>=0.67.1",
+  "django>=5.2.12,<6.0",
+  "strawberry-graphql-django>=0.82.0",
   "channels>=4.3.2",
   "channels-redis[cryptography]>=4.3.0",
-  "celery>=5.5.3",
+  "celery>=5.6.2",
   "django-celery-beat>=2.8.1",
   "django-cleanup>=9.0.0",
   "django-mptt>=0.18.0",
   "django-storages[s3]>=1.14.6",
-  "markdown>=3.10",
-  "pillow>=12.0.0",
-  "psycopg[binary]>=3.2.13",
-  "sentry-sdk>=2.45.0",
+  "markdown>=3.10.2",
+  "pillow>=12.1.1",
+  "psycopg[binary]>=3.3.3",
+  "sentry-sdk>=2.54.0",
   "geoip2>=5.2.0",
   "httpx>=0.28.1",
-  "gunicorn>=23.0.0",
-  "uvicorn[standard]>=0.38.0",
+  "gunicorn>=25.1.0",
+  "uvicorn[standard]>=0.42.0",
   "uvicorn-worker>=0.4.0",
-  "mozilla-django-oidc>=4.0.1",
+  "mozilla-django-oidc>=5.0.2",
 ]
 
 [project.urls]
@@ -36,12 +36,12 @@ Changelog = "https://github.com/he0119/smart-home/blob/main/CHANGELOG.md"
 
 [dependency-groups]
 dev = [
-  "coverage>=7.12.0",
+  "coverage>=7.13.4",
   "django-cors-headers>=4.9.0",
   "eventlet>=0.40.4",
   "daphne>=4.2.1",
-  "strawberry-graphql-django[debug-toolbar]>=0.67.2",
-  "poethepoet>=0.37.0",
+  "strawberry-graphql-django[debug-toolbar]>=0.82.0",
+  "poethepoet>=0.42.1",
   "bump-my-version>=1.2.7",
 ]
 
