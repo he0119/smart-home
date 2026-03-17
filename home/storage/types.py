@@ -3,8 +3,8 @@ from typing import Optional
 import strawberry
 import strawberry_django
 from django.db.models import Q
-from strawberry import relay
-from strawberry_django import FilterLookup
+from strawberry import Info, relay
+from strawberry_django import FilterLookup, StrFilterLookup
 
 from home.users.types import User
 
@@ -27,8 +27,8 @@ class PictureOrder:
 @strawberry.input
 class StorageFilterLookup:
     id: relay.GlobalID | None = strawberry.UNSET
-    name: FilterLookup[str] | None = strawberry.UNSET
-    description: FilterLookup[str] | None = strawberry.UNSET
+    name: StrFilterLookup | None = strawberry.UNSET
+    description: StrFilterLookup | None = strawberry.UNSET
     level: FilterLookup[int] | None = strawberry.UNSET
     is_null: bool | None = strawberry.UNSET
 
@@ -122,9 +122,9 @@ class Picture(relay.Node):
     box_w: strawberry.auto
 
     @strawberry.field
-    def name(self, info) -> str:
+    def name(self, info: Info) -> str:
         return self.picture.name.split("/")[-1]  # type: ignore
 
     @strawberry.field
-    def url(self, info) -> str:
+    def url(self, info: Info) -> str:
         return self.picture.url  # type: ignore

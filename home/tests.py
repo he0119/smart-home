@@ -21,23 +21,6 @@ class MyTestClient(TestClient):
         """登录"""
         self.client.force_login(user)
 
-    def request(
-        self,
-        body: dict[str, object],
-        headers: dict[str, object] | None = None,
-        files: dict[str, object] | None = None,
-    ):
-        kwargs: dict[str, object] = {"data": body}
-        # 默认的测试客户端居然没用上 headers
-        if headers:
-            kwargs.update(headers)
-        if files:
-            kwargs["format"] = "multipart"
-        else:
-            kwargs["content_type"] = "application/json"
-
-        return self.client.post(self.path, **kwargs)  # type: ignore
-
     def execute(
         self,
         query: str,
@@ -50,7 +33,7 @@ class MyTestClient(TestClient):
 
         和之前的格式相同
         """
-        return super().query(query, variables, headers, asserts_errors, files)  # type: ignore
+        return super().query(query, variables, headers, files, asserts_errors)  # type: ignore
 
 
 class GraphQLTestCase(TestCase):
