@@ -22,7 +22,7 @@
       groupName: "Python dev-dependencies",
       // https://docs.renovatebot.com/modules/manager/pep621/
       matchManagers: ["pep621"],
-      matchDepTypes: ["tool.uv.dev-dependencies"],
+      matchDepTypes: ["dependency-groups"],
       matchUpdateTypes: ["minor", "patch"],
       description: "Monthly update of Python dev-dependencies",
     },
