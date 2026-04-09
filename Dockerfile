@@ -1,4 +1,4 @@
-FROM python:3.13.5-slim
+FROM python:3.14.4-slim
 COPY --from=ghcr.io/astral-sh/uv:0.11.5 /uv /bin/uv
 
 # 设置时区
