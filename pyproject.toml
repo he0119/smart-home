@@ -40,7 +40,7 @@ dev = [
   "django-cors-headers>=4.9.0",
   "eventlet>=0.40.4",
   "daphne>=4.2.1",
-  "strawberry-graphql-django[debug-toolbar]>=0.82.0",
+  "strawberry-graphql-django[debug-toolbar]>=0.82.1",
   "poethepoet>=0.42.1",
   "bump-my-version>=1.2.7",
 ]
