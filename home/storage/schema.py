@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from datetime import datetime
 
 import strawberry
@@ -16,9 +17,23 @@ from . import models, types
 @strawberry.type
 class Query:
     item: types.Item = strawberry_django.node(permission_classes=[IsAuthenticated])
-    items: strawberry_django.relay.DjangoListConnection[types.Item] = strawberry_django.connection(
-        permission_classes=[IsAuthenticated]
+
+    @strawberry_django.connection(
+        strawberry_django.relay.DjangoListConnection[types.Item],
+        permission_classes=[IsAuthenticated],
+        filters=types.ItemFilter,
+        order=types.ItemOrder,
     )
+    def items(
+        self,
+        filters: types.ItemFilter | None = strawberry.UNSET,
+    ) -> Iterable[models.Item]:
+        queryset = models.Item.objects.all()
+        # filters 参数缺省时也默认排除已删除物品。
+        if filters is strawberry.UNSET:
+            return queryset.filter(is_deleted=False)
+        return queryset
+
     storage: types.Storage = strawberry_django.node(permission_classes=[IsAuthenticated])
     storages: strawberry_django.relay.DjangoListConnection[types.Storage] = strawberry_django.connection(
         permission_classes=[IsAuthenticated]
