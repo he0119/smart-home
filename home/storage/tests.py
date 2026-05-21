@@ -296,7 +296,7 @@ class StorageTests(GraphQLTestCase):
         self.assertEqual(old_storage.id, 3)
         self.assertEqual(old_storage.name, "工具箱")
         self.assertEqual(old_storage.description, "")
-        self.assertEqual(old_storage.parent_id, 2)
+        self.assertEqual(old_storage.parent_id, 2)  # type: ignore
 
         mutation = """
             mutation updateStorage($input: UpdateStorageInput!) {
@@ -655,6 +655,26 @@ class ItemTests(GraphQLTestCase):
         content = self.client.execute(query)
 
         self.assertEqual(len(content.data["items"]["edges"]), 5)
+
+    def test_get_items_without_filters(self):
+        """不传 filters 时，默认排除已删除物品"""
+        query = """
+            query items {
+                items {
+                    edges {
+                        node {
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        """
+        content = self.client.execute(query)
+
+        names = [item["node"]["name"] for item in content.data["items"]["edges"]]
+        self.assertEqual(len(names), 5)
+        self.assertNotIn("垃圾", names)
 
     def test_get_deleted_items(self):
         """测试获取已删除的物品"""
