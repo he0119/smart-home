@@ -643,30 +643,6 @@ wheels = [
 ]
 
 [[package]]
-name = "django-js-asset"
-version = "3.1.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e6/91/c63f136f553ec24fc46ccf20ac7292a8df04815b383975b6f3f7f0060217/django_js_asset-3.1.2.tar.gz", hash = "sha256:1fc7584199ed1941ed7c8e7b87ca5524bb0f2ba941561d2a104e88ee9f07bedd", size = 9471, upload-time = "2025-03-04T15:22:49.789Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a6/cf/b208767db5e56b5189829f753eec6a14ee75d074922dc2bd19220b22a34d/django_js_asset-3.1.2-py3-none-any.whl", hash = "sha256:b5ffe376aebbd73b7af886d675ac9f43ca63b39540190fa8409c9f8e79145f68", size = 5905, upload-time = "2025-03-04T15:22:51.152Z" },
-]
-
-[[package]]
-name = "django-mptt"
-version = "0.18.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django-js-asset" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/eb/25/04bb8e4384f3484dabbd0e2a84946f1c972b95b07512509a17aaa361be0f/django_mptt-0.18.0.tar.gz", hash = "sha256:cf5661357ff22bc64e20d3341c26e538aa54583aea0763cfe6aaec0ab8e3a8ee", size = 71407, upload-time = "2025-08-26T09:27:01.05Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/51/9e/78aad58a90f2e4d0c898eeadd2f2b720bcae29b43676dd37c2b627c4c6c6/django_mptt-0.18.0-py3-none-any.whl", hash = "sha256:bfa3f01627e3966a1df901aeca74570a3e933e66809ebf58d9df673e63627afb", size = 120157, upload-time = "2025-08-26T09:27:02.168Z" },
-]
-
-[[package]]
 name = "django-storages"
 version = "1.14.6"
 source = { registry = "https://pypi.org/simple" }
@@ -693,6 +669,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/da/05/9b93a66452cdb8a08ab26f08d5766d2332673e659a8b2aeb73f2a904d421/django_timezone_field-7.2.1.tar.gz", hash = "sha256:def846f9e7200b7b8f2a28fcce2b78fb2d470f6a9f272b07c4e014f6ba4c6d2e", size = 13096, upload-time = "2025-12-06T23:50:44.591Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/41/7f/d885667401515b467f84569c56075bc9add72c9fd425fca51a25f4c997e1/django_timezone_field-7.2.1-py3-none-any.whl", hash = "sha256:276915b72c5816f57c3baf9e43f816c695ef940d1b21f91ebf6203c09bf4ad44", size = 13284, upload-time = "2025-12-06T23:50:43.302Z" },
+]
+
+[[package]]
+name = "django-tree-queries"
+version = "0.24.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e3/6d/eaee27d299a5a8874205a783632a9383c16e9a2e73e8a98f0f19f921a2e2/django_tree_queries-0.24.0.tar.gz", hash = "sha256:8971da3fd15a1e6a52a5a2af76c086aa460e6974a130d9ec90ca0d0588baf848", size = 41134, upload-time = "2026-03-25T14:49:46.289Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/33/f5/85030fa7c200847f413d3ddba348fe450194e2520d893b12e92f690996c9/django_tree_queries-0.24.0-py3-none-any.whl", hash = "sha256:568adb664cd9dab55c0e39ab44bb7c0931854cdea1463beb16a89228f9d99ec7", size = 35631, upload-time = "2026-03-25T14:49:44.452Z" },
 ]
 
 [[package]]
@@ -1566,8 +1551,8 @@ dependencies = [
     { name = "django" },
     { name = "django-celery-beat" },
     { name = "django-cleanup" },
-    { name = "django-mptt" },
     { name = "django-storages", extra = ["s3"] },
+    { name = "django-tree-queries" },
     { name = "geoip2" },
     { name = "gunicorn" },
     { name = "httpx" },
@@ -1600,8 +1585,8 @@ requires-dist = [
     { name = "django", specifier = ">=5.2.13,<6.0" },
     { name = "django-celery-beat", specifier = ">=2.9.0" },
     { name = "django-cleanup", specifier = ">=9.0.0" },
-    { name = "django-mptt", specifier = ">=0.18.0" },
     { name = "django-storages", extras = ["s3"], specifier = ">=1.14.6" },
+    { name = "django-tree-queries", specifier = ">=0.24.0" },
     { name = "geoip2", specifier = ">=5.2.0" },
     { name = "gunicorn", specifier = ">=25.3.0" },
     { name = "httpx", specifier = ">=0.28.1" },

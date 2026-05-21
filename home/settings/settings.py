@@ -95,7 +95,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # 数据相关
-    "mptt",
+    "tree_queries",
     "django_celery_beat",
     "django_cleanup",
     # GraphQL
@@ -203,11 +203,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # https://docs.djangoproject.com/zh-hans/4.0/topics/auth/default/
 
 LOGIN_URL = "/admin/"
-
-# MPTT
-# https://django-mptt.readthedocs.io/en/latest/forms.html
-
-MPTT_DEFAULT_LEVEL_INDICATOR = "--"
 
 # Celery
 # https://docs.celeryproject.org/en/stable/getting-started/brokers/redis.html
