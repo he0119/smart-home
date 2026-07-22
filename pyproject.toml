@@ -38,7 +38,6 @@ Changelog = "https://github.com/he0119/smart-home/blob/main/CHANGELOG.md"
 dev = [
   "coverage>=7.15.2",
   "django-cors-headers>=4.9.0",
-  "eventlet>=0.41.1",
   "daphne>=4.2.3",
   "strawberry-graphql-django[debug-toolbar]>=0.86.5",
   "poethepoet>=0.48.0",
