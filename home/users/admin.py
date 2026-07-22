@@ -143,6 +143,7 @@ class OwnerFilter(admin.SimpleListFilter):
             return queryset.filter(user=request.user)
 
 
+@admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
     list_display = ("ip", "user", "is_valid", "last_activity", "location", "device")
     exclude = ("session_key",)
@@ -161,14 +162,11 @@ class SessionAdmin(admin.ModelAdmin):
         return parse_device(obj.user_agent) if obj.user_agent else ""
 
 
+@admin.register(Avatar)
 class AvatarAdmin(admin.ModelAdmin):
     list_display = ("user", "avatar")
 
 
+@admin.register(Config)
 class ConfigAdmin(admin.ModelAdmin):
     list_display = ("user", "key", "value")
-
-
-admin.site.register(Session, SessionAdmin)
-admin.site.register(Avatar, AvatarAdmin)
-admin.site.register(Config, ConfigAdmin)
