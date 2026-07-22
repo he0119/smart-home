@@ -3,11 +3,13 @@ from django.contrib import admin
 from .models import Item, Picture, Storage
 
 
+@admin.register(Storage)
 class StorageAdmin(admin.ModelAdmin):
     list_display = ("name", "parent", "description")
     search_fields = ["name", "description"]
 
 
+@admin.register(Picture)
 class PictureAdmin(admin.ModelAdmin):
     list_filter = ("item",)
     list_display = ("item", "picture", "description", "created_at", "created_by")
@@ -18,6 +20,7 @@ class PictureInline(admin.TabularInline):
     extra = 1
 
 
+@admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
     inlines = [PictureInline]
     list_display = (
@@ -38,8 +41,3 @@ class ItemAdmin(admin.ModelAdmin):
     @admin.display(description="耗材")
     def get_consumables(self, obj):
         return "\n".join([p.name for p in obj.consumables.all()])
-
-
-admin.site.register(Storage, StorageAdmin)
-admin.site.register(Item, ItemAdmin)
-admin.site.register(Picture, PictureAdmin)
