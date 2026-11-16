@@ -36,13 +36,22 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 # Email
-# https://docs.djangoproject.com/zh-hans/4.0/topics/email/
+# Django 6.1 起用 MAILERS 取代 EMAIL_* 各项设置
+# https://docs.djangoproject.com/zh-hans/6.1/howto/mailers-migration/
 
-EMAIL_HOST = "smtp.exmail.qq.com"
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": "smtp.exmail.qq.com",
+            "port": 465,
+            "use_ssl": True,
+            "username": os.getenv("EMAIL_HOST_USER"),
+            "password": os.getenv("EMAIL_HOST_PASSWORD"),
+        },
+    },
+}
+
 SERVER_EMAIL = os.getenv("EMAIL_HOST_USER")
 DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 ADMINS = list(

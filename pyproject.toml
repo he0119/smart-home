@@ -7,7 +7,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.14.4"
 dependencies = [
-  "django>=6.0.7,<6.1",
+  "django>=6.1,<6.2",
   "strawberry-graphql-django>=0.96.3",
   "channels>=4.3.2",
   "channels-redis[cryptography]>=4.3.0",
@@ -42,6 +42,14 @@ dev = [
   "strawberry-graphql-django[debug-toolbar]>=0.96.3",
   "poethepoet>=0.49.0",
   "bump-my-version>=1.8.1",
+]
+
+[tool.uv]
+# django-celery-beat 2.9.0 声明 Django<6.1，但其 main 分支已支持 6.1
+# 等 v2.10.0 发布到 PyPI 后可以删掉这段 override
+# https://github.com/celery/django-celery-beat/issues/1079
+override-dependencies = [
+  { package = { name = "django-celery-beat" }, dependencies = ["django>=5.2"] },
 ]
 
 [tool.uv.pip]
